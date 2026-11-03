@@ -72,6 +72,19 @@ button.primary{background:linear-gradient(120deg,#d99b61,#955336);color:#fff7ee;
 #constructionActions button{flex:1}
 @media(max-width:480px){#constructionViewport{height:235px}#constructionInfo{grid-template-columns:1fr auto}}
 
+
+/* QUICK PLAY: mobile-first playable colony controls */
+#quickPlay{border-color:#69c8ff66;background:linear-gradient(145deg,#14263aee,#101827f5)}
+#quickPlay .quick-intro{font-size:11px;color:#b9c7d8;line-height:1.65;margin:-2px 0 12px}
+#quickPlay .quick-row{display:flex;gap:8px;flex-wrap:wrap;margin:9px 0}
+#quickPlay .quick-row button{flex:1;min-width:125px}
+#quickPlots{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+#quickPlots button{padding:10px 4px;font-size:11px;min-width:0}
+#quickPlots button.active{border-color:#8ee8ff;background:linear-gradient(145deg,#155274,#1b3851);box-shadow:0 0 16px #39bfff33}
+#quickBuildings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#quickBuildings button{text-align:left;min-height:60px;font-size:11px}
+#quickPlay .quick-status{font-size:11px;color:#a8e4bd;margin-top:10px;line-height:1.6}
+@media(min-width:650px){#quickBuildings{grid-template-columns:repeat(4,minmax(0,1fr))}#quickPlots{grid-template-columns:repeat(6,minmax(0,1fr))}}
 </style>
 <meta name="mars-land-build" content="MARS LAND 2.0 upload retry 2026-11-03">
 <link rel="manifest" href="./manifest.webmanifest"><meta name="theme-color" content="#0d1422"><link rel="icon" href="./icon.svg" type="image/svg+xml">
@@ -99,6 +112,26 @@ button.primary{background:linear-gradient(120deg,#d99b61,#955336);color:#fff7ee;
  <div class="stat"><b id="builtCount">0</b><span>อาคารในเครื่องนี้</span></div>
  <div class="stat"><b>3D</b><span>ลูกโลกจำลอง</span></div>
 </div>
+
+<section class="panel" id="quickPlay">
+ <h3>🎮 เริ่มเล่น MARS LAND • PLAY MODE</h3>
+ <p class="quick-intro">เลือกแปลงจากปุ่มด้านล่าง แล้วบันทึกพื้นที่ของคุณ เลือกอาคารและก่อสร้างเพื่อขยายอาณานิคม ข้อมูลเกมจะบันทึกไว้ในเบราว์เซอร์เครื่องนี้</p>
+ <div class="quick-row">
+  <button class="primary" onclick="startMarsGame()">🚀 เริ่มเล่นทันที</button>
+  <button onclick="document.getElementById('stage').scrollIntoView({behavior:'smooth'})">🌍 ไปยังดาวอังคาร 3D</button>
+ </div>
+ <div class="member-subhead">1. เลือกแปลงที่ดิน</div><div id="quickPlots"></div>
+ <div class="quick-row"><button onclick="claimPlot()">＋ บันทึกแปลงที่เลือก</button><button onclick="showParcel()">ดูรายละเอียดแปลง</button></div>
+ <div class="member-subhead">2. เลือกสิ่งปลูกสร้าง</div>
+ <div id="quickBuildings">
+  <button onclick="quickBuild('ฐานที่อยู่อาศัย')">🏠 ฐานที่อยู่อาศัย<br><small>300 MLC • เพิ่มประชากร</small></button>
+  <button onclick="quickBuild('โรงเรือนปลูกพืช')">🌱 โรงเรือนเกษตร<br><small>400 MLC • ผลิตอาหาร</small></button>
+  <button onclick="quickBuild('ห้องปฏิบัติการ')">🔬 ห้องทดลอง<br><small>500 MLC • เพิ่มรายได้</small></button>
+  <button onclick="quickBuild('แผงพลังงานแสงอาทิตย์')">☀️ โรงไฟฟ้าโซลาร์<br><small>350 MLC • ผลิตพลังงาน</small></button>
+ </div>
+ <div class="quick-status" id="quickStatus">สถานะ: เลือกแปลงเพื่อเริ่มต้นการตั้งถิ่นฐาน</div>
+</section>
+
 <section class="panel" id="tycoonPanel" style="border-color:#d99b6166"><h3>🏙 MARS TYCOON • ศูนย์บริหารอาณานิคม</h3><div class="member-grid"><div class="member-card"><span>เงินทุนอาณานิคม</span><b id="tycoonCash">1,000 MLC</b><small>เครดิตจำลอง</small></div><div class="member-card"><span>รายได้ / นาที</span><b id="tycoonIncome">0</b><small>จากอาคารทั้งหมด</small></div><div class="member-card"><span>ประชากร</span><b id="tycoonPopulation">0</b><small>จำลองจากฐานที่พัก</small></div><div class="member-card"><span>พลังงาน</span><b id="tycoonPower">0</b><small>กำลังผลิตสุทธิ</small></div><div class="member-card"><span>น้ำ</span><b id="tycoonWater">0</b><small>กำลังผลิตสุทธิ</small></div><div class="member-card"><span>ผลผลิตอาหาร</span><b id="tycoonFood">0</b><small>หน่วย / นาที</small></div></div><div id="tycoonStatus" style="font-size:11px;color:#cbd5e2;line-height:1.7;margin-top:10px">เข้าสู่ระบบและสร้างอาคารเพื่อเริ่มบริหารอาณานิคม</div><div class="member-subhead">🎯 ภารกิจอาณานิคม</div><div id="tycoonMissions" class="member-plots">กำลังโหลดภารกิจ...</div><div class="member-subhead">🧪 ศูนย์วิจัยและเทคโนโลยี</div><div id="tycoonResearch" class="member-plots">กำลังโหลดเทคโนโลยี...</div><div class="member-subhead">▣ อาคารและการอัปเกรด</div><div id="tycoonBuildings" class="member-plots">ยังไม่มีอาคาร</div><div class="actions" style="margin-top:10px"><button onclick="collectTycoonIncome()" class="primary">💰 รับรายได้สะสม</button><button onclick="renderTycoon()">↻ อัปเดตสถานะ</button></div><p style="font-size:9px;color:#8996aa;margin-bottom:0">ระบบเศรษฐกิจเป็นเกมจำลองในอุปกรณ์นี้ รายได้และทรัพยากรไม่ใช่เงินจริงหรือสินทรัพย์ที่แลกเปลี่ยนได้</p></section><section class="panel"><h3>⌖ ควบคุมภารกิจสำรวจ</h3><div class="actions">
 <button onclick="zoom(1.15)">＋ ซูมเข้า</button><button onclick="zoom(.87)">－ ซูมออก</button>
 <button class="primary" onclick="build()">สร้างอาคารทดลอง</button><button onclick="market()">ตลาดซื้อขาย</button>
@@ -290,6 +323,39 @@ try{if(!window.THREE)throw new Error('โหลดไลบรารี 3D ไ�
  const observer=new ResizeObserver(resize);observer.observe(canvas.parentElement);resize();requestAnimationFrame(animate);
  setInterval(()=>{const item=latest();if(item&&item.id!==lastId)start(item.type,item.id)},1200);
 })();
+</script>
+
+
+<script>
+function startMarsGame(){
+ const profile=JSON.parse(localStorage.getItem('marsMemberProfile')||'null');
+ if(!profile){
+  const guest={name:'ผู้บัญชาการ',email:'guest-'+Date.now()+'@mars.local'};
+  renderMember(guest);
+  const status=document.getElementById('quickStatus');
+  if(status)status.textContent='สร้างโปรไฟล์ผู้เล่นทดลองแล้ว • เลือกแปลงและกดบันทึกเพื่อเริ่มสร้างเมือง';
+ }
+ claimPlot();renderQuickPlay();
+ document.getElementById('quickPlay').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function quickBuild(type){
+ const p=parcels[selected],profile=JSON.parse(localStorage.getItem('marsMemberProfile')||'null');
+ if(!profile){startMarsGame();return;}
+ const data=getMemberData(profile);
+ if(!data.plots.includes(p.id)){modal('บันทึกแปลงก่อน','กด “บันทึกแปลงที่เลือก” ก่อนเริ่มก่อสร้าง','บันทึกแปลง',()=>claimPlot());return;}
+ build(type);
+}
+function chooseQuickPlot(index){selected=index;showParcel();renderQuickPlay();}
+function renderQuickPlay(){
+ const box=document.getElementById('quickPlots');if(!box||!window.parcels)return;
+ box.innerHTML=parcels.map((p,i)=>'<button class="'+(i===selected?'active':'')+'" onclick="chooseQuickPlot('+i+')">'+p.id+'<br><small>'+p.area.toLocaleString()+' ตร.ม.</small></button>').join('');
+ const status=document.getElementById('quickStatus'),profile=JSON.parse(localStorage.getItem('marsMemberProfile')||'null');
+ if(status){const d=profile?getMemberData(profile):null;status.textContent='แปลงที่เลือก: '+parcels[selected].id+' • '+(d&&d.plots.includes(parcels[selected].id)?'บันทึกในพื้นที่ของคุณแล้ว':'ยังไม่ได้บันทึก')+' • เครดิต: '+(d?d.wallet.toLocaleString():'1,000')+' MLC';}
+}
+const originalShowParcel=showParcel;
+showParcel=function(){originalShowParcel();renderQuickPlay();};
+document.addEventListener('DOMContentLoaded',renderQuickPlay);
+setTimeout(renderQuickPlay,500);
 </script>
 
 <script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(console.error))}</script>
