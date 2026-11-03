@@ -233,7 +233,7 @@ function init(){
  resize();restoreStructures3D();restoreInfrastructure3D();animate();showParcel();
 }
 function resize(){if(!renderer)return;let w=canvas.clientWidth,h=canvas.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
-function animate(){requestAnimationFrame(animate);if(!dragging){const t=Date.now()/1000;globe.rotation.y=(t*.0009)%(Math.PI*2);if(scene&&scene.children.length>1){const sun=scene.children.find(o=>o.isDirectionalLight);if(sun){sun.position.x=Math.cos(t*.0009)*4;sun.position.z=Math.sin(t*.0009)*4;}}}renderer.render(scene,camera)}
+function animate(){requestAnimationFrame(animate);if(!dragging){const t=Date.now()/1000;globe.rotation.y=(t*.0009)%(Math.PI*2)}renderer.render(scene,camera)}
 window.applyMars4DVisual=function(phase,weatherIndex){
  if(!scene||!globe)return;
  const day=phase>=.22&&phase<.48, dawn=phase<.22, dusk=phase>=.48&&phase<.68, night=phase>=.68;
