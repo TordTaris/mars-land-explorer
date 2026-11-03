@@ -17,24 +17,61 @@ button{background:#253249;color:#f7e6d2;border:1px solid #56647a;border-radius:1
 #details{font-size:12px;color:#c6d0df;line-height:1.7;margin-top:10px}.notice{font-size:10px;color:#8996aa;text-align:center;padding:16px}
 .modal{display:none;position:fixed;inset:0;background:#000c;z-index:5;align-items:center;justify-content:center;padding:20px}.modal>div{width:100%;max-width:390px;background:#172133;border:1px solid #68758a;border-radius:16px;padding:18px}.modal h2{font-size:17px;color:#ffd19a}.modal p{font-size:13px;line-height:1.6;color:#cbd4e1}.modal button{width:100%;margin-top:8px}
 @media(min-width:700px){main{padding:22px}.actions{grid-template-columns:repeat(4,1fr)}}
+
+/* MARS LAND premium visual refresh */
+:root{--gold:#f4bd78;--gold2:#ffe0ae;--ink:#070b13;--glass:rgba(15,23,37,.78);--edge:rgba(255,208,153,.2)}
+body{background:radial-gradient(ellipse at 50% -15%,#42251f 0%,#111827 38%,#070b13 76%);background-attachment:fixed}
+header{height:72px;padding:12px clamp(16px,4vw,42px);background:rgba(7,11,19,.82);backdrop-filter:blur(18px);border-bottom:1px solid var(--edge);position:sticky;top:0;z-index:4}
+.brand{font-size:19px;letter-spacing:3px;text-shadow:0 0 22px #e89b5b66}
+.tag{letter-spacing:1.8px}
+main{max-width:1120px;padding:22px clamp(14px,3vw,28px) 36px}
+.hero{text-align:left;margin:12px 2px 18px;position:relative}
+.hero:before{content:"MISSION CONTROL / 01";display:block;color:#f1b979;font-size:10px;letter-spacing:3px;font-weight:800;margin-bottom:9px}
+.hero h1{font-size:clamp(27px,5vw,42px);letter-spacing:-1px;line-height:1.1;background:linear-gradient(100deg,#fff1dd,#e9a86d 65%,#b96748);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{font-size:13px;color:#b9c4d4;margin-top:9px}
+#stage{height:min(76vw,590px);min-height:330px;border-radius:24px;border:1px solid #d79b6944;box-shadow:0 24px 80px #0008,inset 0 0 50px #d17d3b10;background:radial-gradient(ellipse at 50% 48%,#28384c 0%,#111b2b 42%,#080d17 76%);isolation:isolate}
+#stage:before{content:"MARS / 24.6° N  •  137.4° E";position:absolute;z-index:2;top:17px;left:18px;color:#f2c28c;font-size:10px;letter-spacing:1.7px;padding:8px 11px;border:1px solid #eab77a44;border-radius:30px;background:#080d18a8;backdrop-filter:blur(8px)}
+#stage:after{content:"LIVE SIMULATION  ◉";position:absolute;z-index:2;top:17px;right:18px;color:#a8e4bd;font-size:9px;letter-spacing:1.4px;padding:8px 11px;border:1px solid #82cba744;border-radius:30px;background:#080d18a8}
+.hint{bottom:17px;font-size:10px;letter-spacing:.5px;color:#f4d8b6}
+.stats{gap:12px;margin:16px 0}
+.stat,.panel{background:linear-gradient(145deg,rgba(30,42,60,.92),rgba(12,19,31,.94));border:1px solid #a5b5ca26;border-radius:18px;box-shadow:0 12px 34px #0003}
+.stat{padding:16px 18px;position:relative;overflow:hidden}
+.stat:after{content:"";position:absolute;width:70px;height:70px;border-radius:50%;right:-25px;top:-30px;background:#e6a96c12}
+.stat b{font-size:24px;color:#f5c38c}
+.stat span{font-size:10px;letter-spacing:1px;text-transform:uppercase}
+.panel{padding:18px;margin-top:12px}
+.panel h3{font-size:15px;letter-spacing:.5px}
+.actions{gap:10px}
+button{cursor:pointer;transition:transform .18s ease,border-color .18s ease,filter .18s ease;background:linear-gradient(145deg,#29384e,#1a2638);border:1px solid #78869a66;border-radius:12px;padding:13px}
+button:hover{transform:translateY(-2px);filter:brightness(1.14);border-color:#e8b477}
+button.primary{background:linear-gradient(120deg,#d99b61,#955336);color:#fff7ee;box-shadow:0 8px 22px #a65c3333}
+#details{margin-top:15px;padding:13px 15px;border:1px solid #ffffff12;border-radius:12px;background:#080e1a88;color:#cbd5e2}
+#details b{color:#f5c38c}
+.notice{margin:18px auto 0;max-width:780px;line-height:1.7}
+.modal>div{box-shadow:0 25px 90px #000b;border-color:#d8a36d66}
+.modal h2{letter-spacing:.3px}
+@media(min-width:700px){.stats{grid-template-columns:repeat(3,1fr)}.actions{grid-template-columns:repeat(4,1fr)}#details{font-size:13px}}
+@media(max-width:480px){header{height:64px}.brand{font-size:16px}.tag{font-size:8px}main{padding-top:15px}.stat{padding:13px 10px}.stat b{font-size:21px}.stat span{font-size:9px}#stage{border-radius:18px}}
+
 </style>
 <meta name="mars-land-build" content="MARS LAND 2.0 upload retry 2026-11-03">
 <link rel="manifest" href="./manifest.webmanifest"><meta name="theme-color" content="#0d1422"><link rel="icon" href="./icon.svg" type="image/svg+xml">
 </head>
 <body>
-<header><div><div class="brand">MARS LAND</div><div class="tag">GLOBAL DIGITAL PLANET • EXPLORER</div></div><div class="tag">3D DEMO</div></header>
+<header><div><div class="brand">MARS LAND</div><div class="tag">GLOBAL DIGITAL PLANET • EXPLORER</div></div><div class="tag" style="padding:8px 11px;border:1px solid #e8b47755;border-radius:30px;color:#f5c38c">● 3D EXPLORER</div></header>
 <main>
-<section class="hero"><h1>สำรวจดาวอังคาร</h1><p>หมุนดาว • ซูม • เลือกแปลงพื้นที่ • ทดลองสร้างฐาน</p></section>
+<section class="hero"><h1>สำรวจดาวอังคาร</h1><p>ค้นพบพื้นที่ใหม่ วางแผนสร้างอาณานิคม และออกแบบอนาคตของมนุษยชาติ</p></section>
 <div id="stage"><canvas id="planet"></canvas><div class="hint">ใช้นิ้วลากเพื่อหมุนดาว • แตะหมุดสีทองเพื่อเลือกแปลง</div></div>
 <div class="stats">
  <div class="stat"><b id="parcelCount">12</b><span>แปลงตัวอย่าง</span></div>
  <div class="stat"><b id="builtCount">0</b><span>อาคารในเครื่องนี้</span></div>
  <div class="stat"><b>3D</b><span>ลูกโลกจำลอง</span></div>
 </div>
-<section class="panel"><h3>ควบคุมพื้นที่</h3><div class="actions">
+<section class="panel"><h3>⌖ ควบคุมภารกิจสำรวจ</h3><div class="actions">
 <button onclick="zoom(1.15)">＋ ซูมเข้า</button><button onclick="zoom(.87)">－ ซูมออก</button>
 <button class="primary" onclick="build()">สร้างอาคารทดลอง</button><button onclick="market()">ตลาดซื้อขาย</button>
 </div><div id="details">กำลังโหลดข้อมูลแปลงพื้นที่…</div></section>
+<section class="panel" style="margin-top:14px"><h3>◈ MARS LAND COMMAND CENTER</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px"><div style="padding:13px;border-radius:12px;background:#080e1a88;border:1px solid #ffffff12"><div style="font-size:9px;letter-spacing:1.4px;color:#91a3b9">PLANET</div><b style="display:block;color:#f3c18c;margin-top:5px">MARS / SOL 001</b></div><div style="padding:13px;border-radius:12px;background:#080e1a88;border:1px solid #ffffff12"><div style="font-size:9px;letter-spacing:1.4px;color:#91a3b9">WORLD MODE</div><b style="display:block;color:#a8e4bd;margin-top:5px">EXPLORATION</b></div><div style="padding:13px;border-radius:12px;background:#080e1a88;border:1px solid #ffffff12"><div style="font-size:9px;letter-spacing:1.4px;color:#91a3b9">NETWORK</div><b style="display:block;color:#f3c18c;margin-top:5px">BACKEND PENDING</b></div></div><p style="font-size:10px;color:#91a0b4;margin:12px 0 0;line-height:1.6">สถานะเครือข่ายจะแสดงเป็นออนไลน์เมื่อเชื่อมต่อฐานข้อมูลกลางและระบบสมาชิกเรียบร้อยแล้ว</p></section>
 <p class="notice">เวอร์ชันทดลอง: ข้อมูลแปลงและการสร้างอาคารบันทึกเฉพาะในอุปกรณ์นี้ ยังไม่ใช่กรรมสิทธิ์จริงและยังไม่มีระบบชำระเงิน</p>
 </main>
 <div class="modal" id="modal"><div><h2 id="mtitle"></h2><p id="mbody"></p><button class="primary" id="mact">ตกลง</button><button onclick="closeModal()">ปิด</button></div></div>
