@@ -55,6 +55,23 @@ button.primary{background:linear-gradient(120deg,#d99b61,#955336);color:#fff7ee;
 @media(min-width:700px){.stats{grid-template-columns:repeat(3,1fr)}.actions{grid-template-columns:repeat(4,1fr)}#details{font-size:13px}}
 @media(max-width:480px){header{height:64px}.brand{font-size:16px}.tag{font-size:8px}main{padding-top:15px}.stat{padding:13px 10px}.stat b{font-size:21px}.stat span{font-size:9px}#stage{border-radius:18px}}
 
+
+/* Construction simulation screen */
+#constructionPanel{margin-top:16px;border-color:#d99b6166;overflow:hidden}
+#constructionViewport{height:280px;position:relative;border:1px solid #d79b6944;border-radius:16px;overflow:hidden;background:radial-gradient(ellipse at 50% 40%,#29384a,#080d17 76%)}
+#constructionCanvas{width:100%;height:100%;display:block}
+#constructionHud{position:absolute;inset:12px 12px auto;display:flex;justify-content:space-between;gap:8px;pointer-events:none}
+.construction-pill{font-size:9px;letter-spacing:1px;padding:7px 10px;border:1px solid #e8b47755;border-radius:30px;background:#080d18c9;color:#f4c58f}
+#constructionInfo{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;margin-top:12px}
+#constructionName{font-size:13px;color:#ffe0ae;font-weight:800}
+#constructionStage{font-size:10px;color:#aeb9ca;margin-top:4px}
+#constructionPercent{font-size:20px;color:#f4bd78;font-weight:900}
+#constructionTrack{height:7px;border-radius:20px;background:#ffffff16;overflow:hidden;margin-top:9px}
+#constructionProgress{height:100%;width:0;background:linear-gradient(90deg,#b97848,#ffe0ae);transition:width .25s}
+#constructionActions{display:flex;gap:8px;margin-top:10px}
+#constructionActions button{flex:1}
+@media(max-width:480px){#constructionViewport{height:235px}#constructionInfo{grid-template-columns:1fr auto}}
+
 </style>
 <meta name="mars-land-build" content="MARS LAND 2.0 upload retry 2026-11-03">
 <link rel="manifest" href="./manifest.webmanifest"><meta name="theme-color" content="#0d1422"><link rel="icon" href="./icon.svg" type="image/svg+xml">
@@ -65,6 +82,18 @@ button.primary{background:linear-gradient(120deg,#d99b61,#955336);color:#fff7ee;
 <section id="memberWelcome" class="panel" style="display:none;margin:0 0 14px;border-color:#d99b6166"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><div style="font-size:9px;letter-spacing:1.5px;color:#aeb9ca">EXPLORER PROFILE / MEMBER HUB</div><b id="memberName" style="color:#f5c38c"></b><div id="memberEmail" style="font-size:11px;color:#aeb9ca"></div></div><button onclick="logoutMember()">ออกจากระบบ</button></div><div class="member-grid"><div class="member-card"><span>กระเป๋าเครดิตทดลอง</span><b id="memberWallet">1,000 MLC</b><small>เครดิตจำลอง ไม่ใช่เงินจริง</small></div><div class="member-card"><span>แปลงทดลองของฉัน</span><b id="memberPlotCount">0</b><small>รายการที่บันทึกในอุปกรณ์นี้</small></div><div class="member-card"><span>สิ่งปลูกสร้างของฉัน</span><b id="memberBuildCount">0</b><small>อาคารบนแปลงที่เลือกไว้</small></div><div class="member-card"><span>โครงสร้างพื้นฐาน</span><b id="memberInfraCount">0</b><small>ถนน น้ำ และไฟฟ้า</small></div></div><div class="member-subhead">▣ พื้นที่ของฉัน</div><div id="memberPlots" class="member-plots">ยังไม่มีแปลงทดลอง กดเลือกแปลงบนดาวแล้วเลือก “บันทึกในพื้นที่ของฉัน”</div></section>
 <section class="hero"><h1>สำรวจดาวอังคาร</h1><p>ค้นพบพื้นที่ใหม่ วางแผนสร้างอาณานิคม และออกแบบอนาคตของมนุษยชาติ</p></section>
 <div id="stage"><canvas id="planet"></canvas><div class="hint">ใช้นิ้วลากเพื่อหมุนดาว • แตะหมุดสีทองเพื่อเลือกแปลง</div></div>
+
+<section class="panel" id="constructionPanel">
+ <h3>🏗 CONSTRUCTION SIMULATOR • ภาพจำลองการก่อสร้าง</h3>
+ <div id="constructionViewport">
+  <canvas id="constructionCanvas"></canvas>
+  <div id="constructionHud"><span class="construction-pill">MARS BUILD SITE / 3D</span><span class="construction-pill" id="constructionLive">● READY</span></div>
+ </div>
+ <div id="constructionInfo"><div><div id="constructionName">รอเลือกอาคารเพื่อเริ่มก่อสร้าง</div><div id="constructionStage">ภาพจำลองจะแสดงขั้นตอนการสร้างด้านล่าง</div></div><div id="constructionPercent">0%</div></div>
+ <div id="constructionTrack"><div id="constructionProgress"></div></div>
+ <div id="constructionActions"><button class="primary" onclick="restartConstructionPreview()">▶ เริ่มจำลองอีกครั้ง</button><button onclick="nextConstructionPreview()">เปลี่ยนอาคาร</button></div>
+ <div style="font-size:9px;color:#8996aa;margin-top:9px">ภาพจำลองแสดงลำดับงานก่อสร้างในเกม ไม่ใช่การก่อสร้างจริง • ความคืบหน้าเป็นภาพแอนิเมชันตัวอย่าง</div>
+</section>
 <div class="stats">
  <div class="stat"><b id="parcelCount">12</b><span>แปลงตัวอย่าง</span></div>
  <div class="stat"><b id="builtCount">0</b><span>อาคารในเครื่องนี้</span></div>
@@ -207,5 +236,61 @@ setInterval(()=>{if(tycoonProfile()){tycoonAccrue();renderTycoon();const p=tycoo
 window.addEventListener('resize',resize);
 try{if(!window.THREE)throw new Error('โหลดไลบรารี 3D ไม่สำเร็จ กรุณาเชื่อมต่ออินเทอร์เน็ต');init()}catch(e){document.getElementById('details').textContent=e.message}
 </script>
+
+<script>
+(function(){
+ const canvas=document.getElementById('constructionCanvas'); if(!canvas||!window.THREE)return;
+ const scene=new THREE.Scene();scene.background=new THREE.Color(0x101a29);scene.fog=new THREE.Fog(0x101a29,9,18);
+ const camera=new THREE.PerspectiveCamera(42,1,.1,100);camera.position.set(4.8,3.5,5.8);
+ const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.7));renderer.shadowMap.enabled=true;
+ scene.add(new THREE.HemisphereLight(0xc8dcff,0x4c2b20,2));
+ const sun=new THREE.DirectionalLight(0xffd3a1,2.5);sun.position.set(-3,7,4);sun.castShadow=true;scene.add(sun);
+ const ground=new THREE.Mesh(new THREE.CircleGeometry(5,64),new THREE.MeshStandardMaterial({color:0x754337,roughness:1}));ground.rotation.x=-Math.PI/2;ground.position.y=-.08;ground.receiveShadow=true;scene.add(ground);
+ const grid=new THREE.GridHelper(10,30,0xc58b63,0x67483e);grid.position.y=-.065;scene.add(grid);
+ const pad=new THREE.Mesh(new THREE.CylinderGeometry(1.35,1.48,.16,48),new THREE.MeshStandardMaterial({color:0x9a8066,metalness:.25,roughness:.8}));pad.position.y=.02;pad.receiveShadow=true;scene.add(pad);
+ const group=new THREE.Group();scene.add(group);
+ const mat=(color,metal=.15,rough=.65)=>new THREE.MeshStandardMaterial({color,metalness:metal,roughness:rough});
+ function box(w,h,d,color,x,y,z){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(color));m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;group.add(m);return m}
+ function cyl(rt,rb,h,color,x,y,z){const m=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,24),mat(color));m.position.set(x,y,z);m.castShadow=true;group.add(m);return m}
+ const pieces=[];
+ function makeModel(type){
+  group.clear();pieces.length=0;
+  const base=box(1.35,.12,1.05,0xb3a18c,0,.17,0);pieces.push(base);
+  if(type==='ฐานที่อยู่อาศัย'){
+   const body=cyl(.43,.48,.58,0xd8c5a7,0,.52,0);pieces.push(body);
+   const dome=new THREE.Mesh(new THREE.SphereGeometry(.44,28,16,0,Math.PI*2,0,Math.PI/2),mat(0x91c2d0,.25,.3));dome.position.y=.81;dome.scale.y=.72;dome.castShadow=true;group.add(dome);pieces.push(dome);
+   pieces.push(box(.16,.27,.035,0x375b6c,0,.48,.46));
+  }else if(type==='ห้องปฏิบัติการ'){
+   pieces.push(box(.95,.55,.78,0xa9bdc8,0,.48,0));pieces.push(box(.55,.22,.82,0x5f9eb9,0,.86,0));pieces.push(cyl(.09,.09,.65,0xd8d0b7,-.38,.98,0));
+  }else if(type==='โรงเรือนปลูกพืช'){
+   pieces.push(box(1,.4,.82,0x527c68,0,.42,0));const roof=new THREE.Mesh(new THREE.BoxGeometry(1.04,.32,.86),mat(0x9bd6b1,.1,.25));roof.position.y=.77;roof.castShadow=true;group.add(roof);pieces.push(roof);
+   for(let i=-1;i<=1;i++)pieces.push(cyl(.035,.045,.38,0x62a86f,i*.27,.48,.05));
+  }else{
+   for(let i=-1;i<=1;i++){const panel=box(.38,.035,.58,0x397eae,i*.43,.42,0);panel.rotation.z=-.12;pieces.push(panel)}
+   pieces.push(cyl(.055,.07,.45,0xd7b77e,0,.35,.45));
+  }
+  group.scale.setScalar(.04);
+ }
+ let typeList=['ฐานที่อยู่อาศัย','ห้องปฏิบัติการ','โรงเรือนปลูกพืช','แผงพลังงานแสงอาทิตย์'],previewIndex=0,started=0,duration=18000,lastId='';
+ const stages=[['สำรวจและปรับระดับพื้นที่',0,18],['เทฐานรากและติดตั้งแท่น',18,38],['ประกอบโครงสร้างหลัก',38,68],['ติดตั้งระบบภายในและพลังงาน',68,88],['ตรวจสอบความพร้อมของอาคาร',88,100]];
+ function resize(){const r=canvas.getBoundingClientRect();if(!r.width||!r.height)return;renderer.setSize(r.width,r.height,false);camera.aspect=r.width/r.height;camera.updateProjectionMatrix()}
+ function start(type,id){previewIndex=Math.max(0,typeList.indexOf(type));makeModel(type);started=performance.now();lastId=id||'';document.getElementById('constructionName').textContent=type+' • '+(id||'ตัวอย่างการก่อสร้าง');document.getElementById('constructionLive').textContent='● BUILDING';}
+ window.restartConstructionPreview=()=>start(typeList[previewIndex],'SIMULATION');
+ window.nextConstructionPreview=()=>{previewIndex=(previewIndex+1)%typeList.length;start(typeList[previewIndex],'PREVIEW');};
+ function latest(){try{const a=JSON.parse(localStorage.getItem('marsStructures')||'[]');if(!a.length)return null;return a[a.length-1]}catch(e){return null}}
+ const first=latest();start(first?.type||typeList[0],first?.id||'PREVIEW');
+ function animate(now){requestAnimationFrame(animate);const p=Math.min(1,(now-started)/duration),pct=Math.round(p*100);
+  group.scale.setScalar(.04+(.96*p));group.position.y=Math.sin(Math.min(1,p)*Math.PI)*.035;
+  const stage=stages.find(s=>pct>=s[1]&&pct<s[2])||stages[4];
+  document.getElementById('constructionStage').textContent='ขั้นตอน '+(stages.indexOf(stage)+1)+'/5 • '+stage[0];
+  document.getElementById('constructionPercent').textContent=pct+'%';document.getElementById('constructionProgress').style.width=pct+'%';
+  if(p>=1)document.getElementById('constructionLive').textContent='✓ COMPLETE';
+  renderer.render(scene,camera);
+ }
+ const observer=new ResizeObserver(resize);observer.observe(canvas.parentElement);resize();requestAnimationFrame(animate);
+ setInterval(()=>{const item=latest();if(item&&item.id!==lastId)start(item.type,item.id)},1200);
+})();
+</script>
+
 <script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(console.error))}</script>
 </body></html>
