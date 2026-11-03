@@ -1,0 +1,20 @@
+{
+  "name": "MARS LAND Explorer",
+  "short_name": "MARS LAND",
+  "lang": "th",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#080d18",
+  "theme_color": "#0d1422",
+  "description": "สำรวจดาวอังคาร เลือกแปลง และทดลองสร้างเมือง",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
