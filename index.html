@@ -140,6 +140,21 @@ button.primary{background:linear-gradient(120deg,#d99b61,#955336);color:#fff7ee;
 <button class="primary" onclick="build()">สร้างอาคารทดลอง</button><button onclick="market()">ตลาดซื้อขาย</button>
 </div><div id="details">กำลังโหลดข้อมูลแปลงพื้นที่…</div></section>
 <section class="panel" style="margin-top:14px"><h3>◈ MARS LOCAL COMMAND CENTER</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px"><div style="padding:13px;border-radius:12px;background:#080e1a88;border:1px solid #ffffff12"><div style="font-size:9px;letter-spacing:1.4px;color:#91a3b9">PLANET</div><b style="display:block;color:#f3c18c;margin-top:5px">MARS / SOL 001</b></div><div style="padding:13px;border-radius:12px;background:#080e1a88;border:1px solid #ffffff12"><div style="font-size:9px;letter-spacing:1.4px;color:#91a3b9">WORLD MODE</div><b style="display:block;color:#a8e4bd;margin-top:5px">EXPLORATION</b></div><div style="padding:13px;border-radius:12px;background:#080e1a88;border:1px solid #ffffff12"><div style="font-size:9px;letter-spacing:1.4px;color:#91a3b9">NETWORK</div><b style="display:block;color:#f3c18c;margin-top:5px">BACKEND PENDING</b></div></div><p style="font-size:10px;color:#91a0b4;margin:12px 0 0;line-height:1.6">สถานะเครือข่ายจะแสดงเป็นออนไลน์เมื่อเชื่อมต่อฐานข้อมูลกลางและระบบสมาชิกเรียบร้อยแล้ว</p></section>
+<section class="panel" id="planetLivePanel" style="margin-top:14px;border-color:#79c9a766">
+ <h3>🛰 MARS LOCAL • LIVE PLANET STATUS</h3>
+ <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px"><span id="planetOnlineDot" style="font-size:10px;color:#a8e4bd">● ONLINE VIEW</span><span id="planetLiveUpdated" style="font-size:10px;color:#9eacc0">กำลังซิงก์เวลา...</span></div>
+ <div class="member-grid">
+  <div class="member-card"><span>เวลาจำลองดาวอังคาร</span><b id="marsClock">--:--:--</b><small>นาฬิกาเดินต่อเนื่อง</small></div>
+  <div class="member-card"><span>วันดาวอังคาร (SOL)</span><b id="marsSol">SOL 0001</b><small>คำนวณจากเวลาโลก</small></div>
+  <div class="member-card"><span>ช่วงแสงบนพื้นที่</span><b id="marsDayPhase">--</b><small>จำลองตามตำแหน่งดวงอาทิตย์</small></div>
+ </div>
+ <div style="margin-top:10px;padding:12px;border-radius:12px;background:#080e1a88;border:1px solid #ffffff12;font-size:11px;line-height:1.7;color:#cbd5e2">
+  <b style="color:#f4bd78">WORLD SIMULATION</b><br>
+  <span id="marsWorldEvent">กำลังประมวลผลสภาพแวดล้อมของดาว...</span><br>
+  <span id="marsWorldElapsed" style="color:#9eacc0">โลกจำลองเดินหน้าตามเวลาจริง แม้ปิดหน้าแอปไว้</span>
+ </div>
+ <p style="font-size:9px;color:#8996aa;margin:10px 0 0">ระบบนี้อัปเดตนาฬิกาและเหตุการณ์จำลองบนอุปกรณ์ที่เปิดดู ไม่ใช่ข้อมูลสภาพอากาศจาก NASA และยังไม่ใช่โลกออนไลน์ร่วมกันระหว่างสมาชิก</p>
+</section>
 <p class="notice">เวอร์ชันทดลอง: ข้อมูลแปลงและการสร้างอาคารบันทึกเฉพาะในอุปกรณ์นี้ ยังไม่ใช่กรรมสิทธิ์จริงและยังไม่มีระบบชำระเงิน</p>
 </main>
 <div class="modal" id="memberModal" style="z-index:8"><div><div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0">MARS LOCAL MEMBER</h2><button onclick="closeMember()" style="width:auto;margin:0;padding:7px 10px">✕</button></div><p style="margin:8px 0 14px">สร้างโปรไฟล์นักสำรวจเพื่อทดลองใช้งานพื้นที่ส่วนตัว</p><div style="display:flex;gap:8px;margin-bottom:12px"><button id="registerTab" class="primary" onclick="setMemberMode('register')">สมัครสมาชิก</button><button id="loginTab" onclick="setMemberMode('login')">เข้าสู่ระบบ</button></div><label style="display:block;font-size:11px;color:#b9c4d4;margin:8px 0 4px">ชื่อที่แสดง</label><input id="memberDisplayName" autocomplete="name" placeholder="ชื่อนักสำรวจ" style="width:100%;padding:12px;border-radius:10px;background:#0b1321;border:1px solid #536078;color:white"><label style="display:block;font-size:11px;color:#b9c4d4;margin:10px 0 4px">อีเมล</label><input id="memberEmailInput" type="email" autocomplete="email" placeholder="name@example.com" style="width:100%;padding:12px;border-radius:10px;background:#0b1321;border:1px solid #536078;color:white"><label style="display:block;font-size:11px;color:#b9c4d4;margin:10px 0 4px">รหัสผ่าน (อย่างน้อย 6 ตัวอักษร)</label><input id="memberPassword" type="password" autocomplete="current-password" placeholder="รหัสผ่าน" style="width:100%;padding:12px;border-radius:10px;background:#0b1321;border:1px solid #536078;color:white"><div id="memberError" style="font-size:11px;color:#ff9b8e;margin-top:9px;min-height:18px"></div><button class="primary" id="memberSubmit" onclick="submitMember()" style="width:100%;margin-top:5px">สร้างบัญชีทดลอง</button><p style="font-size:10px!important;color:#e7bd8c!important;margin-bottom:0">⚠️ รุ่นทดลองเท่านั้น: ข้อมูลบัญชีจัดเก็บในเบราว์เซอร์เครื่องนี้ ยังไม่ใช่ระบบสมาชิกออนไลน์ และไม่ควรใช้รหัสผ่านจริง</p></div></div>
@@ -171,7 +186,7 @@ function init(){
  resize();restoreStructures3D();restoreInfrastructure3D();animate();showParcel();
 }
 function resize(){if(!renderer)return;let w=canvas.clientWidth,h=canvas.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
-function animate(){requestAnimationFrame(animate);if(!dragging)globe.rotation.y+=.0009;renderer.render(scene,camera)}
+function animate(){requestAnimationFrame(animate);if(!dragging){const t=Date.now()/1000;globe.rotation.y=(t*.0009)%(Math.PI*2);if(scene&&scene.children.length>1){const sun=scene.children.find(o=>o.isDirectionalLight);if(sun){sun.position.x=Math.cos(t*.0009)*4;sun.position.z=Math.sin(t*.0009)*4;}}}renderer.render(scene,camera)}
 function zoom(v){camera.position.z=Math.max(2.1,Math.min(5,camera.position.z/v))}
 function pick(e){let r=canvas.getBoundingClientRect(),mouse=new THREE.Vector2((e.clientX-r.left)/r.width*2-1,-((e.clientY-r.top)/r.height*2-1));let ray=new THREE.Raycaster();ray.setFromCamera(mouse,camera);let hits=ray.intersectObjects(markers);if(hits.length){selected=hits[0].object.userData.index;showParcel()}}
 canvas.addEventListener('pointerdown',e=>{down=true;dragging=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId)});
@@ -437,4 +452,29 @@ setTimeout(renderQuickPlay,500);
 </script>
 
 <script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(console.error))}</script>
+<script>
+(function(){
+ const $=id=>document.getElementById(id);
+ const epochKey='marsLocalWorldEpoch';
+ let epoch=Number(localStorage.getItem(epochKey));
+ if(!Number.isFinite(epoch)||epoch<=0){epoch=Date.now();localStorage.setItem(epochKey,String(epoch));}
+ const marsDayMs=24*60*60*1000*1.02749125;
+ const events=['ลมฝุ่นระดับเบาเคลื่อนผ่านที่ราบ','ระบบสำรวจอัตโนมัติกำลังสแกนภูมิประเทศ','แสงอาทิตย์กำลังเปลี่ยนมุมตกกระทบ','สถานีก่อสร้างกำลังตรวจสอบพลังงาน','ดาวเทียมจำลองส่งข้อมูลภูมิประเทศ'];
+ function tick(){
+  const now=Date.now(),elapsed=Math.max(0,now-epoch),sol=Math.floor(elapsed/marsDayMs)+1,dayMs=elapsed%marsDayMs;
+  const totalSeconds=Math.floor(dayMs/1000),hh=String(Math.floor(totalSeconds/3600)).padStart(2,'0'),mm=String(Math.floor(totalSeconds%3600/60)).padStart(2,'0'),ss=String(totalSeconds%60).padStart(2,'0');
+  const phase=dayMs/marsDayMs,light=phase<.25?'รุ่งอรุณ':phase<.5?'กลางวัน':phase<.75?'พลบค่ำ':'กลางคืน';
+  const worldMinute=Math.floor(elapsed/60000),event=events[Math.floor(worldMinute/5)%events.length];
+  if($('marsClock'))$('marsClock').textContent=hh+':'+mm+':'+ss;
+  if($('marsSol'))$('marsSol').textContent='SOL '+String(sol).padStart(4,'0');
+  if($('marsDayPhase'))$('marsDayPhase').textContent=light;
+  if($('marsWorldEvent'))$('marsWorldEvent').textContent=event;
+  if($('planetLiveUpdated'))$('planetLiveUpdated').textContent='อัปเดตล่าสุด '+new Date(now).toLocaleTimeString('th-TH');
+  if($('marsWorldElapsed'))$('marsWorldElapsed').textContent='โลกจำลองเดินมาแล้ว '+Math.floor(elapsed/86400000)+' วัน '+Math.floor(elapsed%86400000/3600000)+' ชั่วโมง ตามเวลาจริง';
+ }
+ tick();setInterval(tick,1000);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick()});
+ window.addEventListener('pageshow',tick);
+})();
+</script>
 </body></html>
