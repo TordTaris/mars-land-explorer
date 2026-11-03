@@ -2,539 +2,95 @@
 <html lang="th">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Mars Local | 4D Living Planet</title>
+<title>MARS LAND 2.0</title>
 <style>
-:root{color-scheme:dark;--gold:#e8b477;--panel:#171c29;--line:#394458}
-*{box-sizing:border-box}body{margin:0;background:#080d18;color:#f4f0eb;font-family:system-ui,Arial,sans-serif}
-header{height:62px;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;background:#0d1422;border-bottom:1px solid #ffffff18}
-.brand{font-weight:900;letter-spacing:2px;color:#ffd19a}.tag{font-size:10px;color:#aeb9ca;letter-spacing:1.5px}
-main{max-width:900px;margin:auto;padding:14px}.hero{text-align:center;margin:10px 0}.hero h1{font-size:22px;margin:0}.hero p{font-size:12px;color:#aab4c5;margin:5px}
-#stage{height:min(72vw,520px);min-height:310px;position:relative;border-radius:18px;overflow:hidden;background:radial-gradient(ellipse at center,#17263b,#080d18 70%);border:1px solid #29364b}
-#planet{width:100%;height:100%;display:block;touch-action:none}.hint{position:absolute;bottom:10px;left:0;right:0;text-align:center;font-size:11px;color:#e9cda9;text-shadow:0 1px 6px #000;pointer-events:none}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.stat,.panel{background:linear-gradient(145deg,#1b2638,#111827);border:1px solid var(--line);border-radius:13px;padding:12px}.stat b{display:block;color:var(--gold);font-size:18px}.stat span{font-size:10px;color:#aeb9ca}
-.panel h3{font-size:14px;color:#ffd19a;margin:0 0 10px}.actions{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-button{background:#253249;color:#f7e6d2;border:1px solid #56647a;border-radius:10px;padding:12px;font-weight:700}button.primary{background:linear-gradient(120deg,#b97848,#74452f);border:0}
-#details{font-size:12px;color:#c6d0df;line-height:1.7;margin-top:10px}.notice{font-size:10px;color:#8996aa;text-align:center;padding:16px}
-.modal{display:none;position:fixed;inset:0;background:#000c;z-index:5;align-items:center;justify-content:center;padding:20px}.modal>div{width:100%;max-width:390px;background:#172133;border:1px solid #68758a;border-radius:16px;padding:18px}.modal h2{font-size:17px;color:#ffd19a}.modal p{font-size:13px;line-height:1.6;color:#cbd4e1}.modal button{width:100%;margin-top:8px}
-@media(min-width:700px){main{padding:22px}.actions{grid-template-columns:repeat(4,1fr)}}
-
-/* MARS LOCAL premium visual refresh */
-:root{--gold:#f4bd78;--gold2:#ffe0ae;--ink:#070b13;--glass:rgba(15,23,37,.78);--edge:rgba(255,208,153,.2)}
-body{background:radial-gradient(ellipse at 50% -15%,#42251f 0%,#111827 38%,#070b13 76%);background-attachment:fixed}
-header{height:72px;padding:12px clamp(16px,4vw,42px);background:rgba(7,11,19,.82);backdrop-filter:blur(18px);border-bottom:1px solid var(--edge);position:sticky;top:0;z-index:4}
-.brand{font-size:19px;letter-spacing:3px;text-shadow:0 0 22px #e89b5b66}
-.tag{letter-spacing:1.8px}
-main{max-width:1120px;padding:22px clamp(14px,3vw,28px) 36px}
-.hero{text-align:left;margin:12px 2px 18px;position:relative}
-.hero:before{content:"MISSION CONTROL / 01";display:block;color:#f1b979;font-size:10px;letter-spacing:3px;font-weight:800;margin-bottom:9px}
-.hero h1{font-size:clamp(27px,5vw,42px);letter-spacing:-1px;line-height:1.1;background:linear-gradient(100deg,#fff1dd,#e9a86d 65%,#b96748);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero p{font-size:13px;color:#b9c4d4;margin-top:9px}
-#stage{height:min(76vw,590px);min-height:330px;border-radius:24px;border:1px solid #d79b6944;box-shadow:0 24px 80px #0008,inset 0 0 50px #d17d3b10;background:radial-gradient(ellipse at 50% 48%,#28384c 0%,#111b2b 42%,#080d17 76%);isolation:isolate}
-#stage:before{content:"MARS / 24.6° N  •  137.4° E";position:absolute;z-index:2;top:17px;left:18px;color:#f2c28c;font-size:10px;letter-spacing:1.7px;padding:8px 11px;border:1px solid #eab77a44;border-radius:30px;background:#080d18a8;backdrop-filter:blur(8px)}
-#stage:after{content:"LIVE SIMULATION  ◉";position:absolute;z-index:2;top:17px;right:18px;color:#a8e4bd;font-size:9px;letter-spacing:1.4px;padding:8px 11px;border:1px solid #82cba744;border-radius:30px;background:#080d18a8}
-.hint{bottom:17px;font-size:10px;letter-spacing:.5px;color:#f4d8b6}
-.stats{gap:12px;margin:16px 0}
-.stat,.panel{background:linear-gradient(145deg,rgba(30,42,60,.92),rgba(12,19,31,.94));border:1px solid #a5b5ca26;border-radius:18px;box-shadow:0 12px 34px #0003}
-.stat{padding:16px 18px;position:relative;overflow:hidden}
-.stat:after{content:"";position:absolute;width:70px;height:70px;border-radius:50%;right:-25px;top:-30px;background:#e6a96c12}
-.stat b{font-size:24px;color:#f5c38c}
-.stat span{font-size:10px;letter-spacing:1px;text-transform:uppercase}
-.panel{padding:18px;margin-top:12px}
-.panel h3{font-size:15px;letter-spacing:.5px}
-.actions{gap:10px}
-button{cursor:pointer;transition:transform .18s ease,border-color .18s ease,filter .18s ease;background:linear-gradient(145deg,#29384e,#1a2638);border:1px solid #78869a66;border-radius:12px;padding:13px}
-button:hover{transform:translateY(-2px);filter:brightness(1.14);border-color:#e8b477}
-button.primary{background:linear-gradient(120deg,#d99b61,#955336);color:#fff7ee;box-shadow:0 8px 22px #a65c3333}
-#details{margin-top:15px;padding:13px 15px;border:1px solid #ffffff12;border-radius:12px;background:#080e1a88;color:#cbd5e2}
-#details b{color:#f5c38c}
-.member-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}.member-card{background:#080e1a99;border:1px solid #ffffff16;border-radius:12px;padding:12px}.member-card span,.member-card small{display:block;font-size:10px;color:#9eacc0}.member-card b{display:block;font-size:20px;color:#f4bd78;margin:5px 0}.member-subhead{font-size:12px;color:#f4bd78;margin:15px 0 8px}.member-plots{font-size:11px;color:#b9c4d4;line-height:1.7}.plot-chip{display:flex;justify-content:space-between;gap:8px;padding:9px 10px;margin:6px 0;border-radius:10px;background:#080e1a;border:1px solid #ffffff14}.plot-chip button{padding:6px 9px;font-size:10px}
-@media(max-width:480px){.member-grid{grid-template-columns:1fr 1fr}.member-card:first-child{grid-column:1/-1}}
-.notice{margin:18px auto 0;max-width:780px;line-height:1.7}
-.modal>div{box-shadow:0 25px 90px #000b;border-color:#d8a36d66}
-.modal h2{letter-spacing:.3px}
-@media(min-width:700px){.stats{grid-template-columns:repeat(3,1fr)}.actions{grid-template-columns:repeat(4,1fr)}#details{font-size:13px}}
-@media(max-width:480px){header{height:64px}.brand{font-size:16px}.tag{font-size:8px}main{padding-top:15px}.stat{padding:13px 10px}.stat b{font-size:21px}.stat span{font-size:9px}#stage{border-radius:18px}}
-
-
-/* Construction simulation screen */
-#constructionPanel{margin-top:16px;border-color:#d99b6166;overflow:hidden}
-#constructionViewport{height:280px;position:relative;border:1px solid #d79b6944;border-radius:16px;overflow:hidden;background:radial-gradient(ellipse at 50% 40%,#29384a,#080d17 76%)}
-#constructionCanvas{width:100%;height:100%;display:block}
-#constructionHud{position:absolute;inset:12px 12px auto;display:flex;justify-content:space-between;gap:8px;pointer-events:none}
-.construction-pill{font-size:9px;letter-spacing:1px;padding:7px 10px;border:1px solid #e8b47755;border-radius:30px;background:#080d18c9;color:#f4c58f}
-#constructionInfo{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;margin-top:12px}
-#constructionName{font-size:13px;color:#ffe0ae;font-weight:800}
-#constructionStage{font-size:10px;color:#aeb9ca;margin-top:4px}
-#constructionPercent{font-size:20px;color:#f4bd78;font-weight:900}
-#constructionTrack{height:7px;border-radius:20px;background:#ffffff16;overflow:hidden;margin-top:9px}
-#constructionProgress{height:100%;width:0;background:linear-gradient(90deg,#b97848,#ffe0ae);transition:width .25s}
-#constructionActions{display:flex;gap:8px;margin-top:10px}
-#constructionActions button{flex:1}
-@media(max-width:480px){#constructionViewport{height:235px}#constructionInfo{grid-template-columns:1fr auto}}
-
-
-/* Tycoon construction controls */
-#constructionPanel .construction-pill{backdrop-filter:blur(6px)}
-#constructionViewport{touch-action:pan-y}
-/* QUICK PLAY: mobile-first playable colony controls */
-#quickPlay{border-color:#69c8ff66;background:linear-gradient(145deg,#14263aee,#101827f5)}
-#quickPlay .quick-intro{font-size:11px;color:#b9c7d8;line-height:1.65;margin:-2px 0 12px}
-#quickPlay .quick-row{display:flex;gap:8px;flex-wrap:wrap;margin:9px 0}
-#quickPlay .quick-row button{flex:1;min-width:125px}
-#quickPlots{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
-#quickPlots button{padding:10px 4px;font-size:11px;min-width:0}
-#quickPlots button.active{border-color:#8ee8ff;background:linear-gradient(145deg,#155274,#1b3851);box-shadow:0 0 16px #39bfff33}
-#quickBuildings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-#quickBuildings button{text-align:left;min-height:60px;font-size:11px}
-#quickPlay .quick-status{font-size:11px;color:#a8e4bd;margin-top:10px;line-height:1.6}
-@media(min-width:650px){#quickBuildings{grid-template-columns:repeat(4,minmax(0,1fr))}#quickPlots{grid-template-columns:repeat(6,minmax(0,1fr))}}
+:root{--bg:#080d17;--panel:#101a2b;--line:#293b53;--text:#edf4ff;--muted:#93a7c2;--orange:#ff875c;--cyan:#5bd9e8;--green:#6ee7a8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px system-ui,sans-serif;overflow:hidden}
+#scene{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 48%,#26364a 0,#101a2a 42%,#070b13 78%)}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+header{position:fixed;top:0;left:0;right:0;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(#070b13dd,transparent);pointer-events:none}
+.brand{font-weight:900;letter-spacing:2px;font-size:18px}.brand span{color:var(--orange)}.status{font-size:11px;color:var(--green);border:1px solid #315d50;padding:6px 9px;border-radius:20px;background:#10251f}
+.panel{position:fixed;background:#0d1726eF;border:1px solid var(--line);border-radius:16px;backdrop-filter:blur(14px);box-shadow:0 12px 40px #0006}
+.left{left:14px;top:76px;width:min(250px,47vw);padding:13px}.right{right:14px;top:76px;width:min(260px,48vw);padding:13px;max-height:calc(100dvh - 160px);overflow:auto}
+h3{margin:0 0 10px;font-size:13px;letter-spacing:1px;color:var(--cyan)}.metric{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #26364a;color:var(--muted);font-size:12px}.metric b{color:var(--text)}
+button,input,select{font:inherit}button{border:1px solid #38506d;background:#17263b;color:var(--text);border-radius:10px;padding:9px 10px;cursor:pointer}button:active{transform:scale(.98)}button.primary{background:linear-gradient(120deg,#e86e4b,#ff9b63);border:0;color:#180d09;font-weight:800}button.active{border-color:var(--cyan);color:var(--cyan)}.actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}.full{width:100%;margin-top:8px}
+.small{font-size:11px;color:var(--muted);line-height:1.5}.plot{border:1px solid #30435b;border-radius:10px;padding:9px;margin:7px 0;background:#111f31}.plot strong{display:block}.plot small{color:var(--muted)}
+.bottom{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:7px;padding:8px;border-radius:15px;background:#0d1726ed;border:1px solid var(--line);max-width:96vw;overflow:auto}.bottom button{white-space:nowrap;font-size:12px}
+#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#16263a;border:1px solid #3d5875;padding:10px 14px;border-radius:12px;display:none;max-width:90vw;text-align:center}
+#login{position:fixed;inset:0;background:#030711cc;display:none;place-items:center;padding:20px}.modal{width:min(360px,100%);padding:18px}.modal input{width:100%;margin:6px 0;padding:11px;background:#08111e;color:white;border:1px solid var(--line);border-radius:9px}
+@media(max-width:650px){.left{top:auto;bottom:76px;left:8px;width:calc(50vw - 12px);padding:10px}.right{top:72px;right:8px;width:calc(50vw - 12px);max-height:42dvh;padding:10px}.brand{font-size:15px}.panel h3{font-size:11px}.metric{font-size:10px;padding:5px 0}.actions button{font-size:11px;padding:7px 4px}.bottom{bottom:8px}.bottom button{padding:8px;font-size:11px}}
 </style>
-<meta name="mars-land-build" content="MARS LOCAL • 3D COLONY SIMULATOR">
-<link rel="manifest" href="./manifest.webmanifest"><meta name="theme-color" content="#0d1422"><link rel="icon" href="./icon.svg" type="image/svg+xml">
 </head>
 <body>
-<header><div><div class="brand">MARS LOCAL</div><div class="tag">GLOBAL DIGITAL PLANET • EXPLORER</div></div><div style="display:flex;align-items:center;gap:9px"><button id="memberButton" onclick="openMember()" style="padding:9px 13px;border-color:#e8b47788;color:#ffe0ae">👤 สมัครสมาชิก / เข้าสู่ระบบ</button><div class="tag" style="padding:8px 11px;border:1px solid #e8b47755;border-radius:30px;color:#f5c38c">● 4D LIVING PLANET</div></div></header>
-<main>
-<section id="memberWelcome" class="panel" style="display:none;margin:0 0 14px;border-color:#d99b6166"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><div style="font-size:9px;letter-spacing:1.5px;color:#aeb9ca">EXPLORER PROFILE / MEMBER HUB</div><b id="memberName" style="color:#f5c38c"></b><div id="memberEmail" style="font-size:11px;color:#aeb9ca"></div></div><button onclick="logoutMember()">ออกจากระบบ</button></div><div class="member-grid"><div class="member-card"><span>กระเป๋าเครดิตทดลอง</span><b id="memberWallet">1,000 MLC</b><small>เครดิตจำลอง ไม่ใช่เงินจริง</small></div><div class="member-card"><span>แปลงทดลองของฉัน</span><b id="memberPlotCount">0</b><small>รายการที่บันทึกในอุปกรณ์นี้</small></div><div class="member-card"><span>สิ่งปลูกสร้างของฉัน</span><b id="memberBuildCount">0</b><small>อาคารบนแปลงที่เลือกไว้</small></div><div class="member-card"><span>โครงสร้างพื้นฐาน</span><b id="memberInfraCount">0</b><small>ถนน น้ำ และไฟฟ้า</small></div></div><div class="member-subhead">▣ พื้นที่ของฉัน</div><div id="memberPlots" class="member-plots">ยังไม่มีแปลงทดลอง กดเลือกแปลงบนดาวแล้วเลือก “บันทึกในพื้นที่ของฉัน”</div></section>
-<section class="hero"><h1>สำรวจดาวอังคาร</h1><p>ค้นพบพื้นที่ใหม่ วางแผนสร้างอาณานิคม และออกแบบอนาคตของมนุษยชาติ</p></section>
-<div id="stage"><canvas id="planet"></canvas><div class="hint">ใช้นิ้วลากเพื่อหมุนดาว • แตะหมุดสีทองเพื่อเลือกแปลง</div></div>
-
-<section class="panel" id="constructionPanel">
- <h3>🏗 CONSTRUCTION SIMULATOR • ภาพจำลองการก่อสร้าง</h3>
- <div id="constructionViewport">
-  <canvas id="constructionCanvas"></canvas>
-  <div id="constructionHud"><span class="construction-pill">MARS BUILD SITE / 3D</span><span class="construction-pill" id="constructionLive">● READY</span></div>
- </div>
- <div id="constructionInfo"><div><div id="constructionName">รอเลือกอาคารเพื่อเริ่มก่อสร้าง</div><div id="constructionStage">ภาพจำลองจะแสดงขั้นตอนการสร้างด้านล่าง</div></div><div id="constructionPercent">0%</div></div>
- <div id="constructionTrack"><div id="constructionProgress"></div></div>
- <div id="constructionActions"><button class="primary" onclick="restartConstructionPreview()">▶ เริ่มจำลองอีกครั้ง</button><button onclick="nextConstructionPreview()">เปลี่ยนอาคาร</button></div>
- <div style="font-size:9px;color:#8996aa;margin-top:9px">ภาพจำลองแสดงลำดับงานก่อสร้างในเกม ไม่ใช่การก่อสร้างจริง • ความคืบหน้าเป็นภาพแอนิเมชันตัวอย่าง</div>
+<div id="scene"></div>
+<header><div class="brand">🔴 MARS <span>LAND</span> <small style="font-size:10px;color:#91a5bd">2.0</small></div><div class="status">● EXPLORER ONLINE</div></header>
+<section class="panel left">
+<h3>MISSION CONTROL</h3>
+<div class="metric"><span>Planet</span><b>Mars / Sol 001</b></div>
+<div class="metric"><span>Selected Plot</span><b id="selected">ยังไม่ได้เลือก</b></div>
+<div class="metric"><span>Coordinates</span><b id="coords">—</b></div>
+<div class="metric"><span>Plots</span><b>12 parcels</b></div>
+<div class="small" style="margin-top:9px">ลากเพื่อหมุนดาว • ใช้สองนิ้วหรือ scroll เพื่อซูม • แตะจุดบนดาวเพื่อเลือกแปลง</div>
+<div class="actions"><button id="rotate" class="active">หมุนอัตโนมัติ: เปิด</button><button id="reset">รีเซ็ตมุมมอง</button></div>
 </section>
-<div class="stats">
- <div class="stat"><b id="parcelCount">12</b><span>แปลงตัวอย่าง</span></div>
- <div class="stat"><b id="builtCount">0</b><span>อาคารในเครื่องนี้</span></div>
- <div class="stat"><b>3D</b><span>ลูกโลกจำลอง</span></div>
+<section class="panel right">
+<h3>LAND EXPLORER</h3>
+<div id="plotInfo" class="small">เลือกจุดแปลงบนดาวอังคารเพื่อดูรายละเอียด</div>
+<div id="plotActions" style="display:none">
+<div class="plot"><strong id="plotName">M-001</strong><small id="plotMeta">พื้นที่จำลอง</small><div style="margin-top:8px">ราคาเสนอ <b id="plotPrice">100 MLC</b></div></div>
+<button class="primary full" id="claim">จองแปลงจำลอง</button>
+<select id="building" class="full" style="padding:9px;background:#101d30;color:white;border:1px solid #38506d;border-radius:9px">
+<option value="Habitat">Habitat Dome</option><option value="Lab">Science Lab</option><option value="Solar">Solar Farm</option><option value="Greenhouse">Greenhouse</option>
+</select>
+<button class="full" id="build">🏗️ วางอาคารบนแปลง</button>
 </div>
-
-<section class="panel" id="quickPlay">
- <h3>🎮 เริ่มเล่น MARS LOCAL • PLAY MODE</h3>
- <p class="quick-intro">เลือกแปลงจากปุ่มด้านล่าง แล้วบันทึกพื้นที่ของคุณ เลือกอาคารและก่อสร้างเพื่อขยายอาณานิคม ข้อมูลเกมจะบันทึกไว้ในเบราว์เซอร์เครื่องนี้</p>
- <div class="quick-row">
-  <button class="primary" onclick="startMarsGame()">🚀 เริ่มเล่นทันที</button>
-  <button onclick="document.getElementById('stage').scrollIntoView({behavior:'smooth'})">🌍 ไปยังดาวอังคาร 3D</button>
- </div>
- <div class="member-subhead">1. เลือกแปลงที่ดิน</div><div id="quickPlots"></div>
- <div class="quick-row"><button onclick="claimPlot()">＋ บันทึกแปลงที่เลือก</button><button onclick="showParcel()">ดูรายละเอียดแปลง</button></div>
- <div class="member-subhead">2. เลือกสิ่งปลูกสร้าง</div>
- <div id="quickBuildings">
-  <button onclick="quickBuild('ฐานที่อยู่อาศัย')">🏠 ฐานที่อยู่อาศัย<br><small>300 MLC • เพิ่มประชากร</small></button>
-  <button onclick="quickBuild('โรงเรือนปลูกพืช')">🌱 โรงเรือนเกษตร<br><small>400 MLC • ผลิตอาหาร</small></button>
-  <button onclick="quickBuild('ห้องปฏิบัติการ')">🔬 ห้องทดลอง<br><small>500 MLC • เพิ่มรายได้</small></button>
-  <button onclick="quickBuild('แผงพลังงานแสงอาทิตย์')">☀️ โรงไฟฟ้าโซลาร์<br><small>350 MLC • ผลิตพลังงาน</small></button>
- </div>
- <div class="quick-status" id="quickStatus">สถานะ: เลือกแปลงเพื่อเริ่มต้นการตั้งถิ่นฐาน</div>
+<h3 style="margin-top:16px">MY COLONY</h3>
+<div class="metric"><span>แปลงที่จอง</span><b id="owned">0</b></div>
+<div class="metric"><span>อาคารที่สร้าง</span><b id="buildings">0</b></div>
+<button class="full" id="account">เข้าสู่ระบบ / สมัครสมาชิก</button>
+<div class="small">โหมดทดลอง: ข้อมูลบัญชีและการจองเก็บไว้ในอุปกรณ์นี้เท่านั้น ยังไม่ใช่กรรมสิทธิ์หรือการซื้อขายเงินจริง</div>
 </section>
-
-<section class="panel" id="tycoonPanel" style="border-color:#d99b6166"><h3>🏙 MARS TYCOON • ศูนย์บริหารอาณานิคม</h3><div class="member-grid"><div class="member-card"><span>เงินทุนอาณานิคม</span><b id="tycoonCash">1,000 MLC</b><small>เครดิตจำลอง</small></div><div class="member-card"><span>รายได้ / นาที</span><b id="tycoonIncome">0</b><small>จากอาคารทั้งหมด</small></div><div class="member-card"><span>ประชากร</span><b id="tycoonPopulation">0</b><small>จำลองจากฐานที่พัก</small></div><div class="member-card"><span>พลังงาน</span><b id="tycoonPower">0</b><small>กำลังผลิตสุทธิ</small></div><div class="member-card"><span>น้ำ</span><b id="tycoonWater">0</b><small>กำลังผลิตสุทธิ</small></div><div class="member-card"><span>ผลผลิตอาหาร</span><b id="tycoonFood">0</b><small>หน่วย / นาที</small></div></div><div id="tycoonStatus" style="font-size:11px;color:#cbd5e2;line-height:1.7;margin-top:10px">เข้าสู่ระบบและสร้างอาคารเพื่อเริ่มบริหารอาณานิคม</div><div class="member-subhead">🎯 ภารกิจอาณานิคม</div><div id="tycoonMissions" class="member-plots">กำลังโหลดภารกิจ...</div><div class="member-subhead">🧪 ศูนย์วิจัยและเทคโนโลยี</div><div id="tycoonResearch" class="member-plots">กำลังโหลดเทคโนโลยี...</div><div class="member-subhead">▣ อาคารและการอัปเกรด</div><div id="tycoonBuildings" class="member-plots">ยังไม่มีอาคาร</div><div class="actions" style="margin-top:10px"><button onclick="collectTycoonIncome()" class="primary">💰 รับรายได้สะสม</button><button onclick="renderTycoon()">↻ อัปเดตสถานะ</button></div><p style="font-size:9px;color:#8996aa;margin-bottom:0">ระบบเศรษฐกิจเป็นเกมจำลองในอุปกรณ์นี้ รายได้และทรัพยากรไม่ใช่เงินจริงหรือสินทรัพย์ที่แลกเปลี่ยนได้</p></section><section class="panel"><h3>⌖ ควบคุมภารกิจสำรวจ</h3><div class="actions">
-<button onclick="zoom(1.15)">＋ ซูมเข้า</button><button onclick="zoom(.87)">－ ซูมออก</button>
-<button class="primary" onclick="build()">สร้างอาคารทดลอง</button><button onclick="market()">ตลาดซื้อขาย</button>
-</div><div id="details">กำลังโหลดข้อมูลแปลงพื้นที่…</div></section>
-<section class="panel" style="margin-top:14px"><h3>◈ MARS LOCAL COMMAND CENTER</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px"><div style="padding:13px;border-radius:12px;background:#080e1a88;border:1px solid #ffffff12"><div style="font-size:9px;letter-spacing:1.4px;color:#91a3b9">PLANET</div><b style="display:block;color:#f3c18c;margin-top:5px">MARS / SOL 001</b></div><div style="padding:13px;border-radius:12px;background:#080e1a88;border:1px solid #ffffff12"><div style="font-size:9px;letter-spacing:1.4px;color:#91a3b9">WORLD MODE</div><b style="display:block;color:#a8e4bd;margin-top:5px">EXPLORATION</b></div><div style="padding:13px;border-radius:12px;background:#080e1a88;border:1px solid #ffffff12"><div style="font-size:9px;letter-spacing:1.4px;color:#91a3b9">NETWORK</div><b style="display:block;color:#f3c18c;margin-top:5px">BACKEND PENDING</b></div></div><p style="font-size:10px;color:#91a0b4;margin:12px 0 0;line-height:1.6">สถานะเครือข่ายจะแสดงเป็นออนไลน์เมื่อเชื่อมต่อฐานข้อมูลกลางและระบบสมาชิกเรียบร้อยแล้ว</p></section>
-<section class="panel" id="mars4dPanel" style="border-color:#67c9e8aa;background:linear-gradient(145deg,#10283aee,#111827f5)">
-<h3>🪐 MARS LOCAL 4D • LIVING PLANET</h3><p style="font-size:11px;color:#b9c7d8;line-height:1.65">ดาวอังคารแสดงผลเป็นวัตถุ 3D ส่วนมิติที่ 4 คือเวลา: แสงอาทิตย์ กลางวัน/กลางคืน และสภาพแวดล้อมจะเปลี่ยนต่อเนื่องให้เห็นบนดาวจริง</p><div style="padding:9px 11px;border:1px solid #67c9e855;border-radius:10px;background:#071b2a;color:#a9e4f3;font-size:10px;margin:8px 0">◉ 4D TIME ACTIVE • วงจรกลางวัน–กลางคืนกำลังขับการเปลี่ยนแสงบนพื้นผิวดาว</div>
-<div class="member-grid"><div class="member-card"><span>เวลาจำลองดาวอังคาร</span><b id="mars4dClock">--:--:--</b><small id="mars4dSol">SOL ----</small></div><div class="member-card"><span>ช่วงแสง</span><b id="mars4dPhase">กำลังคำนวณ</b><small>กลางวัน / กลางคืน</small></div><div class="member-card"><span>สภาพอากาศจำลอง</span><b id="mars4dWeather">กำลังตรวจสอบ</b><small id="mars4dWind">ความเร็วลม --</small></div></div>
-<div style="height:90px;border-radius:13px;overflow:hidden;position:relative;margin:12px 0;background:linear-gradient(90deg,#101b2c,#7b4935 48%,#101b2c);border:1px solid #ffffff22"><div id="mars4dSky" style="position:absolute;inset:0;background:linear-gradient(180deg,#172b4b,#b8795b);transition:background 1s"></div><div id="mars4dDust" style="position:absolute;inset:-30px;opacity:.5;background-image:radial-gradient(circle,#f3c18c 1px,transparent 2px),radial-gradient(circle,#d98a55 1px,transparent 2px);background-size:38px 31px,57px 43px;background-position:0 0,20px 13px;animation:marsDustDrift 9s linear infinite"></div><div style="position:absolute;left:12px;bottom:10px;font-size:10px;letter-spacing:1.4px;color:#fff0d8;text-shadow:0 1px 5px #000">MARS ATMOSPHERE / LIVE SIMULATION</div></div>
-<div class="member-subhead">⏱ ความเร็วเวลาในโลกจำลอง</div><div class="actions"><button onclick="setMars4DSpeed(1)">1× ปกติ</button><button onclick="setMars4DSpeed(60)">60× เร็ว</button><button onclick="setMars4DSpeed(3600)">3,600× เร็วมาก</button></div><div id="mars4dSpeedLabel" style="font-size:10px;color:#a8e4bd;margin-top:8px">เริ่มต้น 3,600× เพื่อให้เห็นวงจรแสงเปลี่ยนชัดเจน</div>
-<div class="member-subhead">📡 เหตุการณ์ดาวอังคาร</div><div id="mars4dEvent" style="font-size:12px;color:#d4deeb;line-height:1.7">กำลังสร้างเหตุการณ์จำลอง...</div>
-<div style="font-size:9px;color:#8996aa;margin-top:10px;line-height:1.6">หมายเหตุ: เวลาและสภาพอากาศเป็นระบบจำลองในเบราว์เซอร์ ยังไม่ใช่ข้อมูลอากาศจริง และยังไม่ซิงก์ระหว่างผู้เล่นทุกคน</div></section>\n<section class="panel" id="worldServerPanel" style="border-color:#77cba866;margin-top:14px"><h3>🌐 MARS LOCAL • WORLD SERVER</h3><div id="worldServerStatus" style="font-size:11px;color:#e9bd8d;margin-bottom:8px">กำลังตรวจสอบการเชื่อมต่อ...</div><div id="worldServerCounts" style="font-size:11px;color:#b9c4d4;margin-bottom:10px">รอข้อมูลจากโลกกลาง</div><div id="worldServerUser" style="font-size:10px;color:#9eacc0;margin-bottom:8px">ยังไม่ได้เข้าสู่ระบบออนไลน์</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px"><input id="worldEmail" type="email" placeholder="อีเมลออนไลน์" style="min-width:0;padding:11px;border-radius:9px;background:#0b1321;border:1px solid #536078;color:white"><input id="worldPassword" type="password" placeholder="รหัสผ่าน 6 ตัวขึ้นไป" style="min-width:0;padding:11px;border-radius:9px;background:#0b1321;border:1px solid #536078;color:white"></div><div class="actions" style="margin-top:8px"><button class="primary" onclick="MarsWorldServer.auth('signup')">สมัครสมาชิกออนไลน์</button><button onclick="MarsWorldServer.auth('login')">เข้าสู่ระบบออนไลน์</button><button onclick="MarsWorldServer.refresh()">↻ ซิงก์โลก</button><button id="worldServerLogout" style="display:none" onclick="MarsWorldServer.logout()">ออกจากระบบ</button></div><p style="font-size:9px;color:#8996aa;margin:9px 0 0">ต้องตั้งค่า Supabase URL และ anon key ก่อนใช้งานจริง • คู่มือ WORLD_SERVER_SETUP_TH.md</p></section>
-<section class="panel" id="planetLivePanel" style="margin-top:14px;border-color:#79c9a766">
- <h3>🛰 MARS LOCAL • LIVE PLANET STATUS</h3>
- <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px"><span id="planetOnlineDot" style="font-size:10px;color:#a8e4bd">● ONLINE VIEW</span><span id="planetLiveUpdated" style="font-size:10px;color:#9eacc0">กำลังซิงก์เวลา...</span></div>
- <div class="member-grid">
-  <div class="member-card"><span>เวลาจำลองดาวอังคาร</span><b id="marsClock">--:--:--</b><small>นาฬิกาเดินต่อเนื่อง</small></div>
-  <div class="member-card"><span>วันดาวอังคาร (SOL)</span><b id="marsSol">SOL 0001</b><small>คำนวณจากเวลาโลก</small></div>
-  <div class="member-card"><span>ช่วงแสงบนพื้นที่</span><b id="marsDayPhase">--</b><small>จำลองตามตำแหน่งดวงอาทิตย์</small></div>
- </div>
- <div style="margin-top:10px;padding:12px;border-radius:12px;background:#080e1a88;border:1px solid #ffffff12;font-size:11px;line-height:1.7;color:#cbd5e2">
-  <b style="color:#f4bd78">WORLD SIMULATION</b><br>
-  <span id="marsWorldEvent">กำลังประมวลผลสภาพแวดล้อมของดาว...</span><br>
-  <span id="marsWorldElapsed" style="color:#9eacc0">โลกจำลองเดินหน้าตามเวลาจริง แม้ปิดหน้าแอปไว้</span>
- </div>
- <p style="font-size:9px;color:#8996aa;margin:10px 0 0">ระบบนี้อัปเดตนาฬิกาและเหตุการณ์จำลองบนอุปกรณ์ที่เปิดดู ไม่ใช่ข้อมูลสภาพอากาศจาก NASA และยังไม่ใช่โลกออนไลน์ร่วมกันระหว่างสมาชิก</p>
-</section>
-<p class="notice">เวอร์ชันทดลอง: ข้อมูลแปลงและการสร้างอาคารบันทึกเฉพาะในอุปกรณ์นี้ ยังไม่ใช่กรรมสิทธิ์จริงและยังไม่มีระบบชำระเงิน</p>
-</main>
-<div class="modal" id="memberModal" style="z-index:8"><div><div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0">MARS LOCAL MEMBER</h2><button onclick="closeMember()" style="width:auto;margin:0;padding:7px 10px">✕</button></div><p style="margin:8px 0 14px">สร้างโปรไฟล์นักสำรวจเพื่อทดลองใช้งานพื้นที่ส่วนตัว</p><div style="display:flex;gap:8px;margin-bottom:12px"><button id="registerTab" class="primary" onclick="setMemberMode('register')">สมัครสมาชิก</button><button id="loginTab" onclick="setMemberMode('login')">เข้าสู่ระบบ</button></div><label style="display:block;font-size:11px;color:#b9c4d4;margin:8px 0 4px">ชื่อที่แสดง</label><input id="memberDisplayName" autocomplete="name" placeholder="ชื่อนักสำรวจ" style="width:100%;padding:12px;border-radius:10px;background:#0b1321;border:1px solid #536078;color:white"><label style="display:block;font-size:11px;color:#b9c4d4;margin:10px 0 4px">อีเมล</label><input id="memberEmailInput" type="email" autocomplete="email" placeholder="name@example.com" style="width:100%;padding:12px;border-radius:10px;background:#0b1321;border:1px solid #536078;color:white"><label style="display:block;font-size:11px;color:#b9c4d4;margin:10px 0 4px">รหัสผ่าน (อย่างน้อย 6 ตัวอักษร)</label><input id="memberPassword" type="password" autocomplete="current-password" placeholder="รหัสผ่าน" style="width:100%;padding:12px;border-radius:10px;background:#0b1321;border:1px solid #536078;color:white"><div id="memberError" style="font-size:11px;color:#ff9b8e;margin-top:9px;min-height:18px"></div><button class="primary" id="memberSubmit" onclick="submitMember()" style="width:100%;margin-top:5px">สร้างบัญชีทดลอง</button><p style="font-size:10px!important;color:#e7bd8c!important;margin-bottom:0">⚠️ รุ่นทดลองเท่านั้น: ข้อมูลบัญชีจัดเก็บในเบราว์เซอร์เครื่องนี้ ยังไม่ใช่ระบบสมาชิกออนไลน์ และไม่ควรใช้รหัสผ่านจริง</p></div></div>
-<div class="modal" id="modal"><div><h2 id="mtitle"></h2><p id="mbody"></p><button class="primary" id="mact">ตกลง</button><button onclick="closeModal()">ปิด</button></div></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./world-server.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-<script>
-const canvas=document.getElementById('planet');
-const terrainTypes=['ที่ราบลาวา','หุบเขาหิน','ที่ราบสูง','ขอบหลุมอุกกาบาต','เนินทราย','ที่ราบน้ำแข็ง'];
-const resourceTypes=['น้ำแข็งใต้ผิวดิน','แร่เหล็ก','ซิลิกา','หินบะซอลต์','แร่แมกนีเซียม','คาร์บอนไดออกไซด์'];
-const parcels=Array.from({length:12},(_,i)=>({id:'M-'+String(i+1).padStart(3,'0'),lat:-55+(i*29)%110,lon:-160+(i*67)%320,area:1000+(i*275)%2400,price:120+(i*37)%260,status:'พร้อมสำรวจ',terrain:terrainTypes[i%terrainTypes.length],resource:resourceTypes[(i*3)%resourceTypes.length],elevation:350+(i*217)%4200,slope:2+(i*7)%24,risk:['ต่ำ','ปานกลาง','สูง'][i%3]}));
-let selected=0,built=Number(localStorage.getItem('marsBuilt')||0),scale=1,down=false,lastX=0,lastY=0;
-document.getElementById('builtCount').textContent=built;
-let scene,camera,renderer,globe,markers=[],structureMeshes=[],infraMeshes=[],dragging=false;
-function makeTexture(){
- const W=1536,H=768,seed=20261103;let state=seed;
- const rand=()=>{state=(state*1664525+1013904223)>>>0;return state/4294967296};
- const grids=[{w:8,h:4,a:[]},{w:18,h:9,a:[]},{w:42,h:21,a:[]},{w:96,h:48,a:[]}];
- grids.forEach(g=>{g.a=Array.from({length:g.w*g.h},rand)});
- function noise(g,u,v){
-  const x=u*g.w,y=v*g.h,ix=Math.floor(x),iy=Math.floor(y),fx=x-ix,fy=y-iy;
-  const smooth=t=>t*t*(3-2*t),sx=smooth(fx),sy=smooth(fy);
-  const at=(xx,yy)=>g.a[((yy%g.h+g.h)%g.h)*g.w+((xx%g.w+g.w)%g.w)];
-  const a=at(ix,iy)*(1-sx)+at(ix+1,iy)*sx,b=at(ix,iy+1)*(1-sx)+at(ix+1,iy+1)*sx;
-  return a*(1-sy)+b*sy;
- }
- const color=document.createElement('canvas'),bump=document.createElement('canvas');
- color.width=bump.width=W;color.height=bump.height=H;
- const cx=color.getContext('2d'),bx=bump.getContext('2d'),img=cx.createImageData(W,H),bimg=bx.createImageData(W,H);
- for(let y=0;y<H;y++)for(let x=0;x<W;x++){
-  const u=x/W,v=y/H,lat=Math.abs(v-.5)*2;
-  const n=noise(grids[0],u,v)*.42+noise(grids[1],u,v)*.29+noise(grids[2],u,v)*.19+noise(grids[3],u,v)*.10;
-  const ridge=Math.max(0,noise(grids[2],u*1.8,v*1.7)-.62)*.55;
-  const h=Math.max(0,Math.min(1,n*.78+ridge));
-  let r=105+h*83,g=48+h*61,b=37+h*43;
-  const dark= Math.max(0,(.34-h)*110);
-  r-=dark;g-=dark*.72;b-=dark*.5;
-  const polar=Math.max(0,(lat-.84)/.16);
-  r=r*(1-polar)+214*polar;g=g*(1-polar)+204*polar;b=b*(1-polar)+190*polar;
-  const i=(y*W+x)*4;img.data[i]=r;img.data[i+1]=g;img.data[i+2]=b;img.data[i+3]=255;
-  const z=Math.max(0,Math.min(255,75+h*135+ridge*50+polar*35));
-  bimg.data[i]=bimg.data[i+1]=bimg.data[i+2]=z;bimg.data[i+3]=255;
- }
- cx.putImageData(img,0,0);bx.putImageData(bimg,0,0);
- // Deterministic impact craters with raised rims, shadowed interiors and matching relief.
- for(let i=0;i<620;i++){
-  const px=rand()*W,py=rand()*H,rad=2+Math.pow(rand(),2)*34;
-  const shade=rand()>.5;
-  let grad=cx.createRadialGradient(px-rad*.22,py-rad*.25,rad*.08,px,py,rad);
-  grad.addColorStop(0,shade?'rgba(48,28,25,.34)':'rgba(230,151,105,.12)');
-  grad.addColorStop(.68,'rgba(76,39,32,.20)');grad.addColorStop(.86,'rgba(224,151,111,.42)');grad.addColorStop(1,'rgba(54,29,27,.10)');
-  cx.fillStyle=grad;cx.beginPath();cx.arc(px,py,rad,0,Math.PI*2);cx.fill();
-  let bg=bx.createRadialGradient(px,py,rad*.48,px,py,rad);
-  bg.addColorStop(0,'rgba(15,15,15,.62)');bg.addColorStop(.72,'rgba(20,20,20,.22)');bg.addColorStop(.9,'rgba(235,235,235,.65)');bg.addColorStop(1,'rgba(130,130,130,.08)');
-  bx.fillStyle=bg;bx.beginPath();bx.arc(px,py,rad,0,Math.PI*2);bx.fill();
- }
- const map=new THREE.CanvasTexture(color),bumpMap=new THREE.CanvasTexture(bump);
- map.colorSpace=THREE.SRGBColorSpace;map.anisotropy=8;bumpMap.anisotropy=8;
- return {map,bumpMap};
-}
-function init(){
- scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(42,canvas.clientWidth/canvas.clientHeight,.1,100);camera.position.z=3.4;
- renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));
- const sphere=new THREE.SphereGeometry(1,128,96),surface=makeTexture(),mat=new THREE.MeshStandardMaterial({map:surface.map,bumpMap:surface.bumpMap,bumpScale:.052,roughness:.98,metalness:0});
- globe=new THREE.Mesh(sphere,mat);scene.add(globe);
- scene.add(new THREE.AmbientLight(0xffffff,1.25));let light=new THREE.DirectionalLight(0xffd1a1,2.1);light.position.set(-3,2,4);scene.add(light);
- let atmosphere=new THREE.Mesh(new THREE.SphereGeometry(1.035,48,32),new THREE.MeshBasicMaterial({color:0xd46b4b,transparent:true,opacity:.09,side:THREE.BackSide}));scene.add(atmosphere);
- parcels.forEach((p,i)=>{let a=(90-p.lat)*Math.PI/180,b=(p.lon+180)*Math.PI/180;let pos=new THREE.Vector3(-Math.sin(a)*Math.cos(b),Math.cos(a),Math.sin(a)*Math.sin(b)).multiplyScalar(1.012);let m=new THREE.Mesh(new THREE.SphereGeometry(.023,12,10),new THREE.MeshBasicMaterial({color:0xffc879}));m.position.copy(pos);m.userData.index=i;globe.add(m);markers.push(m)});
- resize();restoreStructures3D();restoreInfrastructure3D();animate();showParcel();
-}
-function resize(){if(!renderer)return;let w=canvas.clientWidth,h=canvas.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
-function animate(){requestAnimationFrame(animate);if(!dragging){const t=Date.now()/1000;globe.rotation.y=(t*.0009)%(Math.PI*2)}renderer.render(scene,camera)}
-window.applyMars4DVisual=function(phase,weatherIndex){
- if(!scene||!globe)return;
- const day=phase>=.22&&phase<.48, dawn=phase<.22, dusk=phase>=.48&&phase<.68, night=phase>=.68;
- const sun=scene.children.find(o=>o.isDirectionalLight),ambient=scene.children.find(o=>o.isAmbientLight);
- if(sun){sun.position.set(Math.cos(phase*Math.PI*2)*4,Math.sin(phase*Math.PI*2)*1.8,Math.sin(phase*Math.PI*2)*4);sun.intensity=night?.38:day?2.15:dawn||dusk?1.15:1.0;sun.color.set(night?0x8198c8:dawn||dusk?0xff9367:0xffd1a1)}
- if(ambient)ambient.intensity=night?.42:day?1.15:.82;
- if(globe.material){globe.material.color.set(weatherIndex===3?0xb8a09a:weatherIndex===2?0xd0b1a0:0xffffff);globe.material.needsUpdate=true}
- scene.children.forEach(o=>{if(o.geometry&&o.geometry.type==='SphereGeometry'&&o.material&&o.material.transparent&&o.material.side===THREE.BackSide){o.material.opacity=weatherIndex===3?.19:weatherIndex===2?.13:night?.055:.09}});
- markers.forEach((m,i)=>{if(m.material&&m.material.color){m.material.color.set(night?0x7dbdff:weatherIndex===3?0xd5a47d:0xffc879);m.material.opacity=weatherIndex===3?.62:1;m.material.transparent=weatherIndex===3}});
- structureMeshes.forEach((m,i)=>{if(m.material&&m.material.emissive){m.material.emissive.set(night?0x39250f:0x000000);m.material.emissiveIntensity=night?.55:0}});
- const stage=document.getElementById('stage');if(stage){stage.style.boxShadow=weatherIndex===3?'inset 0 0 55px #b56b3b55':night?'inset 0 0 55px #173d7755':'inset 0 0 20px #e4a06b12'}
-};
-function zoom(v){camera.position.z=Math.max(2.1,Math.min(5,camera.position.z/v))}
-function pick(e){let r=canvas.getBoundingClientRect(),mouse=new THREE.Vector2((e.clientX-r.left)/r.width*2-1,-((e.clientY-r.top)/r.height*2-1));let ray=new THREE.Raycaster();ray.setFromCamera(mouse,camera);let hits=ray.intersectObjects(markers);if(hits.length){selected=hits[0].object.userData.index;showParcel()}}
-canvas.addEventListener('pointerdown',e=>{down=true;dragging=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId)});
-canvas.addEventListener('pointermove',e=>{if(!down)return;globe.rotation.y+=(e.clientX-lastX)*.008;globe.rotation.x+=(e.clientY-lastY)*.008;globe.rotation.x=Math.max(-1.2,Math.min(1.2,globe.rotation.x));lastX=e.clientX;lastY=e.clientY});
-canvas.addEventListener('pointerup',e=>{if(!down)return;down=false;dragging=false;if(Math.abs(e.clientX-lastX)+Math.abs(e.clientY-lastY)<12)pick(e)});
-function showParcel(){let p=parcels[selected],structures=JSON.parse(localStorage.getItem('marsStructures')||'[]'),count=structures.filter(s=>s.plot===p.id).length,profile=JSON.parse(localStorage.getItem('marsMemberProfile')||'null'),data=profile?getMemberData(profile):null,owned=data?data.plots.includes(p.id):false;markers.forEach((m,i)=>m.material.color.setHex(i===selected?0xfff0b0:0xffc879));document.getElementById('details').innerHTML='<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap"><b style="font-size:15px">แปลง '+p.id+'</b><span style="color:#a8e4bd;font-size:10px">● '+p.status+'</span></div><div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px"><div>📍 พิกัด<br><b>'+p.lat+'°, '+p.lon+'°</b></div><div>📐 พื้นที่<br><b>'+p.area.toLocaleString()+' ตร.ม.</b></div><div>⛰ ภูมิประเทศ<br><b>'+p.terrain+'</b></div><div>🪨 ทรัพยากรเด่น<br><b>'+p.resource+'</b></div><div>ระดับความสูง<br><b>'+p.elevation.toLocaleString()+' ม.</b></div><div>ความลาดชัน<br><b>'+p.slope+'°</b></div><div>ความเสี่ยงพื้นที่<br><b>'+p.risk+'</b></div><div>มูลค่าในเกม<br><b>'+p.price+' MLC</b></div></div><div style="margin-top:10px;padding-top:9px;border-top:1px solid #ffffff18">🏗 สิ่งปลูกสร้างบนแปลงนี้: <b>'+count+'</b></div><button style="width:100%;margin-top:10px" onclick="claimPlot()">'+(owned?'✓ อยู่ในพื้นที่ของฉัน':'＋ บันทึกในพื้นที่ของฉัน')+'</button><div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:8px"><button onclick="build(&quot;ฐานที่อยู่อาศัย&quot;)">🏠 ฐานที่อยู่อาศัย</button><button onclick="build(&quot;ห้องปฏิบัติการ&quot;)">🔬 ห้องทดลอง</button><button onclick="build(&quot;โรงเรือนปลูกพืช&quot;)">🌱 โรงเรือน</button><button onclick="build(&quot;แผงพลังงานแสงอาทิตย์&quot;)">☀️ โซลาร์ฟาร์ม</button></div><div style="margin-top:12px;padding-top:10px;border-top:1px solid #ffffff18"><b>🛣 โครงสร้างพื้นฐาน</b><div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:7px"><button onclick="addInfrastructure(&quot;ถนนเชื่อมเมือง&quot;)">🛣 ถนน</button><button onclick="addInfrastructure(&quot;ถังเก็บน้ำ&quot;)">💧 ถังเก็บน้ำ</button><button onclick="addInfrastructure(&quot;เสาไฟฟ้า&quot;)">⚡ เสาไฟฟ้า</button></div><small style="color:#8493a8">ติดตั้งบนแปลงที่บันทึกไว้ในบัญชีทดลอง</small></div><div style="font-size:9px;color:#8493a8;margin-top:7px">ข้อมูลภูมิประเทศและทรัพยากรเป็นข้อมูลจำลองสำหรับการทดลอง</div>'}
-function plotNormal(plot){const a=(90-plot.lat)*Math.PI/180,b=(plot.lon+180)*Math.PI/180;return new THREE.Vector3(-Math.sin(a)*Math.cos(b),Math.cos(a),Math.sin(a)*Math.sin(b)).normalize();}
-function placeInfrastructure(item){
- if(!globe||!window.THREE)return;
- const p=parcels.find(v=>v.id===item.plot);if(!p)return;
- const n=plotNormal(p),g=new THREE.Group();g.position.copy(n.clone().multiplyScalar(1.022));g.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),n);
- const add=(geo,color,x,y,z)=>{const m=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color,metalness:.35,roughness:.6}));m.position.set(x,y,z);g.add(m);return m;};
- if(item.type==='ถังเก็บน้ำ'){add(new THREE.CylinderGeometry(.018,.02,.035,12),0x4b9dc4,0,.02,0);add(new THREE.CylinderGeometry(.021,.021,.004,12),0x9bd9ee,0,.039,0);}
- else if(item.type==='เสาไฟฟ้า'){add(new THREE.CylinderGeometry(.003,.005,.055,8),0xd6b47b,0,.03,0);add(new THREE.BoxGeometry(.035,.004,.004),0x9bb6c9,0,.052,0);for(let z of [-.012,.012])add(new THREE.BoxGeometry(.006,.002,.008),0x4b83ac,z,.055,0);}
- else {add(new THREE.TorusGeometry(.035,.006,6,24),0xb58a62,0,.008,0);add(new THREE.BoxGeometry(.018,.006,.012),0x8d765e,0,.009,0);}
- g.userData.infraId=item.id;g.userData.plot=item.plot;globe.add(g);infraMeshes.push(g);
-}
-function restoreInfrastructure3D(){infraMeshes.forEach(m=>globe.remove(m));infraMeshes=[];JSON.parse(localStorage.getItem('marsInfrastructure')||'[]').forEach(placeInfrastructure);}
-function addInfrastructure(type){
- const p=parcels[selected],profile=JSON.parse(localStorage.getItem('marsMemberProfile')||'null');
- if(!profile){modal('เข้าสู่ระบบก่อน','เข้าสู่ระบบเพื่อสร้างโครงสร้างพื้นฐานในเมืองของคุณ','เปิดระบบสมาชิก',()=>openMember());return;}
- const data=getMemberData(profile);
- if(!data.plots.includes(p.id)){modal('บันทึกแปลงก่อน','เพิ่มแปลงนี้ในพื้นที่ของฉันก่อนสร้างโครงสร้างพื้นฐาน','บันทึกแปลง',()=>claimPlot());return;}
- modal('ติดตั้ง'+type,'ยืนยันติดตั้ง'+type+'บนแปลง '+p.id+' ข้อมูลจะบันทึกในอุปกรณ์นี้','ยืนยันติดตั้ง',()=>{
- const items=JSON.parse(localStorage.getItem('marsInfrastructure')||'[]'),item={id:'I-'+Date.now(),plot:p.id,type,createdAt:new Date().toISOString()};
- items.push(item);localStorage.setItem('marsInfrastructure',JSON.stringify(items));placeInfrastructure(item);renderMember(profile);showParcel();
- });
-}
-function modal(t,b,act,fn){document.getElementById('mtitle').textContent=t;document.getElementById('mbody').textContent=b;document.getElementById('mact').textContent=act;document.getElementById('mact').onclick=()=>{fn&&fn();closeModal()};document.getElementById('modal').style.display='flex'}
-function closeModal(){document.getElementById('modal').style.display='none'}
-function makeBuildingMesh(type){
- const group=new THREE.Group(),base=new THREE.Mesh(new THREE.CylinderGeometry(.035,.042,.009,16),new THREE.MeshStandardMaterial({color:0x9a8066,metalness:.45,roughness:.7}));base.position.y=.006;group.add(base);
- const add=(geo,color,x,y,z,metal=0)=>{const m=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color,metalness:metal,roughness:.55}));m.position.set(x,y,z);group.add(m);return m};
- if(type==='ฐานที่อยู่อาศัย'){add(new THREE.CylinderGeometry(.018,.023,.032,12),0xd6c3a5,0,.026,0,.25);add(new THREE.SphereGeometry(.018,12,8,0,Math.PI*2,0,Math.PI/2),0xb9d5df,0,.043,0,.3);add(new THREE.BoxGeometry(.008,.009,.003),0x6eafc8,.012,.026,.018);}
- else if(type==='ห้องปฏิบัติการ'){add(new THREE.BoxGeometry(.04,.025,.03),0x9db7c5,0,.022,0,.45);add(new THREE.BoxGeometry(.012,.009,.032),0x5f9eb9,0,.039,0,.35);add(new THREE.CylinderGeometry(.004,.004,.02,8),0xd8d0b7,-.015,.045,0,.5);}
- else if(type==='โรงเรือนปลูกพืช'){add(new THREE.BoxGeometry(.042,.018,.03),0x537e68,0,.019,0);add(new THREE.BoxGeometry(.038,.014,.027),0x8ec7a4,0,.033,0,.2);for(let i=-1;i<=1;i++)add(new THREE.CylinderGeometry(.002,.003,.013,6),0x4b9b69,i*.011,.046,0);}
- else {for(let i=-1;i<=1;i++){const panel=add(new THREE.BoxGeometry(.023,.002,.018),0x3c78a5,i*.025,.018,0,.65);panel.rotation.z=-.18;}add(new THREE.CylinderGeometry(.003,.003,.018,8),0xd4b57e,0,.015,.023,.5);}
- return group;
-}
-function placeBuilding3D(item){
- if(!globe||!window.THREE)return;
- const p=parcels.find(v=>v.id===item.plot);if(!p)return;
- const a=(90-p.lat)*Math.PI/180,b=(p.lon+180)*Math.PI/180;
- const normal=new THREE.Vector3(-Math.sin(a)*Math.cos(b),Math.cos(a),Math.sin(a)*Math.sin(b)).normalize();
- const group=makeBuildingMesh(item.type);group.position.copy(normal.clone().multiplyScalar(1.018));
- group.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),normal);
- const offset=(structureMeshes.filter(v=>v.userData.plot===item.plot).length%4)*.075;
- group.position.add(new THREE.Vector3(offset*.35,0,offset*.2));
- group.userData.plot=item.plot;group.userData.structureId=item.id;globe.add(group);structureMeshes.push(group);
-}
-function restoreStructures3D(){structureMeshes.forEach(m=>globe.remove(m));structureMeshes=[];const items=JSON.parse(localStorage.getItem('marsStructures')||'[]');items.forEach(placeBuilding3D);}
-function build(type='ฐานที่อยู่อาศัย'){const p=parcels[selected],profile=JSON.parse(localStorage.getItem('marsMemberProfile')||'null');if(!profile){modal('ต้องเข้าสู่ระบบก่อน','สมัครสมาชิกหรือเข้าสู่ระบบก่อนสร้างเมืองทดลอง','เปิดระบบสมาชิก',()=>openMember());return;}const data=getMemberData(profile);if(!data.plots.includes(p.id)){modal('บันทึกแปลงก่อน','เพิ่มแปลง '+p.id+' ลงในพื้นที่ของฉันก่อนจึงจะสร้างสิ่งปลูกสร้างได้','บันทึกแปลง',()=>claimPlot());return;}const costs={'ฐานที่อยู่อาศัย':300,'ห้องปฏิบัติการ':500,'โรงเรือนปลูกพืช':400,'แผงพลังงานแสงอาทิตย์':350};const techData=getMemberData(profile),discount=(techData.research||[]).includes('materials')?0.9:1;const cost=Math.ceil((costs[type]||300)*discount);modal('ก่อสร้าง: '+type,'ค่าก่อสร้าง '+cost+' MLC บนแปลง '+p.id+' อาคารจะผลิตรายได้หรือทรัพยากรเมื่อสร้างเสร็จ','ยืนยันก่อสร้าง',()=>{const current=getMemberData(profile);if(current.wallet<cost){modal('เงินทุนไม่เพียงพอ','ต้องใช้ '+cost+' MLC แต่คุณมี '+current.wallet+' MLC','รับทราบ');return;}current.wallet-=cost;saveMemberData(profile,current);const items=JSON.parse(localStorage.getItem('marsStructures')||'[]');const item={id:'S-'+Date.now(),plot:p.id,type,level:1,createdAt:new Date().toISOString()};items.push(item);localStorage.setItem('marsStructures',JSON.stringify(items));placeBuilding3D(item);built=items.length;localStorage.setItem('marsBuilt',built);document.getElementById('builtCount').textContent=built;renderMember(profile);renderTycoon();showParcel();});}
-function market(){modal('ตลาด MARS LOCAL','หน้าตลาดเป็นตัวอย่างเท่านั้น ยังไม่มีการซื้อขายเงินจริง การชำระเงิน หรือการโอนกรรมสิทธิ์','รับทราบ')}
-
-let memberMode='register';
-function openMember(){const saved=localStorage.getItem('marsMemberProfile');if(saved){renderMember(JSON.parse(saved));return;}setMemberMode('register');document.getElementById('memberModal').style.display='flex';}
-function closeMember(){document.getElementById('memberModal').style.display='none';}
-function setMemberMode(mode){memberMode=mode;document.getElementById('registerTab').classList.toggle('primary',mode==='register');document.getElementById('loginTab').classList.toggle('primary',mode==='login');document.getElementById('memberDisplayName').style.display=mode==='register'?'block':'none';document.getElementById('memberSubmit').textContent=mode==='register'?'สร้างบัญชีทดลอง':'เข้าสู่ระบบทดลอง';document.getElementById('memberError').textContent='';}
-async function passwordDigest(value){const bytes=new TextEncoder().encode(value);const hash=await crypto.subtle.digest('SHA-256',bytes);return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');}
-async function submitMember(){const name=document.getElementById('memberDisplayName').value.trim();const email=document.getElementById('memberEmailInput').value.trim().toLowerCase();const password=document.getElementById('memberPassword').value;const error=document.getElementById('memberError');if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){error.textContent='กรุณากรอกอีเมลให้ถูกต้อง';return;}if(password.length<6){error.textContent='รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร';return;}try{const key='marsMemberAccount:'+email;const digest=await passwordDigest(password);if(memberMode==='register'){if(!name){error.textContent='กรุณากรอกชื่อที่แสดง';return;}if(localStorage.getItem(key)){error.textContent='อีเมลนี้มีบัญชีทดลองในเครื่องนี้แล้ว กรุณาเข้าสู่ระบบ';return;}localStorage.setItem(key,JSON.stringify({name,email,digest}));renderMember({name,email});}else{const account=JSON.parse(localStorage.getItem(key)||'null');if(!account||account.digest!==digest){error.textContent='ไม่พบบัญชีหรือรหัสผ่านไม่ถูกต้องในอุปกรณ์นี้';return;}renderMember({name:account.name,email:account.email});}}catch(e){error.textContent='อุปกรณ์ไม่รองรับการเข้ารหัส หรือบันทึกข้อมูลไม่ได้';}}
-function getMemberData(profile){const key='marsMemberData:'+profile.email;let data=JSON.parse(localStorage.getItem(key)||'null');if(!data){data={wallet:1000,plots:[],createdAt:new Date().toISOString()};localStorage.setItem(key,JSON.stringify(data));}return data;}
-function saveMemberData(profile,data){localStorage.setItem('marsMemberData:'+profile.email,JSON.stringify(data));}
-function renderMember(profile){localStorage.setItem('marsMemberProfile',JSON.stringify(profile));const data=getMemberData(profile),structures=JSON.parse(localStorage.getItem('marsStructures')||'[]'),myStructures=structures.filter(s=>data.plots.includes(s.plot));document.getElementById('memberName').textContent=profile.name;document.getElementById('memberEmail').textContent=profile.email+' • บัญชีทดลองในอุปกรณ์นี้';document.getElementById('memberWallet').textContent=data.wallet.toLocaleString()+' MLC';document.getElementById('memberPlotCount').textContent=data.plots.length;document.getElementById('memberBuildCount').textContent=myStructures.length;const infra=JSON.parse(localStorage.getItem('marsInfrastructure')||'[]').filter(v=>data.plots.includes(v.plot));const infraEl=document.getElementById('memberInfraCount');if(infraEl)infraEl.textContent=infra.length;document.getElementById('memberPlots').innerHTML=data.plots.length?data.plots.map(id=>{const p=parcels.find(x=>x.id===id);const n=myStructures.filter(s=>s.plot===id).length;return '<div class="plot-chip"><span><b>'+id+'</b> • '+(p?p.terrain:'แปลงทดลอง')+'<br><small>สิ่งปลูกสร้าง '+n+' รายการ</small></span><button onclick="goToPlot(\''+id+'\')">ดูแปลง</button></div>'}).join(''):'ยังไม่มีแปลงทดลอง กดเลือกแปลงบนดาวแล้วเลือก “บันทึกในพื้นที่ของฉัน”';document.getElementById('memberWelcome').style.display='block';document.getElementById('memberButton').textContent='👤 '+profile.name;closeMember();}
-function claimPlot(){const profile=JSON.parse(localStorage.getItem('marsMemberProfile')||'null');if(!profile){modal('ต้องเข้าสู่ระบบก่อน','สมัครสมาชิกหรือเข้าสู่ระบบเพื่อบันทึกแปลงทดลองในพื้นที่ส่วนตัว','เข้าสู่ระบบ',()=>openMember());return;}const data=getMemberData(profile),id=parcels[selected].id;if(data.plots.includes(id)){modal('บันทึกไว้แล้ว',id+' อยู่ในรายการพื้นที่ทดลองของคุณแล้ว','ตกลง');return;}data.plots.push(id);saveMemberData(profile,data);renderMember(profile);renderTycoon();showParcel();}
-function goToPlot(id){const i=parcels.findIndex(p=>p.id===id);if(i>=0){selected=i;showParcel();document.getElementById('stage').scrollIntoView({behavior:'smooth',block:'center'});}}
-function logoutMember(){localStorage.removeItem('marsMemberProfile');document.getElementById('memberWelcome').style.display='none';document.getElementById('memberButton').textContent='👤 สมัครสมาชิก / เข้าสู่ระบบ';setMemberMode('login');document.getElementById('memberEmailInput').value='';document.getElementById('memberPassword').value='';document.getElementById('memberModal').style.display='flex';}
-
-
-
-const TYCOON_RATES={'ฐานที่อยู่อาศัย':{income:3,pop:4,power:-1,water:-1,food:0},'ห้องปฏิบัติการ':{income:12,pop:0,power:-3,water:-1,food:0},'โรงเรือนปลูกพืช':{income:5,pop:0,power:-1,water:-2,food:8},'แผงพลังงานแสงอาทิตย์':{income:2,pop:0,power:12,water:0,food:0}};
-function tycoonProfile(){try{return JSON.parse(localStorage.getItem('marsMemberProfile')||'null')}catch(e){return null}}
-function tycoonStats(){const p=tycoonProfile();if(!p)return {income:0,pop:0,power:0,water:0,food:0,items:[]};const d=getMemberData(p),items=JSON.parse(localStorage.getItem('marsStructures')||'[]').filter(x=>d.plots.includes(x.plot));return items.reduce((a,x)=>{const r=TYCOON_RATES[x.type]||{},m=Math.max(1,Number(x.level)||1);a.income+=(r.income||0)*m;a.pop+=(r.pop||0)*m;a.power+=(r.power||0)*m;a.water+=(r.water||0)*m;a.food+=(r.food||0)*m;return a},{income:0,pop:0,power:0,water:0,food:0,items});}
-function tycoonAccrue(){const p=tycoonProfile();if(!p)return;const d=getMemberData(p),now=Date.now(),last=Number(d.tycoonLastTick||now),mins=Math.min(480,Math.max(0,(now-last)/60000));if(mins>=1){const s=tycoonStats();d.wallet+=Math.floor(s.income*mins);d.tycoonLastTick=now;saveMemberData(p,d);}}
-function collectTycoonIncome(){const p=tycoonProfile();if(!p){modal('เข้าสู่ระบบก่อน','สมัครสมาชิกเพื่อเริ่มบริหารอาณานิคม','เข้าสู่ระบบ',()=>openMember());return;}tycoonAccrue();renderMember(p);renderTycoon();modal('อัปเดตบัญชีอาณานิคม','รับรายได้สะสมเข้ากระเป๋าเครดิตทดลองแล้ว','ตกลง');}
-function upgradeTycoonBuilding(id){const p=tycoonProfile();if(!p)return;const d=getMemberData(p),items=JSON.parse(localStorage.getItem('marsStructures')||'[]'),item=items.find(x=>x.id===id);if(!item)return;const level=Math.max(1,Number(item.level)||1),cost=250*level;if(d.wallet<cost){modal('เงินทุนไม่เพียงพอ','อัปเกรดระดับถัดไปต้องใช้ '+cost+' MLC','ตกลง');return;}d.wallet-=cost;item.level=level+1;saveMemberData(p,d);localStorage.setItem('marsStructures',JSON.stringify(items));renderMember(p);renderTycoon();modal('อัปเกรดสำเร็จ','อาคาร '+item.type+' เป็นระดับ '+item.level+' แล้ว','ยอดเยี่ยม');}
-
-const MARS_MISSIONS=[
-{id:'claim',title:'ตั้งถิ่นฐานแรก',desc:'บันทึกแปลงพื้นที่อย่างน้อย 1 แปลง',reward:150,done:d=>d.plots.length>=1},
-{id:'habitat',title:'บ้านหลังแรก',desc:'สร้างฐานที่อยู่อาศัย',reward:200,done:(d,a)=>a.some(x=>x.type==='ฐานที่อยู่อาศัย')},
-{id:'solar',title:'พลังงานสะอาด',desc:'สร้างแผงพลังงานแสงอาทิตย์',reward:180,done:(d,a)=>a.some(x=>x.type==='แผงพลังงานแสงอาทิตย์')},
-{id:'farm',title:'อาหารจากดาวแดง',desc:'สร้างโรงเรือนปลูกพืช',reward:220,done:(d,a)=>a.some(x=>x.type==='โรงเรือนปลูกพืช')},
-{id:'lab',title:'เริ่มต้นวิทยาศาสตร์',desc:'สร้างห้องปฏิบัติการ',reward:250,done:(d,a)=>a.some(x=>x.type==='ห้องปฏิบัติการ')},
-{id:'upgrade',title:'เมืองเติบโต',desc:'อัปเกรดอาคารใดก็ได้ถึงระดับ 2',reward:300,done:(d,a)=>a.some(x=>(Number(x.level)||1)>=2)}
-];
-const MARS_TECH=[
-{id:'automation',name:'ระบบอัตโนมัติ',cost:350,desc:'เพิ่มรายได้จากอาคารทั้งหมด 10%',bonus:0.10},
-{id:'materials',name:'วัสดุก่อสร้างขั้นสูง',cost:600,desc:'ลดค่าก่อสร้างอาคาร 10%',bonus:0.10},
-{id:'life',name:'ระบบชีวนิเวศปิด',cost:850,desc:'เพิ่มผลผลิตอาหารและประชากร 20%',bonus:0.20}
-];
-function claimMarsMission(id){const p=tycoonProfile();if(!p)return;const d=getMemberData(p),a=JSON.parse(localStorage.getItem('marsStructures')||'[]').filter(x=>d.plots.includes(x.plot)),m=MARS_MISSIONS.find(x=>x.id===id);if(!m||!m.done(d,a))return;d.missions=d.missions||[];if(d.missions.includes(id))return;d.missions.push(id);d.wallet+=m.reward;saveMemberData(p,d);renderMember(p);renderTycoon();modal('ภารกิจสำเร็จ！',m.title+' • รับรางวัล '+m.reward+' MLC','รับทราบ');}
-function researchMarsTech(id){const p=tycoonProfile();if(!p)return;const d=getMemberData(p),t=MARS_TECH.find(x=>x.id===id);if(!t)return;d.research=d.research||[];if(d.research.includes(id))return;if(d.wallet<t.cost){modal('เครดิตไม่เพียงพอ','การวิจัยนี้ใช้ '+t.cost+' MLC','ตกลง');return;}d.wallet-=t.cost;d.research.push(id);saveMemberData(p,d);renderMember(p);renderTycoon();modal('วิจัยสำเร็จ',t.name+' ปลดล็อกแล้ว: '+t.desc,'ยอดเยี่ยม');}
-function renderMarsProgress(){const p=tycoonProfile(),missionEl=document.getElementById('tycoonMissions'),techEl=document.getElementById('tycoonResearch');if(!missionEl||!techEl)return;if(!p){missionEl.textContent='เข้าสู่ระบบเพื่อรับภารกิจและรางวัล';techEl.textContent='เข้าสู่ระบบเพื่อวิจัยเทคโนโลยี';return;}const d=getMemberData(p),a=JSON.parse(localStorage.getItem('marsStructures')||'[]').filter(x=>d.plots.includes(x.plot)),claimed=d.missions||[],researched=d.research||[];missionEl.innerHTML=MARS_MISSIONS.map(m=>{const done=m.done(d,a),paid=claimed.includes(m.id);return '<div class="plot-chip"><span><b>'+ (paid?'✓ ':done?'★ ':'○ ')+m.title+'</b><br><small>'+m.desc+' • รางวัล '+m.reward+' MLC</small></span><button '+(!done||paid?'disabled':'')+' onclick="claimMarsMission(\''+m.id+'\')">'+(paid?'รับแล้ว':done?'รับรางวัล':'ยังไม่สำเร็จ')+'</button></div>'}).join('');techEl.innerHTML=MARS_TECH.map(t=>{const active=researched.includes(t.id);return '<div class="plot-chip"><span><b>'+t.name+'</b><br><small>'+t.desc+' • '+t.cost+' MLC</small></span><button '+(active?'disabled':'')+' onclick="researchMarsTech(\''+t.id+'\')">'+(active?'ปลดล็อกแล้ว':'วิจัย')+'</button></div>'}).join('');}
-
-function renderTycoon(){const p=tycoonProfile();if(p)tycoonAccrue();const d=p?getMemberData(p):{wallet:0},s=tycoonStats(),set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};set('tycoonCash',Math.floor(d.wallet).toLocaleString()+' MLC');set('tycoonIncome',s.income.toLocaleString()+' MLC');set('tycoonPopulation',s.pop.toLocaleString());set('tycoonPower',(s.power>=0?'+':'')+s.power);set('tycoonWater',(s.water>=0?'+':'')+s.water);set('tycoonFood',s.food.toLocaleString());const status=document.getElementById('tycoonStatus'),list=document.getElementById('tycoonBuildings');if(status)status.textContent=!p?'เข้าสู่ระบบเพื่อเริ่มอาณานิคม':s.items.length?'อาณานิคมกำลังดำเนินงาน • รายได้ '+s.income+' MLC/นาที • '+s.items.length+' อาคาร':'สร้างอาคารเพื่อเริ่มต้น';renderMarsProgress();if(list)list.innerHTML=s.items.length?s.items.map(x=>'<div class="plot-chip"><span><b>'+x.type+'</b> • '+x.plot+'<br><small>ระดับ '+(x.level||1)+' • '+((TYCOON_RATES[x.type]||{}).income||0)*(x.level||1)+' MLC/นาที</small></span><button onclick="upgradeTycoonBuilding(\''+x.id+'\')">⬆ อัปเกรด '+(250*(x.level||1))+'</button></div>').join(''):'ยังไม่มีอาคาร • ค่าก่อสร้างเริ่มต้น 300 MLC';}
-setInterval(()=>{if(tycoonProfile()){tycoonAccrue();renderTycoon();const p=tycoonProfile();if(p)renderMember(p)}},30000);
-
-(function restoreMember(){try{const p=JSON.parse(localStorage.getItem('marsMemberProfile')||'null');if(p)renderMember(p);renderTycoon();}catch(e){}})();
-window.addEventListener('resize',resize);
-try{if(!window.THREE)throw new Error('โหลดไลบรารี 3D ไม่สำเร็จ กรุณาเชื่อมต่ออินเทอร์เน็ต');init()}catch(e){document.getElementById('details').textContent=e.message}
-</script>
-
-<script>
-(function(){
- const canvas=document.getElementById('constructionCanvas');if(!canvas||!window.THREE)return;
- const $=id=>document.getElementById(id);
- const scene=new THREE.Scene();scene.background=new THREE.Color(0x101a29);scene.fog=new THREE.Fog(0x101a29,10,22);
- const camera=new THREE.PerspectiveCamera(42,1,.1,100);let radius=8.2,theta=.72,phi=1.03;
- const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
- scene.add(new THREE.HemisphereLight(0xc8dcff,0x4c2b20,2.1));
- const sun=new THREE.DirectionalLight(0xffd3a1,2.7);sun.position.set(-4,8,5);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);scene.add(sun);
- const fill=new THREE.PointLight(0x4e9dc9,1.2,9);fill.position.set(3,3,-3);scene.add(fill);
- const mat=(color,metal=.15,rough=.65)=>new THREE.MeshStandardMaterial({color,metalness:metal,roughness:rough});
- function mesh(parent,geo,color,x,y,z,metal=.1){const m=new THREE.Mesh(geo,mat(color,metal));m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m}
- const ground=mesh(scene,new THREE.CircleGeometry(6,64),0x754337,0,-.16,0);ground.rotation.x=-Math.PI/2;
- const grid=new THREE.GridHelper(12,36,0xc58b63,0x67483e);grid.position.y=-.145;scene.add(grid);
- const excavation=mesh(scene,new THREE.CylinderGeometry(.82,.92,.08,32),0x352821,0,-.105,0);excavation.scale.set(1,.35,1);
- // scattered Martian rocks
- for(let i=0;i<30;i++){const a=i*2.4,r=2.5+(i%7)*.43;const rock=mesh(scene,new THREE.DodecahedronGeometry(.07+(i%3)*.035,0),i%2?0x965743:0x604037,Math.cos(a)*r,-.08,Math.sin(a)*r);rock.scale.y=.55;}
- const pad=mesh(scene,new THREE.CylinderGeometry(1.65,1.78,.18,48),0x9a8066,0,-.035,0,.25);
- const ring=mesh(scene,new THREE.TorusGeometry(1.69,.025,8,64),0xe0a56e,0,.06,0,.5);ring.rotation.x=Math.PI/2;
- const site=new THREE.Group();scene.add(site);
- let buildingParts=[],machines=[],workers=[],craneArm,craneHook,rover,robot,excavator,excavatorArm,excavatorBucket,craneLoad;
- const box=(p,w,h,d,c,x,y,z,m=.1)=>mesh(p,new THREE.BoxGeometry(w,h,d),c,x,y,z,m);
- const cyl=(p,rt,rb,h,c,x,y,z)=>mesh(p,new THREE.CylinderGeometry(rt,rb,h,16),c,x,y,z,.2);
- function makeWorker(x,z,robotic=false){
-  const g=new THREE.Group();g.position.set(x,0,z);site.add(g);
-  const suit=robotic?0x8cb7c8:0xe0d7c5,head=robotic?0x263b4b:0xc9d5dd;
-  cyl(g,.095,.11,.23,suit,0,.24,0);const h=mesh(g,new THREE.SphereGeometry(.09,14,12),head,0,.42,0,.35);
-  if(robotic){box(g,.12,.025,.04,0x57c7dc,0,.43,.07,.3);for(let k of [-1,1]){cyl(g,.025,.025,.18,0x667e8d,k*.11,.19,0);}}
-  else{const visor=mesh(g,new THREE.SphereGeometry(.065,12,8),0x4b91b2,0,.43,.065,.55);visor.scale.set(1,.65,.25);}
-  for(let k of [-1,1]){cyl(g,.025,.025,.17,0x566474,k*.055,.085,0);}
-  workers.push({group:g,head:h,phase:Math.random()*6.28,robotic});return g;
- }
- function makeCrane(){
-  const g=new THREE.Group();g.position.set(-1.48,0,-.95);site.add(g);
-  cyl(g,.17,.22,.22,0x555e69,0,.12,0);cyl(g,.09,.11,1.35,0xe1a45f,0,.83,0);
-  box(g,.16,.1,.16,0x34485b,0,1.55,0);
-  craneArm=new THREE.Group();craneArm.position.set(0,1.55,0);g.add(craneArm);
-  box(craneArm,2.15,.1,.13,0xe0a45f,.75,.02,0);
-  box(craneArm,.55,.08,.12,0x53697b,-.25,-.02,0);
-  for(let x of [-.15,1.65]){box(craneArm,.05,.34,.05,0x536273,x,-.2,0);}
-  const cable=box(craneArm,.018,.72,.018,0x9db0bb,1.42,-.42,0);craneHook=box(craneArm,.12,.08,.12,0x6fc4d8,1.42,-.8,0,.45);
-  return g;
- }
- function makeRover(){
-  const g=new THREE.Group();g.position.set(1.45,0,1.18);site.add(g);
-  box(g,.55,.2,.38,0xc56d42,0,.32,0,.35);box(g,.25,.12,.26,0x344d60,-.05,.48,0,.4);
-  for(let x of [-.22,.22])for(let z of [-.22,.22]){const w=mesh(g,new THREE.CylinderGeometry(.105,.105,.07,16),0x202b35,x,.18,z,.25);w.rotation.x=Math.PI/2;machines.push({wheel:w});}
-  const mast=box(g,.045,.48,.045,0xd9b477,.13,.68,0,.5);box(g,.2,.08,.12,0x5d9bb4,.13,.91,0,.5);
-  machines.push({group:g,kind:'rover'});return g;
- }
- function makeRobot(){
-  const g=makeWorker(.9,-.85,true);machines.push({group:g,kind:'robot'});return g;
- }
- function makeExcavator(){
-  const g=new THREE.Group();g.position.set(-1.05,0,1.2);site.add(g);
-  box(g,.62,.22,.38,0xc97842,0,.3,0,.3);
-  for(let x of [-.23,.23])for(let z of [-.22,.22]){const w=mesh(g,new THREE.CylinderGeometry(.1,.1,.07,16),0x26313a,x,.17,z,.2);w.rotation.x=Math.PI/2;}
-  const pivot=new THREE.Group();pivot.position.set(.12,.44,0);g.add(pivot);
-  const upper=box(pivot,.12,.62,.13,0xe0a45f,0,.28,0,.25);upper.rotation.z=-.32;
-  const fore=new THREE.Group();fore.position.set(.03,.55,0);pivot.add(fore);const arm=box(fore,.09,.48,.1,0xc18a54,0,.2,0,.2);arm.rotation.z=.45;
-  const bucket=mesh(fore,new THREE.BoxGeometry(.2,.12,.18),0x53606b,.08,-.04,.02,.5);bucket.rotation.z=-.4;
-  excavatorArm=pivot;excavatorBucket=bucket;excavator=g;machines.push({group:g,kind:'excavator'});
- }
- makeCrane();makeRover();makeRobot();makeExcavator();makeWorker(-.8,.9,false);makeWorker(.55,.92,false);
- craneLoad=mesh(scene,new THREE.BoxGeometry(.42,.28,.38),0xd6a76c,0,-10,0,.25);
- const stages=[['สำรวจและปรับระดับพื้นที่',0,18],['ขุดฐานรากและเทฐานคอนกรีต',18,38],['เครนยกโครงสร้างและประกอบอาคาร',38,68],['ติดตั้งระบบภายในและพลังงาน',68,88],['ตรวจสอบและเปิดใช้งานอาณานิคม',88,100]];
- let typeList=['ฐานที่อยู่อาศัย','ห้องปฏิบัติการ','โรงเรือนปลูกพืช','แผงพลังงานแสงอาทิตย์'],previewIndex=0,started=0,duration=22000,lastId='',partsBuilt=[];
- function addPart(geo,color,x,y,z,metal=.15){const m=mesh(site,geo,color,x,y,z,metal);m.visible=false;m.userData.finalY=y;buildingParts.push(m);return m;}
- function makeBuilding(type){
-  buildingParts.forEach(o=>site.remove(o));buildingParts=[];
-  // foundation and floor
-  addPart(new THREE.BoxGeometry(1.5,.12,1.15),0xb3a18c,0,.18,0,.3);
-  if(type==='ฐานที่อยู่อาศัย'){
-   addPart(new THREE.CylinderGeometry(.48,.52,.55,24),0xd8c5a7,0,.53,0,.2);
-   const dome=addPart(new THREE.SphereGeometry(.48,24,16,0,Math.PI*2,0,Math.PI/2),0x91c2d0,0,.81,0,.35);dome.scale.y=.78;
-   addPart(new THREE.BoxGeometry(.18,.3,.04),0x375b6c,0,.48,.49);
-   for(let x of [-.28,.28])addPart(new THREE.BoxGeometry(.05,.28,.05),0xd4b88e,x,.52,-.35);
-  }else if(type==='ห้องปฏิบัติการ'){
-   addPart(new THREE.BoxGeometry(1.12,.58,.92),0xa9bdc8,0,.52,0,.35);
-   addPart(new THREE.BoxGeometry(.65,.24,.96),0x5f9eb9,0,.93,0,.35);
-   addPart(new THREE.CylinderGeometry(.1,.1,.68,12),0xd8d0b7,-.42,1.02,0,.45);
-   for(let x of [-.3,0,.3])addPart(new THREE.BoxGeometry(.13,.22,.025),0x4d90aa,x,.5,.47,.4);
-  }else if(type==='โรงเรือนปลูกพืช'){
-   addPart(new THREE.BoxGeometry(1.2,.42,.94),0x527c68,0,.46,0,.1);
-   addPart(new THREE.BoxGeometry(1.25,.34,.99),0x9bd6b1,0,.82,0,.2);
-   for(let x of [-.35,0,.35]){addPart(new THREE.CylinderGeometry(.035,.045,.42,8),0x62a86f,x,.64,0);addPart(new THREE.SphereGeometry(.09,10,8),0x7acb7c,x,.91,.08);}
-  }else{
-   for(let x of [-.48,0,.48]){const p=addPart(new THREE.BoxGeometry(.4,.045,.68),0x397eae,x,.42,0,.65);p.rotation.z=-.13;addPart(new THREE.CylinderGeometry(.025,.035,.28,8),0xd7b77e,x,.26,.08,.5);}
-   addPart(new THREE.BoxGeometry(.16,.18,.16),0xc6a16d,0,.3,.48,.4);
-  }
-  partsBuilt=buildingParts.slice();
- }
- function updateCamera(){camera.position.set(Math.sin(theta)*Math.sin(phi)*radius,Math.cos(phi)*radius,Math.cos(theta)*Math.sin(phi)*radius);camera.lookAt(0,.45,0);}
- function resize(){const r=canvas.getBoundingClientRect();if(!r.width||!r.height)return;renderer.setSize(r.width,r.height,false);camera.aspect=r.width/r.height;camera.updateProjectionMatrix();updateCamera();}
- function start(type,id){previewIndex=Math.max(0,typeList.indexOf(type));makeBuilding(type);started=performance.now();lastId=id||'';$('constructionName').textContent=type+' • '+(id||'ตัวอย่างการก่อสร้าง');$('constructionLive').textContent='● BUILDING';}
- window.restartConstructionPreview=()=>start(typeList[previewIndex],'SIMULATION');
- window.nextConstructionPreview=()=>{previewIndex=(previewIndex+1)%typeList.length;start(typeList[previewIndex],'PREVIEW');};
- function latest(){try{const a=JSON.parse(localStorage.getItem('marsStructures')||'[]');return a.length?a[a.length-1]:null}catch(e){return null}}
- const first=latest();start(first?.type||typeList[0],first?.id||'PREVIEW');
- let dragging=false,lastX=0,lastY=0;
- canvas.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId);});
- canvas.addEventListener('pointermove',e=>{if(!dragging)return;theta-=(e.clientX-lastX)*.009;phi=Math.max(.35,Math.min(1.42,phi+(e.clientY-lastY)*.008));lastX=e.clientX;lastY=e.clientY;updateCamera();});
- canvas.addEventListener('pointerup',()=>dragging=false);canvas.addEventListener('pointercancel',()=>dragging=false);
- canvas.addEventListener('wheel',e=>{e.preventDefault();radius=Math.max(5,Math.min(12,radius+e.deltaY*.008));updateCamera();},{passive:false});
- const hud=document.createElement('div');hud.style.cssText='position:absolute;right:12px;bottom:12px;display:flex;gap:6px;pointer-events:none';hud.innerHTML='<span class="construction-pill">↔ ลากเพื่อหมุน</span><span class="construction-pill">⌕ เลื่อนเพื่อซูม</span>';canvas.parentElement.appendChild(hud);
- function animate(now){
-  requestAnimationFrame(animate);const p=Math.min(1,(now-started)/duration),pct=Math.round(p*100);
-  // Reveal the building in construction phases, from foundations to roof and equipment.
-  const visibleCount=Math.ceil(partsBuilt.length*Math.min(1,Math.max(.08,(pct-12)/78)));
-  partsBuilt.forEach((o,i)=>{const reveal=Math.max(0,Math.min(1,(pct-(12+i/Math.max(1,partsBuilt.length)*72))/10));o.visible=reveal>0;o.position.y=o.userData.finalY+(1-reveal)*1.65;});
-  // Excavator digs the pad during site preparation; the crane lifts a cargo module during assembly.
-  excavatorArm.rotation.z=-.32+Math.sin(now*.0021)*.34;
-  excavatorBucket.rotation.z=-.4+Math.sin(now*.0021+1)*.22;
-  const digger=machines.find(m=>m.kind==='excavator');if(digger)digger.group.rotation.y=Math.sin(now*.0007)*.12;
-  craneArm.rotation.y=Math.sin(now*.00055)*.24;craneHook.position.y=-.8+Math.sin(now*.0012)*.14;
-  if(craneLoad){craneLoad.visible=pct>30&&pct<78;craneLoad.position.set(1.42,-.8+Math.sin(now*.0012)*.14,0);craneLoad.rotation.y=now*.0005;}
-  const rv=machines.find(m=>m.kind==='rover');if(rv){rv.group.position.x=1.35+Math.sin(now*.00035)*.42;rv.group.position.z=1.1+Math.cos(now*.00035)*.25;rv.group.rotation.y=Math.sin(now*.00035)*.35;}
-  const rb=machines.find(m=>m.kind==='robot');if(rb){rb.group.position.x=.88+Math.sin(now*.001)*.18;rb.group.rotation.y=Math.sin(now*.001)*.45;}
-  workers.forEach(w=>{w.group.rotation.y=Math.sin(now*.001+w.phase)*.3;w.group.position.y=Math.abs(Math.sin(now*.002+w.phase))*.018;});
-  const stage=stages.find(s=>pct>=s[1]&&pct<s[2])||stages[4];
-  $('constructionStage').textContent='ขั้นตอน '+(stages.indexOf(stage)+1)+'/5 • '+stage[0];
-  $('constructionPercent').textContent=pct+'%';$('constructionProgress').style.width=pct+'%';
-  if(p>=1)$('constructionLive').textContent='✓ COMPLETE';
-  renderer.render(scene,camera);
- }
- const observer=new ResizeObserver(resize);observer.observe(canvas.parentElement);resize();requestAnimationFrame(animate);
- setInterval(()=>{const item=latest();if(item&&item.id!==lastId)start(item.type,item.id)},1200);
-})();
-</script>
-
-
-<script>
-function startMarsGame(){
- const profile=JSON.parse(localStorage.getItem('marsMemberProfile')||'null');
- if(!profile){
-  const guest={name:'ผู้บัญชาการ',email:'guest-'+Date.now()+'@mars.local'};
-  renderMember(guest);
-  const status=document.getElementById('quickStatus');
-  if(status)status.textContent='สร้างโปรไฟล์ผู้เล่นทดลองแล้ว • เลือกแปลงและกดบันทึกเพื่อเริ่มสร้างเมือง';
- }
- claimPlot();renderQuickPlay();
- document.getElementById('quickPlay').scrollIntoView({behavior:'smooth',block:'start'});
-}
-function quickBuild(type){
- const p=parcels[selected],profile=JSON.parse(localStorage.getItem('marsMemberProfile')||'null');
- if(!profile){startMarsGame();return;}
- const data=getMemberData(profile);
- if(!data.plots.includes(p.id)){modal('บันทึกแปลงก่อน','กด “บันทึกแปลงที่เลือก” ก่อนเริ่มก่อสร้าง','บันทึกแปลง',()=>claimPlot());return;}
- build(type);
-}
-function chooseQuickPlot(index){selected=index;showParcel();renderQuickPlay();}
-function renderQuickPlay(){
- const box=document.getElementById('quickPlots');if(!box)return;
- box.innerHTML=parcels.map((p,i)=>'<button class="'+(i===selected?'active':'')+'" onclick="chooseQuickPlot('+i+')">'+p.id+'<br><small>'+p.area.toLocaleString()+' ตร.ม.</small></button>').join('');
- const status=document.getElementById('quickStatus'),profile=JSON.parse(localStorage.getItem('marsMemberProfile')||'null');
- if(status){const d=profile?getMemberData(profile):null;status.textContent='แปลงที่เลือก: '+parcels[selected].id+' • '+(d&&d.plots.includes(parcels[selected].id)?'บันทึกในพื้นที่ของคุณแล้ว':'ยังไม่ได้บันทึก')+' • เครดิต: '+(d?d.wallet.toLocaleString():'1,000')+' MLC';}
-}
-const originalShowParcel=showParcel;
-showParcel=function(){originalShowParcel();renderQuickPlay();};
-document.addEventListener('DOMContentLoaded',renderQuickPlay);
-setTimeout(renderQuickPlay,500);
-</script>
-
-<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(console.error))}</script>
-<script>
-(function(){
- const $=id=>document.getElementById(id);
- const epochKey='marsLocalWorldEpoch';
- let epoch=Number(localStorage.getItem(epochKey));
- if(!Number.isFinite(epoch)||epoch<=0){epoch=Date.now();localStorage.setItem(epochKey,String(epoch));}
- const marsDayMs=24*60*60*1000*1.02749125;
- const events=['ลมฝุ่นระดับเบาเคลื่อนผ่านที่ราบ','ระบบสำรวจอัตโนมัติกำลังสแกนภูมิประเทศ','แสงอาทิตย์กำลังเปลี่ยนมุมตกกระทบ','สถานีก่อสร้างกำลังตรวจสอบพลังงาน','ดาวเทียมจำลองส่งข้อมูลภูมิประเทศ'];
- function tick(){
-  const now=Date.now(),elapsed=Math.max(0,now-epoch),sol=Math.floor(elapsed/marsDayMs)+1,dayMs=elapsed%marsDayMs;
-  const totalSeconds=Math.floor(dayMs/1000),hh=String(Math.floor(totalSeconds/3600)).padStart(2,'0'),mm=String(Math.floor(totalSeconds%3600/60)).padStart(2,'0'),ss=String(totalSeconds%60).padStart(2,'0');
-  const phase=dayMs/marsDayMs,light=phase<.25?'รุ่งอรุณ':phase<.5?'กลางวัน':phase<.75?'พลบค่ำ':'กลางคืน';
-  const worldMinute=Math.floor(elapsed/60000),event=events[Math.floor(worldMinute/5)%events.length];
-  if($('marsClock'))$('marsClock').textContent=hh+':'+mm+':'+ss;
-  if($('marsSol'))$('marsSol').textContent='SOL '+String(sol).padStart(4,'0');
-  if($('marsDayPhase'))$('marsDayPhase').textContent=light;
-  if($('marsWorldEvent'))$('marsWorldEvent').textContent=event;
-  if($('planetLiveUpdated'))$('planetLiveUpdated').textContent='อัปเดตล่าสุด '+new Date(now).toLocaleTimeString('th-TH');
-  if($('marsWorldElapsed'))$('marsWorldElapsed').textContent='โลกจำลองเดินมาแล้ว '+Math.floor(elapsed/86400000)+' วัน '+Math.floor(elapsed%86400000/3600000)+' ชั่วโมง ตามเวลาจริง';
- }
- tick();setInterval(tick,1000);
- document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick()});
- window.addEventListener('pageshow',tick);
-})();
-</script>
-<style>@keyframes marsDustDrift{from{transform:translateX(-25px)}to{transform:translateX(35px)}}#mars4dPanel .member-card b{font-size:18px}</style>
-<script>(function(){const key='marsLocal4DState',solMs=88775244;let s;try{s=JSON.parse(localStorage.getItem(key)||'null')}catch(e){}if(!s||!Number.isFinite(s.worldMs))s={worldMs:0,last:Date.now(),speed:1};s.last=Date.now();if(!localStorage.getItem('mars4dAutoSpeedV2')){s.speed=3600;localStorage.setItem('mars4dAutoSpeedV2','1')}const $=id=>document.getElementById(id),events=['ฝุ่นละเอียดเคลื่อนผ่านที่ราบ','ยานสำรวจกำลังทำแผนที่','อุณหภูมิพื้นผิวเปลี่ยนตามแสงอาทิตย์','สถานีกำลังตรวจสอบพลังงาน','ดาวเทียมส่งข้อมูลภูมิประเทศ','ทีมก่อสร้างเตรียมพื้นที่อาคาร'],weather=['ท้องฟ้าโปร่ง','ลมฝุ่นเบา','หมอกฝุ่นบาง','พายุฝุ่นกำลังเข้าใกล้','ท้องฟ้าแจ่มใส'];function save(){localStorage.setItem(key,JSON.stringify(s))}window.setMars4DSpeed=function(n){s.speed=n;s.last=Date.now();save();tick()};function tick(){const now=Date.now();s.worldMs+=(now-s.last)*s.speed;s.last=now;const day=s.worldMs%solMs,phase=day/solMs,sec=Math.floor(day/1000),hh=String(Math.floor(sec/3600)%24).padStart(2,'0'),mm=String(Math.floor(sec/60)%60).padStart(2,'0'),ss=String(sec%60).padStart(2,'0'),sol=Math.floor(s.worldMs/solMs)+1,light=phase<.22?'รุ่งอรุณ':phase<.48?'กลางวัน':phase<.68?'พลบค่ำ':'กลางคืน',wi=Math.floor(s.worldMs/(solMs/5))%5,ei=Math.floor(s.worldMs/(solMs/6))%6; if($('mars4dClock'))$('mars4dClock').textContent=hh+':'+mm+':'+ss;if($('mars4dSol'))$('mars4dSol').textContent='SOL '+String(sol).padStart(4,'0');if($('mars4dPhase'))$('mars4dPhase').textContent=light;if($('mars4dWeather'))$('mars4dWeather').textContent=weather[wi];if($('mars4dWind'))$('mars4dWind').textContent='ความเร็วลมจำลอง '+[8,24,38,72,12][wi]+' กม./ชม.';if($('mars4dEvent'))$('mars4dEvent').textContent=events[ei]+' • เปลี่ยนตามเวลาโลกจำลอง';if($('mars4dSpeedLabel'))$('mars4dSpeedLabel').textContent='ความเร็ว '+s.speed.toLocaleString()+'× • เวลาจำลองเดินต่อเนื่อง';const sky=$('mars4dSky');if(sky){sky.style.background=phase<.22?'linear-gradient(180deg,#172b4b,#b8795b)':phase<.48?'linear-gradient(180deg,#4b7895,#d99a68)':phase<.68?'linear-gradient(180deg,#46344d,#bc6949)':'linear-gradient(180deg,#071226,#17223a)';sky.style.opacity=wi===3?'.55':'1'}if(window.applyMars4DVisual)window.applyMars4DVisual(phase,wi);if(now%5000<1000)save()}tick();setInterval(tick,250);document.addEventListener('visibilitychange',()=>{s.last=Date.now();if(!document.hidden)tick()})})();</script></body></html>
+<nav class="bottom"><button class="active" data-tab="explore">🌎 สำรวจ</button><button data-tab="market">🪙 ตลาดที่ดิน</button><button data-tab="colony">🏗️ เมืองของฉัน</button><button data-tab="account">👤 สมาชิก</button></nav>
+<div id="toast"></div>
+<div id="login"><div class="panel modal"><h3>สมาชิก MARS LAND</h3><input id="username" placeholder="ชื่อสมาชิก"><input id="email" type="email" placeholder="อีเมล (ทดลอง)"><button class="primary full" id="loginBtn">บันทึกโปรไฟล์ทดลอง</button><button class="full" id="closeLogin">ปิด</button><p class="small">บัญชีนี้บันทึกในเครื่องเท่านั้น ยังไม่เชื่อมระบบสมาชิกออนไลน์</p></div></div>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+const root=document.querySelector('#scene'),scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(45,innerWidth/innerHeight,.1,100);camera.position.set(0,0,4.4);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;root.appendChild(renderer.domElement);
+scene.add(new THREE.AmbientLight(0xffffff,1.2));const sun=new THREE.DirectionalLight(0xffd2b2,2.5);sun.position.set(4,3,5);scene.add(sun);
+const group=new THREE.Group();scene.add(group);
+const loader=new THREE.TextureLoader();const marsMat=new THREE.MeshStandardMaterial({color:0xc65e3d,roughness:1});
+loader.load('https://threejs.org/examples/textures/planets/mars_1k_color.jpg',t=>{marsMat.map=t;marsMat.color.set(0xffffff);marsMat.needsUpdate=true},undefined,()=>{});
+const mars=new THREE.Mesh(new THREE.SphereGeometry(1,72,72),marsMat);group.add(mars);
+const glow=new THREE.Mesh(new THREE.SphereGeometry(1.025,48,48),new THREE.MeshBasicMaterial({color:0xf0784d,transparent:true,opacity:.07,side:THREE.BackSide}));group.add(glow);
+const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.minDistance=1.7;controls.maxDistance=8;controls.autoRotate=true;controls.autoRotateSpeed=.35;
+const parcels=[
+['M-001',18,10],['M-002',-12,24],['M-003',45,-15],['M-004',-48,-8],['M-005',90,12],['M-006',130,-22],
+['M-007',-105,28],['M-008',155,42],['M-009',-155,-35],['M-010',65,48],['M-011',-25,-48],['M-012',-75,55]
+].map((p,i)=>({id:p[0],lon:p[1],lat:p[2],owner:null,building:null,price:100+i*25}));
+const markerMat=(color)=>new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:.3});
+const markers=[];
+function pos(lon,lat,r=1.014){const a=THREE.MathUtils.degToRad(90-lat),b=THREE.MathUtils.degToRad(lon+90);return new THREE.Vector3(-r*Math.sin(a)*Math.cos(b),r*Math.cos(a),r*Math.sin(a)*Math.sin(b))}
+parcels.forEach(p=>{const m=new THREE.Mesh(new THREE.SphereGeometry(.025,12,12),markerMat(0x55dce8));m.position.copy(pos(p.lon,p.lat));m.userData.plot=p;group.add(m);markers.push(m)});
+const ray=new THREE.Raycaster(),pointer=new THREE.Vector2();let selected=null,auto=true;
+renderer.domElement.addEventListener('pointerup',e=>{pointer.x=e.clientX/innerWidth*2-1;pointer.y=-(e.clientY/innerHeight)*2+1;ray.setFromCamera(pointer,camera);const hits=ray.intersectObjects(markers);if(hits.length){selectPlot(hits[0].object.userData.plot)}});
+function selectPlot(p){selected=p;document.querySelector('#selected').textContent=p.id;document.querySelector('#coords').textContent=`${p.lat.toFixed(1)}°, ${p.lon.toFixed(1)}°`;document.querySelector('#plotInfo').style.display='none';document.querySelector('#plotActions').style.display='block';document.querySelector('#plotName').textContent=p.id;document.querySelector('#plotMeta').textContent=`พิกัด ${p.lat}°N / ${p.lon}°E • ${p.owner?'มีผู้จองแล้ว':'พร้อมจอง'}`;document.querySelector('#plotPrice').textContent=p.price+' MLC';document.querySelector('#claim').disabled=!!p.owner;document.querySelector('#claim').textContent=p.owner?'มีผู้จองแล้ว':'จองแปลงจำลอง';updateStats()}
+const state=JSON.parse(localStorage.getItem('marsland-demo')||'{}');state.owned=state.owned||[];state.buildings=state.buildings||{};state.profile=state.profile||null;
+parcels.forEach(p=>{if(state.owned.includes(p.id))p.owner=state.profile?.name||'You';if(state.buildings[p.id])p.building=state.buildings[p.id]});
+function save(){localStorage.setItem('marsland-demo',JSON.stringify(state));updateStats()}
+function updateStats(){document.querySelector('#owned').textContent=state.owned.length;document.querySelector('#buildings').textContent=Object.keys(state.buildings).length;markers.forEach(m=>m.material.color.set(m.userData.plot.owner?0xffa45f:0x55dce8))}
+function toast(s){const t=document.querySelector('#toast');t.textContent=s;t.style.display='block';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.style.display='none',2600)}
+document.querySelector('#claim').onclick=()=>{if(!selected)return;if(!state.profile){toast('กรุณาสร้างโปรไฟล์ทดลองก่อน');openLogin();return}if(!selected.owner){selected.owner=state.profile.name;state.owned.push(selected.id);save();selectPlot(selected);toast('จองแปลงทดลองแล้ว (ยังไม่มีการชำระเงินจริง)')}};
+document.querySelector('#build').onclick=()=>{if(!selected)return;if(!state.owned.includes(selected.id)){toast('ต้องจองแปลงจำลองก่อน');return}selected.building=document.querySelector('#building').value;state.buildings[selected.id]=selected.building;save();const b=new THREE.Mesh(new THREE.BoxGeometry(.07,.07,.07),new THREE.MeshStandardMaterial({color:0x75d6c5,metalness:.35,roughness:.4}));b.position.copy(pos(selected.lon,selected.lat,1.055));b.lookAt(0,0,0);group.add(b);toast('วาง '+selected.building+' บน '+selected.id+' แล้ว');};
+function openLogin(){document.querySelector('#login').style.display='grid';if(state.profile){document.querySelector('#username').value=state.profile.name;document.querySelector('#email').value=state.profile.email||''}}
+document.querySelector('#account').onclick=openLogin;document.querySelector('#closeLogin').onclick=()=>document.querySelector('#login').style.display='none';
+document.querySelector('#loginBtn').onclick=()=>{const name=document.querySelector('#username').value.trim();if(!name){toast('กรุณาใส่ชื่อสมาชิก');return}state.profile={name,email:document.querySelector('#email').value.trim()};save();document.querySelector('#login').style.display='none';document.querySelector('#account').textContent='👤 '+name;toast('บันทึกโปรไฟล์ทดลองแล้ว')};
+document.querySelector('#rotate').onclick=()=>{auto=!auto;controls.autoRotate=auto;document.querySelector('#rotate').textContent='หมุนอัตโนมัติ: '+(auto?'เปิด':'ปิด');document.querySelector('#rotate').classList.toggle('active',auto)};
+document.querySelector('#reset').onclick=()=>{camera.position.set(0,0,4.4);controls.target.set(0,0,0);controls.update()};
+document.querySelectorAll('.bottom button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.bottom button').forEach(x=>x.classList.remove('active'));b.classList.add('active');const tab=b.dataset.tab;if(tab==='market'){toast('ตลาดที่ดิน: แตะจุดสีฟ้าบนดาวเพื่อดูแปลง')}if(tab==='colony'){toast(`เมืองของคุณมี ${state.owned.length} แปลง และ ${Object.keys(state.buildings).length} อาคาร`)}if(tab==='account')openLogin()});
+updateStats();if(state.profile)document.querySelector('#account').textContent='👤 '+state.profile.name;
+function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}animate();
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+</script></body></html>
