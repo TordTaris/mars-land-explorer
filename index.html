@@ -177,16 +177,55 @@ let selected=0,built=Number(localStorage.getItem('marsBuilt')||0),scale=1,down=f
 document.getElementById('builtCount').textContent=built;
 let scene,camera,renderer,globe,markers=[],structureMeshes=[],infraMeshes=[],dragging=false;
 function makeTexture(){
- const c=document.createElement('canvas');c.width=1024;c.height=512;const x=c.getContext('2d');
- const g=x.createLinearGradient(0,0,1024,512);g.addColorStop(0,'#9f4938');g.addColorStop(.5,'#c66b4b');g.addColorStop(1,'#5e2929');x.fillStyle=g;x.fillRect(0,0,1024,512);
- for(let i=0;i<1800;i++){let px=Math.random()*1024,py=Math.random()*512,r=2+Math.random()*25;x.beginPath();x.arc(px,py,r,0,Math.PI*2);x.fillStyle=Math.random()>.5?'rgba(55,24,26,.18)':'rgba(255,183,125,.13)';x.fill()}
- for(let i=0;i<90;i++){let px=Math.random()*1024,py=Math.random()*512,r=3+Math.random()*15;x.beginPath();x.arc(px,py,r,0,Math.PI*2);x.fillStyle='rgba(35,20,25,.22)';x.fill();x.strokeStyle='rgba(255,190,140,.18)';x.stroke()}
- return new THREE.CanvasTexture(c);
+ const W=1536,H=768,seed=20261103;let state=seed;
+ const rand=()=>{state=(state*1664525+1013904223)>>>0;return state/4294967296};
+ const grids=[{w:8,h:4,a:[]},{w:18,h:9,a:[]},{w:42,h:21,a:[]},{w:96,h:48,a:[]}];
+ grids.forEach(g=>{g.a=Array.from({length:g.w*g.h},rand)});
+ function noise(g,u,v){
+  const x=u*g.w,y=v*g.h,ix=Math.floor(x),iy=Math.floor(y),fx=x-ix,fy=y-iy;
+  const smooth=t=>t*t*(3-2*t),sx=smooth(fx),sy=smooth(fy);
+  const at=(xx,yy)=>g.a[((yy%g.h+g.h)%g.h)*g.w+((xx%g.w+g.w)%g.w)];
+  const a=at(ix,iy)*(1-sx)+at(ix+1,iy)*sx,b=at(ix,iy+1)*(1-sx)+at(ix+1,iy+1)*sx;
+  return a*(1-sy)+b*sy;
+ }
+ const color=document.createElement('canvas'),bump=document.createElement('canvas');
+ color.width=bump.width=W;color.height=bump.height=H;
+ const cx=color.getContext('2d'),bx=bump.getContext('2d'),img=cx.createImageData(W,H),bimg=bx.createImageData(W,H);
+ for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+  const u=x/W,v=y/H,lat=Math.abs(v-.5)*2;
+  const n=noise(grids[0],u,v)*.42+noise(grids[1],u,v)*.29+noise(grids[2],u,v)*.19+noise(grids[3],u,v)*.10;
+  const ridge=Math.max(0,noise(grids[2],u*1.8,v*1.7)-.62)*.55;
+  const h=Math.max(0,Math.min(1,n*.78+ridge));
+  let r=105+h*83,g=48+h*61,b=37+h*43;
+  const dark= Math.max(0,(.34-h)*110);
+  r-=dark;g-=dark*.72;b-=dark*.5;
+  const polar=Math.max(0,(lat-.84)/.16);
+  r=r*(1-polar)+214*polar;g=g*(1-polar)+204*polar;b=b*(1-polar)+190*polar;
+  const i=(y*W+x)*4;img.data[i]=r;img.data[i+1]=g;img.data[i+2]=b;img.data[i+3]=255;
+  const z=Math.max(0,Math.min(255,75+h*135+ridge*50+polar*35));
+  bimg.data[i]=bimg.data[i+1]=bimg.data[i+2]=z;bimg.data[i+3]=255;
+ }
+ cx.putImageData(img,0,0);bx.putImageData(bimg,0,0);
+ // Deterministic impact craters with raised rims, shadowed interiors and matching relief.
+ for(let i=0;i<620;i++){
+  const px=rand()*W,py=rand()*H,rad=2+Math.pow(rand(),2)*34;
+  const shade=rand()>.5;
+  let grad=cx.createRadialGradient(px-rad*.22,py-rad*.25,rad*.08,px,py,rad);
+  grad.addColorStop(0,shade?'rgba(48,28,25,.34)':'rgba(230,151,105,.12)');
+  grad.addColorStop(.68,'rgba(76,39,32,.20)');grad.addColorStop(.86,'rgba(224,151,111,.42)');grad.addColorStop(1,'rgba(54,29,27,.10)');
+  cx.fillStyle=grad;cx.beginPath();cx.arc(px,py,rad,0,Math.PI*2);cx.fill();
+  let bg=bx.createRadialGradient(px,py,rad*.48,px,py,rad);
+  bg.addColorStop(0,'rgba(15,15,15,.62)');bg.addColorStop(.72,'rgba(20,20,20,.22)');bg.addColorStop(.9,'rgba(235,235,235,.65)');bg.addColorStop(1,'rgba(130,130,130,.08)');
+  bx.fillStyle=bg;bx.beginPath();bx.arc(px,py,rad,0,Math.PI*2);bx.fill();
+ }
+ const map=new THREE.CanvasTexture(color),bumpMap=new THREE.CanvasTexture(bump);
+ map.colorSpace=THREE.SRGBColorSpace;map.anisotropy=8;bumpMap.anisotropy=8;
+ return {map,bumpMap};
 }
 function init(){
  scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(42,canvas.clientWidth/canvas.clientHeight,.1,100);camera.position.z=3.4;
  renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));
- const sphere=new THREE.SphereGeometry(1,64,48),mat=new THREE.MeshStandardMaterial({map:makeTexture(),roughness:1});
+ const sphere=new THREE.SphereGeometry(1,128,96),surface=makeTexture(),mat=new THREE.MeshStandardMaterial({map:surface.map,bumpMap:surface.bumpMap,bumpScale:.052,roughness:.98,metalness:0});
  globe=new THREE.Mesh(sphere,mat);scene.add(globe);
  scene.add(new THREE.AmbientLight(0xffffff,1.25));let light=new THREE.DirectionalLight(0xffd1a1,2.1);light.position.set(-3,2,4);scene.add(light);
  let atmosphere=new THREE.Mesh(new THREE.SphereGeometry(1.035,48,32),new THREE.MeshBasicMaterial({color:0xd46b4b,transparent:true,opacity:.09,side:THREE.BackSide}));scene.add(atmosphere);
