@@ -1,1 +1,37 @@
-const CACHE="mars-land-shell-v1";const ASSETS=["./","./index.html","./manifest.webmanifest","./icon.svg"];self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));self.addEventListener("activate",e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))));self.addEventListener("fetch",e=>{const u=new URL(e.request.url);if(e.request.method!=="GET"||u.origin!==location.origin)return;e.respondWith(caches.match(e.request).then(hit=>hit||fetch(e.request).then(res=>{if(res.ok){const copy=res.clone();caches.open(CACHE).then(c=>c.put(e.request,copy))}return res}).catch(()=>caches.match("./index.html"))))});
+const CACHE="mars-land-shell-v2";
+const ASSETS=["./","./index.html","./manifest.webmanifest","./icon.svg"];
+self.addEventListener("install",event=>{
+  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)));
+  self.skipWaiting();
+});
+self.addEventListener("activate",event=>{
+  event.waitUntil((async()=>{
+    const keys=await caches.keys();
+    await Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)));
+    await self.clients.claim();
+  })());
+});
+self.addEventListener("fetch",event=>{
+  const request=event.request;
+  const url=new URL(request.url);
+  if(request.method!=="GET"||url.origin!==self.location.origin)return;
+  event.respondWith((async()=>{
+    const isPage=request.mode==="navigate"||url.pathname.endsWith("/index.html")||url.pathname.endsWith("/");
+    if(isPage){
+      try{
+        const fresh=await fetch(request,{cache:"no-store"});
+        if(fresh.ok){const cache=await caches.open(CACHE);await cache.put(request,fresh.clone());}
+        return fresh;
+      }catch(error){
+        return (await caches.match(request))||(await caches.match("./index.html"));
+      }
+    }
+    const cached=await caches.match(request);
+    if(cached)return cached;
+    try{
+      const fresh=await fetch(request);
+      if(fresh.ok){const cache=await caches.open(CACHE);await cache.put(request,fresh.clone());}
+      return fresh;
+    }catch(error){return Response.error();}
+  })());
+});
