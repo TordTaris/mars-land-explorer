@@ -1,6 +1,6 @@
 {
-  "name": "MARS LAND Explorer",
-  "short_name": "MARS LAND",
+  "name": "Mars Local",
+  "short_name": "Mars Local",
   "lang": "th",
   "start_url": "./",
   "scope": "./",
@@ -8,7 +8,7 @@
   "orientation": "portrait",
   "background_color": "#080d18",
   "theme_color": "#0d1422",
-  "description": "สำรวจดาวอังคาร เลือกแปลง และทดลองสร้างเมือง",
+  "description": "Mars Local — สำรวจดาวอังคาร เลือกแปลง และสร้างอาณานิคม 3D",
   "icons": [
     {
       "src": "./icon.svg",
