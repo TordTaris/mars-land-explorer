@@ -84,7 +84,7 @@ button.primary{background:linear-gradient(120deg,#d99b61,#955336);color:#fff7ee;
 const canvas=document.getElementById('planet');
 const terrainTypes=['ที่ราบลาวา','หุบเขาหิน','ที่ราบสูง','ขอบหลุมอุกกาบาต','เนินทราย','ที่ราบน้ำแข็ง'];
 const resourceTypes=['น้ำแข็งใต้ผิวดิน','แร่เหล็ก','ซิลิกา','หินบะซอลต์','แร่แมกนีเซียม','คาร์บอนไดออกไซด์'];
-const parcels=Array.from({length:12},(_,i)=>({id:'M-'+String(i+1).padStart(3,'0'),lat:-55+(i*29)%110,lon:-160+(i*67)%320,area:1000+(i*275)%2400,price:120+(i*37)%260,status:'พร้อมสำรวจ',terrain:terrainTypes[i%terrainTypes.length],resource:resourceTypes[(i*3)%resourceTypes.length],elevation:350+(i*217)%4200,slope:2+(i*7)%24,risk:['ต่ำ','ปานกลาง','สูง'][i%3]})));
+const parcels=Array.from({length:12},(_,i)=>({id:'M-'+String(i+1).padStart(3,'0'),lat:-55+(i*29)%110,lon:-160+(i*67)%320,area:1000+(i*275)%2400,price:120+(i*37)%260,status:'พร้อมสำรวจ',terrain:terrainTypes[i%terrainTypes.length],resource:resourceTypes[(i*3)%resourceTypes.length],elevation:350+(i*217)%4200,slope:2+(i*7)%24,risk:['ต่ำ','ปานกลาง','สูง'][i%3]}));
 let selected=0,built=Number(localStorage.getItem('marsBuilt')||0),scale=1,down=false,lastX=0,lastY=0;
 document.getElementById('builtCount').textContent=built;
 let scene,camera,renderer,globe,markers=[],dragging=false;
