@@ -200,8 +200,8 @@ document.querySelector('#tick').onclick=()=>{const rates=[-.8,-.5,-.7,-.6];activ
 document.querySelector('#reset').onclick=()=>{vals=[98,96,91,88];active.fill(true);document.querySelectorAll('.switch').forEach(b=>{b.textContent='● ONLINE';b.classList.remove('off')});document.querySelector('#days').textContent='180 วัน';document.querySelector('#simMessage').textContent='รีเซ็ตการจำลองแล้ว';render()};render();
 </script>
 <script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js';
-import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/controls/OrbitControls.js';
+import * as THREE from 'https://esm.sh/three@0.160.1';
+import { OrbitControls } from 'https://esm.sh/three@0.160.1/examples/jsm/controls/OrbitControls.js';
 (()=>{
 const host=document.getElementById('threeViewport');if(!host)return;
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x081726);scene.fog=new THREE.Fog(0x081726,24,52);
@@ -217,10 +217,10 @@ const floorMat=mat(0x10283a),wallMat=mat(0x25485e,.58,.35),trimMat=mat(0x071b2b,
 const floorNames=()=>window.marsFloorRooms||[];
 function clearGroup(g){while(g.children.length){const o=g.children.pop();if(o.geometry)o.geometry.dispose();}}
 function box(parent,w,h,d,x,y,z,material,cast=true){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);m.position.set(x,y,z);m.castShadow=cast;m.receiveShadow=true;parent.add(m);return m;}
-function labelTexture(text){const cv=document.createElement('canvas');cv.width=128;cv.height=32;const ctx=cv.getContext('2d');ctx.fillStyle='#071827';ctx.fillRect(0,0,512,128);ctx.strokeStyle='#54d9e8';ctx.lineWidth=2;ctx.strokeRect(4,4,504,120);ctx.fillStyle='#f4e2bc';ctx.font='bold 10px monospace';ctx.textAlign='center';ctx.fillText(text.slice(0,28),64,19);const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;return tex;}
+function labelTexture(text){const cv=document.createElement('canvas');cv.width=128;cv.height=32;const ctx=cv.getContext('2d');ctx.fillStyle='#071827';ctx.fillRect(0,0,128,32);ctx.strokeStyle='#54d9e8';ctx.lineWidth=2;ctx.strokeRect(2,2,124,28);ctx.fillStyle='#f4e2bc';ctx.font='bold 10px monospace';ctx.textAlign='center';ctx.fillText(text.slice(0,28),64,19);const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;return tex;}
 function build(floorIndex){
  selectedFloor=floorIndex;clearGroup(base);roomMeshes=[];base.rotation.y=0;
- const N=19, M=15, cell=1, grid=Array.from({length:M},()=>Array(N).fill(1));
+ const N=23, M=15, cell=1, grid=Array.from({length:M},()=>Array(N).fill(1));
  // Designed facility layout inspired by the supplied reference image:
  // central command spine, cross corridors, side branches and eight connected chambers.
  for(let z=1;z<M-1;z++)for(let x=1;x<N-1;x++)grid[z][x]=1;
