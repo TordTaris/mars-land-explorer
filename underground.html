@@ -320,39 +320,60 @@ function showFloor(i){
  window.currentMarsFloor=i;
  renderFloorDirectory(i);
 }
+let marsLiftBusy=false,marsLiftTimer=null;
+function setLiftControls(disabled){
+ elevatorSelect.disabled=disabled;
+ document.querySelectorAll('.floor').forEach(b=>b.disabled=disabled);
+ document.querySelector('#elevatorGo').disabled=disabled;
+ document.querySelector('#floorPrev').disabled=disabled||window.currentMarsFloor<=0;
+ document.querySelector('#floorNext').disabled=disabled||window.currentMarsFloor>=floors.length-1;
+}
 window.goToMarsFloor=function(value){
+ if(marsLiftBusy)return;
  const parsed=Number(value);
- const i=Math.max(0,Math.min(floors.length-1,Number.isFinite(parsed)?parsed:0));
+ const i=Math.max(0,Math.min(floors.length-1,Number.isFinite(parsed)?Math.trunc(parsed):0));
  const f=floors[i],code='B'+String(i+1).padStart(2,'0');
  const consoleEl=document.querySelector('.elevator-console');
  const status=document.querySelector('#elevatorStatus');
- const go=document.querySelector('#elevatorGo');
  if(i===window.currentMarsFloor){
-  status.textContent='ลิฟต์จอดอยู่ที่ '+code+' · '+f[0];
   elevatorSelect.value=String(i);
+  status.textContent='ลิฟต์จอดอยู่ที่ '+code+' · '+f[0];
   return;
  }
+ marsLiftBusy=true;
+ setLiftControls(true);
  consoleEl?.classList.add('traveling');
  status.textContent='ประตูลิฟต์ปิด · กำลังเดินทางไป '+code+' · '+f[0];
- if(go)go.disabled=true;
- window.setTimeout(()=>{
+ marsLiftTimer=window.setTimeout(()=>{
   showFloor(i);
-  history.replaceState(null,'',location.pathname+'?floor='+code+location.hash);
+  history.pushState({marsFloor:code},'',location.pathname+'?floor='+code+location.hash);
+  marsLiftBusy=false;
   consoleEl?.classList.remove('traveling');
-  if(go)go.disabled=false;
+  setLiftControls(false);
   status.textContent='ถึงปลายทางแล้ว · '+code+' · '+f[0];
+  marsLiftTimer=null;
  },650);
 };
 elevatorSelect.addEventListener('change',()=>{
  const parsed=Number(elevatorSelect.value);
- const i=Math.max(0,Math.min(floors.length-1,Number.isFinite(parsed)?parsed:0));
+ const i=Math.max(0,Math.min(floors.length-1,Number.isFinite(parsed)?Math.trunc(parsed):0));
  const f=floors[i],code='B'+String(i+1).padStart(2,'0');
  document.querySelector('#destinationPreview').textContent='ปลายทางที่เลือก: '+code+' · '+f[0]+' — กดเรียกลิฟต์เพื่อเดินทาง';
 });
 document.querySelector('#elevatorGo').addEventListener('click',()=>window.goToMarsFloor(elevatorSelect.value));
 document.querySelector('#floorPrev').addEventListener('click',()=>window.goToMarsFloor((window.currentMarsFloor??0)-1));
 document.querySelector('#floorNext').addEventListener('click',()=>window.goToMarsFloor((window.currentMarsFloor??0)+1));
+window.addEventListener('popstate',()=>{
+ if(marsLiftTimer!==null)window.clearTimeout(marsLiftTimer);
+ marsLiftBusy=false;
+ const code=new URLSearchParams(location.search).get('floor')||'B01';
+ const i=Math.max(0,Math.min(23,(parseInt(code.replace(/[^0-9]/g,''),10)||1)-1));
+ showFloor(i);
+ document.querySelector('#elevatorStatus').textContent='ลิฟต์พร้อมใช้งาน · B'+String(i+1).padStart(2,'0');
+ setLiftControls(false);
+});
 showFloor(initialFloor);
+setLiftControls(false);
 const systems=[['ระบบหมุนเวียนอากาศ','กรองฝุ่นและกระจายอากาศ'],['ระบบกำจัด CO₂','ดูดซับคาร์บอนไดออกไซด์'],['ระบบรีไซเคิลน้ำ','กรองและนำน้ำกลับมาใช้'],['ระบบผลิต O₂','ผลิตและสำรองออกซิเจน'],['ระบบผลิตอาหาร','ฟาร์มและคลังอาหาร'],['ระบบไฟฟ้าสำรอง','จ่ายไฟจากแบตเตอรี่']];
 const sysRoot=document.querySelector('#systems');const active=systems.map(()=>true);
 systems.forEach((s,i)=>{const d=document.createElement('div');d.className='system';d.innerHTML='<div><b>'+s[0]+'</b><small>'+s[1]+'</small></div><button class="switch">● ONLINE</button>';d.querySelector('button').onclick=()=>{active[i]=!active[i];d.querySelector('button').textContent=active[i]?'● ONLINE':'○ OFFLINE';d.querySelector('button').classList.toggle('off',!active[i]);document.querySelector('#simMessage').textContent=s[0]+(active[i]?' กลับมาทำงาน':' หยุดทำงาน — ค่าทรัพยากรจะลดลงเมื่อเดินเวลา')};sysRoot.appendChild(d)});
