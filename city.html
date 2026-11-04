@@ -896,7 +896,7 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
  const backdrop=document.querySelector('#inventoryBackdrop');
  function refreshInventory(){
   const get=id=>document.getElementById(id);
-  const creditText=get('credits')?.textContent||'5,000 ETH';
+  const creditText=get('credits')?.textContent||'$5,000 USD';
   get('inventoryCredits').textContent=creditText;
   get('inventoryBuildings').textContent=get('count')?.textContent||'0';
   const readStock=()=>{const stock=get('resourceStock')?.textContent||'';return stock};
