@@ -9,6 +9,7 @@ create table if not exists public.mars_city_resources (
   electronics integer not null default 45 check (electronics >= 0),
   updated_at timestamptz not null default now()
 );
+alter table public.mars_city_resources add column if not exists energy integer not null default 850 check (energy >= 0);
 alter table public.mars_city_resources enable row level security;
 drop policy if exists mars_city_resources_read_owner on public.mars_city_resources;
 create policy mars_city_resources_read_owner on public.mars_city_resources
