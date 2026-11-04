@@ -1,8 +1,8 @@
 <!doctype html>
-<html lang="th">
+<html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#0d1422"><meta name="description" content="LOCAL MARS — สำรวจดาวอังคารแบบสมจริง เลือกพื้นที่ และสร้างอาณานิคมจำลอง"><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0d1422"><meta name="description" content="LOCAL MARS — Explore the Red Planet, claim territory, and build a living off-world colony."><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml">
 <title>LOCAL MARS | Planet Explorer</title>
 <style>
 :root{--bg:#080d17;--panel:#101a2b;--line:#293b53;--text:#edf4ff;--muted:#93a7c2;--orange:#ff875c;--cyan:#5bd9e8;--green:#6ee7a8}
@@ -396,7 +396,7 @@ const pairs=[["LOCAL MARS","LOCAL MARS"],["PLANET EXPLORER","PLANET EXPLORER"],[
 const thToEn=new Map(pairs),enToTh=new Map(pairs.map(([th,en])=>[en,th]));
 const region=(navigator.language||'').toLowerCase();
 const zone=Intl.DateTimeFormat().resolvedOptions().timeZone||'';
-const detected=(region.startsWith('th')||zone==='Asia/Bangkok'||zone==='Asia/Bangkok')?'th':'en';
+const detected='en';
 let lang=localStorage.getItem('localMarsLanguage')||detected;
 if(!['th','en'].includes(lang))lang=detected;
 const clean=s=>s.replace(/\\s+/g,' ').trim();
