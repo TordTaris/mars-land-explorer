@@ -1,5 +1,5 @@
-const CACHE="mars-local-shell-v16";
-const ASSETS=["./","./index.html","./city.html","./manifest.webmanifest","./icon.svg"];
+const CACHE="mars-local-shell-v17";
+const ASSETS=["./","./index.html","./city.html","./underground.html","./manifest.webmanifest","./icon.svg"];
 self.addEventListener("install",event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)));
   self.skipWaiting();
