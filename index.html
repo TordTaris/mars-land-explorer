@@ -86,7 +86,7 @@ button.primary{background:linear-gradient(120deg,#e4bd70,#a87c3d);color:#1a1510;
 </head>
 <body>
 <div id="scene"></div>
-<header><div class="brand">🔴 MARS <span>LAND</span> <small style="font-size:9px;color:#91a5bd">LUXURY SPECIAL</small></div><div class="status">● LOCAL DEMO MODE</div></header>
+<header><div class="brand">🔴 MARS <span>LAND</span> <small style="font-size:9px;color:#91a5bd">LUXURY SPECIAL</small></div><div class="status" id="worldServerStatus">กำลังเชื่อมต่อ Marslocal…</div></header>
 <section class="panel left">
 <h3>MISSION CONTROL</h3>
 <div class="metric"><span>Planet</span><b>Mars / Sol 001</b></div>
@@ -115,11 +115,24 @@ button.primary{background:linear-gradient(120deg,#e4bd70,#a87c3d);color:#1a1510;
 <div class="metric"><span>แปลงที่จอง</span><b id="owned">0</b></div>
 <div class="metric"><span>อาคารที่สร้าง</span><b id="buildings">0</b></div>
 <button class="full" id="account">เข้าสู่ระบบ / สมัครสมาชิก</button>
-<div class="small">โหมดทดลอง: ข้อมูลบัญชีและการจองเก็บไว้ในอุปกรณ์นี้เท่านั้น ยังไม่ใช่กรรมสิทธิ์หรือการซื้อขายเงินจริง</div>
+<div class="small" id="worldServerUser">กำลังตรวจสอบบัญชีออนไลน์…</div>
+<div class="small" id="worldServerCounts">กำลังโหลดข้อมูลโลก…</div>
+<button class="full" id="worldServerLogout" style="display:none">ออกจากระบบ</button>
+<div class="small">พื้นที่และทรัพยากรเป็นข้อมูลจำลองภายในเกม ไม่ใช่กรรมสิทธิ์หรือการซื้อขายเงินจริง</div>
 </section>
 <nav class="bottom"><button class="active" data-tab="explore">🌎 สำรวจ</button><button data-tab="market">🪙 ตลาดจำลอง</button><button data-tab="colony">🏙️ เมืองของฉัน</button><button data-tab="city">🏗️ จำลองก่อสร้าง</button><button data-tab="underground">🏚️ ฐาน 24 ชั้น</button><button data-tab="account">👤 สมาชิก</button></nav>
 <div id="toast"></div>
-<div id="login"><div class="panel modal"><h3>สมาชิก MARS LAND</h3><input id="username" placeholder="ชื่อสมาชิก"><input id="email" type="email" placeholder="อีเมล (ทดลอง)"><button class="primary full" id="loginBtn">บันทึกโปรไฟล์ทดลอง</button><button class="full" id="closeLogin">ปิด</button><p class="small">บัญชีนี้บันทึกในเครื่องเท่านั้น ยังไม่เชื่อมระบบสมาชิกออนไลน์</p></div></div>
+<div id="login"><div class="panel modal"><h3>สมาชิก MARS LAND ONLINE</h3>
+<input id="username" placeholder="ชื่อสมาชิก (ใช้ตอนสมัคร)">
+<input id="email" type="email" autocomplete="email" placeholder="อีเมล">
+<input id="password" type="password" autocomplete="current-password" placeholder="รหัสผ่านอย่างน้อย 8 ตัว">
+<button class="primary full" id="loginBtn">สมัครสมาชิกออนไลน์</button>
+<button class="full" id="signInBtn">เข้าสู่ระบบ</button>
+<button class="full" id="closeLogin">ปิด</button>
+<p class="small">บัญชีสมาชิกจัดเก็บผ่าน Supabase Auth ของ Marslocal หากเปิดยืนยันอีเมล กรุณากดยืนยันจากอีเมลก่อนเข้าสู่ระบบ</p>
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="./world-server.js"></script>
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
 </script>
@@ -180,11 +193,15 @@ parcels.forEach(p=>{if(state.owned.includes(p.id))p.owner=state.profile?.name||'
 function save(){localStorage.setItem('marsland-demo',JSON.stringify(state));updateStats()}
 function updateStats(){document.querySelector('#owned').textContent=state.owned.length;document.querySelector('#buildings').textContent=Object.keys(state.buildings).length;markers.forEach(m=>m.material.color.set(m.userData.plot.owner?0xffa45f:0x55dce8))}
 function toast(s){const t=document.querySelector('#toast');t.textContent=s;t.style.display='block';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.style.display='none',2600)}
-document.querySelector('#claim').onclick=()=>{if(!selected)return;if(!state.profile){toast('กรุณาสร้างโปรไฟล์ทดลองก่อน');openLogin();return}if(!selected.owner){selected.owner=state.profile.name;state.owned.push(selected.id);save();selectPlot(selected);toast('จองแปลงทดลองแล้ว (ยังไม่มีการชำระเงินจริง)')}};
-document.querySelector('#build').onclick=()=>{if(!selected)return;if(!state.owned.includes(selected.id)){toast('ต้องจองแปลงจำลองก่อน');return}selected.building=document.querySelector('#building').value;state.buildings[selected.id]=selected.building;save();const b=new THREE.Mesh(new THREE.BoxGeometry(.07,.07,.07),new THREE.MeshStandardMaterial({color:0x75d6c5,metalness:.35,roughness:.4}));b.position.copy(pos(selected.lon,selected.lat,1.055));b.lookAt(0,0,0);group.add(b);toast('วาง '+selected.building+' บน '+selected.id+' แล้ว');};
-function openLogin(){document.querySelector('#login').style.display='grid';if(state.profile){document.querySelector('#username').value=state.profile.name;document.querySelector('#email').value=state.profile.email||''}}
+document.querySelector('#claim').onclick=async()=>{if(!selected)return;const result=await window.MarsWorldServer?.claim(selected.id);if(result?.error){toast(result.error.message);if(!window.MarsWorldServer?.getState().user)openLogin();return;}toast('จอง '+selected.id+' ในโลกออนไลน์สำเร็จ');};
+const typeMap={Habitat:'ฐานที่อยู่อาศัย',Lab:'ห้องปฏิบัติการ',Greenhouse:'โรงเรือนปลูกพืช',Solar:'แผงพลังงานแสงอาทิตย์'};
+document.querySelector('#build').onclick=async()=>{if(!selected)return;const result=await window.MarsWorldServer?.build(selected.id,typeMap[document.querySelector('#building').value]);if(result?.error){toast(result.error.message);if(!window.MarsWorldServer?.getState().user)openLogin();return;}selected.building=document.querySelector('#building').value;state.buildings[selected.id]=selected.building;save();toast('บันทึกสิ่งปลูกสร้าง '+selected.id+' ลงโลกออนไลน์แล้ว');};
+function openLogin(){document.querySelector('#login').style.display='grid'}
 document.querySelector('#account').onclick=openLogin;document.querySelector('#closeLogin').onclick=()=>document.querySelector('#login').style.display='none';
-document.querySelector('#loginBtn').onclick=()=>{const name=document.querySelector('#username').value.trim();if(!name){toast('กรุณาใส่ชื่อสมาชิก');return}state.profile={name,email:document.querySelector('#email').value.trim()};save();document.querySelector('#login').style.display='none';document.querySelector('#account').textContent='👤 '+name;toast('บันทึกโปรไฟล์ทดลองแล้ว')};
+document.querySelector('#loginBtn').onclick=async()=>{const r=await window.MarsWorldServer?.auth('signup');if(r?.error){toast(r.error.message);return;}if(r?.data?.needsEmailConfirmation){toast('สมัครแล้ว กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ');return;}document.querySelector('#login').style.display='none';toast('สมัครสมาชิกออนไลน์สำเร็จ')};
+document.querySelector('#signInBtn').onclick=async()=>{const r=await window.MarsWorldServer?.auth('signin');if(r?.error){toast(r.error.message);return;}document.querySelector('#login').style.display='none';toast('เข้าสู่ระบบออนไลน์สำเร็จ')};
+document.querySelector('#worldServerLogout').onclick=async()=>{await window.MarsWorldServer?.logout();toast('ออกจากระบบแล้ว')};
+document.addEventListener('mars-world-updated',e=>{const d=e.detail||{};parcels.forEach(p=>{const claim=d.claims?.find(x=>x.parcel_id===p.id);p.owner=claim?claim.owner_id:null;const structure=d.structures?.find(x=>x.parcel_id===p.id);p.building=structure?.structure_type||null;});const mine=d.claims?.filter(x=>x.owner_id===d.user?.id)||[];document.querySelector('#owned').textContent=mine.length;document.querySelector('#buildings').textContent=(d.structures||[]).filter(x=>x.owner_id===d.user?.id).length;markers.forEach(m=>m.material.color.set(m.userData.plot.owner?0xffa45f:0x55dce8));if(selected)selectPlot(selected);});
 document.querySelector('#navExplore').onclick=()=>{toast('แตะจุดสีฟ้าบนดาวเพื่อเลือกแปลงสำรวจ')};
 document.querySelector('#navCity').onclick=()=>location.href='./city.html';
 document.querySelector('#navUnderground').onclick=()=>location.href='./underground.html';
