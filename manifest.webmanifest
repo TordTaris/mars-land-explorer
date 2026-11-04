@@ -1,5 +1,5 @@
 {
-  "name": "LOCAL MARS",
+  "name": "LOCAL MARS — Planetary Civilization Network",
   "short_name": "LOCAL MARS",
   "lang": "th",
   "start_url": "./",
@@ -8,7 +8,7 @@
   "orientation": "portrait",
   "background_color": "#080d18",
   "theme_color": "#0d1422",
-  "description": "LOCAL MARS — สำรวจดาวอังคาร เลือกแปลง และสร้างอาณานิคม 3D",
+  "description": "LOCAL MARS — Official planetary exploration and Martian civilization platform.",
   "icons": [
     {
       "src": "./icon.svg",
