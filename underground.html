@@ -81,6 +81,15 @@ body{background:radial-gradient(ellipse at 50% 0,#553526 0,#17263a 38%,#080d18 7
 .elevator-status{margin-top:8px;font-size:10px;color:#83e9c4}
 .elevator-console.traveling .elevator-status{color:#ffd27d;animation:pulseLift .7s infinite alternate}
 @keyframes pulseLift{to{opacity:.45}}
+
+/* Portrait framed underground display */
+.floor-map-wrap{display:flex;flex-direction:column;align-items:stretch}
+#threeViewport{width:min(100%,420px);height:auto;aspect-ratio:3/4;min-height:0;margin:8px auto 10px;border:5px solid #163b59;border-radius:14px;outline:2px solid #39dff2;box-shadow:0 0 0 5px #071321,0 0 28px #00c9f5aa,inset 0 0 22px #00bce455;background:#06111f}
+#threeViewport canvas{width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges}
+.sim-toolbar{justify-content:center}
+.sim-hint{text-align:center;max-width:420px;margin:8px auto}
+.room-inspector,.elevator-console,.map-legend,.walk-pad{width:min(100%,520px);margin-left:auto;margin-right:auto}
+@media(max-width:780px){#threeViewport{width:min(100%,390px);aspect-ratio:3/4;height:auto;min-height:0}.floor-map-wrap{padding:10px}}
 </style></head>
 <body>
 <header><div class="brand">🔴 MARS <span>LAND</span> <small style="font-size:10px;color:#91a5bd">UNDERGROUND 24</small></div><a href="./index.html">← กลับสู่ดาวอังคาร</a></header>
