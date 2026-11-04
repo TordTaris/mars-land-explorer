@@ -527,8 +527,8 @@ async function connectCityOnline(){
  onlineChannel=marsDB.channel('local-mars-city-shared')
   .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_buildings'},()=>{if(onlineUser)loadOnlineCity();})
   .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_resources'},()=>{if(onlineUser)loadOnlineCity();})
-  .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_national_flags'},()=>{if(onlineUser)loadOnlineCity();})
-  .subscribe((state,error)=>{const label=document.querySelector('header .status');if(!label)return;if(state==='SUBSCRIBED'){if(onlineReady)label.textContent='● ONLINE · SHARED COLONY';}else if(state==='CHANNEL_ERROR'||state==='TIMED_OUT'){console.warn('LOCAL MARS realtime:',state,error);label.textContent='● SYNC RETRY';}});
+  .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_national_flags'},async()=>{if(!onlineUser)return;const f=await marsDB.from('mars_city_national_flags').select('id,owner_id,country_code,country_name,flag_emoji,x,z,level,created_at').order('created_at',{ascending:true});if(!f.error&&Array.isArray(f.data))syncOnlineFlags(f.data);else console.warn('LOCAL MARS flags realtime sync:',f.error);})
+  .subscribe((state,error)=>{const label=document.querySelector('header .status');if(!label)return;if(state==='SUBSCRIBED'){if(onlineReady)label.textContent='● ONLINE · SHARED COLONY';}else if(state==='CHANNEL_ERROR'||state==='TIMED_OUT'){console.warn('LOCAL MARS realtime:',state,error);label.textContent=onlineReady?'● ONLINE · REALTIME RETRY':'● SYNC RETRY';}});
  marsDB.auth.onAuthStateChange((_event,session)=>{onlineUser=session?.user||null;const b=document.querySelector('#cityAccount');if(b)b.textContent=onlineUser?'👤 '+(onlineUser.email||'สมาชิก').split('@')[0]:'👤 เข้าสู่ระบบ';if(onlineUser){const label=document.querySelector('header .status');if(label)label.textContent='● CONNECTING · SYNCING';setTimeout(()=>{if(onlineUser)loadOnlineCity();},0);}else{onlineReady=false;onlineCityId=null;const s=document.querySelector('header .status');if(s)s.textContent='● THIRD-PERSON MODE · LOCAL';}});
 }
 async function placeOnline(type,x,z,level){
