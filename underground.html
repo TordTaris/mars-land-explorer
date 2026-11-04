@@ -106,7 +106,7 @@ body{background:radial-gradient(ellipse at 50% 0,#553526 0,#17263a 38%,#080d18 7
 .sim-toolbar .sim-btn.active{background:#087f9b;border-color:#7af3ff}
 #threeViewport{display:none!important}
 @media(max-width:780px){#constructionGrid{width:min(100%,390px);aspect-ratio:3/4;gap:2px;padding:6px}.sim-toolbar{gap:5px}}
-</style></head>
+.sync-status{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:8px auto;padding:8px 10px;width:min(100%,520px);border:1px solid #315b50;border-radius:8px;background:#10251f;color:#9be9c1;font-size:10px}.grid-cell.other-member{opacity:.9;outline:1px dashed #fff7}.grid-cell.other-member:before{content:'WORLD';position:absolute;top:1px;right:2px;font-size:5px;color:#fff;background:#071827aa;padding:1px}.grid-cell.mine{outline:2px solid #fff;outline-offset:-2px}.grid-cell[data-kind="room"].other-member{filter:hue-rotate(25deg)}.grid-cell[data-kind="corridor"].other-member{filter:hue-rotate(70deg)}</style></head>
 <body>
 <header><div class="brand">🔴 MARS <span>LAND</span> <small style="font-size:10px;color:#91a5bd">UNDERGROUND 24</small></div><a href="./index.html">← กลับสู่ดาวอังคาร</a></header>
 <main class="wrap">
@@ -115,7 +115,7 @@ body{background:radial-gradient(ellipse at 50% 0,#553526 0,#17263a 38%,#080d18 7
 <section class="card"><h2>▥ VERTICAL BASE CUTAWAY · เลือกชั้นเพื่อดูรายละเอียด</h2><div class="cross"><div class="surface">MARS SURFACE · ทางเข้า / Airlock / EVA</div><div class="depth">ระดับความลึก ↓</div><div class="levels" id="levels"></div></div><div class="detail"><div class="eyebrow">SELECTED LEVEL</div><strong id="detailName">B01 · ศูนย์บัญชาการ</strong><p id="detailDesc">ควบคุมภารกิจ ระบบสื่อสาร และตรวจสอบสถานะทุกชั้น</p><div class="footer"><span id="detailType">COMMAND & SAFETY</span><span id="detailDepth">ความลึกแนวคิด 10 เมตร</span></div></div>
 <div class="directory" id="floorDirectory">
  <div class="directory-head"><div><div class="eyebrow">DIGITAL FLOOR DIRECTORY</div><h2 id="directoryTitle">B01 · FLOOR DIRECTORY</h2><p id="directorySubtitle">แผนผังพื้นที่และรายละเอียดภายในชั้น</p></div><span class="directory-live">● FLOOR PLAN</span></div>
- <div class="directory-body"><div class="room-list" id="roomList"></div><div class="floor-map-wrap"><div class="map-caption">8-BIT PIXEL UNDERGROUND <span id="mapFloor">B01</span></div><div class="sim-toolbar"><button class="sim-btn active" data-tool="empty">พื้นที่ว่าง</button><button class="sim-btn" data-tool="room">ห้อง</button><button class="sim-btn" data-tool="corridor">ทางเดิน</button><button class="sim-btn" data-tool="life">ระบบชีวิต</button><button class="sim-btn" data-tool="storage">คลัง</button><button class="sim-btn" data-tool="lift">ลิฟต์</button><button class="sim-btn" data-tool="erase">ลบ</button></div><div id="constructionGrid" aria-label="ตารางพื้นที่ก่อสร้างฐานใต้ดิน"></div><div class="sim-hint">เลือกประเภทพื้นที่ แล้วแตะช่องตารางเพื่อวางสิ่งก่อสร้าง · ข้อมูลบันทึกแยกแต่ละชั้นในเครื่องนี้</div><div class="room-inspector" id="roomInspector"><b>แตะห้องในโลก 8-BIT PIXEL เพื่อดูข้อมูล</b><span>ROOM DETAILS · LIVE SIMULATION</span></div><div class="elevator-console"><div class="elevator-title"><span>⬆ ELEVATOR CONTROL</span><small>VERTICAL TRANSIT · 24 LEVELS</small></div><div class="elevator-controls"><label for="elevatorFloor">เลือกชั้นปลายทาง</label><select id="elevatorFloor"></select><button id="elevatorGo" type="button">เรียกลิฟต์ / ไปยังชั้นนี้</button></div><div class="elevator-status" id="elevatorStatus">ลิฟต์จอดอยู่ที่ B01 · พร้อมใช้งาน</div></div><div class="map-legend"><span><i class="legend-main"></i> ห้องหลัก</span><span><i class="legend-support"></i> ห้องสนับสนุน</span><span><i class="legend-route"></i> ทางเดิน</span></div><div class="walk-pad"><button data-move="forward">▲</button><div><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div></div></div></div>
+ <div class="directory-body"><div class="room-list" id="roomList"></div><div class="floor-map-wrap"><div class="map-caption">8-BIT PIXEL UNDERGROUND <span id="mapFloor">B01</span></div><div class="sim-toolbar"><button class="sim-btn active" data-tool="empty">พื้นที่ว่าง</button><button class="sim-btn" data-tool="room">ห้อง</button><button class="sim-btn" data-tool="corridor">ทางเดิน</button><button class="sim-btn" data-tool="life">ระบบชีวิต</button><button class="sim-btn" data-tool="storage">คลัง</button><button class="sim-btn" data-tool="lift">ลิฟต์</button><button class="sim-btn" data-tool="erase">ลบ</button></div><div class="sync-status" id="undergroundSyncStatus">กำลังเชื่อมต่อโลกก่อสร้างส่วนกลาง…</div><div id="constructionGrid" aria-label="ตารางพื้นที่ก่อสร้างฐานใต้ดิน"></div><div class="sim-hint">เลือกประเภทพื้นที่ แล้วแตะช่องตารางเพื่อวางสิ่งก่อสร้าง · ข้อมูลบันทึกแยกแต่ละชั้นในเครื่องนี้</div><div class="room-inspector" id="roomInspector"><b>แตะห้องในโลก 8-BIT PIXEL เพื่อดูข้อมูล</b><span>ROOM DETAILS · LIVE SIMULATION</span></div><div class="elevator-console"><div class="elevator-title"><span>⬆ ELEVATOR CONTROL</span><small>VERTICAL TRANSIT · 24 LEVELS</small></div><div class="elevator-controls"><label for="elevatorFloor">เลือกชั้นปลายทาง</label><select id="elevatorFloor"></select><button id="elevatorGo" type="button">เรียกลิฟต์ / ไปยังชั้นนี้</button></div><div class="elevator-status" id="elevatorStatus">ลิฟต์จอดอยู่ที่ B01 · พร้อมใช้งาน</div></div><div class="map-legend"><span><i class="legend-main"></i> ห้องหลัก</span><span><i class="legend-support"></i> ห้องสนับสนุน</span><span><i class="legend-route"></i> ทางเดิน</span></div><div class="walk-pad"><button data-move="forward">▲</button><div><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div></div></div></div>
  <div class="directory-foot"><span id="floorCapacity">ความจุออกแบบ: 12 คน</span><span id="floorAccess">การเข้าถึง: บัตรสมาชิก + Airlock</span></div>
 </div></section>
 <aside style="display:grid;gap:16px;align-content:start">
@@ -216,19 +216,43 @@ document.querySelector('#tick').onclick=()=>{const rates=[-.8,-.5,-.7,-.6];activ
 document.querySelector('#reset').onclick=()=>{vals=[98,96,91,88];active.fill(true);document.querySelectorAll('.switch').forEach(b=>{b.textContent='● ONLINE';b.classList.remove('off')});document.querySelector('#days').textContent='180 วัน';document.querySelector('#simMessage').textContent='รีเซ็ตการจำลองแล้ว';render()};render();
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (()=>{
 const grid=document.getElementById('constructionGrid');if(!grid)return;
-const labels={empty:'',room:'ห้อง',corridor:'ทาง',life:'ชีพ',storage:'คลัง',lift:'ลิฟต์',erase:''};
-const colors={empty:'#102b40',room:'#c8a45e',corridor:'#16a8c5',life:'#168b75',storage:'#477fa2',lift:'#b75c3e'};
-let tool='empty',floor=0,selected=null;
-const key=i=>'mars-underground-layout-B'+String(i+1).padStart(2,'0');
-function currentFloor(){const t=document.getElementById('mapFloor')?.textContent||'B01';return Math.max(0,parseInt(t.replace('B',''),10)-1)}
-function load(){floor=currentFloor();let data={};try{data=JSON.parse(localStorage.getItem(key(floor))||'{}')}catch(e){}grid.innerHTML='';for(let i=0;i<192;i++){const b=document.createElement('button');b.type='button';b.className='grid-cell';b.dataset.index=i;const kind=data[i]||'empty';paint(b,kind);b.addEventListener('click',()=>{const k=tool==='erase'?'empty':tool;paint(b,k);save();document.getElementById('roomInspector').innerHTML='<b>ช่องพื้นที่ '+String(Math.floor(i/12)+1).padStart(2,'0')+'-'+String(i%12+1).padStart(2,'0')+'</b><span>'+({empty:'พื้นที่ว่าง',room:'พื้นที่ห้อง',corridor:'ทางเดิน',life:'ระบบช่วยชีวิต',storage:'คลังสนับสนุน',lift:'ตำแหน่งลิฟต์'}[k])+' · '+document.getElementById('mapFloor').textContent+'</span>';});grid.appendChild(b)}Object.keys(data).forEach(i=>{const el=grid.querySelector('[data-index="'+i+'"]');if(el)paint(el,data[i])})}
-function paint(el,kind){el.dataset.kind=kind;el.textContent=labels[kind]||'';el.title=kind}
-function save(){const data={};grid.querySelectorAll('.grid-cell').forEach(el=>{if(el.dataset.kind!=='empty')data[el.dataset.index]=el.dataset.kind});localStorage.setItem(key(floor),JSON.stringify(data))}
+const status=document.getElementById('undergroundSyncStatus');
+const SUPA_URL='https://tppgfxsdeuujidcjnfdl.supabase.co';
+const SUPA_KEY='sb_publishable_xQ0_NkSu2TMeIyJnAE94kw_WWQT2T3E';
+const db=window.supabase?.createClient(SUPA_URL,SUPA_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
+const labels={empty:'',room:'ห้อง',corridor:'ทาง',life:'ชีพ',storage:'คลัง',lift:'ลิฟต์'};
+let tool='empty',floor=0,user=null,remote=[],channel=null,saveTimer=null;
+const names={empty:'พื้นที่ว่าง',room:'ห้อง',corridor:'ทางเดิน',life:'ระบบช่วยชีวิต',storage:'คลังสนับสนุน',lift:'ลิฟต์'};
+function currentFloor(){const t=document.getElementById('mapFloor')?.textContent||'B01';return Math.max(1,Math.min(24,parseInt(t.replace('B',''),10)||1))}
+function paint(el,kind,owner){el.dataset.kind=kind;el.textContent=labels[kind]||'';el.classList.toggle('other-member',!!owner&&owner!==user?.id);el.classList.toggle('mine',!!owner&&owner===user?.id);el.title=names[kind]+(owner&&owner!==user?.id?' · สมาชิกอื่น':'')}
+function draw(){floor=currentFloor();grid.innerHTML='';const mine=new Map(),others=new Map();remote.filter(r=>r.floor_no===floor).forEach(r=>{if(r.owner_id===user?.id)mine.set(r.cell_index,r);else if(!others.has(r.cell_index))others.set(r.cell_index,r)});
+for(let i=0;i<192;i++){const b=document.createElement('button');b.type='button';b.className='grid-cell';b.dataset.index=i;const row=mine.get(i)||others.get(i);paint(b,row?.cell_type||'empty',row?.owner_id);b.addEventListener('click',()=>place(i,b));grid.appendChild(b)}}
+async function load(){floor=currentFloor();if(!db){status.textContent='ไม่สามารถโหลดระบบออนไลน์ได้';return}
+const {data,error}=await db.from('mars_underground_cells').select('owner_id,floor_no,cell_index,cell_type,updated_at').eq('floor_no',floor);
+if(error){status.textContent='ยังไม่ได้ตั้งค่าฐานข้อมูลส่วนกลาง: '+error.message;return}
+remote=data||[];draw();status.textContent=(user?'เชื่อมต่อแล้ว · ':'ดูผังส่วนกลาง · ')+remote.length+' ช่องที่สร้างในชั้น B'+String(floor).padStart(2,'0');
+}
+async function place(index,el){if(!user){status.textContent='กรุณาเข้าสู่ระบบสมาชิกก่อนแก้ไขผังก่อสร้าง';return}
+const kind=tool==='erase'?null:tool;
+let q;if(kind){q=await db.from('mars_underground_cells').upsert({owner_id:user.id,floor_no:floor,cell_index:index,cell_type:kind,updated_at:new Date().toISOString()},{onConflict:'owner_id,floor_no,cell_index'});}
+else q=await db.from('mars_underground_cells').delete().eq('owner_id',user.id).eq('floor_no',floor).eq('cell_index',index);
+if(q.error){status.textContent='บันทึกไม่สำเร็จ: '+q.error.message;return}
+await load();const n=document.getElementById('roomInspector');if(n)n.innerHTML='<b>ช่อง '+(Math.floor(index/12)+1)+'-'+(index%12+1)+'</b><span>'+(kind?names[kind]:'ลบพื้นที่')+' · B'+String(floor).padStart(2,'0')+' · ซิงก์ออนไลน์แล้ว</span>';
+}
 document.querySelectorAll('[data-tool]').forEach(b=>b.addEventListener('click',()=>{tool=b.dataset.tool;document.querySelectorAll('[data-tool]').forEach(x=>x.classList.toggle('active',x===b))}));
-const original=window.renderFloorDirectory;const obs=new MutationObserver(()=>{const n=currentFloor();if(n!==floor)load()});obs.observe(document.getElementById('mapFloor'),{childList:true,subtree:true,characterData:true});
-load();
+async function start(){if(!db){status.textContent='โหลด Supabase ไม่สำเร็จ';return}
+const {data}=await db.auth.getSession();user=data.session?.user||null;
+if(!user){status.textContent='โหมดดูอย่างเดียว · เข้าสู่ระบบเพื่อก่อสร้างและซิงก์ผัง';}else status.textContent='สมาชิกออนไลน์ · กำลังโหลดผังส่วนกลาง';
+await load();
+db.auth.onAuthStateChange(async(_event,session)=>{user=session?.user||null;await load()});
+channel=db.channel('mars-underground-global').on('postgres_changes',{event:'*',schema:'public',table:'mars_underground_cells'},async()=>{await load()}).subscribe();
+}
+const obs=new MutationObserver(()=>{const n=currentFloor();if(n!==floor){floor=n;load()}});
+obs.observe(document.getElementById('mapFloor'),{childList:true,subtree:true,characterData:true});
+start();
 })();
 </script></body></html>
