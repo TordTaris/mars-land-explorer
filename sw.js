@@ -1,6 +1,6 @@
 // LOCAL MARS live-update service worker
 // Network-first: deployed website changes are fetched online automatically.
-const CACHE = "local-mars-live-v57";
+const CACHE = "local-mars-live-v58";
 const CORE = ["./", "./index.html", "./city.html", "./underground.html", "./m003-base.html", "./civilization.html", "./i18n.js", "./world-server.js", "./locales/th.json", "./locales/en.json", "./manifest.webmanifest", "./icon.svg"];
 
 self.addEventListener("install", event => {
