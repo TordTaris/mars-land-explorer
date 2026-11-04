@@ -54,7 +54,7 @@ jobs:
           Path("/tmp/mars-main.mjs").write_text(module.group(1), encoding="utf-8")
           city_module = re.search(r'<script type="module">\s*(.*?)\s*</script>', city, re.S)
           assert city_module, "city builder module missing"
-          assert "id=\\"constructionList\\"" in city, "construction progress panel missing"
+          assert 'id="constructionList"' in city, "construction progress panel missing"
           assert "function updateConstructionJobs" in city, "construction simulation loop missing"
           Path("/tmp/mars-city.mjs").write_text(city_module.group(1), encoding="utf-8")
           print("Static paths, PWA assets, main app and city construction module validated.")
