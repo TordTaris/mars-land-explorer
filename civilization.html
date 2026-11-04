@@ -93,4 +93,5 @@ $('refreshWorld').addEventListener('click',async()=>{
  try{await window.MarsWorldServer?.refresh?.();render();}finally{btn.disabled=false;btn.textContent='↻ รีเฟรช';}
 });
 setTimeout(()=>{render();const s=window.MarsWorldServer?.getState?.();if(s?.db)$('worldServerStatus').textContent='● CONNECTED · SYNCING';},1200);
-</script></body></html>
+</script> <script src="./i18n.js"></script>
+</body></html>
