@@ -55,11 +55,13 @@ async function auth(mode){
 }
 async function logout(){if(S.db)await S.db.auth.signOut();S.user=null;authView();emitAuth();status('ออกจากระบบแล้ว');}
 async function claim(parcel){
- if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบออนไลน์ก่อนดำเนินการ'}};
- // Paid parcel checkout is not activated yet. Never grant a parcel from the browser.
- const message='ระบบซื้อพื้นที่ผ่าน PromptPay กำลังตั้งค่าอยู่ ขณะนี้ยังไม่มีการเรียกเก็บเงินหรือโอนสิทธิ์แปลง';
- status(message);
- return {error:{message}};
+ if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบออนไลน์ก่อนซื้อพื้นที่'}};
+ const {data,error}=await S.db.functions.invoke('create-promptpay-checkout',{body:{parcel_id:parcel}});
+ if(error){const message=error.message||'ยังไม่สามารถเริ่มชำระเงินได้';status(message);return {error:{message}};}
+ if(!data?.checkout_url){const message=data?.error||'ยังไม่ได้รับลิงก์ชำระเงิน';status(message);return {error:{message}};}
+ status('กำลังเปิดหน้าชำระ PromptPay…',true);
+ window.location.assign(data.checkout_url);
+ return {data};
 }
 async function build(parcel,type){
  if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบออนไลน์ก่อนก่อสร้าง'}};
