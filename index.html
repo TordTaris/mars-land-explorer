@@ -323,10 +323,34 @@ function renderSharedBuildings(structures){
  clearSharedBuildings();
  (structures||[]).forEach((item,index)=>{
   const parcel=parcels.find(p=>p.id===item.parcel_id);if(!parcel)return;
+  const normal=pos(parcel.lon,parcel.lat,1.012);
+  if(item.structure_type==='โรงไฟฟ้านิวเคลียร์ขนาดใหญ่'){
+   // Stylized sealed energy campus landmark for the M-003 parcel.
+   const site=new THREE.Group();
+   const steel=new THREE.MeshStandardMaterial({color:0x9eabb6,metalness:.7,roughness:.32});
+   const shell=new THREE.MeshStandardMaterial({color:0xe0d8c7,metalness:.2,roughness:.4});
+   const amber=new THREE.MeshStandardMaterial({color:0xd6a34e,metalness:.45,roughness:.3,emissive:0x694014,emissiveIntensity:.18});
+   const glass=new THREE.MeshStandardMaterial({color:0x62c9df,metalness:.35,roughness:.2,emissive:0x17495b,emissiveIntensity:.3});
+   const add=(geo,mat,x,y,z)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);site.add(m);return m;};
+   add(new THREE.CylinderGeometry(.04,.045,.055,18),steel,0,.028,0);
+   add(new THREE.SphereGeometry(.043,18,12,0,Math.PI*2,0,Math.PI/2),shell,0,.055,0);
+   add(new THREE.CylinderGeometry(.024,.027,.035,14),shell,-.075,.018,-.025);
+   add(new THREE.SphereGeometry(.026,14,10,0,Math.PI*2,0,Math.PI/2),steel,-.075,.036,-.025);
+   [-.13,0,.13].forEach((x,j)=>add(new THREE.CylinderGeometry(.016,.023,.082,14),j===1?shell:steel,x,.041,.085));
+   add(new THREE.BoxGeometry(.09,.04,.07),glass,.085,.02,-.075);
+   add(new THREE.BoxGeometry(.13,.027,.08),steel,.02,.014,-.15);
+   [-.07,-.02,.03,.08].forEach(x=>add(new THREE.CylinderGeometry(.013,.013,.036,12),amber,x,.018,.16));
+   add(new THREE.BoxGeometry(.19,.009,.095),amber,.15,.008,.11);
+   const fence=add(new THREE.TorusGeometry(.29,.003,6,72),amber,0,.004,0);fence.rotation.x=Math.PI/2;
+   add(new THREE.CylinderGeometry(.004,.004,.09,8),amber,.23,.045,-.2);
+   add(new THREE.SphereGeometry(.012,10,8),glass,.23,.095,-.2);
+   site.position.copy(normal);site.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),normal.clone().normalize());
+   group.add(site);buildingMeshes.set(item.id||String(index),site);return;
+  }
   const color=item.structure_type==='โรงเรือนปลูกพืช'?0x75d99b:item.structure_type==='ห้องปฏิบัติการ'?0x75c9ed:item.structure_type==='แผงพลังงานแสงอาทิตย์'?0xd9bd70:0xe8e6dc;
   const geo=item.structure_type==='แผงพลังงานแสงอาทิตย์'?new THREE.BoxGeometry(.075,.012,.05):new THREE.ConeGeometry(.038,.07,6);
   const mesh=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color,metalness:.35,roughness:.48,emissive:color,emissiveIntensity:.12}));
-  const normal=pos(parcel.lon,parcel.lat,1.012);mesh.position.copy(normal);mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),normal.clone().normalize());group.add(mesh);buildingMeshes.set(item.id||String(index),mesh);
+  mesh.position.copy(normal);mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),normal.clone().normalize());group.add(mesh);buildingMeshes.set(item.id||String(index),mesh);
  });
 }
 function pos(lon,lat,r=1.014){const a=THREE.MathUtils.degToRad(90-lat),b=THREE.MathUtils.degToRad(lon+90);return new THREE.Vector3(-r*Math.sin(a)*Math.cos(b),r*Math.cos(a),r*Math.sin(a)*Math.sin(b))}
