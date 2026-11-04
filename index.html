@@ -225,7 +225,7 @@ header #lmLanguage{display:inline-flex!important;visibility:visible!important;op
 <h3>LAND EXPLORER</h3>
 <div id="plotInfo" class="small">ดาวอังคารจำลอง • ลากเพื่อหมุน / บีบนิ้วเพื่อซูม • แตะหมุดเพื่อสำรวจแปลง</div>
 <div id="plotActions" style="display:none">
-<div class="plot"><strong id="plotName">M-001</strong><small id="plotMeta">พื้นที่จำลอง</small><div style="margin-top:8px">มูลค่า <b id="plotPrice">$100 USD</b><div class="small">มูลค่าอ้างอิง USD สำหรับระบบจำลอง ไม่ใช่ราคาซื้อขายเงินจริง</div></div></div>
+<div class="plot"><strong id="plotName">M-001</strong><small id="plotMeta">พื้นที่จำลอง</small><div style="margin-top:8px">มูลค่า <b id="plotPrice">฿100 THB</b><div class="small">มูลค่าอ้างอิง THB สำหรับระบบจำลอง การชำระเงินจริงต้องผ่าน PromptPay</div></div></div>
 <button class="primary full" id="claim">ซื้อด้วย PromptPay (THB)</button>
 <div class="plot" style="margin-top:9px;border:1px solid #c5a56b66">
  <div class="small">ราคาตลาดภายใน LOCAL MARS</div>
@@ -506,7 +506,7 @@ function selectPlot(p){
  document.querySelector("#plotName").textContent=p.id;
  document.querySelector("#building").querySelector('option[value="NuclearPlant"]').disabled=p.id!=="M-003";
  document.querySelector("#plotMeta").textContent="พิกัด "+p.lat+"°N / "+p.lon+"°E • "+(claim?"มีเจ้าของแล้ว":"ยังไม่มีเจ้าของ");
- document.querySelector("#plotPrice").textContent="$"+Number(p.price).toLocaleString("en-US")+" USD";
+ document.querySelector("#plotPrice").textContent="฿"+Number(p.price).toLocaleString("th-TH")+" THB";
  document.querySelector("#claim").disabled=!!claim;
  document.querySelector("#claim").textContent=claim?"มีเจ้าของแล้ว":"ซื้อด้วย PromptPay (THB)";
  document.querySelector("#plotMlcPrice").textContent=listing?Number(listing.price_mlc).toLocaleString("en-US")+" MLC":"ไม่เปิดขาย";
