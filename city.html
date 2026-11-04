@@ -428,8 +428,14 @@ function drawOnlineNationalFlag(row){
  const pole=new THREE.Mesh(new THREE.CylinderGeometry(.025,.035,1.45,8),new THREE.MeshStandardMaterial({color:0xd8dce2,metalness:.72,roughness:.3}));pole.position.y=.73;g.add(pole);
  const base=new THREE.Mesh(new THREE.CylinderGeometry(.2,.23,.08,16),new THREE.MeshStandardMaterial({color:0x68798a,metalness:.25,roughness:.7}));base.position.y=.04;g.add(base);
  const canvas=document.createElement('canvas');canvas.width=512;canvas.height=320;const ctx=canvas.getContext('2d');
- ctx.clearRect(0,0,512,320);ctx.fillStyle='rgba(8,18,30,.94)';ctx.strokeStyle='#e4c58b';ctx.lineWidth=8;ctx.beginPath();ctx.roundRect(12,12,488,296,22);ctx.fill();ctx.stroke();
- ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='230px "Noto Color Emoji","Segoe UI Emoji",sans-serif';ctx.fillText(row.flag_emoji||'🏳️',256,164);
+ if(ctx){
+  ctx.clearRect(0,0,512,320);ctx.fillStyle='rgba(8,18,30,.94)';ctx.strokeStyle='#e4c58b';ctx.lineWidth=8;
+  ctx.beginPath();
+  if(typeof ctx.roundRect==='function')ctx.roundRect(12,12,488,296,22);
+  else ctx.rect(12,12,488,296);
+  ctx.fill();ctx.stroke();
+  ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='230px "Noto Color Emoji","Segoe UI Emoji",sans-serif';ctx.fillText(row.flag_emoji||'🏳️',256,164);
+ }
  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
  const cloth=new THREE.Mesh(new THREE.PlaneGeometry(.9,.56),new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide}));cloth.position.set(.47,1.18,0);g.add(cloth);
  g.position.set(Number(row.x)+offset.x,Number(row.level||0)*2.5,Number(row.z)+offset.z);g.userData={flagId:row.id,ownerId:row.owner_id,countryCode:row.country_code,countryName:row.country_name};scene.add(g);nationalFlags.push(g);
@@ -493,29 +499,54 @@ async function placeOnline(type,x,z,level){
 let flagSubmitting=false;
 async function placeNationalFlag(){
  if(flagSubmitting)return;
- if(!onlineUser){toast('กรุณาเข้าสู่ระบบก่อนปักธงประจำชาติ');return;}
- if(!onlineReady||!onlineCityId){toast('เมืองยังไม่พร้อมออนไลน์ กรุณารอสักครู่แล้วลองใหม่');return;}
- if(!selected||!selected.userData){toast('แตะเลือกช่องตารางบนพื้นเมืองก่อนปักธง');return;}
- const select=document.querySelector('#flagCountry'),option=select?.options[select.selectedIndex];
- if(!option||!select.value||!option.dataset.name||!option.dataset.emoji){toast('กรุณาเลือกประเทศที่ต้องการปักธง');return;}
- const x=Number(selected.userData.x),z=Number(selected.userData.z),level=Number(currentLevel);
- if(!Number.isFinite(x)||!Number.isFinite(z)||!Number.isInteger(level)||level<0||level>2||Math.abs(x)>10.5||Math.abs(z)>10.5){toast('ตำแหน่งปักธงไม่ถูกต้อง กรุณาเลือกช่องบนพื้นเมือง');return;}
- const payload={owner_id:onlineUser.id,country_code:select.value,country_name:option.dataset.name,flag_emoji:option.dataset.emoji,x,z,level};
- flagSubmitting=true;
- const button=document.querySelector('#placeFlag');if(button){button.disabled=true;button.textContent='กำลังบันทึกธง…';}
  try{
+  if(!onlineUser){
+   toast('กรุณาเข้าสู่ระบบก่อนปักธง');
+   await loginCity();
+   const sessionResult=await marsDB.auth.getSession();
+   if(sessionResult.error)throw sessionResult.error;
+   onlineUser=sessionResult.data.session?.user||null;
+   if(!onlineUser){toast('ยังไม่ได้เข้าสู่ระบบ จึงยังปักธงออนไลน์ไม่ได้');return;}
+  }
+  if(!onlineReady||!onlineCityId){
+   if(remoteLoading){toast('กำลังเชื่อมต่อเมืองออนไลน์ กรุณารอสักครู่');return;}
+   await loadOnlineCity();
+   if(!onlineReady||!onlineCityId){toast('เมืองออนไลน์ยังไม่พร้อม ตรวจสอบการเชื่อมต่อแล้วลองใหม่');return;}
+  }
+  // If the user did not tap a grid tile, select the nearest valid tile automatically.
+  if(!selected||!selected.userData){
+   const px=Math.max(-9.5,Math.min(10.5,Number(avatar?.position?.x)||0));
+   const pz=Math.max(-9.5,Math.min(10.5,Number(avatar?.position?.z)||0));
+   selected=cells.reduce((best,c)=>{
+    if(!best)return c;
+    const d=(c.userData.x-px)**2+(c.userData.z-pz)**2;
+    const bd=(best.userData.x-px)**2+(best.userData.z-pz)**2;
+    return d<bd?c:best;
+   },null);
+   if(selected)selectCell(selected);
+  }
+  if(!selected||!selected.userData){toast('ไม่พบช่องสำหรับปักธง กรุณาแตะพื้นตารางแล้วลองใหม่');return;}
+  const select=document.querySelector('#flagCountry'),option=select?.options[select.selectedIndex];
+  if(!option||!select.value||!option.dataset.name||!option.dataset.emoji){toast('กรุณาเลือกประเทศที่ต้องการปักธง');return;}
+  const x=Number(selected.userData.x),z=Number(selected.userData.z),level=Number(currentLevel);
+  if(!Number.isFinite(x)||!Number.isFinite(z)||!Number.isInteger(level)||level<0||level>2||Math.abs(x)>10.5||Math.abs(z)>10.5){toast('ตำแหน่งปักธงไม่ถูกต้อง กรุณาเลือกช่องบนพื้นเมือง');return;}
+  const payload={owner_id:onlineUser.id,country_code:select.value,country_name:option.dataset.name,flag_emoji:option.dataset.emoji,x,z,level};
+  flagSubmitting=true;
+  const button=document.querySelector('#placeFlag');if(button){button.disabled=true;button.textContent='กำลังบันทึกธง…';}
   const lookup=await marsDB.from('mars_city_national_flags').select('id').eq('owner_id',onlineUser.id).eq('x',x).eq('z',z).eq('level',level).maybeSingle();
   if(lookup.error)throw lookup.error;
   const result=lookup.data
    ?await marsDB.from('mars_city_national_flags').update({country_code:payload.country_code,country_name:payload.country_name,flag_emoji:payload.flag_emoji}).eq('id',lookup.data.id).select('id').single()
    :await marsDB.from('mars_city_national_flags').insert(payload).select('id').single();
   if(result.error)throw result.error;
-  toast('ปักธง '+option.dataset.name+' สำเร็จแล้ว');await loadOnlineCity();
+  toast('ปักธง '+option.dataset.name+' สำเร็จแล้ว');
+  await loadOnlineCity();
  }catch(e){
   console.error('LOCAL MARS national flag error:',{message:e?.message,code:e?.code,details:e?.details,hint:e?.hint});
   toast('ปักธงไม่สำเร็จ: '+cityErrorText(e));
  }finally{
-  flagSubmitting=false;if(button){button.disabled=false;button.textContent='🚩 ปักธงบนช่องที่เลือก';}
+  flagSubmitting=false;
+  const button=document.querySelector('#placeFlag');if(button){button.disabled=false;button.textContent='🚩 ปักธงบนช่องที่เลือก';}
  }
 }
 async function loginCity(){
