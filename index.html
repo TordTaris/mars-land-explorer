@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#0d1422"><meta name="description" content="MARS LAND — สำรวจดาวอังคาร 3D เลือกแปลงและสร้างอาณานิคมจำลอง"><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml">
-<title>MARS LAND 2.0</title>
+<title>MARS LAND 3.0 | Planet Explorer</title>
 <style>
 :root{--bg:#080d17;--panel:#101a2b;--line:#293b53;--text:#edf4ff;--muted:#93a7c2;--orange:#ff875c;--cyan:#5bd9e8;--green:#6ee7a8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px system-ui,sans-serif;overflow:hidden}
@@ -102,7 +102,7 @@ button.primary{background:linear-gradient(120deg,#e4bd70,#a87c3d);color:#1a1510;
 </section>
 <section class="panel right">
 <h3>LAND EXPLORER</h3>
-<div id="plotInfo" class="small">เลือกจุดแปลงบนดาวอังคารเพื่อดูรายละเอียด</div>
+<div id="plotInfo" class="small">ดาวอังคารจำลอง • ลากเพื่อหมุน / บีบนิ้วเพื่อซูม • แตะหมุดเพื่อสำรวจแปลง</div>
 <div id="plotActions" style="display:none">
 <div class="plot"><strong id="plotName">M-001</strong><small id="plotMeta">พื้นที่จำลอง</small><div style="margin-top:8px">ราคาเสนอ <b id="plotPrice">100 MLC</b></div></div>
 <button class="primary full" id="claim">จองแปลงจำลอง</button>
@@ -146,28 +146,50 @@ scene.add(new THREE.AmbientLight(0xffffff,1.2));const sun=new THREE.DirectionalL
 const group=new THREE.Group();scene.add(group);
 const marsMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:1});
 function makeMarsTexture(){
- const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=512;
- const ctx=canvas.getContext('2d'),img=ctx.createImageData(canvas.width,canvas.height);
- for(let y=0;y<canvas.height;y++)for(let x=0;x<canvas.width;x++){
-  const i=(y*canvas.width+x)*4,n=Math.sin(x*.021+Math.sin(y*.017)*2.4)*.48+Math.sin(y*.047+x*.006)*.27+Math.sin(x*.11-y*.08)*.12;
-  const band=Math.sin(y*.031+Math.sin(x*.008)*1.8)*7,v=n*28+band;
-  img.data[i]=Math.max(0,Math.min(255,139+v));img.data[i+1]=Math.max(0,Math.min(255,61+v*.48));img.data[i+2]=Math.max(0,Math.min(255,39+v*.34));img.data[i+3]=255;
+ // Deterministic procedural albedo + relief: no paid texture service or API required.
+ const canvas=document.createElement('canvas');canvas.width=1536;canvas.height=768;
+ const ctx=canvas.getContext('2d',{willReadFrequently:true}),img=ctx.createImageData(canvas.width,canvas.height);
+ const W=canvas.width,H=canvas.height;
+ for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+  const i=(y*W+x)*4;
+  const broad=Math.sin(x*.008+Math.sin(y*.006)*2.1)*.42+Math.sin(y*.019+x*.002)*.28;
+  const ridges=Math.sin(x*.031+Math.sin(y*.013)*3.2)*.13+Math.sin(y*.052-x*.011)*.09;
+  const fine=Math.sin(x*.17+y*.09)*.035+Math.sin(x*.31-y*.23)*.025;
+  const latitude=Math.abs(y/H-.5)*2;
+  const polar=Math.max(0,(latitude-.79)/.21);
+  const v=(broad+ridges+fine)*30, dust=Math.sin(x*.003+y*.004)*5;
+  img.data[i]=Math.max(0,Math.min(255,139+v+dust-polar*32));
+  img.data[i+1]=Math.max(0,Math.min(255, sixty(61+v*.48+dust*.35-polar*20)));
+  img.data[i+2]=Math.max(0,Math.min(255, thirty(39+v*.34+dust*.2-polar*12)));
+  img.data[i+3]=255;
  }
  ctx.putImageData(img,0,0);
  let seed=271828;const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
- for(let k=0;k<115;k++){
-  const x=rnd()*canvas.width,y=18+rnd()*(canvas.height-36),r=2+rnd()*15;
-  const g=ctx.createRadialGradient(x-r*.2,y-r*.2,r*.08,x,y,r);
-  g.addColorStop(0,'rgba(65,35,30,.56)');g.addColorStop(.62,'rgba(105,54,40,.28)');g.addColorStop(.82,'rgba(226,151,105,.38)');g.addColorStop(1,'rgba(65,35,30,.05)');
+ // Crater rims, shadowed bowls and ejecta; larger basins mixed with fine impact marks.
+ for(let k=0;k<520;k++){
+  const x=rnd()*W,y=20+rnd()*(H-40),r=1.2+Math.pow(rnd(),2.1)*31;
+  const g=ctx.createRadialGradient(x-r*.12,y-r*.16,r*.12,x,y,r);
+  g.addColorStop(0,'rgba(48,27,24,.30)');g.addColorStop(.56,'rgba(76,39,31,.18)');
+  g.addColorStop(.76,'rgba(229,158,111,.42)');g.addColorStop(.86,'rgba(95,48,36,.30)');
+  g.addColorStop(1,'rgba(75,39,31,.02)');
   ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+  if(r>15){ctx.strokeStyle='rgba(235,174,127,.13)';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(x,y,r*.94,0,Math.PI*2);ctx.stroke();}
  }
- const north=ctx.createLinearGradient(0,0,0,55);north.addColorStop(0,'rgba(240,218,190,.78)');north.addColorStop(1,'rgba(240,218,190,0)');ctx.fillStyle=north;ctx.fillRect(0,0,canvas.width,55);
- const south=ctx.createLinearGradient(0,canvas.height-55,0,canvas.height);south.addColorStop(0,'rgba(240,218,190,0)');south.addColorStop(1,'rgba(240,218,190,.78)');ctx.fillStyle=south;ctx.fillRect(0,canvas.height-55,canvas.width,55);
- const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;return texture;
+ // Subtle dusty polar deposits.
+ const capTop=ctx.createLinearGradient(0,0,0,115);capTop.addColorStop(0,'rgba(235,220,197,.9)');capTop.addColorStop(1,'rgba(235,220,197,0)');
+ ctx.fillStyle=capTop;ctx.fillRect(0,0,W,115);
+ const capBottom=ctx.createLinearGradient(0,H-115,0,H);capBottom.addColorStop(0,'rgba(235,220,197,0)');capBottom.addColorStop(1,'rgba(235,220,197,.88)');
+ ctx.fillStyle=capBottom;ctx.fillRect(0,H-115,W,115);
+ const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());return texture;
 }
-marsMat.map=makeMarsTexture();
+function sixty(v){return Math.round(v)}
+function thirty(v){return Math.round(v)}
+marsMat.map=makeMarsTexture();marsMat.bumpMap=marsMat.map;marsMat.bumpScale=.055;marsMat.roughness=1;
+
 const mars=new THREE.Mesh(new THREE.SphereGeometry(1,72,72),marsMat);group.add(mars);
-const glow=new THREE.Mesh(new THREE.SphereGeometry(1.025,48,48),new THREE.MeshBasicMaterial({color:0xf0784d,transparent:true,opacity:.07,side:THREE.BackSide}));group.add(glow);
+// Thin atmospheric limb gives the planet a dusty, sunlit edge (visual effect, not weather simulation).
+const glow=new THREE.Mesh(new THREE.SphereGeometry(1.035,64,64),new THREE.MeshBasicMaterial({color:0xe88b62,transparent:true,opacity:.105,side:THREE.BackSide,depthWrite:false}));group.add(glow);
+const atmosphere=new THREE.Mesh(new THREE.SphereGeometry(1.012,64,64),new THREE.MeshBasicMaterial({color:0x9b4938,transparent:true,opacity:.035,side:THREE.FrontSide,depthWrite:false}));group.add(atmosphere);
 const orbit=new THREE.Mesh(new THREE.TorusGeometry(1.34,.003,8,180),new THREE.MeshBasicMaterial({color:0xd7b778,transparent:true,opacity:.38}));
 orbit.rotation.set(1.12,.18,.32);group.add(orbit);
 const orbit2=new THREE.Mesh(new THREE.TorusGeometry(1.48,.0018,6,180),new THREE.MeshBasicMaterial({color:0x6bcce8,transparent:true,opacity:.22}));
