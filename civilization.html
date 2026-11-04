@@ -22,7 +22,7 @@ h1{font-size:clamp(24px,5vw,38px);margin:7px 0}.sub{color:var(--muted);line-heig
 @media(max-width:760px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.layout{grid-template-columns:1fr}.value{font-size:24px}header{padding:11px 13px}}
 </style></head>
 <body>
-<header><div class="brand">LOCAL <b>MARS</b> <span style="font-size:10px;color:#9eb1c5">/ CIVILIZATION NETWORK</span></div><div class="status" id="status" aria-live="polite">กำลังเชื่อมต่อโลกออนไลน์…</div></header>
+<header><div class="brand">LOCAL <b>MARS</b> <span style="font-size:10px;color:#9eb1c5">/ CIVILIZATION NETWORK</span></div><div class="status" id="worldServerStatus" aria-live="polite">กำลังเชื่อมต่อโลกออนไลน์…</div></header>
 <main>
 <div class="eyebrow">PLANETARY CIVILIZATION NETWORK · LIVE WORLD</div>
 <h1>ศูนย์บัญชาการอารยธรรมดาวอังคาร</h1>
@@ -86,11 +86,11 @@ function render(e){
   right.textContent=time;row.append(left,right);feed.append(row);
  });
 }
-document.addEventListener('mars-world-updated',e=>{render(e);$('status').textContent='● ONLINE · REALTIME';});
+document.addEventListener('mars-world-updated',e=>{render(e);$('worldServerStatus').textContent='● ONLINE · REALTIME';});
 document.addEventListener('mars-auth-state',()=>render());
 $('refreshWorld').addEventListener('click',async()=>{
  const btn=$('refreshWorld');btn.disabled=true;btn.textContent='กำลังรีเฟรช…';
  try{await window.MarsWorldServer?.refresh?.();render();}finally{btn.disabled=false;btn.textContent='↻ รีเฟรช';}
 });
-setTimeout(()=>{render();const s=window.MarsWorldServer?.getState?.();if(s?.db)$('status').textContent='● CONNECTED · SYNCING';},1200);
+setTimeout(()=>{render();const s=window.MarsWorldServer?.getState?.();if(s?.db)$('worldServerStatus').textContent='● CONNECTED · SYNCING';},1200);
 </script></body></html>
