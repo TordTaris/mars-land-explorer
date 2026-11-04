@@ -28,6 +28,7 @@ function subscribe(){
  .on('postgres_changes',{event:'*',schema:'public',table:'world_claims'},refresh)
  .on('postgres_changes',{event:'*',schema:'public',table:'world_structures'},refresh)
  .on('postgres_changes',{event:'*',schema:'public',table:'world_events'},refresh)
+ .on('postgres_changes',{event:'*',schema:'public',table:'mars_mlc_parcel_market'},refresh)
  .subscribe(st=>{if(st==='SUBSCRIBED'){status('เชื่อมต่อโลกออนไลน์แล้ว',true);refresh();}else if(st==='CHANNEL_ERROR'||st==='TIMED_OUT')status('Realtime ขาดการเชื่อมต่อ');});
 }
 async function connect(){
