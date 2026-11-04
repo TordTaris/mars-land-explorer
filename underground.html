@@ -90,6 +90,22 @@ body{background:radial-gradient(ellipse at 50% 0,#553526 0,#17263a 38%,#080d18 7
 .sim-hint{text-align:center;max-width:420px;margin:8px auto}
 .room-inspector,.elevator-console,.map-legend,.walk-pad{width:min(100%,520px);margin-left:auto;margin-right:auto}
 @media(max-width:780px){#threeViewport{width:min(100%,390px);aspect-ratio:3/4;height:auto;min-height:0}.floor-map-wrap{padding:10px}}
+
+#constructionGrid{width:min(100%,420px);aspect-ratio:3/4;margin:8px auto 10px;padding:8px;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:repeat(16,minmax(0,1fr));gap:3px;border:5px solid #174766;border-radius:12px;background-color:#071522;background-image:linear-gradient(#15334a 1px,transparent 1px),linear-gradient(90deg,#15334a 1px,transparent 1px);box-shadow:0 0 0 3px #06101b,0 0 24px #00c9f588;image-rendering:pixelated;touch-action:manipulation}
+.grid-cell{min-width:0;min-height:0;border:1px solid #254a61;border-radius:2px;background:#102b40;position:relative;padding:0;color:#d9f7ff;font-size:clamp(6px,1.7vw,10px);display:grid;place-items:center;overflow:hidden}
+.grid-cell:after{content:'';position:absolute;inset:2px;border:1px solid #ffffff12;pointer-events:none}
+.grid-cell[data-kind="room"]{background:repeating-linear-gradient(135deg,#b98c4d,#b98c4d 5px,#d8b66e 5px,#d8b66e 10px);border-color:#ffe0a1;color:#20180c}
+.grid-cell[data-kind="corridor"]{background:#16a8c5;border-color:#7af3ff;box-shadow:inset 0 0 7px #b4faff}
+.grid-cell[data-kind="life"]{background:#168b75;border-color:#74f3bd;color:#eafff4}
+.grid-cell[data-kind="storage"]{background:#477fa2;border-color:#a3dfff}
+.grid-cell[data-kind="lift"]{background:#b75c3e;border-color:#ffd0a0;color:#fff}
+.grid-cell[data-kind="erase"]{background:#102b40}
+.grid-cell.selected{outline:2px solid #fff;outline-offset:-2px;filter:brightness(1.35)}
+.sim-toolbar{justify-content:center}
+.sim-toolbar .sim-btn{padding:7px 8px;font-size:9px}
+.sim-toolbar .sim-btn.active{background:#087f9b;border-color:#7af3ff}
+#threeViewport{display:none!important}
+@media(max-width:780px){#constructionGrid{width:min(100%,390px);aspect-ratio:3/4;gap:2px;padding:6px}.sim-toolbar{gap:5px}}
 </style></head>
 <body>
 <header><div class="brand">🔴 MARS <span>LAND</span> <small style="font-size:10px;color:#91a5bd">UNDERGROUND 24</small></div><a href="./index.html">← กลับสู่ดาวอังคาร</a></header>
@@ -99,7 +115,7 @@ body{background:radial-gradient(ellipse at 50% 0,#553526 0,#17263a 38%,#080d18 7
 <section class="card"><h2>▥ VERTICAL BASE CUTAWAY · เลือกชั้นเพื่อดูรายละเอียด</h2><div class="cross"><div class="surface">MARS SURFACE · ทางเข้า / Airlock / EVA</div><div class="depth">ระดับความลึก ↓</div><div class="levels" id="levels"></div></div><div class="detail"><div class="eyebrow">SELECTED LEVEL</div><strong id="detailName">B01 · ศูนย์บัญชาการ</strong><p id="detailDesc">ควบคุมภารกิจ ระบบสื่อสาร และตรวจสอบสถานะทุกชั้น</p><div class="footer"><span id="detailType">COMMAND & SAFETY</span><span id="detailDepth">ความลึกแนวคิด 10 เมตร</span></div></div>
 <div class="directory" id="floorDirectory">
  <div class="directory-head"><div><div class="eyebrow">DIGITAL FLOOR DIRECTORY</div><h2 id="directoryTitle">B01 · FLOOR DIRECTORY</h2><p id="directorySubtitle">แผนผังพื้นที่และรายละเอียดภายในชั้น</p></div><span class="directory-live">● FLOOR PLAN</span></div>
- <div class="directory-body"><div class="room-list" id="roomList"></div><div class="floor-map-wrap"><div class="map-caption">8-BIT PIXEL UNDERGROUND <span id="mapFloor">B01</span></div><div class="sim-toolbar"><button id="viewTop" class="sim-btn active">มุมมองด้านบน</button><button id="viewWalk" class="sim-btn">เดินสำรวจ</button><button id="viewReset" class="sim-btn">รีเซ็ตกล้อง</button></div><div id="threeViewport" aria-label="ฉากจำลองฐานใต้ดินสามมิติ"></div><div class="sim-hint">หมุน: ลากนิ้ว/เมาส์ · ซูม: pinch/scroll · เดิน: WASD หรือปุ่มลูกศร · แตะห้องเพื่อดูข้อมูล</div><div class="room-inspector" id="roomInspector"><b>แตะห้องในโลก 8-BIT PIXEL เพื่อดูข้อมูล</b><span>ROOM DETAILS · LIVE SIMULATION</span></div><div class="elevator-console"><div class="elevator-title"><span>⬆ ELEVATOR CONTROL</span><small>VERTICAL TRANSIT · 24 LEVELS</small></div><div class="elevator-controls"><label for="elevatorFloor">เลือกชั้นปลายทาง</label><select id="elevatorFloor"></select><button id="elevatorGo" type="button">เรียกลิฟต์ / ไปยังชั้นนี้</button></div><div class="elevator-status" id="elevatorStatus">ลิฟต์จอดอยู่ที่ B01 · พร้อมใช้งาน</div></div><div class="map-legend"><span><i class="legend-main"></i> ห้องหลัก</span><span><i class="legend-support"></i> ห้องสนับสนุน</span><span><i class="legend-route"></i> ทางเดิน</span></div><div class="walk-pad"><button data-move="forward">▲</button><div><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div></div></div></div>
+ <div class="directory-body"><div class="room-list" id="roomList"></div><div class="floor-map-wrap"><div class="map-caption">8-BIT PIXEL UNDERGROUND <span id="mapFloor">B01</span></div><div class="sim-toolbar"><button class="sim-btn active" data-tool="empty">พื้นที่ว่าง</button><button class="sim-btn" data-tool="room">ห้อง</button><button class="sim-btn" data-tool="corridor">ทางเดิน</button><button class="sim-btn" data-tool="life">ระบบชีวิต</button><button class="sim-btn" data-tool="storage">คลัง</button><button class="sim-btn" data-tool="lift">ลิฟต์</button><button class="sim-btn" data-tool="erase">ลบ</button></div><div id="constructionGrid" aria-label="ตารางพื้นที่ก่อสร้างฐานใต้ดิน"></div><div class="sim-hint">เลือกประเภทพื้นที่ แล้วแตะช่องตารางเพื่อวางสิ่งก่อสร้าง · ข้อมูลบันทึกแยกแต่ละชั้นในเครื่องนี้</div><div class="room-inspector" id="roomInspector"><b>แตะห้องในโลก 8-BIT PIXEL เพื่อดูข้อมูล</b><span>ROOM DETAILS · LIVE SIMULATION</span></div><div class="elevator-console"><div class="elevator-title"><span>⬆ ELEVATOR CONTROL</span><small>VERTICAL TRANSIT · 24 LEVELS</small></div><div class="elevator-controls"><label for="elevatorFloor">เลือกชั้นปลายทาง</label><select id="elevatorFloor"></select><button id="elevatorGo" type="button">เรียกลิฟต์ / ไปยังชั้นนี้</button></div><div class="elevator-status" id="elevatorStatus">ลิฟต์จอดอยู่ที่ B01 · พร้อมใช้งาน</div></div><div class="map-legend"><span><i class="legend-main"></i> ห้องหลัก</span><span><i class="legend-support"></i> ห้องสนับสนุน</span><span><i class="legend-route"></i> ทางเดิน</span></div><div class="walk-pad"><button data-move="forward">▲</button><div><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div></div></div></div>
  <div class="directory-foot"><span id="floorCapacity">ความจุออกแบบ: 12 คน</span><span id="floorAccess">การเข้าถึง: บัตรสมาชิก + Airlock</span></div>
 </div></section>
 <aside style="display:grid;gap:16px;align-content:start">
@@ -199,93 +215,20 @@ let vals=[98,96,91,88];function render(){['oxygen','water','power','food'].forEa
 document.querySelector('#tick').onclick=()=>{const rates=[-.8,-.5,-.7,-.6];active.forEach((on,i)=>{if(!on){const affected=i===0?[0]:i===1?[0]:i===2?[1]:i===3?[0]:i===4?[3]:[2];affected.forEach(k=>vals[k]-=i===0?7:4)}});vals=vals.map((v,i)=>Math.max(0,Math.min(100,v+rates[i])));render();const min=Math.min(...vals);document.querySelector('#days').textContent=Math.max(0,Math.round(min*1.8))+' วัน';document.querySelector('#simMessage').textContent='ผ่านการจำลองเพิ่ม 1 วัน · '+(active.every(Boolean)?'ระบบหลักทำงานครบ':'ตรวจพบระบบหยุดทำงาน กรุณาตรวจสอบความเสี่ยง')};
 document.querySelector('#reset').onclick=()=>{vals=[98,96,91,88];active.fill(true);document.querySelectorAll('.switch').forEach(b=>{b.textContent='● ONLINE';b.classList.remove('off')});document.querySelector('#days').textContent='180 วัน';document.querySelector('#simMessage').textContent='รีเซ็ตการจำลองแล้ว';render()};render();
 </script>
-<script type="module">
-import * as THREE from 'https://esm.sh/three@0.160.1';
-import { OrbitControls } from 'https://esm.sh/three@0.160.1/examples/jsm/controls/OrbitControls.js';
-(()=>{
-const host=document.getElementById('threeViewport');if(!host)return;
-const scene=new THREE.Scene();scene.background=new THREE.Color(0x081726);scene.fog=new THREE.Fog(0x081726,24,52);
-const camera=new THREE.PerspectiveCamera(48,1,.1,150);camera.position.set(13,17,18);
-const renderer=new THREE.WebGLRenderer({antialias:false,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(0.55);renderer.shadowMap.enabled=false;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.NoToneMapping;host.appendChild(renderer.domElement);
-const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.target.set(0,0,0);controls.maxPolarAngle=Math.PI*.48;controls.minDistance=7;controls.maxDistance=36;
-scene.add(new THREE.HemisphereLight(0xa9d8ff,0x182331,2.1));
-const key=new THREE.DirectionalLight(0xffd2a1,2.4);key.position.set(8,18,10);key.castShadow=true;scene.add(key);
-const fill=new THREE.PointLight(0x27c9ed,28,28);fill.position.set(-6,5,-4);scene.add(fill);
-const base=new THREE.Group();scene.add(base);let roomMeshes=[],wallGroup=null,walkMode=false,selectedFloor=0;
-const mat=(color,rough=.95,metal=0)=>new THREE.MeshStandardMaterial({color,roughness:rough,metalness:metal,flatShading:true});
-const floorMat=mat(0x10283a),wallMat=mat(0x25485e,.58,.35),trimMat=mat(0x071b2b,.35,.65),goldMat=mat(0xc99a53,.38,.55),cyanMat=mat(0x20dfff,.24,.5),supportMat=mat(0x267c91,.45,.25);cyanMat.emissive=new THREE.Color(0x00b9e8);cyanMat.emissiveIntensity=2.2;
-const floorNames=()=>window.marsFloorRooms||[];
-function clearGroup(g){while(g.children.length){const o=g.children.pop();if(o.geometry)o.geometry.dispose();}}
-function box(parent,w,h,d,x,y,z,material,cast=true){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);m.position.set(x,y,z);m.castShadow=cast;m.receiveShadow=true;parent.add(m);return m;}
-function labelTexture(text){const cv=document.createElement('canvas');cv.width=128;cv.height=32;const ctx=cv.getContext('2d');ctx.fillStyle='#071827';ctx.fillRect(0,0,128,32);ctx.strokeStyle='#54d9e8';ctx.lineWidth=2;ctx.strokeRect(2,2,124,28);ctx.fillStyle='#f4e2bc';ctx.font='bold 10px monospace';ctx.textAlign='center';ctx.fillText(text.slice(0,28),64,19);const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;return tex;}
-function build(floorIndex){
- selectedFloor=floorIndex;clearGroup(base);roomMeshes=[];base.rotation.y=0;
- const N=23, M=15, cell=1, grid=Array.from({length:M},()=>Array(N).fill(1));
- // Designed facility layout inspired by the supplied reference image:
- // central command spine, cross corridors, side branches and eight connected chambers.
- for(let z=1;z<M-1;z++)for(let x=1;x<N-1;x++)grid[z][x]=1;
- const carve=(x1,z1,x2,z2)=>{for(let z=Math.min(z1,z2);z<=Math.max(z1,z2);z++)for(let x=Math.min(x1,x2);x<=Math.max(x1,x2);x++)grid[z][x]=0;};
- // Main illuminated circulation loop and central cross.
- carve(1,7,N-2,7);carve(9,1,9,M-2);carve(3,3,21,3);carve(3,11,21,11);
- // Branches from the spine into room entrances.
- [3,7,11].forEach(z=>{carve(4,z,4,7);carve(14,z,14,7);});
- const rooms=[
- {x:2,z:1,w:5,d:3},{x:16,z:1,w:5,d:3},
- {x:2,z:9,w:5,d:3},{x:16,z:9,w:5,d:3}
- ];
- rooms.forEach(r=>{for(let z=r.z;z<r.z+r.d;z++)for(let x=r.x;x<r.x+r.w;x++)grid[z][x]=0;});
- // Extra side alcoves make the route feel like a real underground maze.
- carve(1,5,3,5);carve(19,5,22,5);carve(1,13,3,13);carve(19,13,22,13);
- const worldX=(x)=>(x-(N-1)/2),worldZ=(z)=>(z-(M-1)/2);
- box(base,N,.45,M,0,-.28,0,floorMat,false);
- // Maze walls on blocked cells, plus low illuminated skirting
- for(let z=0;z<M;z++)for(let x=0;x<N;x++)if(grid[z][x]){
- const wx=worldX(x),wz=worldZ(z);box(base,.96,1.9,.96,wx,.82,wz,wallMat);
- box(base,.99,.09,.99,wx,-.08,wz,trimMat,false);
- }
- // outer perimeter walls
- for(let x=0;x<N;x++){box(base,1,2,.28,worldX(x),.82,worldZ(0)-.48,wallMat);box(base,1,2,.28,worldX(x),.82,worldZ(M-1)+.48,wallMat);}
- for(let z=0;z<M;z++){box(base,.28,2,1,worldX(0)-.48,.82,worldZ(z),wallMat);box(base,.28,2,1,worldX(N-1)+.48,.82,worldZ(z),wallMat);}
- const names=floorNames()[floorIndex]||[];
- rooms.forEach((r,j)=>{
- const cx=worldX(r.x+r.w/2-.5),cz=worldZ(r.z+r.d/2-.5),w=r.w-.12,d=r.d-.12;
- // open-top rooms with raised metallic floor border, visible from overhead
- const pad=box(base,w,.12,d,cx,-.04,cz,j===2?supportMat:floorMat,false);pad.userData={room:j};
- const edges=[[-w/2,0,w,.16],[w/2,0,w,.16]]; // decorative room threshold rails
- box(base,w,.18,.12,cx,.08,cz-d/2,goldMat);box(base,w,.18,.12,cx,.08,cz+d/2,goldMat);
- box(base,.12,.18,d,cx-w/2,.08,cz,wallMat);box(base,.12,.18,d,cx+w/2,.08,cz,wallMat);
- const door=box(base,1.05,1.35,.12,cx,.72,cz-d/2,cyanMat);door.material=cyanMat;door.userData={room:j};
- const sign=new THREE.Mesh(new THREE.PlaneGeometry(Math.min(w-0.3,3.3),.65),new THREE.MeshBasicMaterial({map:labelTexture(names[j]?.[1]||('ROOM '+(j+1))),side:THREE.DoubleSide}));sign.position.set(cx,1.45,cz);base.add(sign);
- const hit=box(base,w,.1,d,cx,.16,cz,j===2?supportMat:goldMat,false);hit.material=hit.material.clone();hit.material.transparent=true;hit.material.opacity=.16;hit.userData={room:j};roomMeshes.push(hit);
- // ceiling-style floating beacon indicates each room while keeping cutaway view
- const beacon=new THREE.PointLight(j===2?0x45d7ff:0xffbf68,7,5);beacon.position.set(cx,2.3,cz);base.add(beacon);
- });
- // Continuous cyan floor-edge light strips make the route legible like the supplied concept.
- const neonMat=new THREE.MeshStandardMaterial({color:0x36eaff,emissive:0x00bfe8,emissiveIntensity:1.8,metalness:0,roughness:1,flatShading:true});
- for(let x=1;x<N-1;x++){box(base,.075,.035,.82,worldX(x),.015,worldZ(7),neonMat,false);if(x%2===0)box(base,.06,.035,.72,worldX(x),.015,worldZ(3),neonMat,false);}
- for(let z=1;z<M-1;z++){box(base,.82,.035,.075,worldX(9),.018,worldZ(z),neonMat,false);if(z%2===0){box(base,.72,.035,.06,worldX(4),.018,worldZ(z),neonMat,false);box(base,.72,.035,.06,worldX(14),.018,worldZ(z),neonMat,false);}}
- // luminous junction markers and room entrance lights.
- for(const [x,z] of [[9,7],[4,7],[14,7],[9,3],[9,11]]){const glow=new THREE.PointLight(0x12dfff,10,5);glow.position.set(worldX(x),.55,worldZ(z));base.add(glow);}
 
- // central elevator / lift shaft
- box(base,1.7,2,1.7,worldX(9),.85,worldZ(7),trimMat);box(base,1.2,.08,1.2,worldX(9),1.9,worldZ(7),goldMat,false);
- const liftLabel=new THREE.Mesh(new THREE.PlaneGeometry(1.5,.4),new THREE.MeshBasicMaterial({map:labelTexture('LIFT / SHAFT'),side:THREE.DoubleSide}));liftLabel.position.set(worldX(9),2.1,worldZ(7));base.add(liftLabel);
- // border and orientation marker
- const marker=box(base,.7,.04,.7,worldX(1),.04,worldZ(1),goldMat,false);
- setCameraTop();document.getElementById('mapFloor').textContent='B'+String(floorIndex+1).padStart(2,'0');
-}
-function setCameraTop(){walkMode=false;host.classList.remove('walk-mode');camera.position.set(0,24,0.01);camera.up.set(0,0,-1);controls.target.set(0,0,0);controls.enabled=true;controls.maxPolarAngle=.01;controls.minPolarAngle=.01;controls.update();document.getElementById('viewTop').classList.add('active');document.getElementById('viewWalk').classList.remove('active');}
-function setCameraWalk(){walkMode=true;host.classList.add('walk-mode');camera.up.set(0,1,0);camera.position.set(-8,1.65,5);controls.target.set(-7,1.55,4);controls.enabled=true;controls.maxPolarAngle=Math.PI*.49;controls.minPolarAngle=.1;controls.update();document.getElementById('viewWalk').classList.add('active');document.getElementById('viewTop').classList.remove('active');}
-function resize(){const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
-const ray=new THREE.Raycaster(),pointer=new THREE.Vector2();
-renderer.domElement.addEventListener('pointerdown',e=>{renderer.domElement.dataset.x=e.clientX;renderer.domElement.dataset.y=e.clientY;});
-renderer.domElement.addEventListener('pointerup',e=>{if(Math.abs(e.clientX-Number(renderer.domElement.dataset.x))>6||Math.abs(e.clientY-Number(renderer.domElement.dataset.y))>6)return;const r=renderer.domElement.getBoundingClientRect();pointer.set((e.clientX-r.left)/r.width*2-1,-((e.clientY-r.top)/r.height)*2+1);ray.setFromCamera(pointer,camera);const hits=ray.intersectObjects(roomMeshes,false);if(hits.length){const n=hits[0].object.userData.room,room=(floorNames()[selectedFloor]||[])[n];if(room){document.getElementById('roomInspector').innerHTML='<b>'+room[0]+' · '+room[1]+'</b><span>'+room[2]+' · '+(room[3]==='SUPPORT'?'พื้นที่สนับสนุน':'พื้นที่ปฏิบัติงาน')+'</span>';}}});
-document.getElementById('viewTop').onclick=setCameraTop;document.getElementById('viewWalk').onclick=setCameraWalk;document.getElementById('viewReset').onclick=()=>walkMode?setCameraWalk():setCameraTop();
-const keys={};addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;});addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false;});
-function move(dir){const v=new THREE.Vector3();camera.getWorldDirection(v);v.y=0;v.normalize();const side=new THREE.Vector3().crossVectors(v,camera.up).normalize();if(dir==='forward')camera.position.addScaledVector(v,.65);if(dir==='back')camera.position.addScaledVector(v,-.65);if(dir==='left')camera.position.addScaledVector(side,.65);if(dir==='right')camera.position.addScaledVector(side,-.65);controls.target.copy(camera.position).add(v);}
-document.querySelectorAll('[data-move]').forEach(b=>{b.addEventListener('pointerdown',e=>{e.preventDefault();move(b.dataset.move);});});
-function animate(){requestAnimationFrame(animate);if(walkMode){let v=new THREE.Vector3();camera.getWorldDirection(v);v.y=0;v.normalize();const side=new THREE.Vector3().crossVectors(v,camera.up).normalize();if(keys.w||keys.arrowup)camera.position.addScaledVector(v,.08);if(keys.s||keys.arrowdown)camera.position.addScaledVector(v,-.08);if(keys.a||keys.arrowleft)camera.position.addScaledVector(side,.08);if(keys.d||keys.arrowright)camera.position.addScaledVector(side,-.08);controls.target.copy(camera.position).add(v);}controls.update();renderer.render(scene,camera);}
-new ResizeObserver(resize).observe(host);resize();build(0);animate();
-window.renderMars3DFloor=build;window.marsFloorRooms=window.marsFloorRooms||[];
+<script>
+(()=>{
+const grid=document.getElementById('constructionGrid');if(!grid)return;
+const labels={empty:'',room:'ห้อง',corridor:'ทาง',life:'ชีพ',storage:'คลัง',lift:'ลิฟต์',erase:''};
+const colors={empty:'#102b40',room:'#c8a45e',corridor:'#16a8c5',life:'#168b75',storage:'#477fa2',lift:'#b75c3e'};
+let tool='empty',floor=0,selected=null;
+const key=i=>'mars-underground-layout-B'+String(i+1).padStart(2,'0');
+function currentFloor(){const t=document.getElementById('mapFloor')?.textContent||'B01';return Math.max(0,parseInt(t.replace('B',''),10)-1)}
+function load(){floor=currentFloor();let data={};try{data=JSON.parse(localStorage.getItem(key(floor))||'{}')}catch(e){}grid.innerHTML='';for(let i=0;i<192;i++){const b=document.createElement('button');b.type='button';b.className='grid-cell';b.dataset.index=i;const kind=data[i]||'empty';paint(b,kind);b.addEventListener('click',()=>{const k=tool==='erase'?'empty':tool;paint(b,k);save();document.getElementById('roomInspector').innerHTML='<b>ช่องพื้นที่ '+String(Math.floor(i/12)+1).padStart(2,'0')+'-'+String(i%12+1).padStart(2,'0')+'</b><span>'+({empty:'พื้นที่ว่าง',room:'พื้นที่ห้อง',corridor:'ทางเดิน',life:'ระบบช่วยชีวิต',storage:'คลังสนับสนุน',lift:'ตำแหน่งลิฟต์'}[k])+' · '+document.getElementById('mapFloor').textContent+'</span>';});grid.appendChild(b)}Object.keys(data).forEach(i=>{const el=grid.querySelector('[data-index="'+i+'"]');if(el)paint(el,data[i])})}
+function paint(el,kind){el.dataset.kind=kind;el.textContent=labels[kind]||'';el.title=kind}
+function save(){const data={};grid.querySelectorAll('.grid-cell').forEach(el=>{if(el.dataset.kind!=='empty')data[el.dataset.index]=el.dataset.kind});localStorage.setItem(key(floor),JSON.stringify(data))}
+document.querySelectorAll('[data-tool]').forEach(b=>b.addEventListener('click',()=>{tool=b.dataset.tool;document.querySelectorAll('[data-tool]').forEach(x=>x.classList.toggle('active',x===b))}));
+const original=window.renderFloorDirectory;const obs=new MutationObserver(()=>{const n=currentFloor();if(n!==floor)load()});obs.observe(document.getElementById('mapFloor'),{childList:true,subtree:true,characterData:true});
+load();
 })();
 </script></body></html>
