@@ -184,6 +184,29 @@ body[data-floor-type="emergency"]{--floor-glow:#ff705e}
  .elevator-controls button{width:100%}
 }
 
+
+/* Floor-specific habitat blueprints and architectural detailing */
+.grid-cell.blueprint{position:relative;filter:saturate(1.12);box-shadow:inset 0 0 0 1px #ffffff20,0 2px 0 #020914}
+.grid-cell.blueprint[data-kind="room"]{background:linear-gradient(145deg,#e1b86d,#87603a 58%,#513c2c);border-color:#ffe1a0;color:#fff4d6}
+.grid-cell.blueprint[data-kind="storage"]{background:linear-gradient(145deg,#8db8d0,#345e7a 65%,#1b3b55);border-color:#b8e7ff}
+.grid-cell.blueprint[data-kind="life"]{background:linear-gradient(145deg,#4fc5a3,#176a68 65%,#10404b);border-color:#9df5d9}
+.grid-cell.blueprint[data-kind="corridor"]{background:repeating-linear-gradient(90deg,#3e7187,#3e7187 4px,#28536c 4px,#28536c 8px);border-color:#8adff0}
+.grid-cell.blueprint[data-kind="lift"]{background:repeating-linear-gradient(135deg,#ffb46e,#ffb46e 4px,#9b4e38 4px,#9b4e38 8px);border:2px solid #ffe0a5;color:#fff}
+.grid-cell.blueprint:after{content:"";position:absolute;inset:2px;border:1px solid #ffffff35;pointer-events:none}
+.grid-cell.blueprint[data-kind="room"]:nth-child(3n){background:linear-gradient(145deg,#d4a45e,#6e4e35)}
+body[data-floor-type="food"] .grid-cell.blueprint[data-kind="room"]{background:linear-gradient(145deg,#9acb75,#3b8053 60%,#234d3e);border-color:#c7f4a4}
+body[data-floor-type="water"] .grid-cell.blueprint[data-kind="room"]{background:linear-gradient(145deg,#75cce5,#286c91 60%,#173e60);border-color:#b4f0ff}
+body[data-floor-type="power"] .grid-cell.blueprint[data-kind="room"]{background:linear-gradient(145deg,#f6b45b,#9c542f 60%,#522e27);border-color:#ffe0a0}
+body[data-floor-type="science"] .grid-cell.blueprint[data-kind="room"]{background:linear-gradient(145deg,#c2a5f4,#6650a2 60%,#352e64);border-color:#e0d0ff}
+body[data-floor-type="medical"] .grid-cell.blueprint[data-kind="room"]{background:linear-gradient(145deg,#f2a7bd,#a95179 60%,#63334e);border-color:#ffd4e1}
+body[data-floor-type="emergency"] .grid-cell.blueprint[data-kind="room"]{background:linear-gradient(145deg,#f38b65,#9c4038 60%,#542a31);border-color:#ffd0b5}
+.room-entry{position:relative;overflow:hidden}
+.room-entry:before{content:"";width:3px;position:absolute;left:0;top:0;bottom:0;background:var(--floor-glow)}
+.directory-head .directory-live{letter-spacing:1px}
+#constructionGrid{background-image:linear-gradient(#2a5268 1px,transparent 1px),linear-gradient(90deg,#2a5268 1px,transparent 1px);background-size:calc(100% / 12) calc(100% / 16)}
+.floor-map-wrap{position:relative}
+.floor-map-wrap:before{content:"";position:absolute;inset:42px 12px 12px;border:1px solid color-mix(in srgb,var(--floor-glow) 18%,transparent);border-radius:8px;pointer-events:none}
+
 </style></head>
 <body>
 <header><div class="brand">🔴 MARS <span>LAND</span> <small style="font-size:10px;color:#91a5bd">UNDERGROUND 24</small></div><a href="./index.html">← กลับสู่ดาวอังคาร</a></header>
@@ -238,16 +261,32 @@ const floors=[
 window.marsFloorRooms=floors.map((f,i)=>roomsForFloor(i));
 const levels=document.querySelector('#levels');
 const roomTemplates=[
-[['01','ห้องควบคุมภารกิจ','Mission Control','MAIN'],['02','ห้องวิเคราะห์ข้อมูล','Data Analysis','MAIN'],['03','ห้องสื่อสารฉุกเฉิน','Emergency Comms','SUPPORT'],['04','โถงลิฟต์และ Airlock','Access / Airlock','ROUTE']],
-[['01','ศูนย์เครือข่าย','Network Hub','MAIN'],['02','ห้องดาวเทียม','Signal Room','MAIN'],['03','คลังอุปกรณ์','Equipment Store','SUPPORT'],['04','โถงทางเดิน','Access Corridor','ROUTE']],
-[['01','ห้องเฝ้าระวัง','Surveillance','MAIN'],['02','ควบคุมประตูแรงดัน','Pressure Control','MAIN'],['03','คลังอุปกรณ์ฉุกเฉิน','Safety Store','SUPPORT'],['04','ทางหนีภัย','Emergency Route','ROUTE']],
-[['01','ห้องพัก A-01 ถึง A-04','Crew Quarters','MAIN'],['02','ห้องพัก A-05 ถึง A-08','Crew Quarters','MAIN'],['03','ห้องน้ำและสุขอนามัย','Sanitation','SUPPORT'],['04','โถงพักผ่อน','Lounge / Corridor','ROUTE']],
-[['01','ห้องพัก B-01 ถึง B-04','Crew Quarters','MAIN'],['02','ห้องพัก B-05 ถึง B-08','Crew Quarters','MAIN'],['03','ห้องซักรีด','Laundry','SUPPORT'],['04','โถงพักผ่อน','Lounge / Corridor','ROUTE']],
-[['01','ครัวกลาง','Central Kitchen','MAIN'],['02','ห้องเตรียมอาหาร','Food Prep','MAIN'],['03','ห้องเก็บวัตถุดิบ','Cold Storage','SUPPORT'],['04','พื้นที่รับประทานอาหาร','Dining Hall','ROUTE']],
-[['01','โซนปลูกผัก A','Hydroponic A','MAIN'],['02','โซนปลูกผัก B','Hydroponic B','MAIN'],['03','ห้องผสมสารอาหาร','Nutrient Lab','SUPPORT'],['04','ทางบริการและขนส่ง','Service Route','ROUTE']],
-[['01','ห้องเพาะเลี้ยงสาหร่าย','Algae Culture','MAIN'],['02','ห้องชีวปฏิกรณ์','Bioreactor','MAIN'],['03','ห้องตรวจตัวอย่าง','Sample Lab','SUPPORT'],['04','โถงควบคุมระบบ','Service Corridor','ROUTE']]
+[['01','ห้องบัญชาการภารกิจ','Mission Control','MAIN'],['02','ห้องยุทธศาสตร์และแผนที่','Strategic Map Room','MAIN'],['03','ห้องสื่อสารฉุกเฉิน','Emergency Comms','SUPPORT'],['04','โถงลิฟต์และ Airlock','Lift / Airlock','ROUTE']],
+[['01','ศูนย์เครือข่ายหลัก','Network Core','MAIN'],['02','ห้องรับสัญญาณดาวเทียม','Satellite Relay','MAIN'],['03','ห้องเซิร์ฟเวอร์สำรอง','Server Vault','SUPPORT'],['04','ทางเดินสายสื่อสาร','Cable Gallery','ROUTE']],
+[['01','ห้องเฝ้าระวังรอบฐาน','Surveillance Hub','MAIN'],['02','ควบคุมประตูแรงดัน','Pressure Locks','MAIN'],['03','คลังชุด EVA และอุปกรณ์','EVA Equipment','SUPPORT'],['04','โถงหลบภัยฉุกเฉิน','Safe Passage','CRITICAL']],
+[['01','ห้องพักลูกเรือ A','Crew Quarters A','MAIN'],['02','ห้องพักลูกเรือ B','Crew Quarters B','MAIN'],['03','ห้องน้ำและสุขอนามัย','Sanitation','SUPPORT'],['04','เลานจ์พักผ่อน','Crew Lounge','ROUTE']],
+[['01','ห้องพักระยะยาว','Long-stay Quarters','MAIN'],['02','ห้องนอนส่วนบุคคล','Private Cabins','MAIN'],['03','ห้องซักรีดและเก็บผ้า','Laundry','SUPPORT'],['04','สวนพักผ่อนในร่ม','Indoor Garden','ROUTE']],
+[['01','ครัวกลางอัตโนมัติ','Central Kitchen','MAIN'],['02','ห้องเตรียมวัตถุดิบ','Food Preparation','MAIN'],['03','ห้องเย็นและแช่แข็ง','Cold Storage','SUPPORT'],['04','โรงอาหารลูกเรือ','Crew Dining','ROUTE']],
+[['01','โรงเรือนปลูกผัก A','Hydroponic Bay A','MAIN'],['02','โรงเรือนปลูกผัก B','Hydroponic Bay B','MAIN'],['03','ห้องผสมสารอาหาร','Nutrient Mixing','SUPPORT'],['04','ทางขนส่งผลผลิต','Harvest Corridor','ROUTE']],
+[['01','ห้องเพาะเลี้ยงสาหร่าย','Algae Culture','MAIN'],['02','ชีวปฏิกรณ์อาหาร','Food Bioreactor','MAIN'],['03','ห้องตรวจพันธุ์พืช','Seed Lab','SUPPORT'],['04','โถงควบคุมชีวภาพ','Bio Control','ROUTE']],
+[['01','คลังอาหารแห้ง','Dry Food Vault','MAIN'],['02','คลังเมล็ดพันธุ์','Seed Vault','MAIN'],['03','ห้องแช่เย็นสำรอง','Deep Freeze','SUPPORT'],['04','จุดรับส่งเสบียง','Supply Dock','ROUTE']],
+[['01','ระบบกรองน้ำหลายขั้น','Multi-stage Filtration','MAIN'],['02','ถังพักน้ำสะอาด','Potable Water','MAIN'],['03','ห้องตรวจคุณภาพน้ำ','Water Quality Lab','SUPPORT'],['04','ท่อเมนและปั๊มน้ำ','Pump Gallery','ROUTE']],
+[['01','ห้องกรองฝุ่นและสารพิษ','Air Scrubbers','MAIN'],['02','ห้องกำจัดคาร์บอนไดออกไซด์','CO₂ Removal','MAIN'],['03','ควบคุมความชื้น','Humidity Control','SUPPORT'],['04','ท่อลมหมุนเวียน','Ventilation Duct','ROUTE']],
+[['01','โรงแยกน้ำผลิตออกซิเจน','Electrolysis Plant','MAIN'],['02','ถังเก็บออกซิเจน','O₂ Storage','MAIN'],['03','ห้องวิเคราะห์ก๊าซ','Gas Analysis','SUPPORT'],['04','ท่อส่งก๊าซหลัก','Gas Manifold','ROUTE']],
+[['01','เครื่องกำเนิดไฟฟ้าหลัก','Power Generators','MAIN'],['02','ห้องควบคุมโหลด','Load Control','MAIN'],['03','สถานีแปลงกระแสไฟ','Power Conversion','SUPPORT'],['04','อุโมงค์สายไฟ','Power Bus','ROUTE']],
+[['01','แบตเตอรี่สำรองชุด A','Battery Bank A','MAIN'],['02','แบตเตอรี่สำรองชุด B','Battery Bank B','MAIN'],['03','ห้องควบคุมความปลอดภัย','Battery Safety','CRITICAL'],['04','ทางเดินบำรุงรักษา','Service Aisle','ROUTE']],
+[['01','เครื่องแลกเปลี่ยนความร้อน','Heat Exchangers','MAIN'],['02','ระบบระบายความร้อน','Thermal Radiators','MAIN'],['03','ห้องฉนวนและซีล','Insulation Lab','SUPPORT'],['04','ท่อหล่อเย็น','Coolant Gallery','ROUTE']],
+[['01','โรงซ่อมหุ่นยนต์','Robotics Workshop','MAIN'],['02','โรงกลึงและพิมพ์ชิ้นส่วน','Fabrication Shop','MAIN'],['03','คลังอะไหล่','Parts Warehouse','SUPPORT'],['04','ช่องขนส่งเครื่องจักร','Cargo Passage','ROUTE']],
+[['01','ศูนย์ควบคุมหุ่นยนต์','Robot Control','MAIN'],['02','โรงเก็บรถสำรวจ','Rover Garage','MAIN'],['03','แท่นชาร์จและซ่อม','Charging Bay','SUPPORT'],['04','อุโมงค์ขนส่ง','Transit Tunnel','ROUTE']],
+[['01','ห้องวิจัยธรณีวิทยา','Geology Lab','MAIN'],['02','ห้องทดลองชีวภาพ','Bio Research','MAIN'],['03','ห้องวิเคราะห์ตัวอย่าง','Sample Analysis','SUPPORT'],['04','คลีนรูมและ Airlock','Cleanroom Entry','CRITICAL']],
+[['01','ห้องตรวจและวินิจฉัย','Diagnostics','MAIN'],['02','ห้องผ่าตัด','Surgery','MAIN'],['03','เภสัชกรรมและเวชภัณฑ์','Pharmacy','SUPPORT'],['04','ห้องพักฟื้น','Recovery Ward','ROUTE']],
+[['01','ห้องกักกันผู้ป่วย','Isolation Ward','CRITICAL'],['02','ห้องฆ่าเชื้ออุปกรณ์','Decontamination','MAIN'],['03','ห้องตรวจชีวนิรภัย','Bio Safety Lab','SUPPORT'],['04','โถงแรงดันลบ','Negative Pressure','ROUTE']],
+[['01','ศูนย์รวมพลอพยพ','Evacuation Hall','MAIN'],['02','ห้องพักพิงสำรอง','Shelter Pods','MAIN'],['03','คลังชุดเอาตัวรอด','Survival Gear','SUPPORT'],['04','ทางหนีภัยสำรอง','Escape Tunnel','CRITICAL']],
+[['01','ถังเก็บน้ำฉุกเฉิน A','Emergency Tank A','MAIN'],['02','ถังเก็บน้ำฉุกเฉิน B','Emergency Tank B','MAIN'],['03','เครื่องกรองแบบพกพา','Portable Filters','SUPPORT'],['04','ท่อแยกอิสระ','Isolated Water Line','ROUTE']],
+[['01','คลังอาหารฉุกเฉิน','Emergency Rations','MAIN'],['02','คลังยาและเวชภัณฑ์','Medical Reserve','MAIN'],['03','ชุดยังชีพและแบตเตอรี่','Survival Kits','SUPPORT'],['04','ทางเข้าคลังนิรภัย','Vault Access','CRITICAL']],
+[['01','ศูนย์ควบคุมสำรอง','Backup Command','CRITICAL'],['02','ระบบไฟฟ้าอิสระ','Independent Power','CRITICAL'],['03','ระบบอากาศอิสระ','Independent Life Support','CRITICAL'],['04','ห้องควบคุมวิกฤต','Crisis Control','CRITICAL']]
 ];
-function roomsForFloor(i){return roomTemplates[i]||[['01',floors[i][0]+' · โซน A','Primary Zone','MAIN'],['02','พื้นที่ปฏิบัติงาน','Operations','MAIN'],['03','คลังและอุปกรณ์สนับสนุน','Support Store','SUPPORT'],['04','โถงทางเดิน / ทางหนีภัย','Access / Evacuation','ROUTE']]}
+function roomsForFloor(i){return roomTemplates[i]||roomTemplates[0]}
 function renderFloorDirectory(i){
  const f=floors[i],rooms=roomsForFloor(i),code='B'+String(i+1).padStart(2,'0');
  if(window.renderMars3DFloor)window.renderMars3DFloor(i);
@@ -317,16 +356,30 @@ const labels={empty:'',room:'ห้อง',corridor:'ทาง',life:'ชีพ'
 let tool='empty',floor=0,user=null,remote=[],channel=null,saveTimer=null;
 const names={empty:'พื้นที่ว่าง',room:'ห้อง',corridor:'ทางเดิน',life:'ระบบช่วยชีวิต',storage:'คลังสนับสนุน',lift:'ลิฟต์'};
 function currentFloor(){const t=document.getElementById('mapFloor')?.textContent||'B01';return Math.max(1,Math.min(24,parseInt(t.replace('B',''),10)||1))}
+function floorBlueprintCell(index){
+ const x=index%12,y=Math.floor(index/12),fi=floor-1,layout=fi%4;
+ const rooms=roomsForFloor(fi);
+ const rects=layout===0?[[0,1,4,5],[8,1,4,5],[0,10,4,5],[8,10,4,5]]:
+ layout===1?[[1,0,4,5],[7,0,4,5],[1,10,4,5],[7,10,4,5]]:
+ layout===2?[[0,2,5,4],[7,2,5,4],[0,10,5,4],[7,10,5,4]]:
+ [[0,1,5,4],[7,1,5,4],[0,11,5,4],[7,11,5,4]];
+ let kind='empty',roomName='';
+ if(y===7||y===8||x===5||x===6)kind='corridor';
+ rects.forEach((r,n)=>{if(x>=r[0]&&x<r[0]+r[2]&&y>=r[1]&&y<r[1]+r[3]){const room=rooms[n];kind=room[3]==='ROUTE'?'corridor':room[3]==='SUPPORT'?'storage':room[3]==='CRITICAL'?'life':'room';roomName=room[1]+' · '+room[2]}});
+ if((x===5||x===6)&&(y===14||y===15)){kind='lift';roomName='ลิฟต์ขนส่งแนวตั้ง'}
+ if(y===0&&x>=4&&x<=7){kind='life';roomName='ประตูแรงดัน / จุดตรวจเข้าออก'}
+ return {kind,roomName};
+}
 function paint(el,kind,owner){el.dataset.kind=kind;el.textContent=labels[kind]||'';el.classList.toggle('other-member',!!owner&&owner!==user?.id);el.classList.toggle('mine',!!owner&&owner===user?.id);el.title=names[kind]+(owner&&owner!==user?.id?' · สมาชิกอื่น':'')}
 function draw(){floor=currentFloor();grid.innerHTML='';const mine=new Map(),others=new Map();remote.filter(r=>r.floor_no===floor).forEach(r=>{if(r.owner_id===user?.id)mine.set(r.cell_index,r);else if(!others.has(r.cell_index))others.set(r.cell_index,r)});
-for(let i=0;i<192;i++){const b=document.createElement('button');b.type='button';b.className='grid-cell';b.dataset.index=i;const row=mine.get(i)||others.get(i);paint(b,row?.cell_type||'empty',row?.owner_id);b.addEventListener('click',()=>place(i,b));grid.appendChild(b)}}
+for(let i=0;i<192;i++){const b=document.createElement('button');b.type='button';b.className='grid-cell';b.dataset.index=i;const row=mine.get(i)||others.get(i);const preset=floorBlueprintCell(i);const kind=row?.cell_type||preset.kind;paint(b,kind,row?.owner_id);b.classList.toggle('blueprint',!row&&kind!=='empty');if(!row&&preset.roomName)b.title=preset.roomName+' · ผังต้นแบบของชั้น';b.addEventListener('click',()=>place(i,b));grid.appendChild(b)}}
 async function load(){floor=currentFloor();if(!db){status.textContent='ไม่สามารถโหลดระบบออนไลน์ได้';return}
 const {data,error}=await db.from('mars_underground_cells').select('owner_id,floor_no,cell_index,cell_type,updated_at').eq('floor_no',floor);
 if(error){status.textContent='ยังไม่ได้ตั้งค่าฐานข้อมูลส่วนกลาง: '+error.message;return}
 remote=data||[];draw();status.textContent=(user?'เชื่อมต่อแล้ว · ':'ดูผังส่วนกลาง · ')+remote.length+' ช่องที่สร้างในชั้น B'+String(floor).padStart(2,'0');
 }
 async function place(index,el){if(!user){status.textContent='กรุณาเข้าสู่ระบบสมาชิกก่อนแก้ไขผังก่อสร้าง';return}
-const kind=tool==='erase'?null:tool;
+const kind=tool==='erase'||tool==='empty'?null:tool;
 let q;if(kind){q=await db.from('mars_underground_cells').upsert({owner_id:user.id,floor_no:floor,cell_index:index,cell_type:kind,updated_at:new Date().toISOString()},{onConflict:'owner_id,floor_no,cell_index'});}
 else q=await db.from('mars_underground_cells').delete().eq('owner_id',user.id).eq('floor_no',floor).eq('cell_index',index);
 if(q.error){status.textContent='บันทึกไม่สำเร็จ: '+q.error.message;return}
