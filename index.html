@@ -341,4 +341,48 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+
+<!-- LOCAL MARS bilingual interface: auto locale + manual language switch -->
+<style id="local-mars-language-style">
+#lmLanguage{position:fixed;z-index:9999;top:12px;right:14px;padding:8px 12px;border:1px solid #d7b575;border-radius:999px;background:linear-gradient(135deg,#10243aee,#071321ee);color:#f4dfb5;font:700 11px system-ui;letter-spacing:.6px;box-shadow:0 5px 18px #0008;backdrop-filter:blur(12px)}
+body:has(header #lmLanguage) header{padding-right:105px}
+@media(max-width:650px){#lmLanguage{top:9px;right:9px;padding:7px 9px;font-size:10px}body:has(header #lmLanguage) header{padding-right:92px}}
+</style>
+<script id="local-mars-bilingual">
+(()=>{
+const pairs=[["LOCAL MARS","LOCAL MARS"],["PLANET EXPLORER","PLANET EXPLORER"],["กำลังเชื่อมต่อ Marslocal…","Connecting to Marslocal…"],["สำรวจดาวอังคาร","Explore Mars"],["สร้างเมืองอาณานิคม","Build Colony City"],["ฐานใต้ดิน 24 ชั้น","24-Level Underground Base"],["ตลาดซื้อขายที่ดิน","Land Marketplace"],["ยังไม่ได้เลือก","Not selected"],["เลือกภารกิจเพื่อเริ่มต้นการเดินทางบนดาวอังคาร","Choose a mission to begin your journey on Mars"],["หมุนอัตโนมัติ: เปิด","Auto rotate: ON"],["หมุนอัตโนมัติ: ปิด","Auto rotate: OFF"],["รีเซ็ตมุมมอง","Reset View"],["LAND EXPLORER","LAND EXPLORER"],["ดาวอังคารจำลอง • ลากเพื่อหมุน / บีบนิ้วเพื่อซูม • แตะหมุดเพื่อสำรวจแปลง","Mars simulation • Drag to rotate / pinch to zoom • Tap a marker to explore a parcel"],["พื้นที่จำลอง","Simulated land"],["พร้อมจอง","Available"],["มีผู้จองแล้ว","Claimed"],["ราคาเสนอ","Offer price"],["จองแปลงจำลอง","Claim simulated parcel"],["วางอาคารบนแปลง","Place building on parcel"],["ปิดรายละเอียดพื้นที่","Close parcel details"],["แปลงที่จอง","Claimed parcels"],["อาคารที่สร้าง","Buildings constructed"],["เข้าสู่ระบบ / สมัครสมาชิก","Log in / Sign up"],["กำลังตรวจสอบบัญชีออนไลน์…","Checking online account…"],["กำลังโหลดข้อมูลโลก…","Loading world data…"],["ออกจากระบบ","Log out"],["สำรวจ","Explore"],["ตลาดจำลอง","Simulated Market"],["เมืองของฉัน","My Colony"],["จำลองก่อสร้าง","Construction"],["ฐาน 24 ชั้น","24-Level Base"],["สมาชิก","Account"],["สมาชิก LOCAL MARS ONLINE","LOCAL MARS ONLINE MEMBERS"],["ชื่อสมาชิก (ใช้ตอนสมัคร)","Username (for sign-up)"],["อีเมล","Email"],["รหัสผ่านอย่างน้อย 8 ตัว","Password (at least 8 characters)"],["สมัครสมาชิกออนไลน์","Create Online Account"],["เข้าสู่ระบบ","Log In"],["ปิด","Close"],["บัญชีสมาชิกจัดเก็บผ่าน Supabase Auth ของ Marslocal หากเปิดยืนยันอีเมล กรุณากดยืนยันจากอีเมลก่อนเข้าสู่ระบบ","Member accounts are managed by Marslocal Supabase Auth. If email confirmation is enabled, confirm your email before logging in."],["ฐานใต้ดิน 24","Underground 24"],["โปรแกรมจำลองฐานใต้ดิน 24 ชั้นและระบบหมุนเวียนทรัพยากร","24-level underground habitat and resource circulation simulator"],["ชั้น","Floor"],["ระบบและพื้นที่เฉพาะชั้น","Floor Systems & Facilities"],["ควบคุมการปฏิบัติงาน","Operations Control"],["ระดับการทำงานของชั้น","Floor Operating Level"],["ปรับระดับการจำลองเฉพาะ","Adjust simulation level for"],["ภารกิจเฉพาะชั้น","Floor Mission"],["เริ่มภารกิจ","Start Mission"],["ภารกิจที่ดำเนินการแล้ว","Completed Missions"],["เปิดโมดูล","Open Module"],["✓ ตรวจแล้ว","✓ Checked"],["ข้อมูลจำลองบันทึกบนอุปกรณ์นี้","Simulation data is saved on this device"],["กำลังผลิต","Production"],["โหลด","Load"],["ประสิทธิภาพ","Efficiency"],["สถานะ","Status"],["ห้องปฏิบัติการวิทยาศาสตร์","Science Laboratory"],["สถานพยาบาลและศัลยกรรม","Medical & Surgical Center"],["ศูนย์อพยพและหลบภัย","Evacuation & Shelter Center"],["คลังน้ำฉุกเฉิน","Emergency Water Storage"],["คลังเสบียงฉุกเฉิน","Emergency Supply Storage"],["ศูนย์ระบบสำรองขั้นวิกฤต","Critical Backup Systems Center"],["ระบบพลังงาน","Power Systems"],["ระบบน้ำ","Water Systems"],["ระบบอากาศ","Atmosphere Systems"],["ห้องควบคุม","Control Room"],["พื้นที่อยู่อาศัย","Habitat"],["โรงเรือนปลูกพืช","Hydroponics"],["LOCAL MARS / FLOOR EXPERIENCE /","LOCAL MARS / FLOOR EXPERIENCE /"],["DEDICATED FLOOR INTERFACE ·","DEDICATED FLOOR INTERFACE ·"]];
+const thToEn=new Map(pairs),enToTh=new Map(pairs.map(([th,en])=>[en,th]));
+const region=(navigator.language||'').toLowerCase();
+const zone=Intl.DateTimeFormat().resolvedOptions().timeZone||'';
+const detected=(region.startsWith('th')||zone==='Asia/Bangkok'||zone.startsWith('Asia/'))?'th':'en';
+let lang=localStorage.getItem('localMarsLanguage')||detected;
+if(!['th','en'].includes(lang))lang=detected;
+const clean=s=>s.replace(/\\s+/g,' ').trim();
+function translateValue(value){
+ const t=clean(value); if(!t)return value;
+ const dict=lang==='en'?thToEn:enToTh;
+ if(dict.has(t))return value.replace(t,dict.get(t));
+ let out=value;
+ for(const [a,b] of dict){if(a.length>3)out=out.split(a).join(b)}
+ return out;
+}
+function translate(root=document){
+ const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+ const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
+ nodes.forEach(n=>{const p=n.parentElement;if(!p||['SCRIPT','STYLE','NOSCRIPT'].includes(p.tagName)||p.closest('#lmLanguage'))return;const v=translateValue(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v;});
+ root.querySelectorAll?.('[placeholder],[title],[aria-label]').forEach(el=>['placeholder','title','aria-label'].forEach(k=>{const v=el.getAttribute(k);if(v)el.setAttribute(k,translateValue(v));}));
+}
+function install(){
+ let btn=document.getElementById('lmLanguage');
+ if(!btn){btn=document.createElement('button');btn.id='lmLanguage';btn.type='button';document.body.appendChild(btn);}
+ const refresh=()=>{btn.textContent=lang==='th'?'🇹🇭 ไทย':'🇬🇧 English';btn.setAttribute('aria-label',lang==='th'?'Switch language to English':'เปลี่ยนภาษาเป็นไทย');};
+ refresh();translate();
+ btn.onclick=()=>{lang=lang==='th'?'en':'th';localStorage.setItem('localMarsLanguage',lang);document.documentElement.lang=lang;refresh();translate();};
+ document.documentElement.lang=lang;
+ new MutationObserver(records=>{for(const r of records){r.addedNodes.forEach(n=>{if(n.nodeType===Node.TEXT_NODE){const v=translateValue(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v;}else if(n.nodeType===Node.ELEMENT_NODE&&n.id!=='lmLanguage')translate(n);});}}).observe(document.body,{childList:true,subtree:true});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+})();
+</script>
+
 </body></html>
