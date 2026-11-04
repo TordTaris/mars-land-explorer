@@ -24,6 +24,38 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Validate static site and mobile entry points
+        run: |
+          python3 - <<'PY'
+          import json, re
+          from pathlib import Path
+          html = Path("index.html").read_text(encoding="utf-8")
+          manifest = json.loads(Path("manifest.webmanifest").read_text(encoding="utf-8"))
+          sw = Path("sw.js").read_text(encoding="utf-8")
+          assert '<link rel="manifest" href="./manifest.webmanifest">' in html, "manifest link missing"
+          assert "navigator.serviceWorker.register('./sw.js'" in html, "service worker registration missing"
+          assert manifest.get("start_url") == "./" and manifest.get("scope") == "./", "manifest paths must be relative to the GitHub Pages project root"
+          for icon in manifest.get("icons", []):
+              path = icon.get("src", "").removeprefix("./")
+              assert path and Path(path).is_file(), f"manifest icon missing: {path}"
+          for asset in ("index.html", "manifest.webmanifest", "sw.js", "icon.svg"):
+              assert Path(asset).is_file(), f"required deployment file missing: {asset}"
+          importmap = re.search(r'<script type="importmap">\\s*(.*?)\\s*</script>', html, re.S)
+          assert importmap, "Three.js import map missing"
+          imports = json.loads(importmap.group(1)).get("imports", {})
+          assert imports.get("three", "").endswith("/build/three.module.js"), "Three.js module mapping missing"
+          assert imports.get("three/addons/", "").endswith("/examples/jsm/"), "Three.js addons mapping missing"
+          assert "from 'three/addons/controls/OrbitControls.js'" in html, "OrbitControls import missing"
+          for asset in ('"./"', '"./index.html"', '"./manifest.webmanifest"', '"./icon.svg"'):
+              assert asset in sw, f"service worker precache entry missing: {asset}"
+          module = re.search(r'<script type="module">\\s*(.*?)\\s*</script>', html, re.S)
+          assert module, "application module missing"
+          Path("/tmp/mars-main.mjs").write_text(module.group(1), encoding="utf-8")
+          print("Static paths, manifest, icon, service worker and Three.js imports validated.")
+          PY
+          node --check /tmp/mars-main.mjs
+          node --check sw.js
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
