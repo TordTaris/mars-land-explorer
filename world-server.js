@@ -70,7 +70,7 @@ async function build(parcel,type){
  if(r.error){status(r.error.message);return r;}
  if(!r.data?.ok){const error={message:'ฐานข้อมูลยังไม่ยืนยันการก่อสร้าง'};status(error.message);return {error};}
  status('บันทึกอาคารลงฐานข้อมูลออนไลน์บน '+parcel+' แล้ว',true);
- const synced=await refresh();if(synced?.error)return {error:{message:'บันทึกแล้ว แต่โหลดข้อมูลโลกกลับมาไม่สำเร็จ: '+synced.error.message}};
+ const synced=await refresh();if(synced?.error)return {data:r.data,syncWarning:synced.error.message};
  return r;
 }
 window.MarsWorldServer={connect,auth,logout,refresh,claim,build,getState:()=>({user:S.user,claims:S.claims,structures:S.structures,events:S.events,db:S.db})};
