@@ -587,7 +587,8 @@ async function placeNationalFlag(){
   const payload={owner_id:onlineUser.id,country_code:select.value,country_name:option.dataset.name,flag_emoji:option.dataset.emoji,x,z,level};
   flagSubmitting=true;
   const button=document.querySelector('#placeFlag'),quickButton=document.querySelector('#placeFlagHere');if(button){button.disabled=true;button.textContent='กำลังบันทึกธง…';}if(quickButton){quickButton.disabled=true;quickButton.textContent='กำลังบันทึกธง…';}
-  const result=await marsDB.from('mars_city_national_flags').upsert(payload,{onConflict:'owner_id,x,z,level'}).select('id').single();
+  let result=await marsDB.from('mars_city_national_flags').upsert(payload,{onConflict:'owner_id,x,z,level'}).select('id').single();
+  if(result.error){const lookup=await marsDB.from('mars_city_national_flags').select('id').eq('owner_id',onlineUser.id).eq('x',x).eq('z',z).eq('level',level).maybeSingle();if(lookup.error)throw result.error;result=lookup.data?await marsDB.from('mars_city_national_flags').update({country_code:payload.country_code,country_name:payload.country_name,flag_emoji:payload.flag_emoji}).eq('id',lookup.data.id).select('id').single():await marsDB.from('mars_city_national_flags').insert(payload).select('id').single();}
   if(result.error)throw result.error;
   toast('ปักธง '+option.dataset.name+' สำเร็จแล้ว');
   // Refresh flags directly so a building-table sync error cannot hide a saved flag.
@@ -639,7 +640,7 @@ const buildingNames={hab:"โดมที่พักอาศัย",green:"เ
 const constructionStages=["ปรับพื้นที่","วางฐานราก","ประกอบโครงสร้าง","ติดตั้งอุปกรณ์","ตรวจสอบระบบ"];
 const constructionSites=[];let lastConstructionUi=0;
 const keys={forward:false,back:false,left:false,right:false};
-function updateHUD(){const energyNode=document.querySelector('#inventoryEnergy');if(energyNode)energyNode.textContent=energy.toLocaleString()+' kWh';const hudBuildCount=document.querySelector('#hudBuildCount');if(hudBuildCount)hudBuildCount.textContent=buildings.length;document.querySelector('#count').textContent=buildings.length;document.querySelector('#credits').textContent=';document.querySelector('#position').textContent=Math.round(avatar.position.x)+', '+Math.round(avatar.position.z);document.querySelector('#modeLabel').textContent=roadMode?'วางถนน':buildMode?'สร้างเมือง':'เดินสำรวจ';document.querySelector('#roadCount').textContent=roads.length;const stock=document.querySelector('#resourceStock');if(stock)stock.textContent='วัสดุสำรอง: โลหะ '+resources.metal+' • โพลิเมอร์ '+resources.polymer+' • อิเล็กทรอนิกส์ '+resources.electronics+' • งานค้าง '+constructionSites.length}
+function updateHUD(){const energyNode=document.querySelector('#inventoryEnergy');if(energyNode)energyNode.textContent=energy.toLocaleString()+' kWh';const hudBuildCount=document.querySelector('#hudBuildCount');if(hudBuildCount)hudBuildCount.textContent=buildings.length;document.querySelector('#count').textContent=buildings.length;document.querySelector('#credits').textContent='$'+credits.toLocaleString()+' USD';document.querySelector('#position').textContent=Math.round(avatar.position.x)+', '+Math.round(avatar.position.z);document.querySelector('#modeLabel').textContent=roadMode?'วางถนน':buildMode?'สร้างเมือง':'เดินสำรวจ';document.querySelector('#roadCount').textContent=roads.length;const stock=document.querySelector('#resourceStock');if(stock)stock.textContent='วัสดุสำรอง: โลหะ '+resources.metal+' • โพลิเมอร์ '+resources.polymer+' • อิเล็กทรอนิกส์ '+resources.electronics+' • งานค้าง '+constructionSites.length}
 function toast(t){const el=document.querySelector('#toast');el.textContent=t;el.style.display='block';clearTimeout(window._toast);window._toast=setTimeout(()=>el.style.display='none',2200)}
 function selectCell(c){selected=c;document.querySelector('#plot').textContent='X '+c.userData.x.toFixed(0)+' / Z '+c.userData.z.toFixed(0);cells.forEach(m=>m.material.opacity=m===c?.28:0)}
 const ray=new THREE.Raycaster(),pointer=new THREE.Vector2();let dragging=false,lastX=0,lastY=0,moved=0;
@@ -757,7 +758,7 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
  const backdrop=document.querySelector('#inventoryBackdrop');
  function refreshInventory(){
   const get=id=>document.getElementById(id);
-  const creditText=get('credits')?.textContent||'5,000 ETH';
+  const creditText=get('credits')?.textContent||'$5,000 USD';
   get('inventoryCredits').textContent=creditText;
   get('inventoryBuildings').textContent=get('count')?.textContent||'0';
   const readStock=()=>{const stock=get('resourceStock')?.textContent||'';return stock};
