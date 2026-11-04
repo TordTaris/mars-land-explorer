@@ -114,6 +114,89 @@ header .status{white-space:nowrap;background:#102a25;border-color:#4b987b;color:
 .resource-chip small{display:block!important;position:static!important;margin:0!important;padding:0!important;line-height:1.2!important;font-size:9px!important;white-space:nowrap!important}
 @media(max-width:760px){.resourcebar{grid-template-columns:repeat(3,minmax(0,1fr))!important;align-items:stretch!important}.resource-chip{width:100%;min-width:0!important;min-height:64px;padding:6px 2px!important;gap:3px!important}.resource-chip .resource-icon{font-size:12px}.resource-chip b{font-size:clamp(10px,3.1vw,13px)!important;letter-spacing:0!important}.resource-chip small{font-size:clamp(7px,2.3vw,9px)!important}}
 
+
+/* MARS LAND HUD SYSTEM v3 — strict spacing, responsive safe areas */
+:root{--hud-gap:10px;--hud-gold:#d8b477;--hud-glass:rgba(8,19,32,.94)}
+header{
+ position:fixed!important;top:10px!important;left:14px!important;right:14px!important;
+ height:48px!important;min-height:48px!important;padding:0 16px!important;
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ z-index:50!important;pointer-events:none!important;
+ border:1px solid #d8b47766!important;border-radius:14px!important;
+ background:linear-gradient(105deg,#081321f5,#172b40f2 55%,#091727f5)!important;
+}
+.resourcebar{
+ position:fixed!important;top:68px!important;left:50%!important;right:auto!important;
+ transform:translateX(-50%)!important;z-index:45!important;
+ display:flex!important;align-items:stretch!important;justify-content:center!important;
+ gap:10px!important;width:max-content!important;max-width:calc(100vw - 28px)!important;
+ opacity:1!important;pointer-events:none!important;
+}
+.resource-chip{
+ display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+ gap:3px!important;width:116px!important;min-width:116px!important;height:62px!important;min-height:62px!important;
+ padding:5px 8px!important;margin:0!important;overflow:hidden!important;
+ border:1px solid #c9a66e88!important;border-radius:12px!important;
+ background:linear-gradient(145deg,rgba(25,43,62,.97),rgba(7,19,32,.97))!important;
+ box-shadow:0 7px 20px #0007,inset 0 1px #fff2!important;
+ line-height:1.15!important;text-align:center!important;
+}
+.resource-chip .resource-icon{font-size:12px!important;line-height:1!important}
+.resource-chip b{display:block!important;margin:0!important;padding:0!important;font-size:14px!important;line-height:1.2!important;white-space:nowrap!important}
+.resource-chip small{display:block!important;margin:0!important;padding:0!important;font-size:9px!important;line-height:1.15!important;white-space:nowrap!important}
+.view-toolbar{
+ position:fixed!important;top:140px!important;left:50%!important;right:auto!important;
+ transform:translateX(-50%)!important;width:max-content!important;max-width:calc(100vw - 28px)!important;
+ min-height:50px!important;display:flex!important;align-items:center!important;justify-content:center!important;
+ gap:8px!important;padding:5px!important;z-index:48!important;
+ border:1px solid #c9a66e88!important;border-radius:14px!important;
+ background:linear-gradient(135deg,#101f30f5,#071321f5)!important;
+ box-shadow:0 9px 24px #0008!important;
+}
+.view-btn{height:38px!important;min-height:38px!important;padding:0 16px!important;border-radius:9px!important;font-size:11px!important}
+.panel.left.open,.panel.right.open{top:202px!important;max-height:calc(100dvh - 285px)!important}
+.panel.left.open{left:14px!important}.panel.right.open{right:14px!important}
+.toast{z-index:70!important;bottom:68px!important}
+.bottom{z-index:42!important;max-width:calc(100vw - 24px)!important}
+.pad{z-index:30!important}.look{z-index:29!important}
+@media(max-width:760px){
+ header{top:7px!important;left:7px!important;right:7px!important;height:42px!important;min-height:42px!important;padding:0 10px!important;border-radius:11px!important}
+ header .brand{font-size:14px!important;letter-spacing:1px!important}
+ header .brand small{font-size:8px!important}
+ header .status{font-size:8px!important;padding:4px 7px!important}
+ .resourcebar{
+  top:56px!important;left:7px!important;right:7px!important;transform:none!important;
+  width:auto!important;max-width:none!important;display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;
+ }
+ .resource-chip{width:100%!important;min-width:0!important;height:62px!important;min-height:62px!important;padding:4px 2px!important;border-radius:9px!important;gap:3px!important}
+ .resource-chip .resource-icon{font-size:11px!important}
+ .resource-chip b{font-size:clamp(10px,3.2vw,13px)!important}
+ .resource-chip small{font-size:clamp(7px,2.3vw,9px)!important}
+ .view-toolbar{
+  top:126px!important;left:7px!important;right:7px!important;transform:none!important;
+  width:auto!important;max-width:none!important;min-height:46px!important;
+  display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto!important;
+  gap:5px!important;padding:4px!important;border-radius:11px!important;
+ }
+ .view-btn{width:100%!important;min-width:0!important;height:36px!important;min-height:36px!important;padding:0 5px!important;font-size:clamp(9px,2.7vw,10px)!important;white-space:nowrap!important}
+ .view-btn.subtle{padding:0 8px!important}
+ .panel.left.open,.panel.right.open{
+  top:181px!important;left:7px!important;right:7px!important;width:auto!important;
+  max-height:calc(100dvh - 300px)!important;padding:10px!important;
+ }
+ .pad{left:8px!important;bottom:72px!important;width:96px!important;height:86px!important}
+ .look{right:8px!important;bottom:74px!important;max-width:40vw!important;font-size:8px!important}
+ .bottom{left:50%!important;bottom:6px!important;gap:4px!important;padding:5px!important}
+ .bottom button{font-size:9px!important;padding:7px 8px!important}
+ .toast{bottom:58px!important;max-width:calc(100vw - 30px)!important}
+}
+@media(max-width:360px){
+ header .brand small{display:none!important}
+ .view-btn{font-size:8px!important}
+ .resource-chip b{font-size:10px!important}
+}
+
 </style></head><body><div id="world"></div>
 <header><div class="brand">🔴 MARS <span>LAND</span> <small style="font-size:10px;color:#91a5bd">CITY BUILDER</small></div><div class="status">● THIRD-PERSON MODE</div></header>
 <nav class="view-toolbar" aria-label="เครื่องมือควบคุมหน้าจอ">
