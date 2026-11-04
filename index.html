@@ -178,37 +178,7 @@ header .status{display:inline-flex!important;align-items:center!important;justif
  .lm-language-slot{gap:0!important}
 }
 </style>
-<style id="local-mars-mission-deck">
-/* LOCAL MARS 2.1 — compact command deck keeps the planet fully immersive */
-#lmMissionLauncher{position:fixed;z-index:45;left:16px;top:70px;display:none;align-items:center;gap:9px;padding:9px 13px;border:1px solid rgba(224,190,123,.7);border-radius:12px;background:linear-gradient(135deg,rgba(17,37,57,.96),rgba(5,15,27,.94));color:#f3dfb8;box-shadow:0 10px 30px #0008,inset 0 1px #fff2;backdrop-filter:blur(18px);font-size:10px;font-weight:850;letter-spacing:1.5px}
-#lmMissionLauncher .lm-pulse{width:7px;height:7px;border-radius:50%;background:#83e7b6;box-shadow:0 0 12px #83e7b6;animation:lmPulse 1.8s infinite}
-#lmMissionLauncher .lm-chevron{font-size:13px;color:#dfbd7d;transition:transform .2s}
-#lmMissionDeck{position:fixed;z-index:44;left:16px;top:116px;width:min(292px,calc(100vw - 28px));padding:14px;border:1px solid #d0ad6c88;border-radius:17px;background:linear-gradient(145deg,rgba(12,30,48,.97),rgba(4,13,25,.97));box-shadow:0 20px 55px #000b,inset 0 1px #ffffff18;backdrop-filter:blur(20px);display:none}
-#lmMissionDeck.open{display:block;animation:lmDeckIn .2s ease-out}
-#lmMissionDeck .lm-kicker{font-size:9px;letter-spacing:2px;color:#d8b875;font-weight:900}
-#lmMissionDeck .lm-heading{font-size:16px;font-weight:850;color:#fff1d6;margin:5px 0 3px}
-#lmMissionDeck .lm-sub{font-size:10px;color:#9fb2c5;margin-bottom:12px}
-#lmMissionDeck .lm-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-#lmMissionDeck button{min-height:70px;text-align:left;padding:10px;border:1px solid #a98a5b66;border-radius:12px;background:linear-gradient(145deg,#183149,#0b1a2a);box-shadow:inset 0 1px #fff1;display:flex;flex-direction:column;justify-content:space-between;gap:5px}
-#lmMissionDeck button:active{transform:scale(.98)}
-#lmMissionDeck button .lm-icon{font-size:19px;line-height:1}
-#lmMissionDeck button strong{font-size:10px;color:#f5e7cc}
-#lmMissionDeck button small{font-size:8px;color:#9db2c6}
-#lmMissionDeck .lm-stats{display:flex;gap:8px;margin-top:10px}
-#lmMissionDeck .lm-stat{flex:1;border:1px solid #ffffff18;border-radius:10px;padding:8px;background:#ffffff08}
-#lmMissionDeck .lm-stat small{display:block;font-size:8px;color:#9aafc2;letter-spacing:.8px}
-#lmMissionDeck .lm-stat b{display:block;margin-top:3px;color:#e9cf9b;font-size:16px}
-#lmMissionDeck .lm-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:9px;border-top:1px solid #ffffff18;color:#8299ae;font-size:8px;letter-spacing:1px}
-#lmMissionDeck .lm-close{border:0;background:transparent;box-shadow:none;color:#d9bd87;padding:3px 5px;min-height:0;font-size:10px}
-#lmMissionLauncher{display:inline-flex}
-@keyframes lmPulse{50%{opacity:.45;box-shadow:0 0 4px #83e7b6}}
-@keyframes lmDeckIn{from{opacity:0;transform:translateY(-7px)}to{opacity:1;transform:translateY(0)}}
-@media(max-width:650px){
- #lmMissionLauncher{left:9px;top:57px;padding:8px 10px;font-size:9px}
- #lmMissionDeck{left:9px;top:101px;width:min(270px,calc(100vw - 18px));padding:11px}
- #lmMissionDeck button{min-height:64px;padding:8px}
-}
-</style></head>
+</head>
 <body>
 <div id="scene"></div>
 <header><div class="brand">🔴 LOCAL <span>MARS</span> <small style="font-size:9px;color:#91a5bd">PLANET EXPLORER</small></div><div class="status" id="worldServerStatus">กำลังเชื่อมต่อ Marslocal…</div></header>
@@ -440,30 +410,6 @@ if ('serviceWorker' in navigator) {
 #lmLanguage{position:static;inset:auto;z-index:auto;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;margin-left:8px;min-height:34px;max-width:44px;white-space:nowrap;box-shadow:none;backdrop-filter:none}
 body:has(header #lmLanguage) header{padding-right:105px}
 @media(max-width:650px){#lmLanguage{top:9px;right:9px;padding:7px;font-size:10px}body:has(header #lmLanguage) header{padding-right:92px}}
-
-/* LOCAL MARS — full Mission Deck presentation */
-#lmMissionLauncher{left:22px!important;top:76px!important;min-height:42px!important;padding:11px 16px!important;border-radius:13px!important;font-size:11px!important;letter-spacing:2px!important}
-#lmMissionDeck{left:22px!important;top:128px!important;width:min(360px,calc(100vw - 44px))!important;padding:18px!important;border-radius:20px!important;border-color:rgba(222,190,125,.82)!important;background:linear-gradient(145deg,rgba(15,34,53,.97),rgba(4,12,23,.97))!important;box-shadow:0 24px 70px #000c,inset 0 1px #fff2!important}
-#lmMissionDeck .lm-kicker{font-size:10px!important;letter-spacing:2.4px!important}
-#lmMissionDeck .lm-heading{font-size:21px!important;margin:8px 0 5px!important}
-#lmMissionDeck .lm-sub{font-size:11px!important;line-height:1.6!important;margin-bottom:16px!important}
-#lmMissionDeck .lm-grid{gap:10px!important}
-#lmMissionDeck button{min-height:88px!important;padding:12px!important;border-radius:14px!important;border-color:#c7a66b66!important;background:linear-gradient(145deg,#1b3852,#0a1a2b)!important;transition:transform .18s,border-color .18s,background .18s}
-#lmMissionDeck button:hover{transform:translateY(-2px);border-color:#e6c783!important;background:linear-gradient(145deg,#284b66,#10243a)!important}
-#lmMissionDeck button .lm-icon{font-size:24px!important}
-#lmMissionDeck button strong{font-size:11px!important;letter-spacing:.2px}
-#lmMissionDeck button small{font-size:9px!important;line-height:1.4}
-#lmMissionDeck .lm-stat{padding:10px!important;border-color:#c7a66b38!important;background:linear-gradient(145deg,#ffffff0d,#ffffff04)!important}
-#lmMissionDeck .lm-stat b{font-size:19px!important}
-#lmMissionDeck .lm-foot{font-size:8px!important;letter-spacing:1.2px}
-@media(max-width:650px){
- #lmMissionLauncher{left:10px!important;top:58px!important;min-height:38px!important;padding:9px 12px!important}
- #lmMissionDeck{left:10px!important;top:105px!important;width:min(350px,calc(100vw - 20px))!important;max-height:calc(100dvh - 158px)!important;overflow:auto!important;padding:13px!important}
- #lmMissionDeck .lm-heading{font-size:18px!important}
- #lmMissionDeck .lm-grid{gap:7px!important}
- #lmMissionDeck button{min-height:76px!important;padding:9px!important}
- #lmMissionDeck button .lm-icon{font-size:20px!important}
-}
 </style>
 <script id="local-mars-bilingual">
 (()=>{
@@ -504,20 +450,4 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 <script id="local-mars-language-dock">
 (()=>{function dock(){const b=document.getElementById('lmLanguage');if(!b||b.dataset.docked)return;const candidates=['header','.topbar','.top-bar','.header','.nav-header','.toolbar'];let host=null;for(const s of candidates){const e=document.querySelector(s);if(e&&e.getBoundingClientRect().width>0){host=e;break}}if(!host){const nav=document.querySelector('nav');if(nav)host=nav}if(!host)return;let slot=host.querySelector('.lm-language-slot');if(!slot){slot=document.createElement('div');slot.className='lm-language-slot';host.appendChild(slot)}slot.appendChild(b);b.classList.add('lm-language-dock');b.dataset.docked='1'}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',dock,{once:true});else dock();new MutationObserver(dock).observe(document.body,{childList:true,subtree:true});})();
-</script><script id="local-mars-mission-deck-script">
-(()=>{
- const launcher=document.createElement('button');launcher.id='lmMissionLauncher';launcher.type='button';
- launcher.innerHTML='<span class="lm-pulse"></span><span>MISSION DECK</span><span class="lm-chevron">⌄</span>';
- const deck=document.createElement('section');deck.id='lmMissionDeck';deck.setAttribute('aria-label','LOCAL MARS Mission Deck');
- deck.innerHTML='<div class="lm-kicker">LOCAL MARS / OPERATIONS</div><div class="lm-heading">Choose your next mission</div><div class="lm-sub">Explore the planet and expand your civilization.</div><div class="lm-grid"><button data-mission="explore"><span class="lm-icon">🌐</span><strong>Planet Explorer</strong><small>Rotate · Survey · Discover</small></button><button data-mission="zone"><span class="lm-icon">🚀</span><strong>Explorer Zone</strong><small>Start your first mission</small></button><button data-mission="city"><span class="lm-icon">🏙️</span><strong>Colony City</strong><small>Build your settlement</small></button><button data-mission="base"><span class="lm-icon">🛰️</span><strong>Underground 24</strong><small>Manage habitat systems</small></button><button data-mission="market"><span class="lm-icon">✦</span><strong>Land Marketplace</strong><small>View parcel listings</small></button><button data-mission="construction"><span class="lm-icon">🏗️</span><strong>Construction</strong><small>Expand your structures</small></button></div><div class="lm-stats"><div class="lm-stat"><small>OWNED PARCELS</small><b id="lmOwnedCount">0</b></div><div class="lm-stat"><small>STRUCTURES</small><b id="lmBuildingCount">0</b></div></div><div class="lm-foot"><span>PLANETARY NETWORK · SOL 001</span><button class="lm-close" type="button">CLOSE ×</button></div>';
- document.body.append(launcher,deck);
- const setOpen=open=>{deck.classList.toggle('open',open);launcher.querySelector('.lm-chevron').textContent=open?'⌃':'⌄';launcher.setAttribute('aria-expanded',String(open));};
- launcher.addEventListener('click',()=>setOpen(!deck.classList.contains('open')));
- deck.querySelector('.lm-close').addEventListener('click',()=>setOpen(false));
- const run={explore:()=>document.querySelector('#reset')?.click(),zone:()=>document.querySelector('#navNewExplorer')?.click(),city:()=>document.querySelector('#navCity')?.click(),base:()=>document.querySelector('#navUnderground')?.click(),market:()=>document.querySelector('#navMarket')?.click(),construction:()=>location.href='./city.html'};
- deck.querySelectorAll('[data-mission]').forEach(b=>b.addEventListener('click',()=>{const fn=run[b.dataset.mission];if(fn)fn();}));
- const sync=()=>{const a=document.querySelector('#owned'),b=document.querySelector('#buildings');document.querySelector('#lmOwnedCount').textContent=a?.textContent||'0';document.querySelector('#lmBuildingCount').textContent=b?.textContent||'0';};
- sync();setOpen(true);document.addEventListener('mars-world-updated',sync);document.addEventListener('mars-auth-state',e=>{if(!e.detail?.user)setOpen(false);else sync();});
- new MutationObserver(sync).observe(document.querySelector('#owned')||document.body,{childList:true,subtree:true,characterData:true});
-})();
 </script></body></html>
