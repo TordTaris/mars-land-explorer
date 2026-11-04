@@ -359,7 +359,7 @@ const parcels=[
 ['M-001',-160,-55,120],['M-002',-93,-26,157],['M-003',-26,3,9999999],['M-004',41,32,231],
 ['M-005',108,-49,268],['M-006',175,-20,305],['M-007',-118,9,342],['M-008',-51,38,379],
 ['M-009',16,-43,156],['M-010',83,-14,193],['M-011',150,15,230],['M-012',-143,44,267]
-].map(p=>({id:p[0],lon:p[1],lat:p[2],price:p[3],owner:null,building:null}));
+] .map(p=>({id:p[0],lon:p[1],lat:p[2],price:Math.round(p[3]*3.5),owner:null,building:null}));
 const markerMat=(color)=>new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:.3});
 const markers=[];
 const buildingMeshes=new Map();
