@@ -190,7 +190,7 @@ header .status{display:inline-flex!important;align-items:center!important;justif
 <div class="metric"><span>Plots</span><b>12 parcels</b></div>
 <div class="small">เลือกภารกิจเพื่อเริ่มต้นการเดินทางบนดาวอังคาร</div>
 <button id="navExplore">🌐　สำรวจดาวอังคาร</button>
-<button id="navNewExplorer" class="primary">🚀　เขตนักสำรวจใหม่</button>
+<button id="navNewExplorer" class="primary">🚀　NEW EXPLORER ZONE</button>
 <button id="navCity">🏙️　สร้างเมืองอาณานิคม</button>
 <button id="navUnderground">🛰️　ฐานใต้ดิน 24 ชั้น</button>
 <button id="navMarket">✦　ตลาดซื้อขายที่ดิน</button>
@@ -384,7 +384,7 @@ document.querySelector('#navExplore').onclick=()=>{toast('แตะจุดส�
    const direction=target.clone().normalize();camera.position.copy(target.clone().add(direction.multiplyScalar(2.55)));controls.update();
    document.querySelector('#plotActions').style.display='none';
    document.querySelector('#plotInfo').innerHTML='<strong style="color:#9cf4ff">🚀 NEW EXPLORER ZONE</strong><br><br>Welcome to LOCAL MARS. This is the protected starting area for new explorers.<br><br><b>01 · Landing Pad</b> — Begin your first arrival.<br><b>02 · Exploration Training</b> — Learn to rotate and zoom the planet.<br><b>03 · Land Survey</b> — Select a blue parcel marker to inspect land.<br><b>04 · First Colony</b> — Visit City Builder when you are ready.<br><br><small>This is a guided simulation zone, separate from claimable land parcels.</small>';
-   toast('เข้าสู่เขตต้อนรับนักสำรวจใหม่');
+   toast('Welcome to the New Explorer Zone');
  };
 document.querySelector('#navCity').onclick=()=>location.href='./city.html';
 document.querySelector('#navUnderground').onclick=()=>location.href='./underground.html';
