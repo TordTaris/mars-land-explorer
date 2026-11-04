@@ -470,9 +470,9 @@ document.querySelector('#build').onclick=async()=>{
   if(result?.error){toast('ก่อสร้างไม่สำเร็จ: '+(result.error.message||'เซิร์ฟเวอร์ปฏิเสธ'));return;}
   if(!result?.data?.ok){toast('เซิร์ฟเวอร์ยังไม่ยืนยันการก่อสร้าง กรุณาลองใหม่');return;}
   selected.building=choice;
-  toast('บันทึกอาคารลงโลกออนไลน์แล้ว · '+selected.id);
+  toast(result.syncWarning?'บันทึกอาคารออนไลน์แล้ว แต่กำลังรอซิงก์ภาพแสดงผล · '+selected.id:'บันทึกอาคารลงโลกออนไลน์แล้ว · '+selected.id);
  }catch(error){toast('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ: '+(error?.message||'ลองใหม่อีกครั้ง'));}
- finally{button.disabled=false;button.textContent='ยืนยันก่อสร้าง';}
+ finally{button.disabled=false;button.textContent='🏗️ วางอาคารบนแปลง';}
 };
 document.querySelector('#closePlotPanel').onclick=()=>{document.body.classList.remove('plot-selected');selected=null;document.querySelector('#plotActions').style.display='none';document.querySelector('#plotInfo').style.display='block';};
 function openLogin(){document.querySelector('#login').style.display='grid'}
