@@ -122,3 +122,6 @@ revoke all on function public.mars_mlc_set_parcel_listing(text,boolean,integer) 
 grant execute on function public.mars_mlc_reserve_parcel(text) to authenticated;
 grant execute on function public.mars_mlc_purchase_parcel(text) to authenticated;
 grant execute on function public.mars_mlc_set_parcel_listing(text,boolean,integer) to authenticated;
+
+-- Broadcast listing changes to every connected LOCAL MARS client.
+do $$ begin alter publication supabase_realtime add table public.mars_mlc_parcel_market; exception when duplicate_object then null; when undefined_object then null; end $$;
