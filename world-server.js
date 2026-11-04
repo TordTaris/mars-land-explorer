@@ -65,8 +65,13 @@ async function claim(parcel){
 }
 async function build(parcel,type){
  if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบออนไลน์ก่อนก่อสร้าง'}};
- const r=await S.db.rpc('build_world_structure',{p_parcel_id:parcel,p_type:type});if(r.error){status(r.error.message);return r;}
- status('สร้างสิ่งปลูกสร้างบน '+parcel+' แล้ว',true);await refresh();return r;
+ if(!parcel||!type)return {error:{message:'ข้อมูลแปลงหรือประเภทอาคารไม่ครบ'}};
+ const r=await S.db.rpc('build_world_structure',{p_parcel_id:parcel,p_type:type});
+ if(r.error){status(r.error.message);return r;}
+ if(!r.data?.ok){const error={message:'ฐานข้อมูลยังไม่ยืนยันการก่อสร้าง'};status(error.message);return {error};}
+ status('บันทึกอาคารลงฐานข้อมูลออนไลน์บน '+parcel+' แล้ว',true);
+ const synced=await refresh();if(synced?.error)return {error:{message:'บันทึกแล้ว แต่โหลดข้อมูลโลกกลับมาไม่สำเร็จ: '+synced.error.message}};
+ return r;
 }
 window.MarsWorldServer={connect,auth,logout,refresh,claim,build,getState:()=>({user:S.user,claims:S.claims,structures:S.structures,events:S.events,db:S.db})};
 document.addEventListener('DOMContentLoaded',connect);
