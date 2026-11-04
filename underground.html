@@ -70,6 +70,17 @@ body{background:radial-gradient(ellipse at 50% 0,#553526 0,#17263a 38%,#080d18 7
 .walk-mode .walk-pad{display:flex}
 .room-inspector{background:#071827;color:#e7f7ff}
 @media(max-width:780px){.directory-body{grid-template-columns:1fr}#threeViewport{height:380px;min-height:300px}.sim-btn{flex:1}}
+
+.elevator-console{margin-top:10px;padding:12px;border:1px solid #4c7890;border-radius:10px;background:linear-gradient(145deg,#102b40,#071827);color:#e8f8ff}
+.elevator-title{display:flex;justify-content:space-between;gap:8px;align-items:center;color:#57e8f4;font-size:12px;font-weight:900;letter-spacing:.8px}
+.elevator-title small{font-size:8px;color:#9bb7c9}
+.elevator-controls{display:grid;grid-template-columns:1fr auto;gap:7px;align-items:center;margin-top:10px}
+.elevator-controls label{grid-column:1/-1;font-size:10px;color:#afc6d5}
+.elevator-controls select{min-width:0;background:#071521;color:#fff;border:1px solid #47748d;border-radius:7px;padding:9px;font-size:12px}
+.elevator-controls button{background:linear-gradient(90deg,#087f9b,#12c6d7);color:#001b27;border:1px solid #70f3ff;border-radius:7px;padding:10px 12px;font-weight:900;font-size:11px}
+.elevator-status{margin-top:8px;font-size:10px;color:#83e9c4}
+.elevator-console.traveling .elevator-status{color:#ffd27d;animation:pulseLift .7s infinite alternate}
+@keyframes pulseLift{to{opacity:.45}}
 </style></head>
 <body>
 <header><div class="brand">🔴 MARS <span>LAND</span> <small style="font-size:10px;color:#91a5bd">UNDERGROUND 24</small></div><a href="./index.html">← กลับสู่ดาวอังคาร</a></header>
@@ -79,7 +90,7 @@ body{background:radial-gradient(ellipse at 50% 0,#553526 0,#17263a 38%,#080d18 7
 <section class="card"><h2>▥ VERTICAL BASE CUTAWAY · เลือกชั้นเพื่อดูรายละเอียด</h2><div class="cross"><div class="surface">MARS SURFACE · ทางเข้า / Airlock / EVA</div><div class="depth">ระดับความลึก ↓</div><div class="levels" id="levels"></div></div><div class="detail"><div class="eyebrow">SELECTED LEVEL</div><strong id="detailName">B01 · ศูนย์บัญชาการ</strong><p id="detailDesc">ควบคุมภารกิจ ระบบสื่อสาร และตรวจสอบสถานะทุกชั้น</p><div class="footer"><span id="detailType">COMMAND & SAFETY</span><span id="detailDepth">ความลึกแนวคิด 10 เมตร</span></div></div>
 <div class="directory" id="floorDirectory">
  <div class="directory-head"><div><div class="eyebrow">DIGITAL FLOOR DIRECTORY</div><h2 id="directoryTitle">B01 · FLOOR DIRECTORY</h2><p id="directorySubtitle">แผนผังพื้นที่และรายละเอียดภายในชั้น</p></div><span class="directory-live">● FLOOR PLAN</span></div>
- <div class="directory-body"><div class="room-list" id="roomList"></div><div class="floor-map-wrap"><div class="map-caption">8-BIT PIXEL UNDERGROUND <span id="mapFloor">B01</span></div><div class="sim-toolbar"><button id="viewTop" class="sim-btn active">มุมมองด้านบน</button><button id="viewWalk" class="sim-btn">เดินสำรวจ</button><button id="viewReset" class="sim-btn">รีเซ็ตกล้อง</button></div><div id="threeViewport" aria-label="ฉากจำลองฐานใต้ดินสามมิติ"></div><div class="sim-hint">หมุน: ลากนิ้ว/เมาส์ · ซูม: pinch/scroll · เดิน: WASD หรือปุ่มลูกศร · แตะห้องเพื่อดูข้อมูล</div><div class="room-inspector" id="roomInspector"><b>แตะห้องในโลก 8-BIT PIXEL เพื่อดูข้อมูล</b><span>ROOM DETAILS · LIVE SIMULATION</span></div><div class="map-legend"><span><i class="legend-main"></i> ห้องหลัก</span><span><i class="legend-support"></i> ห้องสนับสนุน</span><span><i class="legend-route"></i> ทางเดิน</span></div><div class="walk-pad"><button data-move="forward">▲</button><div><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div></div></div></div>
+ <div class="directory-body"><div class="room-list" id="roomList"></div><div class="floor-map-wrap"><div class="map-caption">8-BIT PIXEL UNDERGROUND <span id="mapFloor">B01</span></div><div class="sim-toolbar"><button id="viewTop" class="sim-btn active">มุมมองด้านบน</button><button id="viewWalk" class="sim-btn">เดินสำรวจ</button><button id="viewReset" class="sim-btn">รีเซ็ตกล้อง</button></div><div id="threeViewport" aria-label="ฉากจำลองฐานใต้ดินสามมิติ"></div><div class="sim-hint">หมุน: ลากนิ้ว/เมาส์ · ซูม: pinch/scroll · เดิน: WASD หรือปุ่มลูกศร · แตะห้องเพื่อดูข้อมูล</div><div class="room-inspector" id="roomInspector"><b>แตะห้องในโลก 8-BIT PIXEL เพื่อดูข้อมูล</b><span>ROOM DETAILS · LIVE SIMULATION</span></div><div class="elevator-console"><div class="elevator-title"><span>⬆ ELEVATOR CONTROL</span><small>VERTICAL TRANSIT · 24 LEVELS</small></div><div class="elevator-controls"><label for="elevatorFloor">เลือกชั้นปลายทาง</label><select id="elevatorFloor"></select><button id="elevatorGo" type="button">เรียกลิฟต์ / ไปยังชั้นนี้</button></div><div class="elevator-status" id="elevatorStatus">ลิฟต์จอดอยู่ที่ B01 · พร้อมใช้งาน</div></div><div class="map-legend"><span><i class="legend-main"></i> ห้องหลัก</span><span><i class="legend-support"></i> ห้องสนับสนุน</span><span><i class="legend-route"></i> ทางเดิน</span></div><div class="walk-pad"><button data-move="forward">▲</button><div><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div></div></div></div>
  <div class="directory-foot"><span id="floorCapacity">ความจุออกแบบ: 12 คน</span><span id="floorAccess">การเข้าถึง: บัตรสมาชิก + Airlock</span></div>
 </div></section>
 <aside style="display:grid;gap:16px;align-content:start">
@@ -160,7 +171,17 @@ function renderFloorDirectory(i){
  document.querySelector('#floorCapacity').textContent='ความจุออกแบบ: '+(i<5?8:i<9?16:i<18?6:20)+' คน (ค่าจำลอง)';
  document.querySelector('#floorAccess').textContent='การเข้าถึง: '+(i===0?'ศูนย์บัญชาการ / ผู้มีสิทธิ์':'บัตรสมาชิก + จุดตรวจแรงดัน');
 }
-floors.forEach((f,i)=>{const b=document.createElement('button');b.className='floor'+(i===0?' selected':'');b.innerHTML='<b>B'+String(i+1).padStart(2,'0')+'</b><span>'+f[0]+'</span><i class="dot"></i>';b.onclick=()=>{document.querySelectorAll('.floor').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');document.querySelector('#detailName').textContent='B'+String(i+1).padStart(2,'0')+' · '+f[0];document.querySelector('#detailDesc').textContent=f[1];document.querySelector('#detailType').textContent=f[2];document.querySelector('#detailDepth').textContent='ความลึกแนวคิด '+((i+1)*10)+' เมตร';renderFloorDirectory(i)};levels.appendChild(b)});
+floors.forEach((f,i)=>{const b=document.createElement('button');b.className='floor'+(i===0?' selected':'');b.innerHTML='<b>B'+String(i+1).padStart(2,'0')+'</b><span>'+f[0]+'</span><i class="dot"></i>';b.onclick=()=>window.goToMarsFloor(i);levels.appendChild(b)});
+const elevatorSelect=document.querySelector('#elevatorFloor');
+floors.forEach((f,i)=>{const o=document.createElement('option');o.value=i;o.textContent='B'+String(i+1).padStart(2,'0')+' · '+f[0];elevatorSelect.appendChild(o)});
+window.goToMarsFloor=function(i){
+ i=Math.max(0,Math.min(floors.length-1,Number(i)||0));const f=floors[i],code='B'+String(i+1).padStart(2,'0');
+ document.querySelectorAll('.floor').forEach((x,n)=>x.classList.toggle('selected',n===i));
+ document.querySelector('#detailName').textContent=code+' · '+f[0];document.querySelector('#detailDesc').textContent=f[1];document.querySelector('#detailType').textContent=f[2];document.querySelector('#detailDepth').textContent='ความลึกแนวคิด '+((i+1)*10)+' เมตร';
+ elevatorSelect.value=String(i);const consoleEl=document.querySelector('.elevator-console');const status=document.querySelector('#elevatorStatus');const previous=window.currentMarsFloor??0;consoleEl.classList.add('traveling');status.textContent='ลิฟต์กำลังเคลื่อนจาก B'+String(previous+1).padStart(2,'0')+' ไป '+code+' ...';
+ setTimeout(()=>{renderFloorDirectory(i);window.currentMarsFloor=i;consoleEl.classList.remove('traveling');status.textContent='ลิฟต์จอดที่ '+code+' · '+f[0]+' · ประตูเปิดแล้ว';},650);
+};
+document.querySelector('#elevatorGo').onclick=()=>window.goToMarsFloor(elevatorSelect.value);
 renderFloorDirectory(0);
 const systems=[['ระบบหมุนเวียนอากาศ','กรองฝุ่นและกระจายอากาศ'],['ระบบกำจัด CO₂','ดูดซับคาร์บอนไดออกไซด์'],['ระบบรีไซเคิลน้ำ','กรองและนำน้ำกลับมาใช้'],['ระบบผลิต O₂','ผลิตและสำรองออกซิเจน'],['ระบบผลิตอาหาร','ฟาร์มและคลังอาหาร'],['ระบบไฟฟ้าสำรอง','จ่ายไฟจากแบตเตอรี่']];
 const sysRoot=document.querySelector('#systems');const active=systems.map(()=>true);
