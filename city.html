@@ -489,47 +489,34 @@ function syncOnlineFlags(rows){
   if(id&&!keep.has(String(id))){scene.remove(o);nationalFlags.splice(i,1);}
  }
 }
-let remoteReloadQueued=false;
+let remoteReloadQueued=false,remoteRetryTimer=null,remoteRetryCount=0;
 async function loadOnlineCity(){
  if(!onlineUser)return;
  if(remoteLoading){remoteReloadQueued=true;return;}
- remoteLoading=true;
- const wasOnline=onlineReady;
+ remoteLoading=true;const userId=onlineUser.id;
  try{
   const init=await marsDB.rpc('mars_city_ensure');
-  if(init.error)throw init.error;
-  if(!init.data||!init.data.city_id)throw new Error('mars_city_ensure returned no city_id; ตรวจสอบผล RPC และ migration 005');
-  onlineCityId=init.data.city_id;
-  const res=init.data.resources;
+  if(init.error)throw Object.assign(new Error('ขั้นเตรียมเมือง (mars_city_ensure): '+cityErrorText(init.error)),init.error);
+  if(!init.data||!init.data.city_id)throw new Error('ขั้นเตรียมเมือง: RPC ไม่ส่ง city_id กลับมา กรุณาตรวจ migration 005');
+  if(!onlineUser||onlineUser.id!==userId)return;
+  onlineCityId=init.data.city_id;const res=init.data.resources;
   if(res){credits=Number(res.credits??credits);energy=Number(res.energy??energy);resources.metal=Number(res.metal??resources.metal);resources.polymer=Number(res.polymer??resources.polymer);resources.electronics=Number(res.electronics??resources.electronics);}
-  const [q,flagsQuery]=await Promise.all([
-   marsDB.from('mars_city_buildings').select('id,city_id,owner_id,building_type,name,position').order('created_at',{ascending:true}),
-   marsDB.from('mars_city_national_flags').select('id,owner_id,country_code,country_name,flag_emoji,x,z,level,created_at').order('created_at',{ascending:true})
-  ]);
-  if(q.error)throw Object.assign(new Error('อ่าน mars_city_buildings ไม่สำเร็จ: '+cityErrorText(q.error)),q.error);
-  if(flagsQuery.error)throw Object.assign(new Error('อ่านข้อมูลธงชาติไม่สำเร็จ: '+cityErrorText(flagsQuery.error)),flagsQuery.error);
-  const rows=Array.isArray(q.data)?q.data:[];
-  const flagRows=Array.isArray(flagsQuery.data)?flagsQuery.data:[];
-  // Apply a complete snapshot only after both online queries succeed.
-  syncOnlineStructures(rows);
-  syncOnlineFlags(flagRows);
-  onlineRows=rows;
-  onlineReady=true;updateHUD();renderConstructionJobs();
+  const q=await marsDB.from('mars_city_buildings').select('id,city_id,owner_id,building_type,name,position').order('created_at',{ascending:true});
+  if(q.error)throw Object.assign(new Error('ขั้นโหลดสิ่งปลูกสร้าง (mars_city_buildings): '+cityErrorText(q.error)),q.error);
+  if(!onlineUser||onlineUser.id!==userId)return;
+  const rows=Array.isArray(q.data)?q.data:[];syncOnlineStructures(rows);onlineRows=rows;onlineReady=true;remoteRetryCount=0;
+  if(remoteRetryTimer){clearTimeout(remoteRetryTimer);remoteRetryTimer=null;}
+  updateHUD();renderConstructionJobs();
   const label=document.querySelector('header .status');if(label)label.textContent='● ONLINE · SHARED COLONY';
+  const flagsQuery=await marsDB.from('mars_city_national_flags').select('id,owner_id,country_code,country_name,flag_emoji,x,z,level,created_at').order('created_at',{ascending:true});
+  if(!flagsQuery.error&&Array.isArray(flagsQuery.data)){if(onlineUser&&onlineUser.id===userId)syncOnlineFlags(flagsQuery.data);}
+  else{console.warn('LOCAL MARS flags sync independent; city remains online:',flagsQuery.error);if(label)label.textContent='● ONLINE · FLAGS RETRY';}
  }catch(e){
-  // Keep the last successfully rendered colony visible during temporary network errors.
-  onlineReady=wasOnline;
-  console.error('LOCAL MARS online city diagnostic:',{message:e?.message,code:e?.code,details:e?.details,hint:e?.hint,status:e?.status});
-  const label=document.querySelector('header .status');
-  if(label)label.textContent=wasOnline?'● ONLINE · RETRYING SYNC':'● SYNC ERROR';
-  toast('ซิงก์เมืองไม่สำเร็จ (เก็บสิ่งปลูกสร้างเดิมไว้): '+cityErrorText(e));
- }finally{
-  remoteLoading=false;
-  if(remoteReloadQueued){
-   remoteReloadQueued=false;
-   setTimeout(()=>{if(onlineUser)loadOnlineCity();},350);
-  }
- }
+  console.error('LOCAL MARS city sync diagnostic:',{message:e?.message,code:e?.code,details:e?.details,hint:e?.hint});
+  const label=document.querySelector('header .status');if(label)label.textContent=onlineReady?'● ONLINE · RETRYING':'● SYNC ERROR';
+  toast('ซิงก์เมืองไม่สำเร็จ: '+cityErrorText(e));
+  if(onlineUser&&onlineUser.id===userId&&!remoteRetryTimer){remoteRetryCount=Math.min(remoteRetryCount+1,5);const delay=Math.min(30000,2000*Math.pow(2,remoteRetryCount-1));remoteRetryTimer=setTimeout(()=>{remoteRetryTimer=null;if(onlineUser&&onlineUser.id===userId)loadOnlineCity();},delay);}
+ }finally{remoteLoading=false;if(remoteReloadQueued){remoteReloadQueued=false;setTimeout(()=>{if(onlineUser)loadOnlineCity();},250);}}
 }
 async function connectCityOnline(){
  const {data,error}=await marsDB.auth.getSession();if(error)throw error;onlineUser=data.session?.user||null;
