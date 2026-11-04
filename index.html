@@ -93,7 +93,11 @@ button.primary{background:linear-gradient(120deg,#e4bd70,#a87c3d);color:#1a1510;
 <div class="metric"><span>Selected Plot</span><b id="selected">ยังไม่ได้เลือก</b></div>
 <div class="metric"><span>Coordinates</span><b id="coords">—</b></div>
 <div class="metric"><span>Plots</span><b>12 parcels</b></div>
-<div class="small" style="margin-top:9px">ลากเพื่อหมุนดาว • ใช้สองนิ้วหรือ scroll เพื่อซูม • แตะจุดบนดาวเพื่อเลือกแปลง</div>
+<div class="small">เลือกภารกิจเพื่อเริ่มต้นการเดินทางบนดาวอังคาร</div>
+<button id="navExplore">🌐　สำรวจดาวอังคาร</button>
+<button id="navCity">🏙️　สร้างเมืองอาณานิคม</button>
+<button id="navUnderground">🛰️　ฐานใต้ดิน 24 ชั้น</button>
+<button id="navMarket">✦　ตลาดซื้อขายที่ดิน</button>
 <div class="actions"><button id="rotate" class="active">หมุนอัตโนมัติ: เปิด</button><button id="reset">รีเซ็ตมุมมอง</button></div>
 </section>
 <section class="panel right">
@@ -181,6 +185,10 @@ document.querySelector('#build').onclick=()=>{if(!selected)return;if(!state.owne
 function openLogin(){document.querySelector('#login').style.display='grid';if(state.profile){document.querySelector('#username').value=state.profile.name;document.querySelector('#email').value=state.profile.email||''}}
 document.querySelector('#account').onclick=openLogin;document.querySelector('#closeLogin').onclick=()=>document.querySelector('#login').style.display='none';
 document.querySelector('#loginBtn').onclick=()=>{const name=document.querySelector('#username').value.trim();if(!name){toast('กรุณาใส่ชื่อสมาชิก');return}state.profile={name,email:document.querySelector('#email').value.trim()};save();document.querySelector('#login').style.display='none';document.querySelector('#account').textContent='👤 '+name;toast('บันทึกโปรไฟล์ทดลองแล้ว')};
+document.querySelector('#navExplore').onclick=()=>{toast('แตะจุดสีฟ้าบนดาวเพื่อเลือกแปลงสำรวจ')};
+document.querySelector('#navCity').onclick=()=>location.href='./city.html';
+document.querySelector('#navUnderground').onclick=()=>location.href='./underground.html';
+document.querySelector('#navMarket').onclick=()=>toast('ตลาดจำลอง: เลือกแปลงบนดาวเพื่อดูราคาและสถานะ');
 document.querySelector('#rotate').onclick=()=>{auto=!auto;controls.autoRotate=auto;document.querySelector('#rotate').textContent='หมุนอัตโนมัติ: '+(auto?'เปิด':'ปิด');document.querySelector('#rotate').classList.toggle('active',auto)};
 document.querySelector('#reset').onclick=()=>{camera.position.set(0,0,4.4);controls.target.set(0,0,0);controls.update()};
 document.querySelectorAll('.bottom button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.bottom button').forEach(x=>x.classList.remove('active'));b.classList.add('active');const tab=b.dataset.tab;if(tab==='city'){location.href='./city.html';return}if(tab==='underground'){location.href='./underground.html';return}if(tab==='market'){toast('ตลาดที่ดิน: แตะจุดสีฟ้าบนดาวเพื่อดูแปลง')}if(tab==='colony'){toast(`เมืองของคุณมี ${state.owned.length} แปลง และ ${Object.keys(state.buildings).length} อาคาร`)}if(tab==='account')openLogin()});
