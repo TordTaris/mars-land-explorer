@@ -7,7 +7,7 @@ on:
       - '.github/workflows/build-android.yml'
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,9 +25,28 @@ jobs:
       - name: Build APK
         working-directory: android
         run: gradle --no-daemon assembleDebug
+      - name: Verify APK output
+        run: |
+          APK="android/app/build/outputs/apk/debug/app-debug.apk"
+          test -s "$APK"
+          ls -lh "$APK"
+          file "$APK"
+          unzip -t "$APK"
       - uses: actions/upload-artifact@v4
         with:
           name: MARS-LAND-Android-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
+      - name: Publish public APK download
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: mars-land-android-${{ github.run_number }}
+          name: MARS LAND Android APK (Build ${{ github.run_number }})
+          body: |
+            MARS LAND Android application.
+            Download app-debug.apk below and install on Android.
+            This app loads the live MARS LAND website and requires an internet connection.
+            Demo virtual land/resources are in-app simulation only.
+          files: android/app/build/outputs/apk/debug/app-debug.apk
+          make_latest: true
