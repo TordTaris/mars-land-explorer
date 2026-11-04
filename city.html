@@ -572,11 +572,11 @@ async function placeNationalFlag(){
    onlineUser=sessionResult.data.session?.user||null;
    if(!onlineUser){toast('ยังไม่ได้เข้าสู่ระบบ จึงยังปักธงออนไลน์ไม่ได้');return;}
   }
-  if(!onlineReady||!onlineCityId){
-   if(remoteLoading){toast('กำลังเชื่อมต่อเมืองออนไลน์ กรุณารอสักครู่');return;}
-   await loadOnlineCity();
-   if(!onlineReady||!onlineCityId){toast('เมืองออนไลน์ยังไม่พร้อม ตรวจสอบการเชื่อมต่อแล้วลองใหม่');return;}
-  }
+  // Flagging is an independent online feature; do not block it when colony/building sync is down.
+  const authCheck=await marsDB.auth.getSession();
+  if(authCheck.error)throw authCheck.error;
+  onlineUser=authCheck.data.session?.user||onlineUser;
+  if(!onlineUser){toast('เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่');return;}
   // If the user did not tap a grid tile, select the nearest valid tile automatically.
   if(!selected||!selected.userData){
    const px=Math.max(-9.5,Math.min(10.5,Number(avatar?.position?.x)||0));
@@ -604,7 +604,11 @@ async function placeNationalFlag(){
    :await marsDB.from('mars_city_national_flags').insert(payload).select('id').single();
   if(result.error)throw result.error;
   toast('ปักธง '+option.dataset.name+' สำเร็จแล้ว');
-  await loadOnlineCity();
+  // Refresh flags directly so a building-table sync error cannot hide a saved flag.
+  const flagRefresh=await marsDB.from('mars_city_national_flags')
+   .select('id,owner_id,country_code,country_name,flag_emoji,x,z,level,created_at')
+   .order('created_at',{ascending:true});
+  if(!flagRefresh.error&&Array.isArray(flagRefresh.data))syncOnlineFlags(flagRefresh.data);
  }catch(e){
   console.error('LOCAL MARS national flag error:',{message:e?.message,code:e?.code,details:e?.details,hint:e?.hint});
   toast('ปักธงไม่สำเร็จ: '+cityErrorText(e));
