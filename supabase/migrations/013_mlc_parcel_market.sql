@@ -103,6 +103,8 @@ begin
   if p_is_listed and (p_price_mlc is null or p_price_mlc<1 or p_price_mlc>1000000) then
     raise exception 'ราคาขายต้องอยู่ระหว่าง 1 ถึง 1,000,000 MLC';
   end if;
+  perform 1 from public.mars_mlc_parcel_market where parcel_id=p_parcel_id for update;
+  if not found then raise exception 'ไม่พบข้อมูลตลาดของแปลงนี้'; end if;
   select * into c from public.world_claims where parcel_id=p_parcel_id for update;
   if not found or c.owner_id<>u then raise exception 'เฉพาะเจ้าของแปลงเท่านั้นที่จัดการประกาศขายได้'; end if;
   update public.mars_mlc_parcel_market set is_listed=p_is_listed,
