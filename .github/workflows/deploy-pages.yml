@@ -40,7 +40,7 @@ jobs:
               assert path and Path(path).is_file(), f"manifest icon missing: {path}"
           for asset in ("index.html", "manifest.webmanifest", "sw.js", "icon.svg"):
               assert Path(asset).is_file(), f"required deployment file missing: {asset}"
-          importmap = re.search(r'<script type="importmap">\\s*(.*?)\\s*</script>', html, re.S)
+          importmap = re.search(r'<script type="importmap">\s*(.*?)\s*</script>', html, re.S)
           assert importmap, "Three.js import map missing"
           imports = json.loads(importmap.group(1)).get("imports", {})
           assert imports.get("three", "").endswith("/build/three.module.js"), "Three.js module mapping missing"
@@ -48,7 +48,7 @@ jobs:
           assert "from 'three/addons/controls/OrbitControls.js'" in html, "OrbitControls import missing"
           for asset in ('"./"', '"./index.html"', '"./manifest.webmanifest"', '"./icon.svg"'):
               assert asset in sw, f"service worker precache entry missing: {asset}"
-          module = re.search(r'<script type="module">\\s*(.*?)\\s*</script>', html, re.S)
+          module = re.search(r'<script type="module">\s*(.*?)\s*</script>', html, re.S)
           assert module, "application module missing"
           Path("/tmp/mars-main.mjs").write_text(module.group(1), encoding="utf-8")
           print("Static paths, manifest, icon, service worker and Three.js imports validated.")
