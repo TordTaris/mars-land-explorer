@@ -10,7 +10,9 @@
    - `https://YOUR-PROJECT.supabase.co` ด้วย Project URL
    - `YOUR_SUPABASE_ANON_KEY` ด้วย anon/public key
 5. Commit การเปลี่ยนแปลงและรอ GitHub Pages deploy
-6. เปิด Mars Local แล้วใช้แผง WORLD SERVER สมัครสมาชิก/เข้าสู่ระบบออนไลน์
+6. เปิดหน้า `index.html` แล้วเลือก เข้าสู่ระบบ / สมัครสมาชิก เพื่อสมัครด้วยอีเมลและรหัสผ่าน (อย่างน้อย 8 ตัว)
+7. หากเปิด Email confirmation ใน Supabase ให้กดยืนยันจากอีเมลก่อน แล้วกลับมาเข้าสู่ระบบ
+8. หลังเข้าสู่ระบบ สามารถจองแปลงและสร้างสิ่งปลูกสร้างผ่าน RPC; ข้อมูลจะแชร์ผ่าน Supabase Realtime
 
 ## ความปลอดภัย
 - ห้ามใส่ service_role key หรือ database password ในเว็บไซต์
@@ -20,7 +22,8 @@
 
 ## ข้อจำกัดรุ่นแรก
 - ยังไม่ออนไลน์จนกว่าจะตั้งค่า Supabase URL และ anon key
-- บัญชีทดลองเดิมใน localStorage แยกจากสมาชิกออนไลน์
+- โปรไฟล์ทดลองเดิมใน localStorage ไม่ใช่บัญชีออนไลน์และไม่ถูกนำเข้าระบบสมาชิก
+- หน้า Explore ใช้ Supabase Auth, world_claims และ world_structures; หน้า City Builder/Underground และ Marketplace UI บางส่วนยังเป็นงานเชื่อมต่อระยะถัดไป
 - เครดิต MLC เดิมยังไม่ย้ายเข้าฐานข้อมูล
 - ระบบ realtime ส่งการเปลี่ยนแปลงแปลง/อาคาร/เหตุการณ์; ระบบตำแหน่ง avatar และแชตจะเป็นงานระยะถัดไป
 
