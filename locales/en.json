@@ -369,5 +369,10 @@
   "LM0368": "USD reference value for simulation only; not a deposit or real-money balance.",
   "LM0369": "NPC Population",
   "LM0370": "🌎 Mars",
-  "LM0371": "💾 Save City"
+  "LM0371": "💾 Save City",
+  "LM0372": "Value",
+  "LM0373": "USD reference value for simulation only; not a real-world sale price.",
+  "LM0374": "Purchase Parcel with PromptPay",
+  "LM0375": "🌐 Civilization",
+  "LM0376": "Area"
 }
