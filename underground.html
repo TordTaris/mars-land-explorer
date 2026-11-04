@@ -121,7 +121,7 @@ const floors=[
 ['คลังเสบียงฉุกเฉิน','อาหาร ยา และชุดยังชีพสำรอง','EMERGENCY SUPPLY'],
 ['ระบบสำรองขั้นวิกฤต','ควบคุมระบบอิสระและจุดเชื่อมต่อฉุกเฉิน','REDUNDANCY']
 ];
-window.marsFloorRooms=roomTemplates;
+window.marsFloorRooms=floors.map((f,i)=>roomsForFloor(i));
 const levels=document.querySelector('#levels');
 const roomTemplates=[
 [['01','ห้องควบคุมภารกิจ','Mission Control','MAIN'],['02','ห้องวิเคราะห์ข้อมูล','Data Analysis','MAIN'],['03','ห้องสื่อสารฉุกเฉิน','Emergency Comms','SUPPORT'],['04','โถงลิฟต์และ Airlock','Access / Airlock','ROUTE']],
