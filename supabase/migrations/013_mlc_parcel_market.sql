@@ -32,6 +32,24 @@ revoke insert,update,delete on public.mars_mlc_parcel_market from anon,authentic
 grant select on public.mars_mlc_parcel_market to anon,authenticated;
 
 -- A parcel acquired through PromptPay must leave the MLC market until its owner lists it.
+-- Prevent simultaneous THB checkout and MLC reservation for the same parcel.
+create or replace function public.mars_mlc_guard_promptpay_order()
+returns trigger language plpgsql security definer set search_path=public as $
+begin
+  perform pg_advisory_xact_lock(hashtextextended('parcel:'||new.parcel_id,0));
+  if new.status='pending' and exists(
+    select 1 from public.mars_mlc_parcel_reservations
+    where parcel_id=new.parcel_id and expires_at>now()
+  ) then
+    raise exception 'แปลงนี้ถูกจองด้วย MLC อยู่ กรุณารอให้การจองหมดอายุหรือเลือกแปลงอื่น';
+  end if;
+  return new;
+end $;
+drop trigger if exists mars_mlc_guard_promptpay_order on public.mars_parcel_orders;
+create trigger mars_mlc_guard_promptpay_order
+before insert or update of status,parcel_id on public.mars_parcel_orders
+for each row execute function public.mars_mlc_guard_promptpay_order();
+
 create or replace function public.mars_mlc_sync_claim_market()
 returns trigger language plpgsql security definer set search_path=public as $
 begin
@@ -46,6 +64,7 @@ begin
   delete from public.mars_mlc_parcel_reservations where parcel_id=new.parcel_id;
   return new;
 end $;
+revoke all on function public.mars_mlc_guard_promptpay_order() from public,anon,authenticated;
 drop trigger if exists mars_mlc_claim_market_sync on public.world_claims;
 create trigger mars_mlc_claim_market_sync
 after insert or delete on public.world_claims
@@ -57,6 +76,10 @@ declare u uuid:=auth.uid(); m public.mars_mlc_parcel_market%rowtype;
         c public.world_claims%rowtype; r public.mars_mlc_parcel_reservations%rowtype;
 begin
   if u is null then raise exception 'กรุณาเข้าสู่ระบบก่อนจองแปลง'; end if;
+  perform pg_advisory_xact_lock(hashtextextended('parcel:'||p_parcel_id,0));
+  if exists(select 1 from public.mars_parcel_orders where parcel_id=p_parcel_id and status='pending' and expires_at>now()) then
+    raise exception 'แปลงนี้มีรายการ PromptPay รอชำระอยู่ กรุณาลองใหม่ภายหลัง';
+  end if;
   select * into m from public.mars_mlc_parcel_market where parcel_id=p_parcel_id for update;
   if not found or not m.is_listed then raise exception 'แปลงนี้ไม่ได้เปิดให้จอง'; end if;
   select * into c from public.world_claims where parcel_id=p_parcel_id;
@@ -81,6 +104,7 @@ declare u uuid:=auth.uid(); m public.mars_mlc_parcel_market%rowtype;
         v_balance bigint; v_seller uuid; v_tx text:=replace(gen_random_uuid()::text,'-','');
 begin
   if u is null then raise exception 'กรุณาเข้าสู่ระบบก่อนซื้อแปลง'; end if;
+  perform pg_advisory_xact_lock(hashtextextended('parcel:'||p_parcel_id,0));
   select * into m from public.mars_mlc_parcel_market where parcel_id=p_parcel_id for update;
   if not found or not m.is_listed then raise exception 'แปลงนี้ไม่ได้เปิดขาย'; end if;
   select * into r from public.mars_mlc_parcel_reservations where parcel_id=p_parcel_id for update;
@@ -138,6 +162,7 @@ begin
     'price_mlc',case when p_is_listed then p_price_mlc else null end);
 end $$;
 
+revoke all on function public.mars_mlc_sync_claim_market() from public,anon,authenticated;
 revoke all on function public.mars_mlc_reserve_parcel(text) from public,anon;
 revoke all on function public.mars_mlc_purchase_parcel(text) from public,anon;
 revoke all on function public.mars_mlc_set_parcel_listing(text,boolean,integer) from public,anon;
