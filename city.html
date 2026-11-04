@@ -587,10 +587,11 @@ async function placeNationalFlag(){
   const payload={owner_id:onlineUser.id,country_code:select.value,country_name:option.dataset.name,flag_emoji:option.dataset.emoji,x,z,level};
   flagSubmitting=true;
   const button=document.querySelector('#placeFlag'),quickButton=document.querySelector('#placeFlagHere');if(button){button.disabled=true;button.textContent='กำลังบันทึกธง…';}if(quickButton){quickButton.disabled=true;quickButton.textContent='กำลังบันทึกธง…';}
-  let result=await marsDB.from('mars_city_national_flags').upsert(payload,{onConflict:'owner_id,x,z,level'}).select('id').single();
-  if(result.error){const lookup=await marsDB.from('mars_city_national_flags').select('id').eq('owner_id',onlineUser.id).eq('x',x).eq('z',z).eq('level',level).maybeSingle();if(lookup.error)throw result.error;result=lookup.data?await marsDB.from('mars_city_national_flags').update({country_code:payload.country_code,country_name:payload.country_name,flag_emoji:payload.flag_emoji}).eq('id',lookup.data.id).select('id').single():await marsDB.from('mars_city_national_flags').insert(payload).select('id').single();}
+  // One active flag per account: placing again moves/replaces the previous flag.
+  const result=await marsDB.from('mars_city_national_flags')
+   .upsert(payload,{onConflict:'owner_id'}).select('id').single();
   if(result.error)throw result.error;
-  toast('ปักธง '+option.dataset.name+' สำเร็จแล้ว');
+  toast('ย้ายธงประจำตัวไปยังตำแหน่งใหม่แล้ว');
   // Refresh flags directly so a building-table sync error cannot hide a saved flag.
   const flagRefresh=await marsDB.from('mars_city_national_flags')
    .select('id,owner_id,country_code,country_name,flag_emoji,x,z,level,created_at')
