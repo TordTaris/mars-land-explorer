@@ -33,6 +33,27 @@ body{background:radial-gradient(ellipse at 50% 0,#553526 0,#17263a 38%,#080d18 7
 .map-legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:9px;font-size:8px;color:#263e52}.map-legend span{display:flex;align-items:center;gap:4px}.map-legend i{width:9px;height:9px;display:inline-block;border:1px solid #526d80}.legend-main{background:#d9c98c}.legend-support{background:#a9c9d8}.legend-route{background:#eef2f5;border-style:dashed!important}
 .directory-foot{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;border-top:1px solid #ffffff20;margin-top:11px;padding-top:9px;color:#c3d0dc;font-size:9px}
 @media(max-width:780px){.directory{padding:10px}.directory-body{grid-template-columns:1fr}.room-list{grid-template-columns:1fr 1fr}.room-entry{grid-template-columns:29px 1fr;padding:7px}.room-entry em{grid-column:2}.floor-map{min-height:180px}.directory-head h2{font-size:14px}}
+
+/* Interactive maze simulation */
+.directory-body{grid-template-columns:minmax(190px,.72fr) minmax(260px,1.28fr)}
+.floor-map-wrap{background:linear-gradient(145deg,#0a1a2c,#102b43);border:1px solid #377da5;color:#eaf7ff;box-shadow:inset 0 0 25px #007eb522}
+.map-caption{color:#8deaff}
+.floor-map{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:repeat(8,minmax(24px,1fr));gap:3px;min-height:340px;padding:9px;border:3px solid #345c78;border-radius:8px;background-color:#071321;background-image:linear-gradient(#15304a55 1px,transparent 1px),linear-gradient(90deg,#15304a55 1px,transparent 1px);background-size:22px 22px;position:relative;overflow:hidden}
+.maze-cell{position:relative;display:flex;align-items:center;justify-content:center;text-align:center;min-width:0;border-radius:3px}
+.maze-corridor{grid-column:span 1;background:linear-gradient(145deg,#b2c8d5,#526f85);border:1px solid #d2e8f4;box-shadow:0 2px 0 #1c3a50}
+.maze-wall{background:linear-gradient(145deg,#18344c,#0a1929);border:1px solid #274963;box-shadow:inset 0 0 7px #0009}
+.maze-room{z-index:2;grid-column:span 3;grid-row:span 2;flex-direction:column;padding:5px;background:linear-gradient(145deg,#f8dc91,#9b783c);border:2px solid #ffe5a5;color:#182b3d;box-shadow:0 4px 0 #314e65,0 0 13px #ffbd5c44;cursor:pointer;font-size:9px;font-weight:900}
+.maze-room.support{background:linear-gradient(145deg,#bce4f2,#548da7);border-color:#c9f2ff}
+.maze-room.critical{background:linear-gradient(145deg,#ffc2b0,#a94c4d);border-color:#ffd1c4}
+.maze-room.active-room{outline:3px solid #3ff5ff;box-shadow:0 0 18px #20dfffb9;transform:translateY(-2px)}
+.maze-room small{font-size:8px;margin-top:4px;font-weight:600}
+.maze-door{position:absolute;width:9px;height:9px;background:#4ff4ff;border:2px solid #e7ffff;border-radius:50%;right:3px;bottom:3px;box-shadow:0 0 8px #4ff4ff}
+.maze-entrance{grid-column:5/9;grid-row:8;background:linear-gradient(90deg,#ff9e3d,#ffe08a);border:2px solid #fff0b8;color:#2b1b0b;font-size:9px;font-weight:900}
+.maze-exit{grid-column:1/4;grid-row:1;background:#163f57;border:1px solid #57dff2;color:#a8f6ff;font-size:8px}
+.room-inspector{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:9px;padding:9px 11px;border:1px solid #34718f;border-radius:8px;background:#071827;color:#e7f7ff;font-size:10px}
+.room-inspector span{color:#65dfee}
+.map-legend{color:#bdd5e5}
+@media(max-width:780px){.directory-body{grid-template-columns:1fr}.floor-map{min-height:310px;grid-template-rows:repeat(8,minmax(26px,1fr))}.maze-room{font-size:8px}.room-list{grid-template-columns:1fr 1fr}}
 </style></head>
 <body>
 <header><div class="brand">🔴 MARS <span>LAND</span> <small style="font-size:10px;color:#91a5bd">UNDERGROUND 24</small></div><a href="./index.html">← กลับสู่ดาวอังคาร</a></header>
@@ -42,7 +63,7 @@ body{background:radial-gradient(ellipse at 50% 0,#553526 0,#17263a 38%,#080d18 7
 <section class="card"><h2>▥ VERTICAL BASE CUTAWAY · เลือกชั้นเพื่อดูรายละเอียด</h2><div class="cross"><div class="surface">MARS SURFACE · ทางเข้า / Airlock / EVA</div><div class="depth">ระดับความลึก ↓</div><div class="levels" id="levels"></div></div><div class="detail"><div class="eyebrow">SELECTED LEVEL</div><strong id="detailName">B01 · ศูนย์บัญชาการ</strong><p id="detailDesc">ควบคุมภารกิจ ระบบสื่อสาร และตรวจสอบสถานะทุกชั้น</p><div class="footer"><span id="detailType">COMMAND & SAFETY</span><span id="detailDepth">ความลึกแนวคิด 10 เมตร</span></div></div>
 <div class="directory" id="floorDirectory">
  <div class="directory-head"><div><div class="eyebrow">DIGITAL FLOOR DIRECTORY</div><h2 id="directoryTitle">B01 · FLOOR DIRECTORY</h2><p id="directorySubtitle">แผนผังพื้นที่และรายละเอียดภายในชั้น</p></div><span class="directory-live">● FLOOR PLAN</span></div>
- <div class="directory-body"><div class="room-list" id="roomList"></div><div class="floor-map-wrap"><div class="map-caption">SCHEMATIC FLOOR PLAN <span id="mapFloor">B01</span></div><div class="floor-map" id="floorMap"></div><div class="map-legend"><span><i class="legend-main"></i> พื้นที่หลัก</span><span><i class="legend-support"></i> พื้นที่สนับสนุน</span><span><i class="legend-route"></i> ทางเดิน / ทางหนีภัย</span></div></div></div>
+ <div class="directory-body"><div class="room-list" id="roomList"></div><div class="floor-map-wrap"><div class="map-caption">SCHEMATIC FLOOR PLAN <span id="mapFloor">B01</span></div><div class="floor-map" id="floorMap"></div><div class="room-inspector" id="roomInspector"><b>แตะห้องบนแผนผังเพื่อดูข้อมูล</b><span>ROOM DETAILS · ระบบจำลอง</span></div><div class="map-legend"><span><i class="legend-main"></i> พื้นที่หลัก</span><span><i class="legend-support"></i> พื้นที่สนับสนุน</span><span><i class="legend-route"></i> ทางเดิน / ทางหนีภัย</span></div></div></div>
  <div class="directory-foot"><span id="floorCapacity">ความจุออกแบบ: 12 คน</span><span id="floorAccess">การเข้าถึง: บัตรสมาชิก + Airlock</span></div>
 </div></section>
 <aside style="display:grid;gap:16px;align-content:start">
@@ -101,8 +122,23 @@ function renderFloorDirectory(i){
  document.querySelector('#directoryTitle').textContent=code+' · '+f[0];
  document.querySelector('#directorySubtitle').textContent=f[1];
  document.querySelector('#mapFloor').textContent=code;
- document.querySelector('#roomList').innerHTML=rooms.map(r=>'<div class="room-entry"><span class="room-number">'+r[0]+'</span><div><b>'+r[1]+'</b><small>'+r[2]+'</small></div><em>'+(r[3]==='MAIN'?'พื้นที่หลัก':r[3]==='SUPPORT'?'สนับสนุน':'ทางสัญจร')+'</em></div>').join('');
- document.querySelector('#floorMap').innerHTML=rooms.map((r,j)=>'<div class="map-room '+(r[3]==='SUPPORT'?'support':r[3]==='ROUTE'?'route':'')+'">'+r[1]+'<small>ROOM '+r[0]+'</small></div>').join('');
+ document.querySelector('#roomList').innerHTML=rooms.map(r=>'<div class="room-entry"><span class="room-number">'+r[0]+'</span><div><b>'+r[1]+'</b><small>'+r[2]+'</small></div><em>'+(r[3]==='MAIN'?'พื้นที่หลัก':r[3]==='SUPPORT'?'สนับสนุน':r[3]==='CRITICAL'?'ความปลอดภัย':'ทางสัญจร')+'</em></div>').join('');
+ const map=document.querySelector('#floorMap');
+ const cells=[
+ ['exit','LIFT / AIRLOCK'],['wall'],['wall'],['corridor'],['wall'],['corridor'],['wall'],['wall'],['corridor'],['wall'],['wall'],['wall'],
+ ['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],
+ ['wall'],['wall'],['corridor'],['wall'],['wall'],['corridor'],['wall'],['wall'],['corridor'],['wall'],['wall'],['corridor'],
+ ['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],
+ ['wall'],['corridor'],['wall'],['wall'],['corridor'],['wall'],['wall'],['corridor'],['wall'],['wall'],['corridor'],['wall'],
+ ['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],
+ ['wall'],['wall'],['corridor'],['wall'],['wall'],['corridor'],['wall'],['wall'],['corridor'],['wall'],['wall'],['wall'],
+ ['wall'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['corridor'],['wall']
+ ];
+ map.innerHTML=cells.map((t,n)=>'<div class="maze-cell '+(t[0]==='exit'?'maze-exit':t[0]==='corridor'?'maze-corridor':'maze-wall')+'" style="grid-column:'+(n%12+1)+';grid-row:'+(Math.floor(n/12)+1)+'">'+(t[0]==='exit'?t[1]:'')+'</div>').join('');
+ const placements=[{x:2,y:2},{x:8,y:2},{x:2,y:5},{x:8,y:5}];
+ rooms.forEach((r,j)=>{const p=placements[j],btn=document.createElement('button');btn.className='maze-cell maze-room '+(r[3]==='SUPPORT'?'support':r[3]==='CRITICAL'?'critical':'');btn.style.gridColumn=(p.x)+' / span 3';btn.style.gridRow=(p.y)+' / span 2';btn.innerHTML=r[1]+'<small>ROOM '+r[0]+'</small><i class="maze-door"></i>';btn.dataset.room=String(j);btn.onclick=()=>{map.querySelectorAll('.maze-room').forEach(x=>x.classList.remove('active-room'));btn.classList.add('active-room');const names=['MAIN','SUPPORT','ROUTE','CRITICAL'];const type=r[3];document.querySelector('#roomInspector').innerHTML='<b>'+r[0]+' · '+r[1]+'</b><span>'+r[2]+' · '+(type==='MAIN'?'พื้นที่หลัก':type==='SUPPORT'?'พื้นที่สนับสนุน':type==='CRITICAL'?'พื้นที่ควบคุมความปลอดภัย':'ทางสัญจร')+'</span>';};map.appendChild(btn)});
+ const entrance=document.createElement('div');entrance.className='maze-cell maze-entrance';entrance.textContent='▼ MAIN ACCESS / LIFT';map.appendChild(entrance);
+ const first=map.querySelector('.maze-room');if(first)first.click();
  document.querySelector('#floorCapacity').textContent='ความจุออกแบบ: '+(i<5?8:i<9?16:i<18?6:20)+' คน (ค่าจำลอง)';
  document.querySelector('#floorAccess').textContent='การเข้าถึง: '+(i===0?'ศูนย์บัญชาการ / ผู้มีสิทธิ์':'บัตรสมาชิก + จุดตรวจแรงดัน');
 }
