@@ -20,6 +20,12 @@ button,input,select{font:inherit}button{border:1px solid #38506d;background:#172
 #toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#16263a;border:1px solid #3d5875;padding:10px 14px;border-radius:12px;display:none;max-width:90vw;text-align:center}
 #login{position:fixed;inset:0;background:#030711cc;display:none;place-items:center;padding:20px}.modal{width:min(360px,100%);padding:18px}.modal input{width:100%;margin:6px 0;padding:11px;background:#08111e;color:white;border:1px solid var(--line);border-radius:9px}
 @media(max-width:650px){.left{top:auto;bottom:76px;left:8px;width:calc(50vw - 12px);padding:10px}.right{top:72px;right:8px;width:calc(50vw - 12px);max-height:42dvh;padding:10px}.brand{font-size:15px}.panel h3{font-size:11px}.metric{font-size:10px;padding:5px 0}.actions button{font-size:11px;padding:7px 4px}.bottom{bottom:8px}.bottom button{padding:8px;font-size:11px}}
+
+/* MARS LAND premium HUD */
+:root{--panel:#102139;--line:#456987;--cyan:#62e3f1;--orange:#ff9a62;--green:#79efad}
+header{z-index:5;min-height:64px;background:linear-gradient(90deg,#07101fee,#0d1a2bb8 65%,transparent);border-bottom:1px solid #6aa0c044}.brand{font-size:21px;text-shadow:0 2px 16px #ff895b66}.brand span{color:#ffad6b}
+.panel{z-index:4;background:linear-gradient(145deg,#112943f2,#091728f2);border:1px solid #5a83a5a8;box-shadow:0 15px 38px #0008,inset 0 1px #ffffff12;backdrop-filter:blur(18px)}.left{top:82px;width:min(245px,25vw)}.right{top:82px;width:min(265px,27vw)}h3{color:#6ee8f4;text-shadow:0 0 14px #48d9e944}.bottom{z-index:6;background:#091729ed;border:1px solid #507391;box-shadow:0 10px 32px #0009;backdrop-filter:blur(18px)}.bottom button{background:linear-gradient(145deg,#1c3854,#102239)}.bottom button.active,button.primary{background:linear-gradient(120deg,#e8754d,#ffb16b);color:#1c1110}
+@media(max-width:760px){header{min-height:52px;padding:8px 10px}.brand{font-size:16px}.left{top:auto;bottom:76px;left:8px;width:calc(47vw - 8px);max-height:37dvh;overflow:auto;padding:9px}.right{top:72px;right:8px;width:calc(50vw - 8px);max-height:calc(100dvh - 165px);padding:9px}.bottom{left:8px;right:8px;transform:none;justify-content:flex-start;overflow-x:auto;max-width:none;bottom:7px}.bottom button{padding:8px 10px;font-size:10px}}
 </style>
 </head>
 <body>
