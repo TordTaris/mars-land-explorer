@@ -99,3 +99,22 @@ grant execute on function public.mars_city_remove_structure(uuid) to authenticat
 do $$ begin
   alter publication supabase_realtime add table public.mars_city_resources;
 exception when duplicate_object then null; when undefined_object then null; end $$;
+
+create or replace function public.mars_city_ensure()
+returns jsonb language plpgsql security definer set search_path=public as $$
+declare u uuid:=auth.uid(); c public.mars_cities%rowtype; r public.mars_city_resources%rowtype;
+begin
+ if u is null then raise exception 'กรุณาเข้าสู่ระบบ'; end if;
+ select * into c from public.mars_cities where owner_id=u order by created_at limit 1 for update;
+ if not found then
+  insert into public.mars_cities(owner_id,name,description,is_public)
+  values(u,'อาณานิคม LOCAL MARS','Shared Martian colony',true) returning * into c;
+ else
+  update public.mars_cities set is_public=true,updated_at=now() where id=c.id returning * into c;
+ end if;
+ insert into public.mars_city_resources(city_id,owner_id) values(c.id,u) on conflict(city_id) do nothing;
+ select * into r from public.mars_city_resources where city_id=c.id;
+ return jsonb_build_object('city_id',c.id,'resources',to_jsonb(r));
+end $$;
+revoke all on function public.mars_city_ensure() from public, anon;
+grant execute on function public.mars_city_ensure() to authenticated;
