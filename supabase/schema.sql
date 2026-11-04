@@ -138,7 +138,7 @@ insert into public.land_plots (id, name, latitude, longitude, area_m2, price_mlc
 values
 ('M-001','Olympus Gateway',18.65,226.20,10000,120),
 ('M-002','Red Valley',12.40,221.80,10000,95),
-('M-003','Crystal Ridge',21.10,230.50,10000,150),
+('M-003','Crystal Ridge',21.10,230.50,10000,9999999),
 ('M-004','Sunset Basin',-4.20,137.40,10000,110),
 ('M-005','Ares Frontier',-8.50,145.20,10000,105),
 ('M-006','Valles View',-13.90,295.30,10000,180),
