@@ -373,7 +373,7 @@ async function loadOnlineCity(){
  if(!onlineUser||remoteLoading)return;remoteLoading=true;
  try{
   const init=await marsDB.rpc('mars_city_ensure');if(init.error)throw init.error;onlineCityId=init.data.city_id;
-  const res=init.data.resources;if(res){credits=res.credits;resources.metal=res.metal;resources.polymer=res.polymer;resources.electronics=res.electronics;}
+  const res=init.data.resources;if(res){credits=res.credits;energy=res.energy??energy;resources.metal=res.metal;resources.polymer=res.polymer;resources.electronics=res.electronics;}
   const q=await marsDB.from('mars_city_buildings').select('id,city_id,owner_id,building_type,name,position').order('created_at',{ascending:true});
   if(q.error)throw q.error;onlineRows=q.data||[];
   clearCityVisuals();
@@ -437,14 +437,14 @@ for(const x of [-.13,.13]){part(new THREE.CapsuleGeometry(.085,.36,4,8),suit,x,.
 for(const x of [-.34,.34])part(new THREE.CapsuleGeometry(.075,.35,4,8),suit,x,1.02,0);
 const marker=new THREE.Mesh(new THREE.RingGeometry(.42,.52,32),new THREE.MeshBasicMaterial({color:0x62e2e8,side:THREE.DoubleSide}));marker.rotation.x=-Math.PI/2;marker.position.y=.04;scene.add(marker);
 const cells=[],buildings=[],roads=[];for(let x=-10;x<=10;x++)for(let z=-10;z<=10;z++){const mesh=new THREE.Mesh(new THREE.PlaneGeometry(.94,.94),new THREE.MeshBasicMaterial({color:0x4fc6d0,transparent:true,opacity:.0,side:THREE.DoubleSide}));mesh.rotation.x=-Math.PI/2;mesh.position.set(x+.5,.035,z+.5);mesh.userData={x:x+.5,z:z+.5};scene.add(mesh);cells.push(mesh)}
-let selected=null,buildMode=false,roadMode=false,currentLevel=0,yaw=0,camYaw=0,camPitch=.24,distance=6,credits=5000;
+let selected=null,buildMode=false,roadMode=false,currentLevel=0,yaw=0,camYaw=0,camPitch=.24,distance=6,credits=5000,energy=850;
 const resources={metal:120,polymer:90,electronics:45};
 const recipes={hab:{credit:800,metal:24,polymer:18,electronics:4},green:{credit:650,metal:16,polymer:24,electronics:5},lab:{credit:950,metal:28,polymer:12,electronics:12},solar:{credit:500,metal:18,polymer:6,electronics:8},hub:{credit:1200,metal:36,polymer:20,electronics:16},tower:{credit:400,metal:14,polymer:4,electronics:10}};
 const buildingNames={hab:"โดมที่พักอาศัย",green:"เรือนกระจก",lab:"ห้องวิจัย",solar:"แผงพลังงาน",hub:"ศูนย์บัญชาการ",tower:"หอคอยสื่อสาร"};
 const constructionStages=["ปรับพื้นที่","วางฐานราก","ประกอบโครงสร้าง","ติดตั้งอุปกรณ์","ตรวจสอบระบบ"];
 const constructionSites=[];let lastConstructionUi=0;
 const keys={forward:false,back:false,left:false,right:false};
-function updateHUD(){const hudBuildCount=document.querySelector('#hudBuildCount');if(hudBuildCount)hudBuildCount.textContent=buildings.length;document.querySelector('#count').textContent=buildings.length;document.querySelector('#credits').textContent=credits.toLocaleString()+' MLC';document.querySelector('#position').textContent=Math.round(avatar.position.x)+', '+Math.round(avatar.position.z);document.querySelector('#modeLabel').textContent=roadMode?'วางถนน':buildMode?'สร้างเมือง':'เดินสำรวจ';document.querySelector('#roadCount').textContent=roads.length;const stock=document.querySelector('#resourceStock');if(stock)stock.textContent='วัสดุสำรอง: โลหะ '+resources.metal+' • โพลิเมอร์ '+resources.polymer+' • อิเล็กทรอนิกส์ '+resources.electronics+' • งานค้าง '+constructionSites.length}
+function updateHUD(){const energyNode=document.querySelector('#inventoryEnergy');if(energyNode)energyNode.textContent=energy.toLocaleString()+' kWh';const hudBuildCount=document.querySelector('#hudBuildCount');if(hudBuildCount)hudBuildCount.textContent=buildings.length;document.querySelector('#count').textContent=buildings.length;document.querySelector('#credits').textContent=credits.toLocaleString()+' MLC';document.querySelector('#position').textContent=Math.round(avatar.position.x)+', '+Math.round(avatar.position.z);document.querySelector('#modeLabel').textContent=roadMode?'วางถนน':buildMode?'สร้างเมือง':'เดินสำรวจ';document.querySelector('#roadCount').textContent=roads.length;const stock=document.querySelector('#resourceStock');if(stock)stock.textContent='วัสดุสำรอง: โลหะ '+resources.metal+' • โพลิเมอร์ '+resources.polymer+' • อิเล็กทรอนิกส์ '+resources.electronics+' • งานค้าง '+constructionSites.length}
 function toast(t){const el=document.querySelector('#toast');el.textContent=t;el.style.display='block';clearTimeout(window._toast);window._toast=setTimeout(()=>el.style.display='none',2200)}
 function selectCell(c){selected=c;document.querySelector('#plot').textContent='X '+c.userData.x.toFixed(0)+' / Z '+c.userData.z.toFixed(0);cells.forEach(m=>m.material.opacity=m===c?.28:0)}
 const ray=new THREE.Raycaster(),pointer=new THREE.Vector2();let dragging=false,lastX=0,lastY=0,moved=0;
