@@ -1,37 +1,36 @@
-const CACHE="mars-local-shell-v17";
-const ASSETS=["./","./index.html","./city.html","./underground.html","./manifest.webmanifest","./icon.svg"];
-self.addEventListener("install",event=>{
-  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)));
+// MARS LAND live-update service worker
+// Network-first: deployed website changes are fetched online automatically.
+const CACHE = "mars-land-live-v18";
+const CORE = ["./", "./index.html", "./city.html", "./underground.html", "./manifest.webmanifest", "./icon.svg"];
+
+self.addEventListener("install", event => {
+  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(CORE)));
   self.skipWaiting();
 });
-self.addEventListener("activate",event=>{
-  event.waitUntil((async()=>{
-    const keys=await caches.keys();
-    await Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)));
+
+self.addEventListener("activate", event => {
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter(key => key.startsWith("mars-land-") && key !== CACHE).map(key => caches.delete(key)));
     await self.clients.claim();
   })());
 });
-self.addEventListener("fetch",event=>{
-  const request=event.request;
-  const url=new URL(request.url);
-  if(request.method!=="GET"||url.origin!==self.location.origin)return;
-  event.respondWith((async()=>{
-    const isPage=request.mode==="navigate"||url.pathname.endsWith(".html")||url.pathname.endsWith("/");
-    if(isPage){
-      try{
-        const fresh=await fetch(request,{cache:"no-store"});
-        if(fresh.ok){const cache=await caches.open(CACHE);await cache.put(request,fresh.clone());}
-        return fresh;
-      }catch(error){
-        return (await caches.match(request))||(await caches.match("./index.html"));
+
+self.addEventListener("fetch", event => {
+  const request = event.request;
+  const url = new URL(request.url);
+  if (request.method !== "GET" || url.origin !== self.location.origin) return;
+  event.respondWith((async () => {
+    try {
+      const fresh = await fetch(request, { cache: "no-store" });
+      if (fresh.ok && request.method === "GET") {
+        const cache = await caches.open(CACHE);
+        await cache.put(request, fresh.clone());
       }
-    }
-    const cached=await caches.match(request);
-    if(cached)return cached;
-    try{
-      const fresh=await fetch(request);
-      if(fresh.ok){const cache=await caches.open(CACHE);await cache.put(request,fresh.clone());}
       return fresh;
-    }catch(error){return Response.error();}
+    } catch (error) {
+      return (await caches.match(request)) ||
+        (request.mode === "navigate" ? await caches.match("./index.html") : Response.error());
+    }
   })());
 });
