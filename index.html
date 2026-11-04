@@ -499,14 +499,26 @@ function selectPlot(p){
  const listing=(world.mlcMarket||[]).find(x=>x.parcel_id===p.id);
  const claim=(world.claims||[]).find(x=>x.parcel_id===p.id);
  const isOwner=!!(world.user&&claim?.owner_id===world.user.id);
- document.body.classList.toggle('plot-selected',document.body.classList.contains('authenticated'));
- document.querySelector('#selected').textContent=p.id;
- document.querySelector('#coords').textContent=`${p.lat.toFixed(1)}°, ${p.lon.toFixed(1)}°`;
- document.querySelector('#plotInfo').style.display='none';document.querySelector('#plotActions').style.display='block';
- document.querySelector('#plotName').textContent=p.id;
- document.querySelector('#building').querySelector('option[value="NuclearPlant"]').disabled=p.id!=='M-003';
- document.querySelector('#plotMeta').textContent=`พิกัด ${p.lat}°N / ${p.lon}°E • ${claim?'มีเจ้าของแล้ว':'ยังไม่มีเจ้าของ'}`;
- document.querySelector('#plotPrice').textContent='
+ document.body.classList.toggle("plot-selected",document.body.classList.contains("authenticated"));
+ document.querySelector("#selected").textContent=p.id;
+ document.querySelector("#coords").textContent=p.lat.toFixed(1)+"°, "+p.lon.toFixed(1)+"°";
+ document.querySelector("#plotInfo").style.display="none";document.querySelector("#plotActions").style.display="block";
+ document.querySelector("#plotName").textContent=p.id;
+ document.querySelector("#building").querySelector('option[value="NuclearPlant"]').disabled=p.id!=="M-003";
+ document.querySelector("#plotMeta").textContent="พิกัด "+p.lat+"°N / "+p.lon+"°E • "+(claim?"มีเจ้าของแล้ว":"ยังไม่มีเจ้าของ");
+ document.querySelector("#plotPrice").textContent="$"+Number(p.price).toLocaleString("en-US")+" USD";
+ document.querySelector("#claim").disabled=!!claim;
+ document.querySelector("#claim").textContent=claim?"มีเจ้าของแล้ว":"ซื้อด้วย PromptPay (THB)";
+ document.querySelector("#plotMlcPrice").textContent=listing?Number(listing.price_mlc).toLocaleString("en-US")+" MLC":"ไม่เปิดขาย";
+ document.querySelector("#plotMlcStatus").textContent=claim?(isOwner?(listing?.is_listed?"แปลงของคุณ · เปิดประกาศขาย":"แปลงของคุณ · ยังไม่ประกาศขาย"):(listing?.is_listed?"เจ้าของประกาศขาย":"มีเจ้าของ · ไม่เปิดขาย")):(listing?.is_listed?"ว่าง · จองหรือซื้อได้ด้วย MLC":"ยังไม่เปิดขายด้วย MLC");
+ document.querySelector("#reserveMlc").disabled=!listing?.is_listed||isOwner;
+ document.querySelector("#buyMlc").disabled=!listing?.is_listed||isOwner;
+ document.querySelector("#mlcSellerControls").style.display=isOwner?"block":"none";
+ document.querySelector("#listMlcPrice").value=listing?.price_mlc||"";
+ document.querySelector("#listMlc").style.display=listing?.is_listed?"none":"block";
+ document.querySelector("#unlistMlc").style.display=listing?.is_listed?"block":"none";
+ updateStats();
+}
 const state=JSON.parse(localStorage.getItem('localmars-demo')||localStorage.getItem('marsland-demo')||'{}');state.owned=state.owned||[];state.buildings=state.buildings||{};state.profile=state.profile||null;
 parcels.forEach(p=>{if(state.owned.includes(p.id))p.owner=state.profile?.name||'You'});
 function save(){localStorage.setItem('localmars-demo',JSON.stringify(state));updateStats()}
