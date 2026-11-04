@@ -2,8 +2,8 @@
 <html lang="th">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#0d1422"><meta name="description" content="MARS LAND — สำรวจดาวอังคาร 3D เลือกแปลงและสร้างอาณานิคมจำลอง"><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml">
-<title>MARS LAND 3.0 | Planet Explorer</title>
+<meta name="theme-color" content="#0d1422"><meta name="description" content="LOCAL MARS — สำรวจดาวอังคารแบบสมจริง เลือกพื้นที่ และสร้างอาณานิคมจำลอง"><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml">
+<title>LOCAL MARS | Planet Explorer</title>
 <style>
 :root{--bg:#080d17;--panel:#101a2b;--line:#293b53;--text:#edf4ff;--muted:#93a7c2;--orange:#ff875c;--cyan:#5bd9e8;--green:#6ee7a8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px system-ui,sans-serif;overflow:hidden}
@@ -119,10 +119,27 @@ button.primary{background:linear-gradient(120deg,#e4bd70,#a87c3d);color:#1a1510;
 #scene:after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 38%,#02050b99 100%)}
 @media(max-width:760px){header{padding:9px 10px}.brand{font-size:17px;letter-spacing:1.2px}.status{font-size:8px;padding:5px 7px}.bottom button{font-size:9px;padding:8px 9px}}
 </style>
+<style id="local-mars-parcel-panel">
+/* LOCAL MARS — selected parcel detail card for immersive logged-in exploration */
+body.authenticated.plot-selected .right{
+ display:block!important;position:fixed;top:auto;right:18px;bottom:82px;transform:none;
+ width:min(340px,calc(100vw - 36px));max-height:42dvh;overflow:auto;z-index:30;padding:14px;
+}
+body.authenticated.plot-selected .right>#plotInfo,
+body.authenticated.plot-selected .right>:nth-child(n+4){display:none!important}
+body.authenticated.plot-selected .right>#plotActions{display:block!important}
+body.authenticated.plot-selected .right>h3:first-child{margin-bottom:8px}
+body.authenticated.plot-selected .right #plotActions .plot{margin:6px 0}
+body.authenticated.plot-selected .right #plotActions button{font-size:11px}
+@media(max-width:650px){
+ body.authenticated.plot-selected .right{left:10px;right:10px;bottom:65px;width:auto;max-height:40dvh;padding:10px}
+ body.authenticated.plot-selected .right>h3:first-child{font-size:10px}
+}
+</style>
 </head>
 <body>
 <div id="scene"></div>
-<header><div class="brand">🔴 MARS <span>LAND</span> <small style="font-size:9px;color:#91a5bd">LUXURY SPECIAL</small></div><div class="status" id="worldServerStatus">กำลังเชื่อมต่อ Marslocal…</div></header>
+<header><div class="brand">🔴 LOCAL <span>MARS</span> <small style="font-size:9px;color:#91a5bd">PLANET EXPLORER</small></div><div class="status" id="worldServerStatus">กำลังเชื่อมต่อ Marslocal…</div></header>
 <section class="panel left">
 <h3>MISSION CONTROL</h3>
 <div class="metric"><span>Planet</span><b>Mars / Sol 001</b></div>
@@ -146,6 +163,7 @@ button.primary{background:linear-gradient(120deg,#e4bd70,#a87c3d);color:#1a1510;
 <option value="Habitat">Habitat Dome</option><option value="Lab">Science Lab</option><option value="Solar">Solar Farm</option><option value="Greenhouse">Greenhouse</option>
 </select>
 <button class="full" id="build">🏗️ วางอาคารบนแปลง</button>
+<button class="full" id="closePlotPanel">ปิดรายละเอียดพื้นที่</button>
 </div>
 <h3 style="margin-top:16px">MY COLONY</h3>
 <div class="metric"><span>แปลงที่จอง</span><b id="owned">0</b></div>
@@ -158,7 +176,7 @@ button.primary{background:linear-gradient(120deg,#e4bd70,#a87c3d);color:#1a1510;
 </section>
 <nav class="bottom"><button class="active" data-tab="explore">🌎 สำรวจ</button><button data-tab="market">🪙 ตลาดจำลอง</button><button data-tab="colony">🏙️ เมืองของฉัน</button><button data-tab="city">🏗️ จำลองก่อสร้าง</button><button data-tab="underground">🏚️ ฐาน 24 ชั้น</button><button data-tab="account">👤 สมาชิก</button></nav>
 <div id="toast"></div>
-<div id="login"><div class="panel modal"><h3>สมาชิก MARS LAND ONLINE</h3>
+<div id="login"><div class="panel modal"><h3>สมาชิก LOCAL MARS ONLINE</h3>
 <input id="username" placeholder="ชื่อสมาชิก (ใช้ตอนสมัคร)">
 <input id="email" type="email" autocomplete="email" placeholder="อีเมล">
 <input id="password" type="password" autocomplete="current-password" placeholder="รหัสผ่านอย่างน้อย 8 ตัว">
@@ -220,15 +238,15 @@ function makeMarsTexture(){
 }
 function sixty(v){return Math.round(v)}
 function thirty(v){return Math.round(v)}
-marsMat.map=makeMarsTexture();marsMat.bumpMap=marsMat.map;marsMat.bumpScale=.055;marsMat.roughness=1;
+marsMat.map=makeMarsTexture();marsMat.bumpMap=marsMat.map;marsMat.bumpScale=.075;marsMat.roughness=.96;marsMat.metalness=0;
 
-const mars=new THREE.Mesh(new THREE.SphereGeometry(1,72,72),marsMat);group.add(mars);
+const mars=new THREE.Mesh(new THREE.SphereGeometry(1,112,80),marsMat);group.add(mars);
 // Thin atmospheric limb gives the planet a dusty, sunlit edge (visual effect, not weather simulation).
 const glow=new THREE.Mesh(new THREE.SphereGeometry(1.035,64,64),new THREE.MeshBasicMaterial({color:0xe88b62,transparent:true,opacity:.105,side:THREE.BackSide,depthWrite:false}));group.add(glow);
 const atmosphere=new THREE.Mesh(new THREE.SphereGeometry(1.012,64,64),new THREE.MeshBasicMaterial({color:0x9b4938,transparent:true,opacity:.035,side:THREE.FrontSide,depthWrite:false}));group.add(atmosphere);
-const orbit=new THREE.Mesh(new THREE.TorusGeometry(1.34,.003,8,180),new THREE.MeshBasicMaterial({color:0xd7b778,transparent:true,opacity:.38}));
+const orbit=new THREE.Mesh(new THREE.TorusGeometry(1.34,.003,8,180),new THREE.MeshBasicMaterial({color:0xd7b778,transparent:true,opacity:.22}));
 orbit.rotation.set(1.12,.18,.32);group.add(orbit);
-const orbit2=new THREE.Mesh(new THREE.TorusGeometry(1.48,.0018,6,180),new THREE.MeshBasicMaterial({color:0x6bcce8,transparent:true,opacity:.22}));
+const orbit2=new THREE.Mesh(new THREE.TorusGeometry(1.48,.0018,6,180),new THREE.MeshBasicMaterial({color:0x6bcce8,transparent:true,opacity:.12}));
 orbit2.rotation.set(.72,-.4,.9);group.add(orbit2);
 const starGeo=new THREE.BufferGeometry(),starPts=[];
 for(let i=0;i<900;i++){const rr=8+Math.random()*28,th=Math.random()*Math.PI*2,ph=Math.acos(2*Math.random()-1);starPts.push(rr*Math.sin(ph)*Math.cos(th),rr*Math.sin(ph)*Math.sin(th),rr*Math.cos(ph))}
@@ -287,22 +305,23 @@ Object.assign(colonyTag.style,{position:'fixed',left:'50%',top:'calc(50% + 125px
 parcels.forEach(p=>{const m=new THREE.Mesh(new THREE.SphereGeometry(.025,12,12),markerMat(0x55dce8));m.position.copy(pos(p.lon,p.lat));m.userData.plot=p;group.add(m);markers.push(m)});
 const ray=new THREE.Raycaster(),pointer=new THREE.Vector2();let selected=null,auto=true;
 renderer.domElement.addEventListener('pointerup',e=>{pointer.x=e.clientX/innerWidth*2-1;pointer.y=-(e.clientY/innerHeight)*2+1;ray.setFromCamera(pointer,camera);const hits=ray.intersectObjects(markers);if(hits.length){selectPlot(hits[0].object.userData.plot)}});
-function selectPlot(p){selected=p;document.querySelector('#selected').textContent=p.id;document.querySelector('#coords').textContent=`${p.lat.toFixed(1)}°, ${p.lon.toFixed(1)}°`;document.querySelector('#plotInfo').style.display='none';document.querySelector('#plotActions').style.display='block';document.querySelector('#plotName').textContent=p.id;document.querySelector('#plotMeta').textContent=`พิกัด ${p.lat}°N / ${p.lon}°E • ${p.owner?'มีผู้จองแล้ว':'พร้อมจอง'}`;document.querySelector('#plotPrice').textContent=p.price+' MLC';document.querySelector('#claim').disabled=!!p.owner;document.querySelector('#claim').textContent=p.owner?'มีผู้จองแล้ว':'จองแปลงจำลอง';updateStats()}
-const state=JSON.parse(localStorage.getItem('marsland-demo')||'{}');state.owned=state.owned||[];state.buildings=state.buildings||{};state.profile=state.profile||null;
+function selectPlot(p){selected=p;document.body.classList.toggle('plot-selected',document.body.classList.contains('authenticated'));document.querySelector('#selected').textContent=p.id;document.querySelector('#coords').textContent=`${p.lat.toFixed(1)}°, ${p.lon.toFixed(1)}°`;document.querySelector('#plotInfo').style.display='none';document.querySelector('#plotActions').style.display='block';document.querySelector('#plotName').textContent=p.id;document.querySelector('#plotMeta').textContent=`พิกัด ${p.lat}°N / ${p.lon}°E • ${p.owner?'มีผู้จองแล้ว':'พร้อมจอง'}`;document.querySelector('#plotPrice').textContent=p.price+' MLC';document.querySelector('#claim').disabled=!!p.owner;document.querySelector('#claim').textContent=p.owner?'มีผู้จองแล้ว':'จองแปลงจำลอง';updateStats()}
+const state=JSON.parse(localStorage.getItem('localmars-demo')||localStorage.getItem('marsland-demo')||'{}');state.owned=state.owned||[];state.buildings=state.buildings||{};state.profile=state.profile||null;
 parcels.forEach(p=>{if(state.owned.includes(p.id))p.owner=state.profile?.name||'You';if(state.buildings[p.id])p.building=state.buildings[p.id]});
-function save(){localStorage.setItem('marsland-demo',JSON.stringify(state));updateStats()}
+function save(){localStorage.setItem('localmars-demo',JSON.stringify(state));updateStats()}
 function updateStats(){document.querySelector('#owned').textContent=state.owned.length;document.querySelector('#buildings').textContent=Object.keys(state.buildings).length;markers.forEach(m=>m.material.color.set(m.userData.plot.owner?0xffa45f:0x55dce8))}
 function toast(s){const t=document.querySelector('#toast');t.textContent=s;t.style.display='block';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.style.display='none',2600)}
 document.querySelector('#claim').onclick=async()=>{if(!selected)return;const result=await window.MarsWorldServer?.claim(selected.id);if(result?.error){toast(result.error.message);if(!window.MarsWorldServer?.getState().user)openLogin();return;}toast('จอง '+selected.id+' ในโลกออนไลน์สำเร็จ');};
 const typeMap={Habitat:'ฐานที่อยู่อาศัย',Lab:'ห้องปฏิบัติการ',Greenhouse:'โรงเรือนปลูกพืช',Solar:'แผงพลังงานแสงอาทิตย์'};
 document.querySelector('#build').onclick=async()=>{if(!selected)return;const result=await window.MarsWorldServer?.build(selected.id,typeMap[document.querySelector('#building').value]);if(result?.error){toast(result.error.message);if(!window.MarsWorldServer?.getState().user)openLogin();return;}selected.building=document.querySelector('#building').value;state.buildings[selected.id]=selected.building;save();toast('บันทึกสิ่งปลูกสร้าง '+selected.id+' ลงโลกออนไลน์แล้ว');};
+document.querySelector('#closePlotPanel').onclick=()=>{document.body.classList.remove('plot-selected');selected=null;document.querySelector('#plotActions').style.display='none';document.querySelector('#plotInfo').style.display='block';};
 function openLogin(){document.querySelector('#login').style.display='grid'}
 document.querySelector('#account').onclick=openLogin;document.querySelector('#closeLogin').onclick=()=>document.querySelector('#login').style.display='none';
 document.querySelector('#loginBtn').onclick=async()=>{const r=await window.MarsWorldServer?.auth('signup');if(r?.error){toast(r.error.message);return;}if(r?.data?.needsEmailConfirmation){toast('สมัครแล้ว กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ');return;}document.querySelector('#login').style.display='none';toast('สมัครสมาชิกออนไลน์สำเร็จ')};
 document.querySelector('#signInBtn').onclick=async()=>{const r=await window.MarsWorldServer?.auth('signin');if(r?.error){toast(r.error.message);return;}document.querySelector('#login').style.display='none';toast('เข้าสู่ระบบออนไลน์สำเร็จ')};
 document.querySelector('#worldServerLogout').onclick=async()=>{await window.MarsWorldServer?.logout();toast('ออกจากระบบแล้ว')};
-document.addEventListener('mars-auth-state',e=>{document.body.classList.toggle('authenticated',!!e.detail?.user);if(e.detail?.user){document.querySelector('#login').style.display='none';toast('ยินดีต้อนรับสู่ดาวอังคาร · Planet Explorer');}else{document.body.classList.remove('authenticated');}});
-document.addEventListener('mars-world-updated',e=>{const d=e.detail||{};document.body.classList.toggle('authenticated',!!d.user);parcels.forEach(p=>{const claim=d.claims?.find(x=>x.parcel_id===p.id);p.owner=claim?claim.owner_id:null;const structure=d.structures?.find(x=>x.parcel_id===p.id);p.building=structure?.structure_type||null;});renderSharedBuildings(d.structures||[]);const mine=d.claims?.filter(x=>x.owner_id===d.user?.id)||[];document.querySelector('#owned').textContent=mine.length;document.querySelector('#buildings').textContent=(d.structures||[]).filter(x=>x.owner_id===d.user?.id).length;markers.forEach(m=>m.material.color.set(m.userData.plot.owner?0xffa45f:0x55dce8));if(selected)selectPlot(selected);});
+document.addEventListener('mars-auth-state',e=>{document.body.classList.toggle('authenticated',!!e.detail?.user);document.body.classList.toggle('plot-selected',!!e.detail?.user&&!!selected);if(e.detail?.user){document.querySelector('#login').style.display='none';toast('ยินดีต้อนรับสู่ดาวอังคาร · Planet Explorer');}else{document.body.classList.remove('authenticated');}});
+document.addEventListener('mars-world-updated',e=>{const d=e.detail||{};document.body.classList.toggle('authenticated',!!d.user);document.body.classList.toggle('plot-selected',!!d.user&&!!selected);parcels.forEach(p=>{const claim=d.claims?.find(x=>x.parcel_id===p.id);p.owner=claim?claim.owner_id:null;const structure=d.structures?.find(x=>x.parcel_id===p.id);p.building=structure?.structure_type||null;});renderSharedBuildings(d.structures||[]);const mine=d.claims?.filter(x=>x.owner_id===d.user?.id)||[];document.querySelector('#owned').textContent=mine.length;document.querySelector('#buildings').textContent=(d.structures||[]).filter(x=>x.owner_id===d.user?.id).length;markers.forEach(m=>m.material.color.set(m.userData.plot.owner?0xffa45f:0x55dce8));if(selected)selectPlot(selected);});
 document.querySelector('#navExplore').onclick=()=>{toast('แตะจุดสีฟ้าบนดาวเพื่อเลือกแปลงสำรวจ')};
 document.querySelector('#navCity').onclick=()=>location.href='./city.html';
 document.querySelector('#navUnderground').onclick=()=>location.href='./underground.html';
@@ -318,7 +337,7 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js', { scope: './' })
-      .catch(error => console.warn('MARS LAND offline support unavailable:', error));
+      .catch(error => console.warn('LOCAL MARS offline support unavailable:', error));
   });
 }
 </script>
