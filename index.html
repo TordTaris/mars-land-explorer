@@ -2,6 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#0d1422"><meta name="description" content="MARS LAND — สำรวจดาวอังคาร 3D เลือกแปลงและสร้างอาณานิคมจำลอง"><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml">
 <title>MARS LAND 2.0</title>
 <style>
 :root{--bg:#080d17;--panel:#101a2b;--line:#293b53;--text:#edf4ff;--muted:#93a7c2;--orange:#ff875c;--cyan:#5bd9e8;--green:#6ee7a8}
@@ -53,9 +54,12 @@ button,input,select{font:inherit}button{border:1px solid #38506d;background:#172
 <nav class="bottom"><button class="active" data-tab="explore">🌎 สำรวจ</button><button data-tab="market">🪙 ตลาดที่ดิน</button><button data-tab="colony">🏗️ เมืองของฉัน</button><button data-tab="account">👤 สมาชิก</button></nav>
 <div id="toast"></div>
 <div id="login"><div class="panel modal"><h3>สมาชิก MARS LAND</h3><input id="username" placeholder="ชื่อสมาชิก"><input id="email" type="email" placeholder="อีเมล (ทดลอง)"><button class="primary full" id="loginBtn">บันทึกโปรไฟล์ทดลอง</button><button class="full" id="closeLogin">ปิด</button><p class="small">บัญชีนี้บันทึกในเครื่องเท่านั้น ยังไม่เชื่อมระบบสมาชิกออนไลน์</p></div></div>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
 <script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
-import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 const root=document.querySelector('#scene'),scene=new THREE.Scene();
 const camera=new THREE.PerspectiveCamera(45,innerWidth/innerHeight,.1,100);camera.position.set(0,0,4.4);
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;root.appendChild(renderer.domElement);
@@ -93,4 +97,13 @@ document.querySelectorAll('.bottom button').forEach(b=>b.onclick=()=>{document.q
 updateStats();if(state.profile)document.querySelector('#account').textContent='👤 '+state.profile.name;
 function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}animate();
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
-</script></body></html>
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js', { scope: './' })
+      .catch(error => console.warn('MARS LAND offline support unavailable:', error));
+  });
+}
+</script>
+</body></html>
