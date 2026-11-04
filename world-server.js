@@ -1,6 +1,6 @@
 /* Mars Local shared World Server. Configure URL and anon key; never use service_role in browser. */
 (function(){
-const CONFIG={url:'https://bnlczmtfvizamyqnqeig.supabase.co',key:'sb_publishable_OupQwscBT9x9Swt3l22w4g_hjs95gZz'};
+const CONFIG={url:'https://tppgfxsdeuujidcjnfdl.supabase.co',key:'sb_publishable_xQ0_NkSu2TMeIyJnAE94kw_WWQT2T3E'};
 const configured=!CONFIG.url.includes('YOUR-PROJECT')&&!CONFIG.key.includes('YOUR_SUPABASE');
 const $=id=>document.getElementById(id),S={db:null,user:null,channel:null,claims:[],structures:[],events:[]};
 function status(t,ok=false){const e=$('worldServerStatus');if(e){e.textContent=(ok?'● WORLD SERVER ONLINE • ':'○ WORLD SERVER • ')+t;e.style.color=ok?'#a8e4bd':'#e9bd8d';}}
