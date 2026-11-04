@@ -25,7 +25,7 @@ create table if not exists public.land_plots (
   latitude numeric(8,4) not null,
   longitude numeric(8,4) not null,
   area_m2 numeric(14,2) not null default 10000,
-  price_thb numeric(14,2) not null default 100,
+  price_thb numeric(14,2) not null default 350,
   status text not null default 'available'
     check (status in ('available','owned','listed')),
   owner_id uuid references public.profiles(id) on delete set null,
@@ -136,18 +136,18 @@ for delete to authenticated using (auth.uid() = seller_id);
 -- Demo parcels; these are virtual game parcels, not legal property rights.
 insert into public.land_plots (id, name, latitude, longitude, area_m2, price_thb)
 values
-('M-001','Olympus Gateway',18.65,226.20,10000,120),
-('M-002','Red Valley',12.40,221.80,10000,95),
-('M-003','Crystal Ridge',21.10,230.50,10000,9999999),
-('M-004','Sunset Basin',-4.20,137.40,10000,110),
-('M-005','Ares Frontier',-8.50,145.20,10000,105),
-('M-006','Valles View',-13.90,295.30,10000,180),
-('M-007','Elysium Field',24.70,147.20,10000,130),
-('M-008','Dust Harbor',2.10,155.60,10000,90),
-('M-009','Phobos Outlook',10.80,190.10,10000,160),
-('M-010','New Horizon',-18.20,210.40,10000,125),
-('M-011','Solar Crown',5.60,265.90,10000,145),
-('M-012','Terraform Point',-2.30,310.70,10000,170)
+('M-001','Olympus Gateway',18.65,226.20,10000,420),
+('M-002','Red Valley',12.40,221.80,10000,333),
+('M-003','Crystal Ridge',21.10,230.50,10000,34999997),
+('M-004','Sunset Basin',-4.20,137.40,10000,385),
+('M-005','Ares Frontier',-8.50,145.20,10000,368),
+('M-006','Valles View',-13.90,295.30,10000,630),
+('M-007','Elysium Field',24.70,147.20,10000,455),
+('M-008','Dust Harbor',2.10,155.60,10000,315),
+('M-009','Phobos Outlook',10.80,190.10,10000,560),
+('M-010','New Horizon',-18.20,210.40,10000,438),
+('M-011','Solar Crown',5.60,265.90,10000,508),
+('M-012','Terraform Point',-2.30,310.70,10000,595)
 on conflict (id) do nothing;
 
 -- Enable Realtime for shared world updates (safe to run more than once).
