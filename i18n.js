@@ -6,7 +6,7 @@ let language=localStorage.getItem(STORE)||FALLBACK;
 if(!['th','en'].includes(language))language=FALLBACK;
 let dictionaries={th:{},en:{}},ready=false;
 const originalText=new WeakMap(),originalAttrs=new WeakMap();
-const clean=s=>String(s).replace(/\\s+/g,' ').trim();
+const clean=s=>String(s).replace(/\s+/g,' ').trim();
 let thToEn=new Map(),enToTh=new Map();
 function rebuild(){thToEn=new Map();enToTh=new Map();const ids=Object.keys(dictionaries.th);for(const id of ids){const th=dictionaries.th[id],en=dictionaries.en[id];if(typeof th==='string'&&typeof en==='string'){if(!thToEn.has(th))thToEn.set(th,en);if(!enToTh.has(en))enToTh.set(en,th);}}}
 function convert(value){if(!ready||!value)return value;const dict=language==='en'?thToEn:enToTh;const key=clean(value);if(dict.has(key))return value.replace(key,dict.get(key));let out=value;const entries=[...dict.entries()].sort((a,b)=>b[0].length-a[0].length);for(const [from,to] of entries){if(from.length>2&&out.includes(from))out=out.split(from).join(to);}return out;}
