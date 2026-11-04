@@ -177,12 +177,26 @@ for(let i=0;i<900;i++){const rr=8+Math.random()*28,th=Math.random()*Math.PI*2,ph
 starGeo.setAttribute('position',new THREE.Float32BufferAttribute(starPts,3));
 scene.add(new THREE.Points(starGeo,new THREE.PointsMaterial({color:0xd9e8ff,size:.045,transparent:true,opacity:.85})));
 const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.minDistance=1.7;controls.maxDistance=8;controls.autoRotate=true;controls.autoRotateSpeed=.35;
+// Canonical parcel coordinates match the shared Supabase world_parcels table.
 const parcels=[
-['M-001',18,10],['M-002',-12,24],['M-003',45,-15],['M-004',-48,-8],['M-005',90,12],['M-006',130,-22],
-['M-007',-105,28],['M-008',155,42],['M-009',-155,-35],['M-010',65,48],['M-011',-25,-48],['M-012',-75,55]
-].map((p,i)=>({id:p[0],lon:p[1],lat:p[2],owner:null,building:null,price:100+i*25}));
+['M-001',-160,-55,120],['M-002',-93,-26,157],['M-003',-26,3,194],['M-004',41,32,231],
+['M-005',108,-49,268],['M-006',175,-20,305],['M-007',-118,9,342],['M-008',-51,38,379],
+['M-009',16,-43,156],['M-010',83,-14,193],['M-011',150,15,230],['M-012',-143,44,267]
+].map(p=>({id:p[0],lon:p[1],lat:p[2],price:p[3],owner:null,building:null}));
 const markerMat=(color)=>new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:.3});
 const markers=[];
+const buildingMeshes=new Map();
+function clearSharedBuildings(){for(const mesh of buildingMeshes.values())group.remove(mesh);buildingMeshes.clear();}
+function renderSharedBuildings(structures){
+ clearSharedBuildings();
+ (structures||[]).forEach((item,index)=>{
+  const parcel=parcels.find(p=>p.id===item.parcel_id);if(!parcel)return;
+  const color=item.structure_type==='โรงเรือนปลูกพืช'?0x75d99b:item.structure_type==='ห้องปฏิบัติการ'?0x75c9ed:item.structure_type==='แผงพลังงานแสงอาทิตย์'?0xd9bd70:0xe8e6dc;
+  const geo=item.structure_type==='แผงพลังงานแสงอาทิตย์'?new THREE.BoxGeometry(.075,.012,.05):new THREE.ConeGeometry(.038,.07,6);
+  const mesh=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color,metalness:.35,roughness:.48,emissive:color,emissiveIntensity:.12}));
+  const normal=pos(parcel.lon,parcel.lat,1.012);mesh.position.copy(normal);mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),normal.clone().normalize());group.add(mesh);buildingMeshes.set(item.id||String(index),mesh);
+ });
+}
 function pos(lon,lat,r=1.014){const a=THREE.MathUtils.degToRad(90-lat),b=THREE.MathUtils.degToRad(lon+90);return new THREE.Vector3(-r*Math.sin(a)*Math.cos(b),r*Math.cos(a),r*Math.sin(a)*Math.sin(b))}
 parcels.forEach(p=>{const m=new THREE.Mesh(new THREE.SphereGeometry(.025,12,12),markerMat(0x55dce8));m.position.copy(pos(p.lon,p.lat));m.userData.plot=p;group.add(m);markers.push(m)});
 const ray=new THREE.Raycaster(),pointer=new THREE.Vector2();let selected=null,auto=true;
@@ -201,7 +215,7 @@ document.querySelector('#account').onclick=openLogin;document.querySelector('#cl
 document.querySelector('#loginBtn').onclick=async()=>{const r=await window.MarsWorldServer?.auth('signup');if(r?.error){toast(r.error.message);return;}if(r?.data?.needsEmailConfirmation){toast('สมัครแล้ว กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ');return;}document.querySelector('#login').style.display='none';toast('สมัครสมาชิกออนไลน์สำเร็จ')};
 document.querySelector('#signInBtn').onclick=async()=>{const r=await window.MarsWorldServer?.auth('signin');if(r?.error){toast(r.error.message);return;}document.querySelector('#login').style.display='none';toast('เข้าสู่ระบบออนไลน์สำเร็จ')};
 document.querySelector('#worldServerLogout').onclick=async()=>{await window.MarsWorldServer?.logout();toast('ออกจากระบบแล้ว')};
-document.addEventListener('mars-world-updated',e=>{const d=e.detail||{};parcels.forEach(p=>{const claim=d.claims?.find(x=>x.parcel_id===p.id);p.owner=claim?claim.owner_id:null;const structure=d.structures?.find(x=>x.parcel_id===p.id);p.building=structure?.structure_type||null;});const mine=d.claims?.filter(x=>x.owner_id===d.user?.id)||[];document.querySelector('#owned').textContent=mine.length;document.querySelector('#buildings').textContent=(d.structures||[]).filter(x=>x.owner_id===d.user?.id).length;markers.forEach(m=>m.material.color.set(m.userData.plot.owner?0xffa45f:0x55dce8));if(selected)selectPlot(selected);});
+document.addEventListener('mars-world-updated',e=>{const d=e.detail||{};parcels.forEach(p=>{const claim=d.claims?.find(x=>x.parcel_id===p.id);p.owner=claim?claim.owner_id:null;const structure=d.structures?.find(x=>x.parcel_id===p.id);p.building=structure?.structure_type||null;});renderSharedBuildings(d.structures||[]);const mine=d.claims?.filter(x=>x.owner_id===d.user?.id)||[];document.querySelector('#owned').textContent=mine.length;document.querySelector('#buildings').textContent=(d.structures||[]).filter(x=>x.owner_id===d.user?.id).length;markers.forEach(m=>m.material.color.set(m.userData.plot.owner?0xffa45f:0x55dce8));if(selected)selectPlot(selected);});
 document.querySelector('#navExplore').onclick=()=>{toast('แตะจุดสีฟ้าบนดาวเพื่อเลือกแปลงสำรวจ')};
 document.querySelector('#navCity').onclick=()=>location.href='./city.html';
 document.querySelector('#navUnderground').onclick=()=>location.href='./underground.html';
