@@ -542,7 +542,7 @@ async function connectCityOnline(){
   .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_resources'},()=>{if(onlineUser)loadOnlineCity();})
   .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_national_flags'},()=>{if(onlineUser)loadOnlineCity();})
   .subscribe((state,error)=>{const label=document.querySelector('header .status');if(!label)return;if(state==='SUBSCRIBED'){if(onlineReady)label.textContent='● ONLINE · SHARED COLONY';}else if(state==='CHANNEL_ERROR'||state==='TIMED_OUT'){console.warn('LOCAL MARS realtime:',state,error);label.textContent='● SYNC RETRY';}});
- marsDB.auth.onAuthStateChange(async(_event,session)=>{onlineUser=session?.user||null;const b=document.querySelector('#cityAccount');if(b)b.textContent=onlineUser?'👤 '+(onlineUser.email||'สมาชิก').split('@')[0]:'👤 เข้าสู่ระบบ';if(onlineUser)await loadOnlineCity();else{onlineReady=false;onlineCityId=null;const s=document.querySelector('header .status');if(s)s.textContent='● THIRD-PERSON MODE · LOCAL';}});
+ marsDB.auth.onAuthStateChange((_event,session)=>{onlineUser=session?.user||null;const b=document.querySelector('#cityAccount');if(b)b.textContent=onlineUser?'👤 '+(onlineUser.email||'สมาชิก').split('@')[0]:'👤 เข้าสู่ระบบ';if(onlineUser){const label=document.querySelector('header .status');if(label)label.textContent='● CONNECTING · SYNCING';setTimeout(()=>{if(onlineUser)loadOnlineCity();},0);}else{onlineReady=false;onlineCityId=null;const s=document.querySelector('header .status');if(s)s.textContent='● THIRD-PERSON MODE · LOCAL';}});
 }
 async function placeOnline(type,x,z,level){
  if(!onlineUser){toast('กรุณาเข้าสู่ระบบสมาชิกก่อนสร้างเมืองออนไลน์');return false;}
