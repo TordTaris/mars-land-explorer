@@ -26,11 +26,67 @@ button,input,select{font:inherit}button{border:1px solid #38506d;background:#172
 header{z-index:5;min-height:64px;background:linear-gradient(90deg,#07101fee,#0d1a2bb8 65%,transparent);border-bottom:1px solid #6aa0c044}.brand{font-size:21px;text-shadow:0 2px 16px #ff895b66}.brand span{color:#ffad6b}
 .panel{z-index:4;background:linear-gradient(145deg,#112943f2,#091728f2);border:1px solid #5a83a5a8;box-shadow:0 15px 38px #0008,inset 0 1px #ffffff12;backdrop-filter:blur(18px)}.left{top:82px;width:min(245px,25vw)}.right{top:82px;width:min(265px,27vw)}h3{color:#6ee8f4;text-shadow:0 0 14px #48d9e944}.bottom{z-index:6;background:#091729ed;border:1px solid #507391;box-shadow:0 10px 32px #0009;backdrop-filter:blur(18px)}.bottom button{background:linear-gradient(145deg,#1c3854,#102239)}.bottom button.active,button.primary{background:linear-gradient(120deg,#e8754d,#ffb16b);color:#1c1110}
 @media(max-width:760px){header{min-height:52px;padding:8px 10px}.brand{font-size:16px}.left{top:auto;bottom:76px;left:8px;width:calc(47vw - 8px);max-height:37dvh;overflow:auto;padding:9px}.right{top:72px;right:8px;width:calc(50vw - 8px);max-height:calc(100dvh - 165px);padding:9px}.bottom{left:8px;right:8px;transform:none;justify-content:flex-start;overflow-x:auto;max-width:none;bottom:7px}.bottom button{padding:8px 10px;font-size:10px}}
-.resource-chip{min-width:94px;padding:7px 11px;border:1px solid #5b83a5a6;border-radius:12px;background:linear-gradient(145deg,#142b45ee,#09182bee);box-shadow:0 8px 22px #0006;text-align:center;font-size:10px;color:#b6c9dc}.resource-chip b{display:block;font-size:15px;color:#fff}.resource-chip small{display:block;font-size:9px;color:#79efad}@media(max-width:760px){.resourcebar{top:56px!important;left:8px!important;right:8px!important;transform:none!important;gap:4px!important}.resource-chip{min-width:0;flex:1;padding:5px 3px;font-size:9px}.resource-chip b{font-size:12px}}</style>
+.resource-chip{min-width:94px;padding:7px 11px;border:1px solid #5b83a5a6;border-radius:12px;background:linear-gradient(145deg,#142b45ee,#09182bee);box-shadow:0 8px 22px #0006;text-align:center;font-size:10px;color:#b6c9dc}.resource-chip b{display:block;font-size:15px;color:#fff}.resource-chip small{display:block;font-size:9px;color:#79efad}@media(max-width:760px){.resourcebar{top:56px!important;left:8px!important;right:8px!important;transform:none!important;gap:4px!important}.resource-chip{min-width:0;flex:1;padding:5px 3px;font-size:9px}.resource-chip b{font-size:12px}}
+/* LUXURY SPECIAL — cinematic planetary landing screen */
+:root{--gold:#dfbd7d;--cyan:#67dff0;--panel:#09182beF;--line:#c5a56b77}
+body{background:#030812;color:#f7f0e4}
+#scene{background:radial-gradient(ellipse at 50% 48%,#25344b 0,#101b2c 42%,#030711 82%)}
+#scene:after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 38%,#02050bd9 100%),linear-gradient(180deg,#02050b55,transparent 26%,transparent 75%,#02050b88)}
+header{z-index:10;padding:15px 20px;background:linear-gradient(90deg,#050b16ee,#0a1424aa 65%,transparent);border-bottom:1px solid #d1ae6b55}
+.brand{font-size:clamp(20px,3vw,30px);font-style:italic;letter-spacing:2.5px;text-shadow:0 3px 18px #000}.brand span{color:#e5b957}
+.brand small{color:#e0c58e!important;letter-spacing:2px;text-transform:uppercase}
+.status{color:#e2c68e;border:1px solid #c5a56b77;background:#101c2add;letter-spacing:1px}
+.panel{z-index:8;background:linear-gradient(145deg,#0a1a2cf2,#07111ff2);border:1px solid #c6a56888;border-radius:17px;box-shadow:0 18px 50px #0009,inset 0 1px #fff2;backdrop-filter:blur(18px)}
+.left{left:18px;top:50%;transform:translateY(-42%);width:min(265px,24vw);padding:14px}
+.right{right:18px;top:50%;transform:translateY(-42%);width:min(275px,25vw);max-height:72dvh;padding:14px;overflow:auto}
+.panel h3{color:#e0c184;letter-spacing:1.8px;font-size:11px;text-shadow:none}
+.metric{border-bottom:1px solid #ffffff16;color:#b7c3d0}.metric b{color:#f5e9d1}
+button{border:1px solid #b99a636e;background:linear-gradient(145deg,#172b40,#0b1727);color:#f4e8d1;border-radius:10px;box-shadow:inset 0 1px #fff1,0 5px 14px #0004}
+button:hover{border-color:#f0ce8d}
+button.primary{background:linear-gradient(120deg,#e4bd70,#a87c3d);color:#1a1510;border:1px solid #f3d89d;font-weight:900}
+.actions{grid-template-columns:1fr 1fr}
+.plot{background:#102238;border-color:#b89a6255}
+.bottom{z-index:12;left:50%;right:auto;bottom:18px;transform:translateX(-50%);padding:8px;border:1px solid #c6a66b88;border-radius:16px;background:#071322eF;box-shadow:0 14px 36px #0009;backdrop-filter:blur(18px)}
+.bottom button{font-size:11px;letter-spacing:.3px;padding:10px 13px}
+.bottom button.active{background:linear-gradient(120deg,#dcb66c,#936a34);color:#14100b}
+#toast{z-index:30;background:#101d2d;border:1px solid #d2b274;color:#f8e9cb}
+#login{z-index:40}
+#login .modal{background:linear-gradient(145deg,#172b40,#081321)}
+/* landing menu */
+.left h3:after,.right h3:after{content:"";display:block;height:1px;margin-top:8px;background:linear-gradient(90deg,#d7b57588,transparent)}
+.left .metric{display:none}
+.left .small{margin:8px 0 12px!important;color:#9eb2c8;font-size:10px}
+.left .actions{display:none}
+.left:before{content:"MISSION SELECT";display:block;color:#dcb979;font-size:9px;font-weight:900;letter-spacing:2px;margin-bottom:10px}
+.left button{width:100%;margin:4px 0;text-align:left;padding:12px 10px;font-weight:750;font-size:12px}
+.left button:before{display:inline-block;width:26px;font-size:17px;vertical-align:middle}
+#rotate:before{content:"🌐"}#reset:before{content:"⌖"}
+.left button#rotate{display:block}
+.left button#reset{display:block}
+.right h3:first-child{font-size:12px}
+.right .metric{display:flex}
+.right .small{color:#a9b8c9;line-height:1.6}
+.right #plotInfo{padding:10px;border:1px solid #ffffff18;border-radius:10px;background:#0c1b2b}
+.right #plotActions{margin-top:9px}
+@media(max-width:760px){
+ header{padding:9px 10px}.brand{font-size:17px;letter-spacing:1.2px}.brand small{font-size:7px!important}
+ .status{font-size:8px;padding:5px 7px}
+ .left{top:76px;left:8px;bottom:auto;transform:none;width:min(47vw,220px);padding:9px}
+ .right{top:76px;right:8px;bottom:auto;transform:none;width:min(47vw,220px);max-height:calc(100dvh - 160px);padding:9px}
+ .left button{font-size:10px;padding:9px 6px;margin:3px 0}
+ .left button:before{width:20px;font-size:14px}
+ .right .metric{font-size:9px;padding:5px 0}
+ .right .small{font-size:9px}
+ .bottom{left:8px;right:8px;bottom:7px;transform:none;max-width:none;justify-content:flex-start;overflow-x:auto;gap:4px;padding:5px}
+ .bottom button{font-size:9px;padding:8px 9px}
+}
+@media(max-width:380px){.left{width:46vw}.right{width:46vw}.left button{font-size:9px}.panel h3{font-size:9px}}
+
+</style>
 </head>
 <body>
 <div id="scene"></div>
-<header><div class="brand">🔴 MARS <span>LAND</span> <small style="font-size:10px;color:#91a5bd">2.0</small></div><div class="status">● LOCAL DEMO MODE</div></header>
+<header><div class="brand">🔴 MARS <span>LAND</span> <small style="font-size:9px;color:#91a5bd">LUXURY SPECIAL</small></div><div class="status">● LOCAL DEMO MODE</div></header>
 <section class="panel left">
 <h3>MISSION CONTROL</h3>
 <div class="metric"><span>Planet</span><b>Mars / Sol 001</b></div>
@@ -95,6 +151,14 @@ function makeMarsTexture(){
 marsMat.map=makeMarsTexture();
 const mars=new THREE.Mesh(new THREE.SphereGeometry(1,72,72),marsMat);group.add(mars);
 const glow=new THREE.Mesh(new THREE.SphereGeometry(1.025,48,48),new THREE.MeshBasicMaterial({color:0xf0784d,transparent:true,opacity:.07,side:THREE.BackSide}));group.add(glow);
+const orbit=new THREE.Mesh(new THREE.TorusGeometry(1.34,.003,8,180),new THREE.MeshBasicMaterial({color:0xd7b778,transparent:true,opacity:.38}));
+orbit.rotation.set(1.12,.18,.32);group.add(orbit);
+const orbit2=new THREE.Mesh(new THREE.TorusGeometry(1.48,.0018,6,180),new THREE.MeshBasicMaterial({color:0x6bcce8,transparent:true,opacity:.22}));
+orbit2.rotation.set(.72,-.4,.9);group.add(orbit2);
+const starGeo=new THREE.BufferGeometry(),starPts=[];
+for(let i=0;i<900;i++){const rr=8+Math.random()*28,th=Math.random()*Math.PI*2,ph=Math.acos(2*Math.random()-1);starPts.push(rr*Math.sin(ph)*Math.cos(th),rr*Math.sin(ph)*Math.sin(th),rr*Math.cos(ph))}
+starGeo.setAttribute('position',new THREE.Float32BufferAttribute(starPts,3));
+scene.add(new THREE.Points(starGeo,new THREE.PointsMaterial({color:0xd9e8ff,size:.045,transparent:true,opacity:.85})));
 const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.minDistance=1.7;controls.maxDistance=8;controls.autoRotate=true;controls.autoRotateSpeed=.35;
 const parcels=[
 ['M-001',18,10],['M-002',-12,24],['M-003',45,-15],['M-004',-48,-8],['M-005',90,12],['M-006',130,-22],
