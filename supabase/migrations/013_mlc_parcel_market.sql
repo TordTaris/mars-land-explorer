@@ -8,8 +8,9 @@ create table if not exists public.mars_mlc_parcel_market (
   updated_at timestamptz not null default now()
 );
 insert into public.mars_mlc_parcel_market(parcel_id,price_mlc,is_listed)
-select id,greatest(1,least(base_price,1000000)),true
-from public.world_parcels
+select p.id,greatest(1,least(p.base_price,1000000)),
+  not exists(select 1 from public.world_claims c where c.parcel_id=p.id)
+from public.world_parcels p
 on conflict(parcel_id) do nothing;
 
 create table if not exists public.mars_mlc_parcel_reservations (
@@ -26,12 +27,9 @@ alter table public.mars_mlc_parcel_reservations enable row level security;
 drop policy if exists mars_mlc_market_public_read on public.mars_mlc_parcel_market;
 create policy mars_mlc_market_public_read on public.mars_mlc_parcel_market
   for select to anon,authenticated using (true);
-drop policy if exists mars_mlc_reservations_public_read on public.mars_mlc_parcel_reservations;
-create policy mars_mlc_reservations_public_read on public.mars_mlc_parcel_reservations
-  for select to anon,authenticated using (true);
+revoke all on public.mars_mlc_parcel_reservations from anon,authenticated;
 revoke insert,update,delete on public.mars_mlc_parcel_market from anon,authenticated;
-revoke insert,update,delete on public.mars_mlc_parcel_reservations from anon,authenticated;
-grant select on public.mars_mlc_parcel_market,public.mars_mlc_parcel_reservations to anon,authenticated;
+grant select on public.mars_mlc_parcel_market to anon,authenticated;
 
 create or replace function public.mars_mlc_reserve_parcel(p_parcel_id text)
 returns jsonb language plpgsql security definer set search_path=public as $$
