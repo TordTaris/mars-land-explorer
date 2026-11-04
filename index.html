@@ -62,11 +62,31 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 const root=document.querySelector('#scene'),scene=new THREE.Scene();
 const camera=new THREE.PerspectiveCamera(45,innerWidth/innerHeight,.1,100);camera.position.set(0,0,4.4);
-const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;root.appendChild(renderer.domElement);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;root.appendChild(renderer.domElement);
 scene.add(new THREE.AmbientLight(0xffffff,1.2));const sun=new THREE.DirectionalLight(0xffd2b2,2.5);sun.position.set(4,3,5);scene.add(sun);
 const group=new THREE.Group();scene.add(group);
-const loader=new THREE.TextureLoader();const marsMat=new THREE.MeshStandardMaterial({color:0xc65e3d,roughness:1});
-loader.load('https://threejs.org/examples/textures/planets/mars_1k_color.jpg',t=>{marsMat.map=t;marsMat.color.set(0xffffff);marsMat.needsUpdate=true},undefined,()=>{});
+const marsMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:1});
+function makeMarsTexture(){
+ const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=512;
+ const ctx=canvas.getContext('2d'),img=ctx.createImageData(canvas.width,canvas.height);
+ for(let y=0;y<canvas.height;y++)for(let x=0;x<canvas.width;x++){
+  const i=(y*canvas.width+x)*4,n=Math.sin(x*.021+Math.sin(y*.017)*2.4)*.48+Math.sin(y*.047+x*.006)*.27+Math.sin(x*.11-y*.08)*.12;
+  const band=Math.sin(y*.031+Math.sin(x*.008)*1.8)*7,v=n*28+band;
+  img.data[i]=Math.max(0,Math.min(255,139+v));img.data[i+1]=Math.max(0,Math.min(255,61+v*.48));img.data[i+2]=Math.max(0,Math.min(255,39+v*.34));img.data[i+3]=255;
+ }
+ ctx.putImageData(img,0,0);
+ let seed=271828;const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
+ for(let k=0;k<115;k++){
+  const x=rnd()*canvas.width,y=18+rnd()*(canvas.height-36),r=2+rnd()*15;
+  const g=ctx.createRadialGradient(x-r*.2,y-r*.2,r*.08,x,y,r);
+  g.addColorStop(0,'rgba(65,35,30,.56)');g.addColorStop(.62,'rgba(105,54,40,.28)');g.addColorStop(.82,'rgba(226,151,105,.38)');g.addColorStop(1,'rgba(65,35,30,.05)');
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+ }
+ const north=ctx.createLinearGradient(0,0,0,55);north.addColorStop(0,'rgba(240,218,190,.78)');north.addColorStop(1,'rgba(240,218,190,0)');ctx.fillStyle=north;ctx.fillRect(0,0,canvas.width,55);
+ const south=ctx.createLinearGradient(0,canvas.height-55,0,canvas.height);south.addColorStop(0,'rgba(240,218,190,0)');south.addColorStop(1,'rgba(240,218,190,.78)');ctx.fillStyle=south;ctx.fillRect(0,canvas.height-55,canvas.width,55);
+ const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;return texture;
+}
+marsMat.map=makeMarsTexture();
 const mars=new THREE.Mesh(new THREE.SphereGeometry(1,72,72),marsMat);group.add(mars);
 const glow=new THREE.Mesh(new THREE.SphereGeometry(1.025,48,48),new THREE.MeshBasicMaterial({color:0xf0784d,transparent:true,opacity:.07,side:THREE.BackSide}));group.add(glow);
 const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.minDistance=1.7;controls.maxDistance=8;controls.autoRotate=true;controls.autoRotateSpeed=.35;
