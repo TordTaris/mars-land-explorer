@@ -116,7 +116,7 @@ h1{font-size:clamp(26px,4.5vw,44px);letter-spacing:-1px}
 .cross{grid-template-columns:44px 1fr;max-width:100%}
 .surface{font-size:10px;letter-spacing:1.5px;border-radius:7px;padding:12px;background:repeating-linear-gradient(110deg,#593a2b,#593a2b 18px,#714632 18px,#714632 36px)}
 .levels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
-.floor{min-height:43px;grid-template-columns:43px minmax(0,1fr) 7px;border-radius:7px;padding:7px 9px;background:#0b1b2b;border-color:#29465d}
+.floor{min-height:43px;grid-template-columns:43px minmax(0,1fr) 7px;border-radius:7px;padding:7px;background:#0b1b2b;border-color:#29465d}
 .floor b{color:#ffb37c;font-size:10px}.floor span{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .floor:hover,.floor.selected{border-color:var(--floor-glow);background:linear-gradient(100deg,color-mix(in srgb,var(--floor-glow) 19%,#0c1e2d),#102337);box-shadow:inset 3px 0 var(--floor-glow),0 0 16px color-mix(in srgb,var(--floor-glow) 18%,transparent)}
 .detail{margin-top:14px;border-radius:10px;background:linear-gradient(110deg,#10283a,#0a1725);border-color:#365c75}
@@ -198,10 +198,10 @@ body[data-floor-type="emergency"] .grid-cell.blueprint[data-kind="room"]{backgro
 .floor-map-wrap:before{content:"";position:absolute;inset:42px 12px 12px;border:1px solid color-mix(in srgb,var(--floor-glow) 18%,transparent);border-radius:8px;pointer-events:none}
 
 </style><style id="local-mars-language-layout-fix">
-#lmLanguage{position:static!important;inset:auto!important;z-index:auto!important;display:inline-flex!important;align-items:center;justify-content:center;flex:0 0 auto;margin:0 0 0 8px;min-height:34px;max-width:108px;white-space:nowrap;box-shadow:none!important;backdrop-filter:none!important}
+#lmLanguage{position:static!important;inset:auto!important;z-index:auto!important;display:inline-flex!important;align-items:center;justify-content:center;flex:0 0 auto;margin:0 0 0 8px;min-height:34px;max-width:44px;white-space:nowrap;box-shadow:none!important;backdrop-filter:none!important}
 #lmLanguage.lm-language-dock{position:static!important}
 .lm-language-slot{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex:0 0 auto;min-width:0}
-@media(max-width:650px){#lmLanguage{font-size:10px!important;padding:6px 8px!important;min-height:30px;margin-left:4px} .lm-language-slot{gap:4px}}
+@media(max-width:650px){#lmLanguage{font-size:10px!important;padding:6px!important;min-height:30px;margin-left:4px} .lm-language-slot{gap:4px}}
 </style></head>
 <body>
 <header><div class="brand">🔴 LOCAL <span>MARS</span> <small style="font-size:10px;color:#91a5bd">UNDERGROUND 24</small></div><a href="./index.html">← กลับสู่ดาวอังคาร</a></header>
@@ -562,9 +562,9 @@ render();
 
 <!-- LOCAL MARS bilingual interface: auto locale + manual language switch -->
 <style id="local-mars-language-style">
-#lmLanguage{position:static;inset:auto;z-index:auto;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;margin-left:8px;min-height:34px;max-width:108px;white-space:nowrap;box-shadow:none;backdrop-filter:none}
+#lmLanguage{position:static;inset:auto;z-index:auto;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;margin-left:8px;min-height:34px;max-width:44px;white-space:nowrap;box-shadow:none;backdrop-filter:none}
 body:has(header #lmLanguage) header{padding-right:105px}
-@media(max-width:650px){#lmLanguage{top:9px;right:9px;padding:7px 9px;font-size:10px}body:has(header #lmLanguage) header{padding-right:92px}}
+@media(max-width:650px){#lmLanguage{top:9px;right:9px;padding:7px;font-size:10px}body:has(header #lmLanguage) header{padding-right:92px}}
 </style>
 <script id="local-mars-bilingual">
 (()=>{
@@ -593,7 +593,7 @@ function translate(root=document){
 function install(){
  let btn=document.getElementById('lmLanguage');
  if(!btn){btn=document.createElement('button');btn.id='lmLanguage';btn.type='button';document.body.appendChild(btn);}
- const refresh=()=>{btn.textContent=lang==='th'?'🇹🇭 ไทย':'🇬🇧 English';btn.setAttribute('aria-label',lang==='th'?'Switch language to English':'เปลี่ยนภาษาเป็นไทย');};
+ const refresh=()=>{btn.textContent=lang==='th'?'🇹🇭':'🇬🇧';btn.setAttribute('aria-label',lang==='th'?'Switch language to English':'เปลี่ยนภาษาเป็นไทย');};
  refresh();translate();
  btn.onclick=()=>{lang=lang==='th'?'en':'th';localStorage.setItem('localMarsLanguage',lang);document.documentElement.lang=lang;refresh();translate();};
  document.documentElement.lang=lang;
