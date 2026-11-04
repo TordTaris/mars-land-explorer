@@ -1,5 +1,5 @@
-const CACHE="mars-local-shell-v15";
-const ASSETS=["./","./index.html","./manifest.webmanifest","./icon.svg"];
+const CACHE="mars-local-shell-v16";
+const ASSETS=["./","./index.html","./city.html","./manifest.webmanifest","./icon.svg"];
 self.addEventListener("install",event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)));
   self.skipWaiting();
@@ -16,7 +16,7 @@ self.addEventListener("fetch",event=>{
   const url=new URL(request.url);
   if(request.method!=="GET"||url.origin!==self.location.origin)return;
   event.respondWith((async()=>{
-    const isPage=request.mode==="navigate"||url.pathname.endsWith("/index.html")||url.pathname.endsWith("/");
+    const isPage=request.mode==="navigate"||url.pathname.endsWith(".html")||url.pathname.endsWith("/");
     if(isPage){
       try{
         const fresh=await fetch(request,{cache:"no-store"});
