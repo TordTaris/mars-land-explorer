@@ -75,6 +75,7 @@ async function build(parcel,type){
  const synced=await refresh();if(synced?.error)return {data:r.data,syncWarning:synced.error.message};
  return r;
 }
-window.MarsWorldServer={connect,auth,logout,refresh,claim,build,getState:()=>({user:S.user,parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,db:S.db})};
+async function loadM003PrivateBase(){if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบออนไลน์ก่อน'}};const {data,error}=await S.db.from('m003_private_base').select('floor_no,room_name,description,system_status').order('floor_no');if(error)return {error};return {data:data||[]};}
+window.MarsWorldServer={connect,auth,logout,refresh,claim,build,loadM003PrivateBase,getState:()=>({user:S.user,parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,db:S.db})};
 document.addEventListener('DOMContentLoaded',connect);
 })();
