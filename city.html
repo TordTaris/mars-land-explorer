@@ -27,7 +27,7 @@ button,select{border-color:#456987;background:linear-gradient(145deg,#1b3855,#10
 .pad{opacity:.48;transition:opacity .2s}.pad:active,.pad:focus-within{opacity:.95}
 .look{opacity:.65;pointer-events:none}
 @media(max-width:760px){
- .view-toolbar{top:61px;left:8px;right:8px;transform:none;justify-content:center;gap:5px;padding:5px}
+ .view-toolbar.menu-hidden{display:none!important}#showMenu{display:none;position:fixed;z-index:50;top:14px;left:50%;transform:translateX(-50%);padding:10px 18px;border:1px solid #d9b27a;border-radius:12px;background:linear-gradient(120deg,#b9824d,#e7c18a);color:#1b160f;font-weight:900;box-shadow:0 8px 24px #0009}#showMenu.visible{display:block} .view-toolbar{top:61px;left:8px;right:8px;transform:none;justify-content:center;gap:5px;padding:5px}
  .view-btn{flex:1;padding:9px 5px;font-size:10px}
  .panel.left.open,.panel.right.open{top:108px;left:8px;right:8px;width:auto;max-height:calc(100dvh - 235px);padding:11px}
  .resourcebar{top:10px!important;left:8px!important;right:8px!important;transform:none!important;max-width:none;gap:4px!important;opacity:.68}
@@ -332,6 +332,7 @@ header .status{display:inline-flex!important;align-items:center!important;justif
  <button id="hidePanels" class="view-btn subtle">ซ่อนเมนู</button>
  <button id="openInventory" class="view-btn">🎒 กระเป๋าทรัพยากร</button>
 </nav>
+<button id="showMenu" type="button" aria-label="Show menu">☰ SHOW MENU</button>
 
 <section class="panel left"><h3>COLONY COMMAND</h3><div class="row"><span>โหมด</span><b id="modeLabel">เดินสำรวจ</b></div><div class="row"><span>พิกัด</span><b id="position">0, 0</b></div><div class="row"><span>อาคาร</span><b id="count">0</b></div><div class="row"><span>เครดิตจำลอง</span><b id="credits">5,000 MLC</b></div><p class="hint">กล้องอยู่ด้านหลังตัวละคร มองเห็นนักสำรวจและเมืองรอบตัว หมุนกล้องโดยลากหน้าจอด้านขวาหรือบนพื้นที่ว่าง</p><div class="tools"><button id="walk" class="active">🚶 เดินสำรวจ</button><button id="buildMode">🏗️ สร้างเมือง</button></div></section>
 <section class="panel right"><h3>BUILD MENU</h3><div class="row"><span>พื้นที่เลือก</span><b id="plot">ยังไม่เลือก</b></div><div class="row"><span>ถนน</span><b id="roadCount">0</b></div><div class="row"><span>NPC</span><b id="npcCount">3</b></div><select id="building" class="wide"><option value="hab">โดมที่พักอาศัย</option><option value="green">เรือนกระจก</option><option value="lab">ห้องวิจัย</option><option value="solar">แผงพลังงาน</option><option value="hub">ศูนย์บัญชาการ</option><option value="tower">หอคอยสื่อสาร</option></select><button id="place" class="primary wide">วางอาคารบนช่องที่เลือก</button><button id="roadMode" class="wide">🛣️ วางถนน</button><select id="level" class="wide"><option value="0">ชั้นพื้นผิว L0</option><option value="1">ชั้นยกระดับ L1</option><option value="2">ชั้นยกระดับ L2</option></select><button id="remove" class="wide">รื้อถอนอาคารที่เลือก</button><p class="hint">แตะช่องตารางเพื่อเลือกตำแหน่ง แล้วเริ่มก่อสร้าง อาคารจะค่อย ๆ ปรากฏตามขั้นตอนในโลก 3D</p><div class="build-progress"><h3>🏗️ LIVE CONSTRUCTION</h3><div class="resource-stock" id="resourceStock">วัสดุสำรอง: โลหะ 120 • โพลิเมอร์ 90 • อิเล็กทรอนิกส์ 45</div><div id="constructionList" class="small">ยังไม่มีงานก่อสร้าง • เลือกช่องและเริ่มวางอาคาร</div></div></section>
@@ -469,11 +470,15 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
 (()=>{
  const left=document.querySelector('.panel.left'),right=document.querySelector('.panel.right');
  const info=document.querySelector('#toggleInfo'),build=document.querySelector('#toggleBuild'),hide=document.querySelector('#hidePanels');
- function closePanels(){left.classList.remove('open');right.classList.remove('open');info.classList.remove('active');build.classList.remove('active');info.setAttribute('aria-expanded','false');build.setAttribute('aria-expanded','false')}
- info.addEventListener('click',()=>{const opening=!left.classList.contains('open');closePanels();if(opening){left.classList.add('open');info.classList.add('active');info.setAttribute('aria-expanded','true')}});
- build.addEventListener('click',()=>{const opening=!right.classList.contains('open');closePanels();if(opening){right.classList.add('open');build.classList.add('active');build.setAttribute('aria-expanded','true')}});
- hide.addEventListener('click',closePanels);
- document.addEventListener('keydown',e=>{if(e.key==='Escape')closePanels()});
+ const toolbar=document.querySelector('.view-toolbar'),showMenu=document.querySelector('#showMenu');
+ function closePanels(){left?.classList.remove('open');right?.classList.remove('open');info?.classList.remove('active');build?.classList.remove('active');info?.setAttribute('aria-expanded','false');build?.setAttribute('aria-expanded','false')}
+ function hideMenuBar(){closePanels();toolbar?.classList.add('menu-hidden');showMenu?.classList.add('visible')}
+ function revealMenuBar(){toolbar?.classList.remove('menu-hidden');showMenu?.classList.remove('visible')}
+ info?.addEventListener('click',()=>{revealMenuBar();const opening=!left.classList.contains('open');closePanels();if(opening){left.classList.add('open');info.classList.add('active');info.setAttribute('aria-expanded','true')}});
+ build?.addEventListener('click',()=>{revealMenuBar();const opening=!right.classList.contains('open');closePanels();if(opening){right.classList.add('open');build.classList.add('active');build.setAttribute('aria-expanded','true')}});
+ hide?.addEventListener('click',hideMenuBar);
+ showMenu?.addEventListener('click',revealMenuBar);
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')hideMenuBar()});
  const walk=document.querySelector('#walk'),buildMode=document.querySelector('#buildMode');
  if(walk)walk.addEventListener('click',()=>{closePanels()});
  if(buildMode)buildMode.addEventListener('click',()=>{right.classList.add('open');build.classList.add('active');build.setAttribute('aria-expanded','true')});
