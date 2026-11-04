@@ -1,8 +1,8 @@
 <!doctype html>
-<html lang="th">
+<html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#0b1220"><meta name="description" content="LOCAL MARS Underground 24 — โปรแกรมจำลองฐานใต้ดิน 24 ชั้นและระบบหมุนเวียนทรัพยากร">
+<meta name="theme-color" content="#0b1220"><meta name="description" content="LOCAL MARS Underground 24 — A 24-level underground habitat and life-support simulation.">
 <title>LOCAL MARS | Underground 24</title>
 <style>
 :root{color-scheme:dark;--bg:#080e18;--panel:#111d2d;--line:#2a4058;--text:#eaf3ff;--muted:#9bb0c9;--cyan:#56d9e8;--orange:#ff9166;--green:#69e3a5;--red:#ff6b78}
@@ -609,7 +609,7 @@ const pairs=[["LOCAL MARS","LOCAL MARS"],["PLANET EXPLORER","PLANET EXPLORER"],[
 const thToEn=new Map(pairs),enToTh=new Map(pairs.map(([th,en])=>[en,th]));
 const region=(navigator.language||'').toLowerCase();
 const zone=Intl.DateTimeFormat().resolvedOptions().timeZone||'';
-const detected=(region.startsWith('th')||zone==='Asia/Bangkok'||zone==='Asia/Bangkok')?'th':'en';
+const detected='en';
 let lang=localStorage.getItem('localMarsLanguage')||detected;
 if(!['th','en'].includes(lang))lang=detected;
 const clean=s=>s.replace(/\\s+/g,' ').trim();
