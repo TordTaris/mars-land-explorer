@@ -632,7 +632,7 @@ part(new THREE.BoxGeometry(.34,.43,.2),gold,0,.98,-.25);
 for(const x of [-.13,.13]){part(new THREE.CapsuleGeometry(.085,.36,4,8),suit,x,.32,0);part(new THREE.BoxGeometry(.15,.12,.25),dark,x,.08,.04)}
 for(const x of [-.34,.34])part(new THREE.CapsuleGeometry(.075,.35,4,8),suit,x,1.02,0);
 const marker=new THREE.Mesh(new THREE.RingGeometry(.42,.52,32),new THREE.MeshBasicMaterial({color:0x62e2e8,side:THREE.DoubleSide}));marker.rotation.x=-Math.PI/2;marker.position.y=.04;scene.add(marker);
-const cells=[],buildings=[],roads=[];for(let x=-10;x<=10;x++)for(let z=-10;z<=10;z++){const mesh=new THREE.Mesh(new THREE.PlaneGeometry(.94,.94),new THREE.MeshBasicMaterial({color:0x4fc6d0,transparent:true,opacity:.0,side:THREE.DoubleSide}));mesh.rotation.x=-Math.PI/2;mesh.position.set(x+.5,.035,z+.5);mesh.userData={x:x+.5,z:z+.5};scene.add(mesh);cells.push(mesh)}
+const cells=[],buildings=[],roads=[],nationalFlags=[];for(let x=-10;x<=10;x++)for(let z=-10;z<=10;z++){const mesh=new THREE.Mesh(new THREE.PlaneGeometry(.94,.94),new THREE.MeshBasicMaterial({color:0x4fc6d0,transparent:true,opacity:.0,side:THREE.DoubleSide}));mesh.rotation.x=-Math.PI/2;mesh.position.set(x+.5,.035,z+.5);mesh.userData={x:x+.5,z:z+.5};scene.add(mesh);cells.push(mesh)}
 let selected=null,buildMode=false,roadMode=false,currentLevel=0,yaw=0,camYaw=0,camPitch=.24,distance=6,credits=5000,energy=850;
 const resources={metal:120,polymer:90,electronics:45};
 const recipes={hab:{credit:800,metal:24,polymer:18,electronics:4},green:{credit:650,metal:16,polymer:24,electronics:5},lab:{credit:950,metal:28,polymer:12,electronics:12},solar:{credit:500,metal:18,polymer:6,electronics:8},hub:{credit:1200,metal:36,polymer:20,electronics:16},tower:{credit:400,metal:14,polymer:4,electronics:10}};
