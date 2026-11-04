@@ -106,16 +106,94 @@ body{background:radial-gradient(ellipse at 50% 0,#553526 0,#17263a 38%,#080d18 7
 .sim-toolbar .sim-btn.active{background:#087f9b;border-color:#7af3ff}
 #threeViewport{display:none!important}
 @media(max-width:780px){#constructionGrid{width:min(100%,390px);aspect-ratio:3/4;gap:2px;padding:6px}.sim-toolbar{gap:5px}}
-body[data-floor-type="command"]{--floor-glow:#36d9e8}body[data-floor-type="habitat"]{--floor-glow:#e7b76b}body[data-floor-type="food"]{--floor-glow:#78d99a}body[data-floor-type="water"]{--floor-glow:#56c7f0}body[data-floor-type="power"]{--floor-glow:#f4a34f}body[data-floor-type="engineering"]{--floor-glow:#a6b7ce}body[data-floor-type="science"]{--floor-glow:#b995ff}body[data-floor-type="medical"]{--floor-glow:#ff8298}body[data-floor-type="emergency"]{--floor-glow:#ff654f}body[data-floor-type]{background:radial-gradient(ellipse at 50% 0,color-mix(in srgb,var(--floor-glow) 22%,#15263a),#080d18 78%)}body[data-floor-type] #constructionGrid{border-color:var(--floor-glow);box-shadow:0 0 0 3px #06101b,0 0 30px color-mix(in srgb,var(--floor-glow) 55%,transparent)}body[data-floor-type] .directory-live{color:var(--floor-glow);border-color:var(--floor-glow)}body[data-floor-type] .floor.selected{border-color:var(--floor-glow);box-shadow:inset 3px 0 var(--floor-glow),0 0 14px color-mix(in srgb,var(--floor-glow) 30%,transparent)}.destination-preview{margin-top:7px;padding:8px 10px;border:1px dashed #47748d;border-radius:7px;color:#b9d8e8;font-size:10px}.sync-status{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:8px auto;padding:8px 10px;width:min(100%,520px);border:1px solid #315b50;border-radius:8px;background:#10251f;color:#9be9c1;font-size:10px}.grid-cell.other-member{opacity:.9;outline:1px dashed #fff7}.grid-cell.other-member:before{content:'WORLD';position:absolute;top:1px;right:2px;font-size:5px;color:#fff;background:#071827aa;padding:1px}.grid-cell.mine{outline:2px solid #fff;outline-offset:-2px}.grid-cell[data-kind="room"].other-member{filter:hue-rotate(25deg)}.grid-cell[data-kind="corridor"].other-member{filter:hue-rotate(70deg)}</style></head>
+body[data-floor-type="command"]{--floor-glow:#36d9e8}body[data-floor-type="habitat"]{--floor-glow:#e7b76b}body[data-floor-type="food"]{--floor-glow:#78d99a}body[data-floor-type="water"]{--floor-glow:#56c7f0}body[data-floor-type="power"]{--floor-glow:#f4a34f}body[data-floor-type="engineering"]{--floor-glow:#a6b7ce}body[data-floor-type="science"]{--floor-glow:#b995ff}body[data-floor-type="medical"]{--floor-glow:#ff8298}body[data-floor-type="emergency"]{--floor-glow:#ff654f}body[data-floor-type]{background:radial-gradient(ellipse at 50% 0,color-mix(in srgb,var(--floor-glow) 22%,#15263a),#080d18 78%)}body[data-floor-type] #constructionGrid{border-color:var(--floor-glow);box-shadow:0 0 0 3px #06101b,0 0 30px color-mix(in srgb,var(--floor-glow) 55%,transparent)}body[data-floor-type] .directory-live{color:var(--floor-glow);border-color:var(--floor-glow)}body[data-floor-type] .floor.selected{border-color:var(--floor-glow);box-shadow:inset 3px 0 var(--floor-glow),0 0 14px color-mix(in srgb,var(--floor-glow) 30%,transparent)}.destination-preview{margin-top:7px;padding:8px 10px;border:1px dashed #47748d;border-radius:7px;color:#b9d8e8;font-size:10px}.sync-status{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:8px auto;padding:8px 10px;width:min(100%,520px);border:1px solid #315b50;border-radius:8px;background:#10251f;color:#9be9c1;font-size:10px}.grid-cell.other-member{opacity:.9;outline:1px dashed #fff7}.grid-cell.other-member:before{content:'WORLD';position:absolute;top:1px;right:2px;font-size:5px;color:#fff;background:#071827aa;padding:1px}.grid-cell.mine{outline:2px solid #fff;outline-offset:-2px}.grid-cell[data-kind="room"].other-member{filter:hue-rotate(25deg)}.grid-cell[data-kind="corridor"].other-member{filter:hue-rotate(70deg)}
+/* MARS LAND UNDERGROUND — complete command-deck redesign */
+:root{--bg:#050a12;--panel:#0b1725;--line:#29465f;--cyan:#73eaff;--orange:#ffad70;--green:#7ff0bc;--floor-glow:#73eaff}
+html{scroll-behavior:smooth}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(ellipse at 18% -8%,#5b392b 0,transparent 34%),radial-gradient(ellipse at 92% 6%,#123e57 0,transparent 30%),linear-gradient(145deg,#050a12,#081321 55%,#050b14);background-attachment:fixed}
+header{padding:13px clamp(14px,4vw,40px);background:#050c16eF;border-bottom:1px solid #6ddcf044}
+.brand{display:flex;align-items:center;gap:8px;letter-spacing:2px}.brand:before{content:"";width:9px;height:9px;border-radius:50%;background:#ff7659;box-shadow:0 0 16px #ff7659}
+header a{font-size:11px;padding:9px 12px;border:1px solid #34556c;border-radius:9px;background:#0c1b2a}
+.wrap{max-width:1440px;padding-top:24px}
+.intro{padding:22px 24px;margin-bottom:16px;border:1px solid #4a6c82;border-radius:18px;background:linear-gradient(105deg,#10263aee,#0a1725ee 65%,#251b1bee);box-shadow:0 18px 60px #0006;align-items:center}
+.intro:after{content:"MARS / SUBSURFACE HABITAT";font-size:clamp(12px,2vw,22px);font-weight:900;letter-spacing:3px;color:#ffffff12;align-self:center}
+.eyebrow{color:var(--floor-glow);letter-spacing:2.4px}
+h1{font-size:clamp(26px,4.5vw,44px);letter-spacing:-1px}
+.status{border-radius:8px;background:#0a2a25;border-color:#347d68;box-shadow:0 0 22px #38d69a18}
+.grid{grid-template-columns:minmax(0,1.5fr) minmax(290px,.72fr);gap:14px}
+.card{border-radius:15px;padding:17px;background:linear-gradient(155deg,#102237f5,#091522f5);border:1px solid #34556e;box-shadow:0 20px 48px #0005,inset 0 1px #ffffff0c}
+.card h2{font-size:11px;letter-spacing:1.7px;color:#8deaff;padding-bottom:11px;border-bottom:1px solid #29445b}
+.cross{grid-template-columns:44px 1fr;max-width:100%}
+.surface{font-size:10px;letter-spacing:1.5px;border-radius:7px;padding:12px;background:repeating-linear-gradient(110deg,#593a2b,#593a2b 18px,#714632 18px,#714632 36px)}
+.levels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.floor{min-height:43px;grid-template-columns:43px minmax(0,1fr) 7px;border-radius:7px;padding:7px 9px;background:#0b1b2b;border-color:#29465d}
+.floor b{color:#ffb37c;font-size:10px}.floor span{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.floor:hover,.floor.selected{border-color:var(--floor-glow);background:linear-gradient(100deg,color-mix(in srgb,var(--floor-glow) 19%,#0c1e2d),#102337);box-shadow:inset 3px 0 var(--floor-glow),0 0 16px color-mix(in srgb,var(--floor-glow) 18%,transparent)}
+.detail{margin-top:14px;border-radius:10px;background:linear-gradient(110deg,#10283a,#0a1725);border-color:#365c75}
+.directory{border-radius:13px;background:linear-gradient(145deg,#0a1928,#0c2032);border-color:#42647c}
+.directory-head h2{border:0;padding:0;color:#f1e3c4;font-size:16px}
+.directory-body{grid-template-columns:minmax(175px,.72fr) minmax(290px,1.28fr);gap:12px}
+.room-entry{border-radius:7px;background:#0d2031;border-color:#2b4b63}
+.room-number{color:#ffc27d}
+.floor-map-wrap{border-radius:10px;background:linear-gradient(145deg,#071522,#0b2234);border-color:#3b6a85}
+.map-caption{font-size:10px;color:#83eaff;letter-spacing:1.5px}
+#constructionGrid{width:min(100%,470px);aspect-ratio:4/5;border:5px solid var(--floor-glow);border-radius:9px;gap:2px;padding:6px;background-color:#07111d;background-image:linear-gradient(color-mix(in srgb,var(--floor-glow) 15%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--floor-glow) 15%,transparent) 1px,transparent 1px);box-shadow:0 0 0 3px #030912,0 0 30px color-mix(in srgb,var(--floor-glow) 30%,transparent),inset 0 0 25px #0008}
+.grid-cell{border-radius:1px;border:1px solid #25445a;background:#10283b;font-size:clamp(5px,1.5vw,9px)}
+.grid-cell[data-kind="room"]{background:linear-gradient(145deg,#b98c4d,#72512d);border-color:#f3c77d}
+.grid-cell[data-kind="corridor"]{background:linear-gradient(145deg,#48c5d7,#12627a);border-color:#9af5ff}
+.grid-cell[data-kind="life"]{background:linear-gradient(145deg,#2bbd92,#12644f);border-color:#8af3cb}
+.grid-cell[data-kind="storage"]{background:linear-gradient(145deg,#5897bd,#244e70);border-color:#a6dfff}
+.grid-cell[data-kind="lift"]{background:linear-gradient(145deg,#e18b58,#813d2b);border-color:#ffd0a0}
+.grid-cell.other-member{outline:1px solid #b995ff;outline-offset:-2px}
+.grid-cell.mine{box-shadow:inset 0 0 0 2px #fff7}
+.sim-toolbar{justify-content:flex-start;max-width:520px;margin:0 auto 9px}
+.sim-btn{border-radius:6px;font-weight:700}
+.sync-status{width:min(100%,520px);border-radius:6px;font-size:9px}
+.sim-hint{max-width:520px}
+.room-inspector{border-radius:7px;border-color:#2f647f}
+.elevator-console{border-radius:9px;border-color:#3d6b84;background:linear-gradient(130deg,#0d2739,#071521)}
+.elevator-title{font-size:11px}
+.elevator-controls{grid-template-columns:minmax(0,1fr) auto}
+.elevator-controls select,.elevator-controls button{min-height:40px}
+.elevator-controls button{border-radius:7px}
+.destination-preview{border-radius:6px}
+.metric{border-radius:9px;background:linear-gradient(145deg,#10263a,#091522);border-color:#29465d}
+.metric b{font-size:25px;letter-spacing:-1px}
+.bar{height:6px}
+.system{border-radius:8px;background:#0b1b2a;border-color:#29465d}
+.action{border-radius:7px}
+.action.primary{box-shadow:0 5px 18px #ff945033}
+.note{font-size:10px}
+.footer{padding-top:10px;border-top:1px solid #243d52}
+body[data-floor-type="command"]{--floor-glow:#58e8f4}
+body[data-floor-type="engineering"]{--floor-glow:#9cb8d2}
+body[data-floor-type="habitat"]{--floor-glow:#f0c27b}
+body[data-floor-type="food"]{--floor-glow:#8be2a0}
+body[data-floor-type="water"]{--floor-glow:#61c9ff}
+body[data-floor-type="power"]{--floor-glow:#ffae55}
+body[data-floor-type="science"]{--floor-glow:#c1a0ff}
+body[data-floor-type="medical"]{--floor-glow:#ff91ad}
+body[data-floor-type="emergency"]{--floor-glow:#ff705e}
+@media(max-width:780px){
+ .wrap{padding:12px 10px 30px}.intro{padding:16px;gap:9px}.intro:after{display:none}
+ .grid{grid-template-columns:1fr}.card{padding:12px}.levels{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .directory-body{grid-template-columns:1fr}.room-list{grid-template-columns:1fr 1fr}
+ .room-entry{grid-template-columns:27px minmax(0,1fr);gap:5px}.room-entry em{grid-column:2}
+ #constructionGrid{width:min(100%,390px);aspect-ratio:4/5}
+ .elevator-controls{grid-template-columns:1fr}.elevator-controls label{grid-column:auto}
+ .elevator-controls button{width:100%}
+}
+
+</style></head>
 <body>
 <header><div class="brand">🔴 MARS <span>LAND</span> <small style="font-size:10px;color:#91a5bd">UNDERGROUND 24</small></div><a href="./index.html">← กลับสู่ดาวอังคาร</a></header>
 <main class="wrap">
-<div class="intro"><div><div class="eyebrow">HABITAT ENGINEERING / CONCEPT SIMULATOR</div><h1>ฐานใต้ดิน 24 ชั้น</h1><p>ออกแบบโครงสร้างเมืองใต้ผิวดาว พร้อมติดตามระบบช่วยชีวิตและทรัพยากรหมุนเวียน</p></div><div class="status">● SIMULATION ONLINE</div></div>
+<div class="intro"><div><div class="eyebrow">MARS LAND · SUBSURFACE COMMAND DECK</div><h1>ฐานอาณานิคมใต้ดาวอังคาร</h1><p>24 ระดับใต้พื้นผิว · ศูนย์บัญชาการ · ที่อยู่อาศัย · เกษตร · พลังงาน · วิทยาศาสตร์ · ระบบฉุกเฉิน</p><div class="actions"><span class="status">● LIVE WORLD SIMULATION</span><span class="status">24 LEVELS / B01—B24</span></div></div></div>
 <div class="grid">
 <section class="card"><h2>▥ VERTICAL BASE CUTAWAY · เลือกชั้นเพื่อดูรายละเอียด</h2><div class="cross"><div class="surface">MARS SURFACE · ทางเข้า / Airlock / EVA</div><div class="depth">ระดับความลึก ↓</div><div class="levels" id="levels"></div></div><div class="detail"><div class="eyebrow">SELECTED LEVEL</div><strong id="detailName">B01 · ศูนย์บัญชาการ</strong><p id="detailDesc">ควบคุมภารกิจ ระบบสื่อสาร และตรวจสอบสถานะทุกชั้น</p><div class="footer"><span id="detailType">COMMAND & SAFETY</span><span id="detailDepth">ความลึกแนวคิด 10 เมตร</span></div></div>
 <div class="directory" id="floorDirectory">
  <div class="directory-head"><div><div class="eyebrow">DIGITAL FLOOR DIRECTORY</div><h2 id="directoryTitle">B01 · FLOOR DIRECTORY</h2><p id="directorySubtitle">แผนผังพื้นที่และรายละเอียดภายในชั้น</p></div><span class="directory-live">● FLOOR PLAN</span></div>
- <div class="directory-body"><div class="room-list" id="roomList"></div><div class="floor-map-wrap"><div class="map-caption">8-BIT PIXEL UNDERGROUND <span id="mapFloor">B01</span></div><div class="sim-toolbar"><button class="sim-btn active" data-tool="empty">พื้นที่ว่าง</button><button class="sim-btn" data-tool="room">ห้อง</button><button class="sim-btn" data-tool="corridor">ทางเดิน</button><button class="sim-btn" data-tool="life">ระบบชีวิต</button><button class="sim-btn" data-tool="storage">คลัง</button><button class="sim-btn" data-tool="lift">ลิฟต์</button><button class="sim-btn" data-tool="erase">ลบ</button></div><div class="sync-status" id="undergroundSyncStatus">กำลังเชื่อมต่อโลกก่อสร้างส่วนกลาง…</div><div id="constructionGrid" aria-label="ตารางพื้นที่ก่อสร้างฐานใต้ดิน"></div><div class="sim-hint">เลือกประเภทพื้นที่ แล้วแตะช่องตารางเพื่อวางสิ่งก่อสร้าง · ข้อมูลบันทึกแยกแต่ละชั้นในเครื่องนี้</div><div class="room-inspector" id="roomInspector"><b>แตะห้องในโลก 8-BIT PIXEL เพื่อดูข้อมูล</b><span>ROOM DETAILS · LIVE SIMULATION</span></div><div class="elevator-console"><div class="elevator-title"><span>⬆ ELEVATOR CONTROL</span><small>VERTICAL TRANSIT · 24 LEVELS</small></div><div class="elevator-controls"><label for="elevatorFloor">เลือกชั้นปลายทาง</label><select id="elevatorFloor"></select><button id="elevatorGo" type="button">เรียกลิฟต์ / ไปยังชั้นนี้</button></div><div class="actions" style="margin-top:8px"><button class="action" id="floorPrev" type="button">↑ ชั้นก่อนหน้า</button><button class="action" id="floorNext" type="button">↓ ชั้นถัดไป</button></div><div class="elevator-status" id="elevatorStatus">ลิฟต์จอดอยู่ที่ B01 · พร้อมใช้งาน</div><div id="destinationPreview" class="destination-preview">ปลายทางที่เลือก: B01 · ศูนย์บัญชาการ</div></div><div class="map-legend"><span><i class="legend-main"></i> ห้องหลัก</span><span><i class="legend-support"></i> ห้องสนับสนุน</span><span><i class="legend-route"></i> ทางเดิน</span></div><div class="walk-pad"><button data-move="forward">▲</button><div><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div></div></div></div>
+ <div class="directory-body"><div class="room-list" id="roomList"></div><div class="floor-map-wrap"><div class="map-caption"><span>FACILITY ARCHITECTURE / CONSTRUCTION GRID</span><span id="mapFloor">B01</span></div><div class="sim-toolbar"><button class="sim-btn active" data-tool="empty">พื้นที่ว่าง</button><button class="sim-btn" data-tool="room">ห้อง</button><button class="sim-btn" data-tool="corridor">ทางเดิน</button><button class="sim-btn" data-tool="life">ระบบชีวิต</button><button class="sim-btn" data-tool="storage">คลัง</button><button class="sim-btn" data-tool="lift">ลิฟต์</button><button class="sim-btn" data-tool="erase">ลบ</button></div><div class="sync-status" id="undergroundSyncStatus">กำลังเชื่อมต่อโลกก่อสร้างส่วนกลาง…</div><div id="constructionGrid" aria-label="ตารางพื้นที่ก่อสร้างฐานใต้ดิน"></div><div class="sim-hint">เลือกประเภทพื้นที่ แล้วแตะช่องตารางเพื่อวางสิ่งก่อสร้าง · ข้อมูลบันทึกแยกแต่ละชั้นในเครื่องนี้</div><div class="room-inspector" id="roomInspector"><b>แตะห้องในโลก 8-BIT PIXEL เพื่อดูข้อมูล</b><span>ROOM DETAILS · LIVE SIMULATION</span></div><div class="elevator-console"><div class="elevator-title"><span>⬆ ELEVATOR CONTROL</span><small>VERTICAL TRANSIT · 24 LEVELS</small></div><div class="elevator-controls"><label for="elevatorFloor">เลือกชั้นปลายทาง</label><select id="elevatorFloor"></select><button id="elevatorGo" type="button">เรียกลิฟต์ / ไปยังชั้นนี้</button></div><div class="actions" style="margin-top:8px"><button class="action" id="floorPrev" type="button">↑ ชั้นก่อนหน้า</button><button class="action" id="floorNext" type="button">↓ ชั้นถัดไป</button></div><div class="elevator-status" id="elevatorStatus">ลิฟต์จอดอยู่ที่ B01 · พร้อมใช้งาน</div><div id="destinationPreview" class="destination-preview">ปลายทางที่เลือก: B01 · ศูนย์บัญชาการ</div></div><div class="map-legend"><span><i class="legend-main"></i> ห้องหลัก</span><span><i class="legend-support"></i> ห้องสนับสนุน</span><span><i class="legend-route"></i> ทางเดิน</span></div><div class="walk-pad"><button data-move="forward">▲</button><div><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div></div></div></div>
  <div class="directory-foot"><span id="floorCapacity">ความจุออกแบบ: 12 คน</span><span id="floorAccess">การเข้าถึง: บัตรสมาชิก + Airlock</span></div>
 </div></section>
 <aside style="display:grid;gap:16px;align-content:start">
