@@ -440,6 +440,30 @@ if ('serviceWorker' in navigator) {
 #lmLanguage{position:static;inset:auto;z-index:auto;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;margin-left:8px;min-height:34px;max-width:44px;white-space:nowrap;box-shadow:none;backdrop-filter:none}
 body:has(header #lmLanguage) header{padding-right:105px}
 @media(max-width:650px){#lmLanguage{top:9px;right:9px;padding:7px;font-size:10px}body:has(header #lmLanguage) header{padding-right:92px}}
+
+/* LOCAL MARS — full Mission Deck presentation */
+#lmMissionLauncher{left:22px!important;top:76px!important;min-height:42px!important;padding:11px 16px!important;border-radius:13px!important;font-size:11px!important;letter-spacing:2px!important}
+#lmMissionDeck{left:22px!important;top:128px!important;width:min(360px,calc(100vw - 44px))!important;padding:18px!important;border-radius:20px!important;border-color:rgba(222,190,125,.82)!important;background:linear-gradient(145deg,rgba(15,34,53,.97),rgba(4,12,23,.97))!important;box-shadow:0 24px 70px #000c,inset 0 1px #fff2!important}
+#lmMissionDeck .lm-kicker{font-size:10px!important;letter-spacing:2.4px!important}
+#lmMissionDeck .lm-heading{font-size:21px!important;margin:8px 0 5px!important}
+#lmMissionDeck .lm-sub{font-size:11px!important;line-height:1.6!important;margin-bottom:16px!important}
+#lmMissionDeck .lm-grid{gap:10px!important}
+#lmMissionDeck button{min-height:88px!important;padding:12px!important;border-radius:14px!important;border-color:#c7a66b66!important;background:linear-gradient(145deg,#1b3852,#0a1a2b)!important;transition:transform .18s,border-color .18s,background .18s}
+#lmMissionDeck button:hover{transform:translateY(-2px);border-color:#e6c783!important;background:linear-gradient(145deg,#284b66,#10243a)!important}
+#lmMissionDeck button .lm-icon{font-size:24px!important}
+#lmMissionDeck button strong{font-size:11px!important;letter-spacing:.2px}
+#lmMissionDeck button small{font-size:9px!important;line-height:1.4}
+#lmMissionDeck .lm-stat{padding:10px!important;border-color:#c7a66b38!important;background:linear-gradient(145deg,#ffffff0d,#ffffff04)!important}
+#lmMissionDeck .lm-stat b{font-size:19px!important}
+#lmMissionDeck .lm-foot{font-size:8px!important;letter-spacing:1.2px}
+@media(max-width:650px){
+ #lmMissionLauncher{left:10px!important;top:58px!important;min-height:38px!important;padding:9px 12px!important}
+ #lmMissionDeck{left:10px!important;top:105px!important;width:min(350px,calc(100vw - 20px))!important;max-height:calc(100dvh - 158px)!important;overflow:auto!important;padding:13px!important}
+ #lmMissionDeck .lm-heading{font-size:18px!important}
+ #lmMissionDeck .lm-grid{gap:7px!important}
+ #lmMissionDeck button{min-height:76px!important;padding:9px!important}
+ #lmMissionDeck button .lm-icon{font-size:20px!important}
+}
 </style>
 <script id="local-mars-bilingual">
 (()=>{
@@ -493,7 +517,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  const run={explore:()=>document.querySelector('#reset')?.click(),zone:()=>document.querySelector('#navNewExplorer')?.click(),city:()=>document.querySelector('#navCity')?.click(),base:()=>document.querySelector('#navUnderground')?.click(),market:()=>document.querySelector('#navMarket')?.click(),construction:()=>location.href='./city.html'};
  deck.querySelectorAll('[data-mission]').forEach(b=>b.addEventListener('click',()=>{const fn=run[b.dataset.mission];if(fn)fn();}));
  const sync=()=>{const a=document.querySelector('#owned'),b=document.querySelector('#buildings');document.querySelector('#lmOwnedCount').textContent=a?.textContent||'0';document.querySelector('#lmBuildingCount').textContent=b?.textContent||'0';};
- sync();document.addEventListener('mars-world-updated',sync);document.addEventListener('mars-auth-state',e=>{if(!e.detail?.user)setOpen(false);else sync();});
+ sync();setOpen(true);document.addEventListener('mars-world-updated',sync);document.addEventListener('mars-auth-state',e=>{if(!e.detail?.user)setOpen(false);else sync();});
  new MutationObserver(sync).observe(document.querySelector('#owned')||document.body,{childList:true,subtree:true,characterData:true});
 })();
 </script></body></html>
