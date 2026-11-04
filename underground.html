@@ -610,7 +610,7 @@ const thToEn=new Map(pairs),enToTh=new Map(pairs.map(([th,en])=>[en,th]));
 const region=(navigator.language||'').toLowerCase();
 const zone=Intl.DateTimeFormat().resolvedOptions().timeZone||'';
 const detected='en';
-let lang=localStorage.getItem('localMarsLanguage')||detected;
+if(!localStorage.getItem('localMarsLanguageModeV2')){localStorage.setItem('localMarsLanguage','en');localStorage.setItem('localMarsLanguageModeV2','1');}let lang=localStorage.getItem('localMarsLanguage')||detected;
 if(!['th','en'].includes(lang))lang=detected;
 const clean=s=>s.replace(/\\s+/g,' ').trim();
 function translateValue(value){
