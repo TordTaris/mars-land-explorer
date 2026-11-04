@@ -197,6 +197,11 @@ body[data-floor-type="emergency"] .grid-cell.blueprint[data-kind="room"]{backgro
 .floor-map-wrap{position:relative}
 .floor-map-wrap:before{content:"";position:absolute;inset:42px 12px 12px;border:1px solid color-mix(in srgb,var(--floor-glow) 18%,transparent);border-radius:8px;pointer-events:none}
 
+</style><style id="local-mars-language-layout-fix">
+#lmLanguage{position:static!important;inset:auto!important;z-index:auto!important;display:inline-flex!important;align-items:center;justify-content:center;flex:0 0 auto;margin:0 0 0 8px;min-height:34px;max-width:108px;white-space:nowrap;box-shadow:none!important;backdrop-filter:none!important}
+#lmLanguage.lm-language-dock{position:static!important}
+.lm-language-slot{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex:0 0 auto;min-width:0}
+@media(max-width:650px){#lmLanguage{font-size:10px!important;padding:6px 8px!important;min-height:30px;margin-left:4px} .lm-language-slot{gap:4px}}
 </style></head>
 <body>
 <header><div class="brand">🔴 LOCAL <span>MARS</span> <small style="font-size:10px;color:#91a5bd">UNDERGROUND 24</small></div><a href="./index.html">← กลับสู่ดาวอังคาร</a></header>
@@ -557,7 +562,7 @@ render();
 
 <!-- LOCAL MARS bilingual interface: auto locale + manual language switch -->
 <style id="local-mars-language-style">
-#lmLanguage{position:fixed;z-index:9999;top:12px;right:14px;padding:8px 12px;border:1px solid #d7b575;border-radius:999px;background:linear-gradient(135deg,#10243aee,#071321ee);color:#f4dfb5;font:700 11px system-ui;letter-spacing:.6px;box-shadow:0 5px 18px #0008;backdrop-filter:blur(12px)}
+#lmLanguage{position:static;inset:auto;z-index:auto;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;margin-left:8px;min-height:34px;max-width:108px;white-space:nowrap;box-shadow:none;backdrop-filter:none}
 body:has(header #lmLanguage) header{padding-right:105px}
 @media(max-width:650px){#lmLanguage{top:9px;right:9px;padding:7px 9px;font-size:10px}body:has(header #lmLanguage) header{padding-right:92px}}
 </style>
@@ -598,4 +603,6 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 
-</body></html>
+<script id="local-mars-language-dock">
+(()=>{function dock(){const b=document.getElementById('lmLanguage');if(!b||b.dataset.docked)return;const candidates=['header','.topbar','.top-bar','.header','.nav-header','.toolbar'];let host=null;for(const s of candidates){const e=document.querySelector(s);if(e&&e.getBoundingClientRect().width>0){host=e;break}}if(!host){const nav=document.querySelector('nav');if(nav)host=nav}if(!host)return;let slot=host.querySelector('.lm-language-slot');if(!slot){slot=document.createElement('div');slot.className='lm-language-slot';host.appendChild(slot)}slot.appendChild(b);b.classList.add('lm-language-dock');b.dataset.docked='1'}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',dock,{once:true});else dock();new MutationObserver(dock).observe(document.body,{childList:true,subtree:true});})();
+</script></body></html>
