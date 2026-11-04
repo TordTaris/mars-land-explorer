@@ -444,8 +444,57 @@ function cityErrorText(e){
  const parts=[e?.message,e?.code&&('code '+e.code),e?.details,e?.hint].filter(Boolean);
  return parts.join(' · ')||String(e||'unknown error');
 }
+function syncOnlineStructures(rows){
+ const keep=new Set(rows.map(r=>String(r.id)));
+ // Keep existing meshes in place. Only create new records or remove records deleted remotely.
+ rows.forEach(row=>{
+  const id=String(row.id);
+  const exists=buildings.some(o=>String(o.userData?.recordId)===id)
+   ||roads.some(o=>String(o.userData?.recordId)===id)
+   ||constructionSites.some(o=>String(o.data?.recordId)===id);
+  if(exists)return;
+  const p=row.position||{},rawType=String(p.game_type||row.name||row.building_type||'').toLowerCase();
+  const type=({habitat:'hab',greenhouse:'green',landing_pad:'tower',communications_tower:'tower',communication_tower:'tower',tower:'tower',road:'road'}[rawType]||rawType);
+  const x=Number(p.x)||0,z=Number(p.z)||0,level=Number(p.level)||0,offset=cityOffset(row.owner_id);
+  const data={id:row.id,x,z,type,level,startedAt:Number(p.startedAt)||Date.now()-60000,durationMs:Number(p.durationMs)||60000,recordId:row.id,ownerId:row.owner_id};
+  if(type==='road'){drawOnlineRoad(x,z,level,row,offset);return;}
+  const age=Date.now()-data.startedAt;
+  if(age<data.durationMs){
+   data.x+=offset.x;data.z+=offset.z;
+   const site=createConstructionSite(data);site.data.recordId=row.id;site.data.ownerId=row.owner_id;
+  }else{
+   const g=makeBuilding(type,x+offset.x,z+offset.z,level);
+   g.userData={...data,x:x+offset.x,z:z+offset.z,recordId:row.id,ownerId:row.owner_id,remote:row.owner_id!==onlineUser.id};
+   buildings.push(g);
+  }
+ });
+ for(let i=buildings.length-1;i>=0;i--){
+  const o=buildings[i],id=o.userData?.recordId;
+  if(id&&!keep.has(String(id))){scene.remove(o);buildings.splice(i,1);}
+ }
+ for(let i=roads.length-1;i>=0;i--){
+  const o=roads[i],id=o.userData?.recordId;
+  if(id&&!keep.has(String(id))){scene.remove(o);roads.splice(i,1);}
+ }
+ for(let i=constructionSites.length-1;i>=0;i--){
+  const site=constructionSites[i],id=site.data?.recordId;
+  if(id&&!keep.has(String(id))){scene.remove(site.group);constructionSites.splice(i,1);}
+ }
+}
+function syncOnlineFlags(rows){
+ const keep=new Set(rows.map(r=>String(r.id)));
+ rows.forEach(row=>{if(!nationalFlags.some(o=>String(o.userData?.flagId)===String(row.id)))drawOnlineNationalFlag(row);});
+ for(let i=nationalFlags.length-1;i>=0;i--){
+  const o=nationalFlags[i],id=o.userData?.flagId;
+  if(id&&!keep.has(String(id))){scene.remove(o);nationalFlags.splice(i,1);}
+ }
+}
+let remoteReloadQueued=false;
 async function loadOnlineCity(){
- if(!onlineUser||remoteLoading)return;remoteLoading=true;
+ if(!onlineUser)return;
+ if(remoteLoading){remoteReloadQueued=true;return;}
+ remoteLoading=true;
+ const wasOnline=onlineReady;
  try{
   const init=await marsDB.rpc('mars_city_ensure');
   if(init.error)throw init.error;
@@ -458,24 +507,29 @@ async function loadOnlineCity(){
    marsDB.from('mars_city_national_flags').select('id,owner_id,country_code,country_name,flag_emoji,x,z,level,created_at').order('created_at',{ascending:true})
   ]);
   if(q.error)throw Object.assign(new Error('อ่าน mars_city_buildings ไม่สำเร็จ: '+cityErrorText(q.error)),q.error);
-  onlineRows=Array.isArray(q.data)?q.data:[];
   if(flagsQuery.error)throw Object.assign(new Error('อ่านข้อมูลธงชาติไม่สำเร็จ: '+cityErrorText(flagsQuery.error)),flagsQuery.error);
+  const rows=Array.isArray(q.data)?q.data:[];
   const flagRows=Array.isArray(flagsQuery.data)?flagsQuery.data:[];
-  clearCityVisuals();
-  onlineRows.forEach(row=>{
-   const p=row.position||{},rawType=String(p.game_type||row.name||row.building_type||'').toLowerCase(),type=({habitat:'hab',greenhouse:'green',landing_pad:'tower',communications_tower:'tower',communication_tower:'tower',tower:'tower',road:'road'}[rawType]||rawType);
-   const x=Number(p.x)||0,z=Number(p.z)||0,level=Number(p.level)||0,offset=cityOffset(row.owner_id);
-   const data={id:row.id,x,z,type,level,startedAt:Number(p.startedAt)||Date.now()-60000,durationMs:Number(p.durationMs)||60000,recordId:row.id,ownerId:row.owner_id};
-   if(type==='road'){drawOnlineRoad(x,z,level,row,offset);return;}
-   const age=Date.now()-data.startedAt;
-   if(age<data.durationMs){data.x+=offset.x;data.z+=offset.z;const site=createConstructionSite(data);site.data.recordId=row.id;site.data.ownerId=row.owner_id;}
-   else{const g=makeBuilding(type,x+offset.x,z+offset.z,level);g.userData={...data,x:x+offset.x,z:z+offset.z,recordId:row.id,ownerId:row.owner_id,remote:row.owner_id!==onlineUser.id};buildings.push(g);}
-  });
-  flagRows.forEach(drawOnlineNationalFlag);
+  // Apply a complete snapshot only after both online queries succeed.
+  syncOnlineStructures(rows);
+  syncOnlineFlags(flagRows);
+  onlineRows=rows;
   onlineReady=true;updateHUD();renderConstructionJobs();
   const label=document.querySelector('header .status');if(label)label.textContent='● ONLINE · SHARED COLONY';
- }catch(e){onlineReady=false;console.error('LOCAL MARS online city diagnostic:',{message:e?.message,code:e?.code,details:e?.details,hint:e?.hint,status:e?.status});toast('เชื่อมต่อเมืองออนไลน์ไม่สำเร็จ: '+cityErrorText(e));}
- finally{remoteLoading=false;}
+ }catch(e){
+  // Keep the last successfully rendered colony visible during temporary network errors.
+  onlineReady=wasOnline;
+  console.error('LOCAL MARS online city diagnostic:',{message:e?.message,code:e?.code,details:e?.details,hint:e?.hint,status:e?.status});
+  const label=document.querySelector('header .status');
+  if(label)label.textContent=wasOnline?'● ONLINE · RETRYING SYNC':'● SYNC ERROR';
+  toast('ซิงก์เมืองไม่สำเร็จ (เก็บสิ่งปลูกสร้างเดิมไว้): '+cityErrorText(e));
+ }finally{
+  remoteLoading=false;
+  if(remoteReloadQueued){
+   remoteReloadQueued=false;
+   setTimeout(()=>{if(onlineUser)loadOnlineCity();},350);
+  }
+ }
 }
 async function connectCityOnline(){
  const {data,error}=await marsDB.auth.getSession();if(error)throw error;onlineUser=data.session?.user||null;
@@ -492,9 +546,19 @@ async function connectCityOnline(){
 }
 async function placeOnline(type,x,z,level){
  if(!onlineUser){toast('กรุณาเข้าสู่ระบบสมาชิกก่อนสร้างเมืองออนไลน์');return false;}
- const r=await marsDB.rpc('mars_city_place_structure',{p_type:type,p_x:x,p_z:z,p_level:level});
- if(r.error){toast(r.error.message);return false;}
- toast('บันทึก '+(buildingNames[type]||'ถนน')+' ลงโลกออนไลน์แล้ว');await loadOnlineCity();return true;
+ try{
+  if(!onlineReady||!onlineCityId){await loadOnlineCity();}
+  if(!onlineReady||!onlineCityId){toast('เมืองออนไลน์ยังไม่พร้อม จึงยังไม่เริ่มก่อสร้าง');return false;}
+  const r=await marsDB.rpc('mars_city_place_structure',{p_type:type,p_x:x,p_z:z,p_level:level});
+  if(r.error)throw r.error;
+  toast('บันทึก '+(buildingNames[type]||'ถนน')+' ลงโลกออนไลน์แล้ว');
+  await loadOnlineCity();
+  return true;
+ }catch(e){
+  console.error('LOCAL MARS construction error:',{message:e?.message,code:e?.code,details:e?.details,hint:e?.hint});
+  toast('ก่อสร้างออนไลน์ไม่สำเร็จ: '+cityErrorText(e));
+  return false;
+ }
 }
 let flagSubmitting=false;
 async function placeNationalFlag(){
