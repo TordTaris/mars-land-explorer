@@ -716,5 +716,14 @@
   "LM0715": "ลด 8%",
   "LM0716": "42 ชนิด",
   "LM0717": "72 ชม.",
-  "LM0718": "96 ชม."
+  "LM0718": "96 ชม.",
+  "mlc_wallet_title": "MLC WALLET",
+  "mlc_wallet_tag": "IN-GAME CURRENCY",
+  "mlc_balance_label": "ยอดคงเหลือ MLC",
+  "mlc_starter_button": "🎁 รับ MLC เริ่มต้น 1,000",
+  "mlc_trade_label": "โอน / ซื้อขาย MLC ระหว่างสมาชิก",
+  "mlc_recipient_placeholder": "รหัสบัญชีสมาชิกผู้รับ (User ID)",
+  "mlc_amount_placeholder": "จำนวน MLC",
+  "mlc_transfer_button": "↔ โอน MLC",
+  "mlc_disclaimer": "MLC เป็นแต้ม/สกุลเงินจำลองภายใน LOCAL MARS เท่านั้น ไม่ใช่ USD, คริปโต หรือเงินที่แลกคืนได้ และไม่เกี่ยวข้องกับ PromptPay"
 }
