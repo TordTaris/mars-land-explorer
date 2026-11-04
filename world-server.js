@@ -5,6 +5,7 @@ const CONFIG={url:'https://tppgfxsdeuujidcjnfdl.supabase.co',key:'sb_publishable
 const $=id=>document.getElementById(id);
 const S={db:null,user:null,channel:null,claims:[],structures:[],events:[]};
 function status(message,ok=false){const el=$('worldServerStatus');if(el){el.textContent=(ok?'● ONLINE · ':'○ SERVER · ')+message;el.style.color=ok?'#a8e4bd':'#e9bd8d';}}
+function emitAuth(){document.dispatchEvent(new CustomEvent('mars-auth-state',{detail:{user:S.user}}));}
 function authView(){const el=$('worldServerUser');if(el)el.textContent=S.user?'สมาชิกออนไลน์: '+(S.user.email||S.user.id):'ยังไม่ได้เข้าสู่ระบบ';const out=$('worldServerLogout');if(out)out.style.display=S.user?'block':'none';}
 function counts(){const el=$('worldServerCounts');if(el)el.textContent='พื้นที่จอง '+S.claims.length+' · อาคาร '+S.structures.length;}
 async function refresh(){
@@ -31,8 +32,8 @@ async function connect(){
  if(!window.supabase){status('โหลด Supabase client ไม่สำเร็จ');return {error:'client_missing'};}
  S.db=window.supabase.createClient(CONFIG.url,CONFIG.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
  const {data,error}=await S.db.auth.getSession();if(error){status(error.message);return {error};}
- S.user=data.session?.user||null;authView();subscribe();
- S.db.auth.onAuthStateChange((_event,session)=>{S.user=session?.user||null;authView();refresh();});
+ S.user=data.session?.user||null;authView();emitAuth();subscribe();
+ S.db.auth.onAuthStateChange((_event,session)=>{S.user=session?.user||null;authView();emitAuth();refresh();});
  return {data:{user:S.user}};
 }
 async function auth(mode){
@@ -47,12 +48,12 @@ async function auth(mode){
  }
  else result=await S.db.auth.signInWithPassword({email,password});
  if(result.error){status(result.error.message);return {error:result.error};}
- S.user=result.data.session?.user||null;authView();
+ S.user=result.data.session?.user||null;authView();emitAuth();
  if(S.user&&name){const p=await S.db.from('mars_profiles').upsert({user_id:S.user.id,display_name:name,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(p.error){status('เข้าสู่ระบบแล้ว แต่บันทึกชื่อไม่สำเร็จ: '+p.error.message);return {error:p.error};}}
  if(mode==='signup'&&!result.data.session){status('สมัครแล้ว กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ');return {data:{needsEmailConfirmation:true}};}
  status(mode==='signup'?'สมัครสมาชิกออนไลน์สำเร็จ':'เข้าสู่ระบบสำเร็จ',true);await refresh();return {data:{user:S.user}};
 }
-async function logout(){if(S.db)await S.db.auth.signOut();S.user=null;authView();status('ออกจากระบบแล้ว');}
+async function logout(){if(S.db)await S.db.auth.signOut();S.user=null;authView();emitAuth();status('ออกจากระบบแล้ว');}
 async function claim(parcel){
  if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบออนไลน์ก่อนจองพื้นที่'}};
  const r=await S.db.rpc('claim_world_parcel',{p_parcel_id:parcel});if(r.error){status(r.error.message);return r;}
