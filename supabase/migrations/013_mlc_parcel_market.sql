@@ -34,7 +34,7 @@ grant select on public.mars_mlc_parcel_market to anon,authenticated;
 -- A parcel acquired through PromptPay must leave the MLC market until its owner lists it.
 -- Prevent simultaneous THB checkout and MLC reservation for the same parcel.
 create or replace function public.mars_mlc_guard_promptpay_order()
-returns trigger language plpgsql security definer set search_path=public as $
+returns trigger language plpgsql security definer set search_path=public as $$
 begin
   perform pg_advisory_xact_lock(hashtextextended('parcel:'||new.parcel_id,0));
   if new.status='pending' and exists(
@@ -44,14 +44,14 @@ begin
     raise exception 'แปลงนี้ถูกจองด้วย MLC อยู่ กรุณารอให้การจองหมดอายุหรือเลือกแปลงอื่น';
   end if;
   return new;
-end $;
+end $$;
 drop trigger if exists mars_mlc_guard_promptpay_order on public.mars_parcel_orders;
 create trigger mars_mlc_guard_promptpay_order
 before insert or update of status,parcel_id on public.mars_parcel_orders
 for each row execute function public.mars_mlc_guard_promptpay_order();
 
 create or replace function public.mars_mlc_sync_claim_market()
-returns trigger language plpgsql security definer set search_path=public as $
+returns trigger language plpgsql security definer set search_path=public as $$
 begin
   if tg_op='DELETE' then
     update public.mars_mlc_parcel_market set is_listed=true,updated_at=now()
@@ -63,7 +63,7 @@ begin
     where parcel_id=new.parcel_id;
   delete from public.mars_mlc_parcel_reservations where parcel_id=new.parcel_id;
   return new;
-end $;
+end $$;
 revoke all on function public.mars_mlc_guard_promptpay_order() from public,anon,authenticated;
 drop trigger if exists mars_mlc_claim_market_sync on public.world_claims;
 create trigger mars_mlc_claim_market_sync
