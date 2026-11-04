@@ -9,7 +9,7 @@ The application uses one shared localization runtime across all main pages.
 - `locales/en.json`: matching English strings.
 - `sw.js`: caches the runtime and both locale files for offline use.
 
-The locale files use matching IDs (for example, `LM0001`). Never renumber or reuse an existing ID. Every ID must exist in both locale files.
+The locale files use matching IDs (for example, `LM0001`). The current dictionary contains 702 matched entries. Never renumber or reuse an existing ID. Every ID must exist in both locale files.
 
 ## Language behavior
 
