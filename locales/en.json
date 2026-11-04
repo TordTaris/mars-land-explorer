@@ -716,5 +716,14 @@
   "LM0715": "8% reduction",
   "LM0716": "42 varieties",
   "LM0717": "72 hrs",
-  "LM0718": "96 hrs"
+  "LM0718": "96 hrs",
+  "mlc_wallet_title": "MLC WALLET",
+  "mlc_wallet_tag": "IN-GAME CURRENCY",
+  "mlc_balance_label": "MLC balance",
+  "mlc_starter_button": "🎁 Claim 1,000 starter MLC",
+  "mlc_trade_label": "Transfer / trade MLC between members",
+  "mlc_recipient_placeholder": "Recipient member account ID (User ID)",
+  "mlc_amount_placeholder": "MLC amount",
+  "mlc_transfer_button": "↔ Transfer MLC",
+  "mlc_disclaimer": "MLC is an in-app game currency for LOCAL MARS only. It is not USD, cryptocurrency, or redeemable money, and is separate from PromptPay."
 }
