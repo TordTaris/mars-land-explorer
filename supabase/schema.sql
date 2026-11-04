@@ -25,7 +25,7 @@ create table if not exists public.land_plots (
   latitude numeric(8,4) not null,
   longitude numeric(8,4) not null,
   area_m2 numeric(14,2) not null default 10000,
-  price_eth numeric(14,2) not null default 100,
+  price_usd numeric(14,2) not null default 100,
   status text not null default 'available'
     check (status in ('available','owned','listed')),
   owner_id uuid references public.profiles(id) on delete set null,
@@ -49,7 +49,7 @@ create table if not exists public.marketplace_listings (
   id uuid primary key default gen_random_uuid(),
   plot_id text not null unique references public.land_plots(id) on delete cascade,
   seller_id uuid not null references public.profiles(id) on delete cascade,
-  asking_price_eth numeric(14,2) not null check (asking_price_eth > 0),
+  asking_price_usd numeric(14,2) not null check (asking_price_usd > 0),
   description text not null default '',
   status text not null default 'active'
     check (status in ('active','cancelled','sold')),
@@ -134,7 +134,7 @@ create policy "Users delete own listings" on public.marketplace_listings
 for delete to authenticated using (auth.uid() = seller_id);
 
 -- Demo parcels; these are virtual game parcels, not legal property rights.
-insert into public.land_plots (id, name, latitude, longitude, area_m2, price_eth)
+insert into public.land_plots (id, name, latitude, longitude, area_m2, price_usd)
 values
 ('M-001','Olympus Gateway',18.65,226.20,10000,120),
 ('M-002','Red Valley',12.40,221.80,10000,95),
