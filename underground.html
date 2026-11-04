@@ -55,11 +55,11 @@ body{background:radial-gradient(ellipse at 50% 0,#553526 0,#17263a 38%,#080d18 7
 .map-legend{color:#bdd5e5}
 @media(max-width:780px){.directory-body{grid-template-columns:1fr}.floor-map{min-height:310px;grid-template-rows:repeat(8,minmax(26px,1fr))}.maze-room{font-size:8px}.room-list{grid-template-columns:1fr 1fr}}
 
-/* Actual 3D underground facility viewport */
+/* 8-bit pixel underground facility viewport */
 .directory-body{grid-template-columns:minmax(190px,.72fr) minmax(300px,1.28fr)}
 .floor-map-wrap{background:linear-gradient(145deg,#081726,#102b43);border:1px solid #377da5;color:#eaf7ff}
 #threeViewport{height:430px;min-height:330px;position:relative;overflow:hidden;border:1px solid #345d79;border-radius:10px;background:radial-gradient(ellipse at 50% 40%,#29465c,#071321 78%);touch-action:none}
-#threeViewport canvas{display:block;width:100%;height:100%;touch-action:none}
+#threeViewport canvas{display:block;width:100%;height:100%;touch-action:none;image-rendering:pixelated;}
 .sim-toolbar{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 9px}
 .sim-btn{border:1px solid #426681;background:#132b40;color:#d9edf8;border-radius:7px;padding:7px 10px;font-size:10px}
 .sim-btn.active{background:#14556a;border-color:#62e3f1;color:#fff;box-shadow:0 0 12px #38d8e455}
@@ -79,7 +79,7 @@ body{background:radial-gradient(ellipse at 50% 0,#553526 0,#17263a 38%,#080d18 7
 <section class="card"><h2>▥ VERTICAL BASE CUTAWAY · เลือกชั้นเพื่อดูรายละเอียด</h2><div class="cross"><div class="surface">MARS SURFACE · ทางเข้า / Airlock / EVA</div><div class="depth">ระดับความลึก ↓</div><div class="levels" id="levels"></div></div><div class="detail"><div class="eyebrow">SELECTED LEVEL</div><strong id="detailName">B01 · ศูนย์บัญชาการ</strong><p id="detailDesc">ควบคุมภารกิจ ระบบสื่อสาร และตรวจสอบสถานะทุกชั้น</p><div class="footer"><span id="detailType">COMMAND & SAFETY</span><span id="detailDepth">ความลึกแนวคิด 10 เมตร</span></div></div>
 <div class="directory" id="floorDirectory">
  <div class="directory-head"><div><div class="eyebrow">DIGITAL FLOOR DIRECTORY</div><h2 id="directoryTitle">B01 · FLOOR DIRECTORY</h2><p id="directorySubtitle">แผนผังพื้นที่และรายละเอียดภายในชั้น</p></div><span class="directory-live">● FLOOR PLAN</span></div>
- <div class="directory-body"><div class="room-list" id="roomList"></div><div class="floor-map-wrap"><div class="map-caption">3D UNDERGROUND SIMULATION <span id="mapFloor">B01</span></div><div class="sim-toolbar"><button id="viewTop" class="sim-btn active">มุมมองด้านบน</button><button id="viewWalk" class="sim-btn">เดินสำรวจ</button><button id="viewReset" class="sim-btn">รีเซ็ตกล้อง</button></div><div id="threeViewport" aria-label="ฉากจำลองฐานใต้ดินสามมิติ"></div><div class="sim-hint">หมุน: ลากนิ้ว/เมาส์ · ซูม: pinch/scroll · เดิน: WASD หรือปุ่มลูกศร · แตะห้องเพื่อดูข้อมูล</div><div class="room-inspector" id="roomInspector"><b>แตะห้องในฉาก 3D เพื่อดูข้อมูล</b><span>ROOM DETAILS · LIVE SIMULATION</span></div><div class="map-legend"><span><i class="legend-main"></i> ห้องหลัก</span><span><i class="legend-support"></i> ห้องสนับสนุน</span><span><i class="legend-route"></i> ทางเดิน</span></div><div class="walk-pad"><button data-move="forward">▲</button><div><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div></div></div></div>
+ <div class="directory-body"><div class="room-list" id="roomList"></div><div class="floor-map-wrap"><div class="map-caption">8-BIT PIXEL UNDERGROUND <span id="mapFloor">B01</span></div><div class="sim-toolbar"><button id="viewTop" class="sim-btn active">มุมมองด้านบน</button><button id="viewWalk" class="sim-btn">เดินสำรวจ</button><button id="viewReset" class="sim-btn">รีเซ็ตกล้อง</button></div><div id="threeViewport" aria-label="ฉากจำลองฐานใต้ดินสามมิติ"></div><div class="sim-hint">หมุน: ลากนิ้ว/เมาส์ · ซูม: pinch/scroll · เดิน: WASD หรือปุ่มลูกศร · แตะห้องเพื่อดูข้อมูล</div><div class="room-inspector" id="roomInspector"><b>แตะห้องในโลก 8-BIT PIXEL เพื่อดูข้อมูล</b><span>ROOM DETAILS · LIVE SIMULATION</span></div><div class="map-legend"><span><i class="legend-main"></i> ห้องหลัก</span><span><i class="legend-support"></i> ห้องสนับสนุน</span><span><i class="legend-route"></i> ทางเดิน</span></div><div class="walk-pad"><button data-move="forward">▲</button><div><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div></div></div></div>
  <div class="directory-foot"><span id="floorCapacity">ความจุออกแบบ: 12 คน</span><span id="floorAccess">การเข้าถึง: บัตรสมาชิก + Airlock</span></div>
 </div></section>
 <aside style="display:grid;gap:16px;align-content:start">
@@ -176,18 +176,18 @@ import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.1/exampl
 const host=document.getElementById('threeViewport');if(!host)return;
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x081726);scene.fog=new THREE.Fog(0x081726,24,52);
 const camera=new THREE.PerspectiveCamera(48,1,.1,150);camera.position.set(13,17,18);
-const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.25;host.appendChild(renderer.domElement);
+const renderer=new THREE.WebGLRenderer({antialias:false,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(0.55);renderer.shadowMap.enabled=false;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.NoToneMapping;host.appendChild(renderer.domElement);
 const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.target.set(0,0,0);controls.maxPolarAngle=Math.PI*.48;controls.minDistance=7;controls.maxDistance=36;
 scene.add(new THREE.HemisphereLight(0xa9d8ff,0x182331,2.1));
 const key=new THREE.DirectionalLight(0xffd2a1,2.4);key.position.set(8,18,10);key.castShadow=true;scene.add(key);
 const fill=new THREE.PointLight(0x27c9ed,28,28);fill.position.set(-6,5,-4);scene.add(fill);
 const base=new THREE.Group();scene.add(base);let roomMeshes=[],wallGroup=null,walkMode=false,selectedFloor=0;
-const mat=(color,rough=.75,metal=.12)=>new THREE.MeshStandardMaterial({color,roughness:rough,metalness:metal});
+const mat=(color,rough=.95,metal=0)=>new THREE.MeshStandardMaterial({color,roughness:rough,metalness:metal,flatShading:true});
 const floorMat=mat(0x10283a),wallMat=mat(0x25485e,.58,.35),trimMat=mat(0x071b2b,.35,.65),goldMat=mat(0xc99a53,.38,.55),cyanMat=mat(0x20dfff,.24,.5),supportMat=mat(0x267c91,.45,.25);cyanMat.emissive=new THREE.Color(0x00b9e8);cyanMat.emissiveIntensity=2.2;
 const floorNames=()=>window.marsFloorRooms||[];
 function clearGroup(g){while(g.children.length){const o=g.children.pop();if(o.geometry)o.geometry.dispose();}}
 function box(parent,w,h,d,x,y,z,material,cast=true){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);m.position.set(x,y,z);m.castShadow=cast;m.receiveShadow=true;parent.add(m);return m;}
-function labelTexture(text){const cv=document.createElement('canvas');cv.width=512;cv.height=128;const ctx=cv.getContext('2d');ctx.fillStyle='#071827';ctx.fillRect(0,0,512,128);ctx.strokeStyle='#54d9e8';ctx.lineWidth=5;ctx.strokeRect(4,4,504,120);ctx.fillStyle='#f4e2bc';ctx.font='bold 30px sans-serif';ctx.textAlign='center';ctx.fillText(text.slice(0,28),256,76);const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;return tex;}
+function labelTexture(text){const cv=document.createElement('canvas');cv.width=128;cv.height=32;const ctx=cv.getContext('2d');ctx.fillStyle='#071827';ctx.fillRect(0,0,512,128);ctx.strokeStyle='#54d9e8';ctx.lineWidth=2;ctx.strokeRect(4,4,504,120);ctx.fillStyle='#f4e2bc';ctx.font='bold 10px monospace';ctx.textAlign='center';ctx.fillText(text.slice(0,28),64,19);const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;return tex;}
 function build(floorIndex){
  selectedFloor=floorIndex;clearGroup(base);roomMeshes=[];base.rotation.y=0;
  const N=19, M=15, cell=1, grid=Array.from({length:M},()=>Array(N).fill(1));
@@ -231,7 +231,7 @@ function build(floorIndex){
  const beacon=new THREE.PointLight(j===2?0x45d7ff:0xffbf68,7,5);beacon.position.set(cx,2.3,cz);base.add(beacon);
  });
  // Continuous cyan floor-edge light strips make the route legible like the supplied concept.
- const neonMat=new THREE.MeshStandardMaterial({color:0x36eaff,emissive:0x00bfe8,emissiveIntensity:2.8,metalness:.35,roughness:.25});
+ const neonMat=new THREE.MeshStandardMaterial({color:0x36eaff,emissive:0x00bfe8,emissiveIntensity:1.8,metalness:0,roughness:1,flatShading:true});
  for(let x=1;x<N-1;x++){box(base,.075,.035,.82,worldX(x),.015,worldZ(7),neonMat,false);if(x%2===0)box(base,.06,.035,.72,worldX(x),.015,worldZ(3),neonMat,false);}
  for(let z=1;z<M-1;z++){box(base,.82,.035,.075,worldX(9),.018,worldZ(z),neonMat,false);if(z%2===0){box(base,.72,.035,.06,worldX(4),.018,worldZ(z),neonMat,false);box(base,.72,.035,.06,worldX(14),.018,worldZ(z),neonMat,false);}}
  // luminous junction markers and room entrance lights.
