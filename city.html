@@ -347,7 +347,7 @@ header .brand .brand-lockup small{display:block!important;color:#aebdca!importan
 </nav>
 <button id="showMenu" type="button" aria-label="Show menu">☰ SHOW MENU</button>
 
-<section class="panel left"><h3>COLONY COMMAND</h3><div class="row"><span>โหมด</span><b id="modeLabel">เดินสำรวจ</b></div><div class="row"><span>พิกัด</span><b id="position">0, 0</b></div><div class="row"><span>อาคาร</span><b id="count">0</b></div><div class="row"><span>เครดิตจำลอง</span><b id="credits">$5,000 USD</b></div><p class="hint">กล้องอยู่ด้านหลังตัวละคร มองเห็นนักสำรวจและเมืองรอบตัว หมุนกล้องโดยลากหน้าจอด้านขวาหรือบนพื้นที่ว่าง</p><div class="tools"><button id="walk" class="active">🚶 เดินสำรวจ</button><button id="buildMode">🏗️ สร้างเมือง</button></div></section>
+<section class="panel left"><h3>COLONY COMMAND</h3><div class="row"><span>โหมด</span><b id="modeLabel">เดินสำรวจ</b></div><div class="row"><span>พิกัด</span><b id="position">0, 0</b></div><div class="row"><span>อาคาร</span><b id="count">0</b></div><div class="row"><span>เครดิตจำลอง</span><b id="credits">฿5,000 THB</b></div><p class="hint">กล้องอยู่ด้านหลังตัวละคร มองเห็นนักสำรวจและเมืองรอบตัว หมุนกล้องโดยลากหน้าจอด้านขวาหรือบนพื้นที่ว่าง</p><div class="tools"><button id="walk" class="active">🚶 เดินสำรวจ</button><button id="buildMode">🏗️ สร้างเมือง</button></div></section>
 <section class="panel right"><h3>BUILD MENU</h3><div class="row"><span>พื้นที่เลือก</span><b id="plot">ยังไม่เลือก</b></div><div class="row"><span>ถนน</span><b id="roadCount">0</b></div><div class="row"><span>NPC</span><b id="npcCount">3</b></div>
 <div style="margin-top:10px;padding:9px;border:1px solid #c9a66e66;border-radius:11px;background:#091a2b">
  <div style="font-size:10px;font-weight:800;letter-spacing:1px;color:#e4c58b;margin-bottom:6px">🏳️ ธงประจำชาติสมาชิก</div>
@@ -397,7 +397,7 @@ header .brand .brand-lockup small{display:block!important;color:#aebdca!importan
   <div class="inventory-head"><div><div class="inventory-kicker">COLONY INVENTORY</div><h2 id="inventoryTitle">กระเป๋าทรัพยากร</h2><p>สินทรัพย์และทรัพยากรของอาณานิคม</p></div><button id="closeInventory" class="inventory-close" aria-label="ปิด">✕</button></div>
   <div class="inventory-section-title">ยอดคงเหลือ</div>
   <div class="inventory-grid">
-   <article class="inventory-card credit"><span>💎 เครดิตทดลอง</span><strong id="inventoryCredits">$5,000 USD</strong><small>มูลค่าอ้างอิง USD สำหรับระบบจำลอง ไม่ใช่เงินฝากหรือยอดเงินจริง</small></article>
+   <article class="inventory-card credit"><span>💎 เครดิตทดลอง</span><strong id="inventoryCredits">฿5,000 THB</strong><small>มูลค่าอ้างอิง THB สำหรับระบบจำลอง ไม่ใช่ยอดชำระเงินจริง</small></article>
    <article class="inventory-card energy"><span>⚡ พลังงาน</span><strong id="inventoryEnergy">850 kWh</strong><small>ค่าพลังงานจำลอง</small></article>
    <article class="inventory-card"><span>🏗️ อาคาร</span><strong id="inventoryBuildings">0</strong><small>จำนวนอาคารที่สร้างแล้ว</small></article>
    <article class="inventory-card"><span>🧑‍🚀 ประชากร NPC</span><strong>3</strong><small>ผู้ตั้งถิ่นฐานจำลอง</small></article>
@@ -641,7 +641,7 @@ const buildingNames={hab:"โดมที่พักอาศัย",green:"เ
 const constructionStages=["ปรับพื้นที่","วางฐานราก","ประกอบโครงสร้าง","ติดตั้งอุปกรณ์","ตรวจสอบระบบ"];
 const constructionSites=[];let lastConstructionUi=0;
 const keys={forward:false,back:false,left:false,right:false};
-function updateHUD(){const energyNode=document.querySelector('#inventoryEnergy');if(energyNode)energyNode.textContent=energy.toLocaleString()+' kWh';const hudBuildCount=document.querySelector('#hudBuildCount');if(hudBuildCount)hudBuildCount.textContent=buildings.length;document.querySelector('#count').textContent=buildings.length;document.querySelector('#credits').textContent='$'+credits.toLocaleString()+' USD';document.querySelector('#position').textContent=Math.round(avatar.position.x)+', '+Math.round(avatar.position.z);document.querySelector('#modeLabel').textContent=roadMode?'วางถนน':buildMode?'สร้างเมือง':'เดินสำรวจ';document.querySelector('#roadCount').textContent=roads.length;const stock=document.querySelector('#resourceStock');if(stock)stock.textContent='วัสดุสำรอง: โลหะ '+resources.metal+' • โพลิเมอร์ '+resources.polymer+' • อิเล็กทรอนิกส์ '+resources.electronics+' • งานค้าง '+constructionSites.length}
+function updateHUD(){const energyNode=document.querySelector('#inventoryEnergy');if(energyNode)energyNode.textContent=energy.toLocaleString()+' kWh';const hudBuildCount=document.querySelector('#hudBuildCount');if(hudBuildCount)hudBuildCount.textContent=buildings.length;document.querySelector('#count').textContent=buildings.length;document.querySelector('#credits').textContent='฿'+credits.toLocaleString('th-TH')+' THB';document.querySelector('#position').textContent=Math.round(avatar.position.x)+', '+Math.round(avatar.position.z);document.querySelector('#modeLabel').textContent=roadMode?'วางถนน':buildMode?'สร้างเมือง':'เดินสำรวจ';document.querySelector('#roadCount').textContent=roads.length;const stock=document.querySelector('#resourceStock');if(stock)stock.textContent='วัสดุสำรอง: โลหะ '+resources.metal+' • โพลิเมอร์ '+resources.polymer+' • อิเล็กทรอนิกส์ '+resources.electronics+' • งานค้าง '+constructionSites.length}
 function toast(t){const el=document.querySelector('#toast');el.textContent=t;el.style.display='block';clearTimeout(window._toast);window._toast=setTimeout(()=>el.style.display='none',2200)}
 function selectCell(c){selected=c;document.querySelector('#plot').textContent='X '+c.userData.x.toFixed(0)+' / Z '+c.userData.z.toFixed(0);cells.forEach(m=>m.material.opacity=m===c?.28:0)}
 const ray=new THREE.Raycaster(),pointer=new THREE.Vector2();let dragging=false,lastX=0,lastY=0,moved=0;
@@ -759,7 +759,7 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
  const backdrop=document.querySelector('#inventoryBackdrop');
  function refreshInventory(){
   const get=id=>document.getElementById(id);
-  const creditText=get('credits')?.textContent||'$5,000 USD';
+  const creditText=get('credits')?.textContent||'฿5,000 THB';
   get('inventoryCredits').textContent=creditText;
   get('inventoryBuildings').textContent=get('count')?.textContent||'0';
   const readStock=()=>{const stock=get('resourceStock')?.textContent||'';return stock};
