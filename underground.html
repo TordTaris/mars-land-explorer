@@ -421,7 +421,7 @@ start();
 </div>
 <script id="lm-underground-v2-script">
 (function(){
-const $=function(s){return document.querySelector(s)}, $=function(s){return Array.from(document.querySelectorAll(s))};
+const $=function(s){return document.querySelector(s)}, $$=function(s){return Array.from(document.querySelectorAll(s))};
 const key='localMarsUndergroundControlV2';
 const base={systems:{air:true,co2:true,water:true,oxygen:true,food:true,power:true},mode:'AUTO',crew:18,harvests:0,alerts:0,resources:{oxygen:98,water:96,power:91,food:88,metal:72,parts:64},rooms:{},logs:[]};
 let state;try{state=Object.assign({},base,JSON.parse(localStorage.getItem(key)||'{}'));state.systems=Object.assign({},base.systems,state.systems||{});state.resources=Object.assign({},base.resources,state.resources||{});state.rooms=state.rooms||{};state.logs=state.logs||[]}catch(e){state=JSON.parse(JSON.stringify(base))}
