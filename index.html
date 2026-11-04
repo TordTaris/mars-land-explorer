@@ -198,7 +198,12 @@ header .brand .brand-lockup small{display:block!important;color:#aebdca!importan
 .bottom button[data-tab="wallet"]{border-color:#c5a56b!important;color:#f0d18e!important}
 @media(max-width:650px){.mlc-wallet-overlay{right:10px;bottom:74px;width:min(360px,calc(100vw - 20px));max-height:70vh}}
 </style>
-</head>
+<style id="local-mars-language-visible-fix">
+header{pointer-events:auto!important}
+header .lm-language-slot{display:flex!important;align-items:center!important;justify-content:center!important;flex:0 0 auto!important;position:relative!important;z-index:100!important;pointer-events:auto!important;visibility:visible!important;opacity:1!important}
+header #lmLanguage{display:inline-flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;position:static!important;z-index:101!important;flex:0 0 34px!important;width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important;max-width:34px!important;margin:0!important;padding:0!important;font-size:18px!important;line-height:1!important}
+@media(max-width:650px){header #lmLanguage{width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important;max-width:30px!important;font-size:16px!important}}
+</style></head>
 <body>
 <div id="scene"></div>
 <header><div class="brand"><span class="brand-insignia" aria-hidden="true"><img src="./icon.svg" alt=""></span><span class="brand-lockup"><strong>LOCAL <b>MARS</b></strong><small>PLANETARY CIVILIZATION NETWORK</small></span></div><div class="status" id="worldServerStatus">กำลังเชื่อมต่อ Marslocal…</div></header>
@@ -572,75 +577,3 @@ if ('serviceWorker' in navigator) {
 (()=>{function dock(){const b=document.getElementById('lmLanguage');if(!b||b.dataset.docked)return;const candidates=['header','.topbar','.top-bar','.header','.nav-header','.toolbar'];let host=null;for(const s of candidates){const e=document.querySelector(s);if(e&&e.getBoundingClientRect().width>0){host=e;break}}if(!host){const nav=document.querySelector('nav');if(nav)host=nav}if(!host)return;let slot=host.querySelector('.lm-language-slot');if(!slot){slot=document.createElement('div');slot.className='lm-language-slot';host.appendChild(slot)}slot.appendChild(b);b.classList.add('lm-language-dock');b.dataset.docked='1'}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',dock,{once:true});else dock();new MutationObserver(dock).observe(document.body,{childList:true,subtree:true});})();
 </script> <script src="./i18n.js"></script>
 </body></html>
-+Number(p.price).toLocaleString('en-US')+' USD';document.querySelector('#claim').disabled=!!p.owner;document.querySelector('#claim').textContent=p.owner?'มีผู้จองแล้ว':'ซื้อแปลงด้วย PromptPay';updateStats()}
-const state=JSON.parse(localStorage.getItem('localmars-demo')||localStorage.getItem('marsland-demo')||'{}');state.owned=state.owned||[];state.buildings=state.buildings||{};state.profile=state.profile||null;
-parcels.forEach(p=>{if(state.owned.includes(p.id))p.owner=state.profile?.name||'You'});
-function save(){localStorage.setItem('localmars-demo',JSON.stringify(state));updateStats()}
-function updateStats(){const world=window.MarsWorldServer?.getState?.();const user=world?.user;document.querySelector('#owned').textContent=user?(world.claims||[]).filter(x=>x.owner_id===user.id).length:0;document.querySelector('#buildings').textContent=user?(world.structures||[]).filter(x=>x.owner_id===user.id).length:0;markers.forEach(m=>m.material.color.set(m.userData.plot.owner?0xffa45f:0x55dce8))}
-function toast(s){const t=document.querySelector('#toast');t.textContent=s;t.style.display='block';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.style.display='none',2600)}
-document.querySelector('#claim').onclick=async()=>{if(!selected)return;const result=await window.MarsWorldServer?.claim(selected.id);if(result?.error){toast(result.error.message);if(!window.MarsWorldServer?.getState().user)openLogin();return;}};
-const typeMap={Habitat:'ฐานที่อยู่อาศัย',Lab:'ห้องปฏิบัติการ',Greenhouse:'โรงเรือนปลูกพืช',Solar:'แผงพลังงานแสงอาทิตย์',NuclearPlant:'โรงไฟฟ้านิวเคลียร์ขนาดใหญ่'};
-document.querySelector('#build').onclick=async()=>{
- if(!selected){toast('กรุณาเลือกแปลงที่ดินก่อน');return;}
- const choice=document.querySelector('#building').value;
- if(choice==='NuclearPlant'&&selected.id!=='M-003'){toast('โรงไฟฟ้านิวเคลียร์ขนาดใหญ่ติดตั้งได้เฉพาะพื้นที่ M-003');return;}
- const world=window.MarsWorldServer?.getState?.();
- if(!world?.user){toast('กรุณาเข้าสู่ระบบออนไลน์ก่อนก่อสร้าง');openLogin();return;}
- if(!world.db){toast('เซิร์ฟเวอร์ยังไม่พร้อม กรุณาลองใหม่');return;}
- const type=typeMap[choice];
- const button=document.querySelector('#build');button.disabled=true;button.textContent='กำลังก่อสร้าง…';
- try{
-  const result=await window.MarsWorldServer.build(selected.id,type);
-  if(result?.error){toast('ก่อสร้างไม่สำเร็จ: '+(result.error.message||'เซิร์ฟเวอร์ปฏิเสธ'));return;}
-  if(!result?.data?.ok){toast('เซิร์ฟเวอร์ยังไม่ยืนยันการก่อสร้าง กรุณาลองใหม่');return;}
-  selected.building=choice;
-  toast(result.syncWarning?'บันทึกอาคารออนไลน์แล้ว แต่กำลังรอซิงก์ภาพแสดงผล · '+selected.id:'บันทึกอาคารลงโลกออนไลน์แล้ว · '+selected.id);
- }catch(error){toast('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ: '+(error?.message||'ลองใหม่อีกครั้ง'));}
- finally{button.disabled=false;button.textContent='🏗️ วางอาคารบนแปลง';}
-};
-document.querySelector('#closePlotPanel').onclick=()=>{document.body.classList.remove('plot-selected');selected=null;document.querySelector('#plotActions').style.display='none';document.querySelector('#plotInfo').style.display='block';};
-function openLogin(){document.querySelector('#login').style.display='grid'}
-document.querySelector('#account').onclick=openLogin;document.querySelector('#closeLogin').onclick=()=>document.querySelector('#login').style.display='none';
-document.querySelector('#loginBtn').onclick=async()=>{const r=await window.MarsWorldServer?.auth('signup');if(r?.error){toast(r.error.message);return;}if(r?.data?.needsEmailConfirmation){toast('สมัครแล้ว กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ');return;}document.querySelector('#login').style.display='none';toast('สมัครสมาชิกออนไลน์สำเร็จ')};
-document.querySelector('#signInBtn').onclick=async()=>{const r=await window.MarsWorldServer?.auth('signin');if(r?.error){toast(r.error.message);return;}document.querySelector('#login').style.display='none';toast('เข้าสู่ระบบออนไลน์สำเร็จ')};
-document.querySelector('#worldServerLogout').onclick=async()=>{await window.MarsWorldServer?.logout();toast('ออกจากระบบแล้ว')};
-document.addEventListener('mars-auth-state',e=>{document.body.classList.toggle('authenticated',!!e.detail?.user);document.body.classList.toggle('plot-selected',!!e.detail?.user&&!!selected);if(e.detail?.user){document.querySelector('#login').style.display='none';toast('ยินดีต้อนรับสู่ดาวอังคาร · Planet Explorer');}else{document.body.classList.remove('authenticated');}});
-document.addEventListener('mars-world-updated',e=>{const d=e.detail||{};document.body.classList.toggle('authenticated',!!d.user);document.body.classList.toggle('plot-selected',!!d.user&&!!selected);parcels.forEach(p=>{const canonical=d.parcels?.find(x=>x.id===p.id);if(canonical&&Number.isFinite(Number(canonical.base_price)))p.price=Number(canonical.base_price);const claim=d.claims?.find(x=>x.parcel_id===p.id);p.owner=claim?claim.owner_id:null;const structure=d.structures?.find(x=>x.parcel_id===p.id);p.building=structure?.structure_type||null;});renderSharedBuildings(d.structures||[]);const mine=d.claims?.filter(x=>x.owner_id===d.user?.id)||[];document.querySelector('#owned').textContent=mine.length;document.querySelector('#buildings').textContent=(d.structures||[]).filter(x=>x.owner_id===d.user?.id).length;markers.forEach(m=>m.material.color.set(m.userData.plot.owner?0xffa45f:0x55dce8));if(selected)selectPlot(selected);});
-document.querySelector('#navExplore').onclick=()=>{toast('แตะจุดสีฟ้าบนดาวเพื่อเลือกแปลงสำรวจ')};
- document.querySelector('#navNewExplorer').onclick=()=>{
-   controls.autoRotate=false;auto=false;document.querySelector('#rotate').textContent='หมุนอัตโนมัติ: ปิด';document.querySelector('#rotate').classList.remove('active');
-   const target=pos(-45,-12,1.0);controls.target.copy(target);
-   const direction=target.clone().normalize();camera.position.copy(target.clone().add(direction.multiplyScalar(2.55)));controls.update();
-   document.querySelector('#plotActions').style.display='none';
-   document.querySelector('#plotInfo').innerHTML='<strong style="color:#9cf4ff">🚀 NEW EXPLORER ZONE</strong><br><br>Welcome to LOCAL MARS. This is the protected starting area for new explorers.<br><br><b>01 · Landing Pad</b> — Begin your first arrival.<br><b>02 · Exploration Training</b> — Learn to rotate and zoom the planet.<br><b>03 · Land Survey</b> — Select a blue parcel marker to inspect land.<br><b>04 · First Colony</b> — Visit City Builder when you are ready.<br><br><small>This is a guided simulation zone, separate from claimable land parcels.</small>';
-   toast('Welcome to the New Explorer Zone');
- };
-document.querySelector('#navCity').onclick=()=>location.href='./city.html';
-document.querySelector('#navUnderground').onclick=()=>location.href='./underground.html';
-document.querySelector('#navMarket').onclick=()=>toast('ตลาดจำลอง: เลือกแปลงบนดาวเพื่อดูราคาและสถานะ');
-document.querySelector('#rotate').onclick=()=>{auto=!auto;controls.autoRotate=auto;document.querySelector('#rotate').textContent='หมุนอัตโนมัติ: '+(auto?'เปิด':'ปิด');document.querySelector('#rotate').classList.toggle('active',auto)};
-document.querySelector('#reset').onclick=()=>{camera.position.set(0,0,3.55);controls.target.set(0,0,0);controls.update()};
-document.querySelectorAll('.bottom button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.bottom button').forEach(x=>x.classList.remove('active'));b.classList.add('active');const tab=b.dataset.tab;if(tab==='city'){location.href='./city.html';return}if(tab==='underground'){location.href='./underground.html';return}if(tab==='market'){toast('ตลาดที่ดิน: แตะจุดสีฟ้าบนดาวเพื่อดูแปลง')}if(tab==='colony'){toast(`เมืองของคุณมี ${state.owned.length} แปลง และ ${Object.keys(state.buildings).length} อาคาร`)}if(tab==='account')openLogin()});
-// Restore locally saved constructions on every app launch, then merge online structures when connected.
-const restoredStructures=Object.entries(state.buildings).map(([parcel_id,building])=>({id:'local-'+parcel_id,parcel_id,structure_type:typeMap[building]||building,owner_id:'local'}));
-renderSharedBuildings(restoredStructures);
-updateStats();if(state.profile)document.querySelector('#account').textContent='👤 '+state.profile.name;
-function animate(){requestAnimationFrame(animate);controls.update();const t=Date.now()*.001;turbine.rotation.y=t*1.8;beacon.material.opacity=.55+Math.sin(t*3)*.4;beaconLight.intensity=.45+Math.sin(t*3)*.3;renderer.render(scene,camera)}animate();
-addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
-</script>
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js', { scope: './' })
-      .catch(error => console.warn('LOCAL MARS offline support unavailable:', error));
-  });
-}
-</script>
-
-<!-- LOCAL MARS bilingual interface: auto locale + manual language switch -->
-
-
-
-<script id="local-mars-language-dock">
-(()=>{function dock(){const b=document.getElementById('lmLanguage');if(!b||b.dataset.docked)return;const candidates=['header','.topbar','.top-bar','.header','.nav-header','.toolbar'];let host=null;for(const s of candidates){const e=document.querySelector(s);if(e&&e.getBoundingClientRect().width>0){host=e;break}}if(!host){const nav=document.querySelector('nav');if(nav)host=nav}if(!host)return;let slot=host.querySelector('.lm-language-slot');if(!slot){slot=document.createElement('div');slot.className='lm-language-slot';host.appendChild(slot)}slot.appendChild(b);b.classList.add('lm-language-dock');b.dataset.docked='1'}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',dock,{once:true});else dock();new MutationObserver(dock).observe(document.body,{childList:true,subtree:true});})();
-</script></body></html>
