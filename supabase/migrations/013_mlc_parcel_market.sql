@@ -1,5 +1,5 @@
 -- LOCAL MARS 013: MLC parcel reservation and member-to-member marketplace.
--- MLC is an in-app simulated currency only; USD reference values and THB PromptPay stay separate.
+-- MLC is an in-app simulated currency only; THB reference values and THB PromptPay checkout stay separate; MLC remains a closed-loop in-app currency.
 
 create table if not exists public.mars_mlc_parcel_market (
   parcel_id text primary key references public.world_parcels(id) on delete cascade,
