@@ -51,7 +51,7 @@ button,input,select{font:inherit}button{border:1px solid #38506d;background:#172
 <button class="full" id="account">เข้าสู่ระบบ / สมัครสมาชิก</button>
 <div class="small">โหมดทดลอง: ข้อมูลบัญชีและการจองเก็บไว้ในอุปกรณ์นี้เท่านั้น ยังไม่ใช่กรรมสิทธิ์หรือการซื้อขายเงินจริง</div>
 </section>
-<nav class="bottom"><button class="active" data-tab="explore">🌎 สำรวจ</button><button data-tab="market">🪙 ตลาดจำลอง</button><button data-tab="colony">🏗️ เมืองของฉัน</button><button data-tab="underground">🏚️ ฐาน 24 ชั้น</button><button data-tab="account">👤 สมาชิก</button></nav>
+<nav class="bottom"><button class="active" data-tab="explore">🌎 สำรวจ</button><button data-tab="market">🪙 ตลาดจำลอง</button><button data-tab="colony">🏙️ เมืองของฉัน</button><button data-tab="city">🏗️ จำลองก่อสร้าง</button><button data-tab="underground">🏚️ ฐาน 24 ชั้น</button><button data-tab="account">👤 สมาชิก</button></nav>
 <div id="toast"></div>
 <div id="login"><div class="panel modal"><h3>สมาชิก MARS LAND</h3><input id="username" placeholder="ชื่อสมาชิก"><input id="email" type="email" placeholder="อีเมล (ทดลอง)"><button class="primary full" id="loginBtn">บันทึกโปรไฟล์ทดลอง</button><button class="full" id="closeLogin">ปิด</button><p class="small">บัญชีนี้บันทึกในเครื่องเท่านั้น ยังไม่เชื่อมระบบสมาชิกออนไลน์</p></div></div>
 <script type="importmap">
@@ -113,7 +113,7 @@ document.querySelector('#account').onclick=openLogin;document.querySelector('#cl
 document.querySelector('#loginBtn').onclick=()=>{const name=document.querySelector('#username').value.trim();if(!name){toast('กรุณาใส่ชื่อสมาชิก');return}state.profile={name,email:document.querySelector('#email').value.trim()};save();document.querySelector('#login').style.display='none';document.querySelector('#account').textContent='👤 '+name;toast('บันทึกโปรไฟล์ทดลองแล้ว')};
 document.querySelector('#rotate').onclick=()=>{auto=!auto;controls.autoRotate=auto;document.querySelector('#rotate').textContent='หมุนอัตโนมัติ: '+(auto?'เปิด':'ปิด');document.querySelector('#rotate').classList.toggle('active',auto)};
 document.querySelector('#reset').onclick=()=>{camera.position.set(0,0,4.4);controls.target.set(0,0,0);controls.update()};
-document.querySelectorAll('.bottom button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.bottom button').forEach(x=>x.classList.remove('active'));b.classList.add('active');const tab=b.dataset.tab;if(tab==='underground'){location.href='./underground.html';return}if(tab==='market'){toast('ตลาดที่ดิน: แตะจุดสีฟ้าบนดาวเพื่อดูแปลง')}if(tab==='colony'){toast(`เมืองของคุณมี ${state.owned.length} แปลง และ ${Object.keys(state.buildings).length} อาคาร`)}if(tab==='account')openLogin()});
+document.querySelectorAll('.bottom button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.bottom button').forEach(x=>x.classList.remove('active'));b.classList.add('active');const tab=b.dataset.tab;if(tab==='city'){location.href='./city.html';return}if(tab==='underground'){location.href='./underground.html';return}if(tab==='market'){toast('ตลาดที่ดิน: แตะจุดสีฟ้าบนดาวเพื่อดูแปลง')}if(tab==='colony'){toast(`เมืองของคุณมี ${state.owned.length} แปลง และ ${Object.keys(state.buildings).length} อาคาร`)}if(tab==='account')openLogin()});
 updateStats();if(state.profile)document.querySelector('#account').textContent='👤 '+state.profile.name;
 function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}animate();
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
