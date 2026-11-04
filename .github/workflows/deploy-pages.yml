@@ -76,7 +76,7 @@ jobs:
       - name: Prepare static site
         run: |
           mkdir -p _site
-          cp index.html city.html underground.html manifest.webmanifest sw.js icon.svg _site/
+          cp index.html city.html underground.html world-server.js manifest.webmanifest sw.js icon.svg _site/
           touch _site/.nojekyll
 
       - name: Upload site artifact
