@@ -34,8 +34,8 @@ async function connect(){
  if(!window.supabase){status('โหลด Supabase client ไม่สำเร็จ');return {error:'client_missing'};}
  S.db=window.supabase.createClient(CONFIG.url,CONFIG.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
  const {data,error}=await S.db.auth.getSession();if(error){status(error.message);return {error};}
- S.user=data.session?.user||null;authView();emitAuth();subscribe();
- S.db.auth.onAuthStateChange((_event,session)=>{S.user=session?.user||null;authView();emitAuth();refresh();});
+ S.user=data.session?.user||null;authView();emitAuth();subscribe();if(S.user)walletBalances();
+ S.db.auth.onAuthStateChange((_event,session)=>{S.user=session?.user||null;authView();emitAuth();refresh();if(S.user)walletBalances();});
  return {data:{user:S.user}};
 }
 async function auth(mode){
@@ -76,6 +76,31 @@ async function build(parcel,type){
  return r;
 }
 async function loadM003PrivateBase(){if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบออนไลน์ก่อน'}};const {data,error}=await S.db.from('m003_private_base').select('floor_no,room_name,description,system_status').order('floor_no');if(error)return {error};return {data:data||[]};}
-window.MarsWorldServer={connect,auth,logout,refresh,claim,build,loadM003PrivateBase,getState:()=>({user:S.user,parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,db:S.db})};
+
+async function walletBalances(){
+ if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบออนไลน์ก่อน'}};
+ const {data,error}=await S.db.rpc('mars_wallet_balances');
+ if(error)return {error};
+ const balances={credits:0,energy:0,metal:0,mlc:0};
+ (data||[]).forEach(row=>{if(Object.prototype.hasOwnProperty.call(balances,row.resource))balances[row.resource]=Number(row.balance)||0;});
+ document.dispatchEvent(new CustomEvent('mars-wallet-updated',{detail:balances}));
+ return {data:balances};
+}
+async function grantMlcStarter(){
+ if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบออนไลน์ก่อน'}};
+ const result=await S.db.rpc('mars_wallet_mlc_grant_starter');
+ if(result.error)return result;
+ return await walletBalances();
+}
+async function transferMlc(recipient,amount){
+ if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบออนไลน์ก่อน'}};
+ const id=globalThis.crypto?.randomUUID?.()||('tx'+Date.now()+Math.random().toString(36).slice(2));
+ const result=await S.db.rpc('mars_wallet_mlc_transfer',{p_recipient:recipient,p_amount:Number(amount),p_idempotency_key:'mlc:'+id});
+ if(result.error)return result;
+ const refreshed=await walletBalances();
+ return refreshed.error?{data:result.data,syncWarning:refreshed.error.message}:result;
+}
+
+window.MarsWorldServer={connect,auth,logout,refresh,claim,build,loadM003PrivateBase,walletBalances,grantMlcStarter,transferMlc,getState:()=>({user:S.user,parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,db:S.db})};
 document.addEventListener('DOMContentLoaded',connect);
 })();
