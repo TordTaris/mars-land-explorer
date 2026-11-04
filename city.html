@@ -457,7 +457,7 @@ async function loadOnlineCity(){
   if(flagsQuery.error)console.warn('LOCAL MARS flags query:',cityErrorText(flagsQuery.error));
   clearCityVisuals();
   onlineRows.forEach(row=>{
-   const p=row.position||{},type=p.game_type||({habitat:'hab',greenhouse:'green',landing_pad:'tower',road:'road'}[row.building_type]||row.building_type);
+   const p=row.position||{},rawType=String(p.game_type||row.name||row.building_type||'').toLowerCase(),type=({habitat:'hab',greenhouse:'green',landing_pad:'tower',communications_tower:'tower',communication_tower:'tower',tower:'tower',road:'road'}[rawType]||rawType);
    const x=Number(p.x)||0,z=Number(p.z)||0,level=Number(p.level)||0,offset=cityOffset(row.owner_id);
    const data={id:row.id,x,z,type,level,startedAt:Number(p.startedAt)||Date.now()-60000,durationMs:Number(p.durationMs)||60000,recordId:row.id,ownerId:row.owner_id};
    if(type==='road'){drawOnlineRoad(x,z,level,row,offset);return;}
@@ -549,7 +549,21 @@ if(type==='hab'){base=new THREE.Mesh(new THREE.CylinderGeometry(.72,.8,.45,24),c
 if(type==='green'){base=new THREE.Mesh(new THREE.BoxGeometry(1.4,.18,1.1),orange);base.position.y=.1;top=new THREE.Mesh(new THREE.BoxGeometry(1.25,.75,.95),glass);top.position.y=.55}
 if(type==='lab'||type==='hub'){base=new THREE.Mesh(new THREE.BoxGeometry(1.25,.85,1.15),type==='hub'?orange:concrete);base.position.y=.43;top=new THREE.Mesh(new THREE.BoxGeometry(.85,.2,.78),glass);top.position.y=.96}
 if(type==='solar'){base=new THREE.Mesh(new THREE.BoxGeometry(1.5,.08,.85),new THREE.MeshStandardMaterial({color:0x1e4771,metalness:.5,roughness:.3}));base.position.y=.65;base.rotation.x=-.25;top=new THREE.Mesh(new THREE.CylinderGeometry(.05,.08,.55,8),dark);top.position.y=.28}
-if(type==='tower'){base=new THREE.Mesh(new THREE.CylinderGeometry(.12,.2,1.8,8),concrete);base.position.y=.9;top=new THREE.Mesh(new THREE.SphereGeometry(.3,12,10),gold);top.position.y=1.9}
+if(type==='tower'){
+ const tower=new THREE.Group();
+ const steel=new THREE.MeshStandardMaterial({color:0x9eabb8,metalness:.82,roughness:.28});
+ const darkSteel=new THREE.MeshStandardMaterial({color:0x34495d,metalness:.72,roughness:.35});
+ const signal=new THREE.MeshStandardMaterial({color:0xff654d,emissive:0x8f1d12,emissiveIntensity:1.1});
+ const foot=new THREE.Mesh(new THREE.CylinderGeometry(.42,.5,.16,12),darkSteel);foot.position.y=.08;tower.add(foot);
+ const mast=new THREE.Mesh(new THREE.CylinderGeometry(.045,.13,2.65,10),steel);mast.position.y=1.42;tower.add(mast);
+ for(let y of [.48,1.15,1.85,2.45]){const brace=new THREE.Mesh(new THREE.TorusGeometry(.13+(y/2.65)*.035,.025,6,12),darkSteel);brace.rotation.x=Math.PI/2;brace.position.y=y;tower.add(brace)}
+ for(let y of [.75,1.55,2.3]){const arm=new THREE.Mesh(new THREE.BoxGeometry(.72,.045,.055),darkSteel);arm.position.set(0,y,0);tower.add(arm);const dish=new THREE.Mesh(new THREE.SphereGeometry(.22,14,10,0,Math.PI*2,0,Math.PI/2),glass);dish.rotation.x=-Math.PI/2;dish.position.set(.28,y+.08,0);tower.add(dish)}
+ const antenna=new THREE.Mesh(new THREE.CylinderGeometry(.018,.035,.48,8),steel);antenna.position.y=3.0;tower.add(antenna);
+ const beacon=new THREE.Mesh(new THREE.SphereGeometry(.075,10,8),signal);beacon.position.y=3.27;tower.add(beacon);
+ const crossA=new THREE.Mesh(new THREE.BoxGeometry(.8,.035,.035),steel);crossA.position.y=2.75;tower.add(crossA);
+ const crossB=new THREE.Mesh(new THREE.BoxGeometry(.035,.035,.8),steel);crossB.position.y=2.75;tower.add(crossB);
+ g.add(tower);
+}
 g.add(base);if(top)g.add(top);g.position.set(x,level*2.5,z);g.traverse(o=>{if(o.isMesh)o.castShadow=true});scene.add(g);return g}
 function makeConstructionRover(){
  const rover=new THREE.Group(),bodyMat=new THREE.MeshStandardMaterial({color:0xd5dfe5,metalness:.35,roughness:.5}),darkMat=new THREE.MeshStandardMaterial({color:0x25394d,metalness:.2,roughness:.7}),lampMat=new THREE.MeshStandardMaterial({color:0x69e1e8,emissive:0x278d9b,emissiveIntensity:1.2});
