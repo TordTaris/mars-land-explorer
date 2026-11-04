@@ -321,7 +321,12 @@ const buildingMeshes=new Map();
 function clearSharedBuildings(){for(const mesh of buildingMeshes.values())group.remove(mesh);buildingMeshes.clear();}
 function renderSharedBuildings(structures){
  clearSharedBuildings();
- (structures||[]).forEach((item,index)=>{
+ // Always render the M-003 nuclear complex as a visible world landmark,
+ // even before a member has saved a construction record to the online database.
+ const source=Array.isArray(structures)?structures.slice():[];
+ const hasM003Nuclear=source.some(item=>item.parcel_id==='M-003' && ['โรงไฟฟ้านิวเคลียร์ขนาดใหญ่','NuclearPlant','Mega Nuclear Energy Complex','โรงงานนิวเคลียร์'].includes(String(item.structure_type||item.building_type||'')));
+ if(!hasM003Nuclear)source.push({id:'local-m003-nuclear-landmark',parcel_id:'M-003',structure_type:'โรงไฟฟ้านิวเคลียร์ขนาดใหญ่'});
+ source.forEach((item,index)=>{
   const parcel=parcels.find(p=>p.id===item.parcel_id);if(!parcel)return;
   const normal=pos(parcel.lon,parcel.lat,1.012);
   const structureName=String(item.structure_type||item.building_type||'');
@@ -397,6 +402,8 @@ function renderSharedBuildings(structures){
   mesh.position.copy(normal);mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),normal.clone().normalize());group.add(mesh);buildingMeshes.set(item.id||String(index),mesh);
  });
 }
+ // Build the M-003 landmark immediately on page load; online world updates will refresh it later.
+renderSharedBuildings([]);
 function pos(lon,lat,r=1.014){const a=THREE.MathUtils.degToRad(90-lat),b=THREE.MathUtils.degToRad(lon+90);return new THREE.Vector3(-r*Math.sin(a)*Math.cos(b),r*Math.cos(a),r*Math.sin(a)*Math.sin(b))}
 
 /* MARS LAND 3.0 — living settlement landmark */
