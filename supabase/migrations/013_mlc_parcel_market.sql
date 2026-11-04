@@ -31,6 +31,26 @@ revoke all on public.mars_mlc_parcel_reservations from anon,authenticated;
 revoke insert,update,delete on public.mars_mlc_parcel_market from anon,authenticated;
 grant select on public.mars_mlc_parcel_market to anon,authenticated;
 
+-- A parcel acquired through PromptPay must leave the MLC market until its owner lists it.
+create or replace function public.mars_mlc_sync_claim_market()
+returns trigger language plpgsql security definer set search_path=public as $
+begin
+  if tg_op='DELETE' then
+    update public.mars_mlc_parcel_market set is_listed=true,updated_at=now()
+      where parcel_id=old.parcel_id;
+    delete from public.mars_mlc_parcel_reservations where parcel_id=old.parcel_id;
+    return old;
+  end if;
+  update public.mars_mlc_parcel_market set is_listed=false,updated_at=now()
+    where parcel_id=new.parcel_id;
+  delete from public.mars_mlc_parcel_reservations where parcel_id=new.parcel_id;
+  return new;
+end $;
+drop trigger if exists mars_mlc_claim_market_sync on public.world_claims;
+create trigger mars_mlc_claim_market_sync
+after insert or delete on public.world_claims
+for each row execute function public.mars_mlc_sync_claim_market();
+
 create or replace function public.mars_mlc_reserve_parcel(p_parcel_id text)
 returns jsonb language plpgsql security definer set search_path=public as $$
 declare u uuid:=auth.uid(); m public.mars_mlc_parcel_market%rowtype;
