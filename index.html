@@ -137,10 +137,10 @@ body.authenticated.plot-selected .right #plotActions button{font-size:11px}
 }
 </style>
 <style id="local-mars-language-layout-fix">
-#lmLanguage{position:static!important;inset:auto!important;z-index:auto!important;display:inline-flex!important;align-items:center;justify-content:center;flex:0 0 auto;margin:0 0 0 8px;min-height:34px;max-width:108px;white-space:nowrap;box-shadow:none!important;backdrop-filter:none!important}
+#lmLanguage{position:static!important;inset:auto!important;z-index:auto!important;display:inline-flex!important;align-items:center;justify-content:center;flex:0 0 auto;margin:0 0 0 8px;min-height:34px;max-width:44px;white-space:nowrap;box-shadow:none!important;backdrop-filter:none!important}
 #lmLanguage.lm-language-dock{position:static!important}
 .lm-language-slot{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex:0 0 auto;min-width:0}
-@media(max-width:650px){#lmLanguage{font-size:10px!important;padding:6px 8px!important;min-height:30px;margin-left:4px} .lm-language-slot{gap:4px}}
+@media(max-width:650px){#lmLanguage{font-size:10px!important;padding:6px!important;min-height:30px;margin-left:4px} .lm-language-slot{gap:4px}}
 </style></head>
 <body>
 <div id="scene"></div>
@@ -349,9 +349,9 @@ if ('serviceWorker' in navigator) {
 
 <!-- LOCAL MARS bilingual interface: auto locale + manual language switch -->
 <style id="local-mars-language-style">
-#lmLanguage{position:static;inset:auto;z-index:auto;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;margin-left:8px;min-height:34px;max-width:108px;white-space:nowrap;box-shadow:none;backdrop-filter:none}
+#lmLanguage{position:static;inset:auto;z-index:auto;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;margin-left:8px;min-height:34px;max-width:44px;white-space:nowrap;box-shadow:none;backdrop-filter:none}
 body:has(header #lmLanguage) header{padding-right:105px}
-@media(max-width:650px){#lmLanguage{top:9px;right:9px;padding:7px 9px;font-size:10px}body:has(header #lmLanguage) header{padding-right:92px}}
+@media(max-width:650px){#lmLanguage{top:9px;right:9px;padding:7px;font-size:10px}body:has(header #lmLanguage) header{padding-right:92px}}
 </style>
 <script id="local-mars-bilingual">
 (()=>{
@@ -380,7 +380,7 @@ function translate(root=document){
 function install(){
  let btn=document.getElementById('lmLanguage');
  if(!btn){btn=document.createElement('button');btn.id='lmLanguage';btn.type='button';document.body.appendChild(btn);}
- const refresh=()=>{btn.textContent=lang==='th'?'🇹🇭 ไทย':'🇬🇧 English';btn.setAttribute('aria-label',lang==='th'?'Switch language to English':'เปลี่ยนภาษาเป็นไทย');};
+ const refresh=()=>{btn.textContent=lang==='th'?'🇹🇭':'🇬🇧';btn.setAttribute('aria-label',lang==='th'?'Switch language to English':'เปลี่ยนภาษาเป็นไทย');};
  refresh();translate();
  btn.onclick=()=>{lang=lang==='th'?'en':'th';localStorage.setItem('localMarsLanguage',lang);document.documentElement.lang=lang;refresh();translate();};
  document.documentElement.lang=lang;
