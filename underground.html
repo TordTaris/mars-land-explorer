@@ -181,7 +181,9 @@ function renderFloorDirectory(i){
  document.querySelector('#floorCapacity').textContent='ความจุออกแบบ: '+(i<5?8:i<9?16:i<18?6:20)+' คน (ค่าจำลอง)';
  document.querySelector('#floorAccess').textContent='การเข้าถึง: '+(i===0?'ศูนย์บัญชาการ / ผู้มีสิทธิ์':'บัตรสมาชิก + จุดตรวจแรงดัน');
 }
-const requestedFloor=new URLSearchParams(location.search).get('floor')||'B01';const initialFloor=Math.max(0,Math.min(23,(parseInt(requestedFloor.replace(/[^0-9]/g,''),10)||1)-1));\nfunction floorType(i){if(i===0)return 'command';if(i<=2)return 'engineering';if(i<=4)return 'habitat';if(i<=8)return 'food';if(i<=11)return 'water';if(i<=14)return 'power';if(i<=17)return 'science';if(i<=19)return 'medical';return 'emergency'}\nfloors.forEach((f,i)=>{const b=document.createElement('button');b.className='floor'+(i===initialFloor?' selected':'');b.innerHTML='<b>B'+String(i+1).padStart(2,'0')+'</b><span>'+f[0]+'</span><i class="dot"></i>';b.onclick=()=>window.goToMarsFloor(i);levels.appendChild(b)});
+const requestedFloor=new URLSearchParams(location.search).get('floor')||'B01';const initialFloor=Math.max(0,Math.min(23,(parseInt(requestedFloor.replace(/[^0-9]/g,''),10)||1)-1));
+function floorType(i){if(i===0)return 'command';if(i<=2)return 'engineering';if(i<=4)return 'habitat';if(i<=8)return 'food';if(i<=11)return 'water';if(i<=14)return 'power';if(i<=17)return 'science';if(i<=19)return 'medical';return 'emergency'}
+floors.forEach((f,i)=>{const b=document.createElement('button');b.className='floor'+(i===initialFloor?' selected':'');b.innerHTML='<b>B'+String(i+1).padStart(2,'0')+'</b><span>'+f[0]+'</span><i class="dot"></i>';b.onclick=()=>window.goToMarsFloor(i);levels.appendChild(b)});
 const elevatorSelect=document.querySelector('#elevatorFloor');
 floors.forEach((f,i)=>{const o=document.createElement('option');o.value=i;o.textContent='B'+String(i+1).padStart(2,'0')+' · '+f[0];elevatorSelect.appendChild(o)});
 window.currentMarsFloor=initialFloor;
@@ -212,7 +214,8 @@ window.goToMarsFloor=function(i){
  document.querySelector('#elevatorGo').disabled=true;
  setTimeout(()=>{location.href='?floor='+code;},850);
 };
-elevatorSelect.addEventListener('change',()=>{const i=Number(elevatorSelect.value);const f=floors[i];const code='B'+String(i+1).padStart(2,'0');document.querySelector('#destinationPreview').textContent='ปลายทางที่เลือก: '+code+' · '+f[0]+' — กดเรียกลิฟต์เพื่อเดินทาง'});\ndocument.querySelector('#elevatorGo').onclick=()=>window.goToMarsFloor(elevatorSelect.value);
+elevatorSelect.addEventListener('change',()=>{const i=Number(elevatorSelect.value);const f=floors[i];const code='B'+String(i+1).padStart(2,'0');document.querySelector('#destinationPreview').textContent='ปลายทางที่เลือก: '+code+' · '+f[0]+' — กดเรียกลิฟต์เพื่อเดินทาง'});
+document.querySelector('#elevatorGo').onclick=()=>window.goToMarsFloor(elevatorSelect.value);
 document.querySelector('#floorPrev').onclick=()=>window.goToMarsFloor((window.currentMarsFloor??0)-1);
 document.querySelector('#floorNext').onclick=()=>window.goToMarsFloor((window.currentMarsFloor??0)+1);
 showFloor(initialFloor);
