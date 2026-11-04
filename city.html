@@ -325,7 +325,7 @@ header .status{display:inline-flex!important;align-items:center!important;justif
 }
 </style>
 </head><body><div id="world"></div>
-<header><div class="brand">🔴 MARS <span>LAND</span> <small style="font-size:10px;color:#91a5bd">LUXURY SPECIAL EDITION</small></div><div class="status">● THIRD-PERSON MODE</div></header>
+<header><div class="brand">🔴 MARS <span>LAND</span> <small style="font-size:10px;color:#91a5bd">LUXURY SPECIAL EDITION</small></div><div style="display:flex;align-items:center;gap:7px"><button id="cityAccount" type="button" style="pointer-events:auto;font-size:10px;padding:7px 9px">👤 เข้าสู่ระบบ</button><div class="status">● THIRD-PERSON MODE · LOCAL</div></div></header>
 <nav class="view-toolbar" aria-label="เครื่องมือควบคุมหน้าจอ">
  <button id="toggleInfo" class="view-btn" aria-expanded="false">◉ ข้อมูลอาณานิคม</button>
  <button id="toggleBuild" class="view-btn" aria-expanded="false">＋ ก่อสร้าง</button>
@@ -362,6 +362,62 @@ header .status{display:inline-flex!important;align-items:center!important;justif
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 <script type="module">
 import * as THREE from 'three';
+
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+const marsDB=createClient('https://tppgfxsdeuujidcjnfdl.supabase.co','sb_publishable_xQ0_NkSu2TMeIyJnAE94kw_WWQT2T3E',{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+let onlineUser=null,onlineCityId=null,onlineReady=false,onlineChannel=null,onlineRows=[],remoteLoading=false;
+function cityOffset(owner){if(owner===onlineUser?.id)return {x:0,z:0};let n=0;for(const ch of String(owner||''))n=(n+ch.charCodeAt(0))%997;return {x:((n%3)-1)*23,z:((Math.floor(n/3)%3)-1)*23};}
+function clearCityVisuals(){buildings.forEach(o=>scene.remove(o));roads.forEach(o=>scene.remove(o));constructionSites.forEach(o=>scene.remove(o.group));buildings.length=0;roads.length=0;constructionSites.length=0;}
+function drawOnlineRoad(x,z,level,row,offset){const g=new THREE.Group();const slab=new THREE.Mesh(new THREE.BoxGeometry(.94,.055,.94),new THREE.MeshStandardMaterial({color:0x46535c,roughness:.95}));slab.position.y=.03;g.add(slab);const stripe=new THREE.Mesh(new THREE.BoxGeometry(.06,.012,.68),new THREE.MeshBasicMaterial({color:0xe8c68a}));stripe.position.y=.064;g.add(stripe);g.position.set(x+offset.x,level*2.5,z+offset.z);g.userData={x:x+offset.x,z:z+offset.z,level,recordId:row.id,ownerId:row.owner_id,remote:row.owner_id!==onlineUser?.id};scene.add(g);roads.push(g);}
+async function loadOnlineCity(){
+ if(!onlineUser||remoteLoading)return;remoteLoading=true;
+ try{
+  const init=await marsDB.rpc('mars_city_ensure');if(init.error)throw init.error;onlineCityId=init.data.city_id;
+  const res=init.data.resources;if(res){credits=res.credits;resources.metal=res.metal;resources.polymer=res.polymer;resources.electronics=res.electronics;}
+  const q=await marsDB.from('mars_city_buildings').select('id,city_id,owner_id,building_type,name,position').order('created_at',{ascending:true});
+  if(q.error)throw q.error;onlineRows=q.data||[];
+  clearCityVisuals();
+  onlineRows.forEach(row=>{
+   const p=row.position||{},type=p.game_type||({habitat:'hab',greenhouse:'green',landing_pad:'tower',road:'road'}[row.building_type]||row.building_type);
+   const x=Number(p.x)||0,z=Number(p.z)||0,level=Number(p.level)||0,offset=cityOffset(row.owner_id);
+   const data={id:row.id,x,z,type,level,startedAt:Number(p.startedAt)||Date.now()-60000,durationMs:Number(p.durationMs)||60000,recordId:row.id,ownerId:row.owner_id};
+   if(type==='road'){drawOnlineRoad(x,z,level,row,offset);return;}
+   const age=Date.now()-data.startedAt;
+   if(age<data.durationMs){data.x+=offset.x;data.z+=offset.z;const site=createConstructionSite(data);site.data.recordId=row.id;site.data.ownerId=row.owner_id;}
+   else{const g=makeBuilding(type,x+offset.x,z+offset.z,level);g.userData={...data,x:x+offset.x,z:z+offset.z,recordId:row.id,ownerId:row.owner_id,remote:row.owner_id!==onlineUser.id};buildings.push(g);}
+  });
+  onlineReady=true;updateHUD();renderConstructionJobs();
+  const label=document.querySelector('header .status');if(label)label.textContent='● ONLINE · SHARED COLONY';
+ }catch(e){onlineReady=false;console.warn('LOCAL MARS online city:',e);toast('เชื่อมต่อเมืองออนไลน์ไม่สำเร็จ: '+(e.message||e));}
+ finally{remoteLoading=false;}
+}
+async function connectCityOnline(){
+ const {data,error}=await marsDB.auth.getSession();if(error)throw error;onlineUser=data.session?.user||null;
+ const button=document.querySelector('#cityAccount');if(button)button.textContent=onlineUser?'👤 '+(onlineUser.email||'สมาชิก').split('@')[0]:'👤 เข้าสู่ระบบ';
+ if(onlineUser)await loadOnlineCity();
+ if(onlineChannel)marsDB.removeChannel(onlineChannel);
+ onlineChannel=marsDB.channel('local-mars-city-shared')
+  .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_buildings'},()=>{if(onlineUser)loadOnlineCity();})
+  .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_resources'},()=>{if(onlineUser)loadOnlineCity();})
+  .subscribe();
+ marsDB.auth.onAuthStateChange(async(_event,session)=>{onlineUser=session?.user||null;const b=document.querySelector('#cityAccount');if(b)b.textContent=onlineUser?'👤 '+(onlineUser.email||'สมาชิก').split('@')[0]:'👤 เข้าสู่ระบบ';if(onlineUser)await loadOnlineCity();else{onlineReady=false;onlineCityId=null;const s=document.querySelector('header .status');if(s)s.textContent='● THIRD-PERSON MODE · LOCAL';}});
+}
+async function placeOnline(type,x,z,level){
+ if(!onlineUser){toast('กรุณาเข้าสู่ระบบสมาชิกก่อนสร้างเมืองออนไลน์');return false;}
+ const r=await marsDB.rpc('mars_city_place_structure',{p_type:type,p_x:x,p_z:z,p_level:level});
+ if(r.error){toast(r.error.message);return false;}
+ toast('บันทึก '+(buildingNames[type]||'ถนน')+' ลงโลกออนไลน์แล้ว');await loadOnlineCity();return true;
+}
+async function loginCity(){
+ if(onlineUser){if(confirm('ต้องการออกจากระบบ LOCAL MARS หรือไม่?'))await marsDB.auth.signOut();return;}
+ const email=prompt('กรอกอีเมลสมาชิก LOCAL MARS');if(!email)return;
+ const password=prompt('กรอกรหัสผ่าน (อย่างน้อย 8 ตัวอักษร)');if(!password)return;
+ const signup=confirm('กด OK เพื่อสมัครสมาชิกใหม่ หรือ Cancel เพื่อเข้าสู่ระบบ');
+ const r=signup?await marsDB.auth.signUp({email:email.trim(),password,options:{emailRedirectTo:new URL('./',location.href).href,data:{display_name:email.split('@')[0]}}}):await marsDB.auth.signInWithPassword({email:email.trim(),password});
+ if(r.error){toast(r.error.message);return;}
+ if(signup&&!r.data.session)toast('สมัครแล้ว กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ');else toast('เข้าสู่ระบบ LOCAL MARS สำเร็จ');
+}
+
 const root=document.querySelector('#world'),scene=new THREE.Scene();scene.background=new THREE.Color(0x8796a2);scene.fog=new THREE.Fog(0x8796a2,22,65);
 const camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,120);const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;root.appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xdcecff,0x68402e,2));const sun=new THREE.DirectionalLight(0xffd4ad,2.4);sun.position.set(-12,22,10);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);scene.add(sun);
@@ -394,7 +450,7 @@ function selectCell(c){selected=c;document.querySelector('#plot').textContent='X
 const ray=new THREE.Raycaster(),pointer=new THREE.Vector2();let dragging=false,lastX=0,lastY=0,moved=0;
 renderer.domElement.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;lastY=e.clientY;moved=0;renderer.domElement.setPointerCapture(e.pointerId)});
 renderer.domElement.addEventListener('pointermove',e=>{if(!dragging)return;const dx=e.clientX-lastX,dy=e.clientY-lastY;moved+=Math.abs(dx)+Math.abs(dy);camYaw-=dx*.006;camPitch=Math.max(-.05,Math.min(.85,camPitch+dy*.004));lastX=e.clientX;lastY=e.clientY});
-renderer.domElement.addEventListener('pointerup',e=>{dragging=false;if(moved>12)return;pointer.x=e.clientX/innerWidth*2-1;pointer.y=-(e.clientY/innerHeight)*2+1;ray.setFromCamera(pointer,camera);const hits=ray.intersectObjects(cells);if(hits.length){selectCell(hits[0].object);if(roadMode){addRoad(selected.userData.x,selected.userData.z,currentLevel);return}if(!buildMode)toast('เลือกพื้นที่แล้ว • เปิดโหมดสร้างเมืองเพื่อวางอาคาร')}});renderer.domElement.addEventListener('wheel',e=>{distance=Math.max(3.2,Math.min(12,distance+e.deltaY*.008))},{passive:true});
+renderer.domElement.addEventListener('pointerup',e=>{dragging=false;if(moved>12)return;pointer.x=e.clientX/innerWidth*2-1;pointer.y=-(e.clientY/innerHeight)*2+1;ray.setFromCamera(pointer,camera);const hits=ray.intersectObjects(cells);if(hits.length){selectCell(hits[0].object);if(roadMode){if(onlineUser)placeOnline('road',selected.userData.x,selected.userData.z,currentLevel);else addRoad(selected.userData.x,selected.userData.z,currentLevel);return}if(!buildMode)toast('เลือกพื้นที่แล้ว • เปิดโหมดสร้างเมืองเพื่อวางอาคาร')}});renderer.domElement.addEventListener('wheel',e=>{distance=Math.max(3.2,Math.min(12,distance+e.deltaY*.008))},{passive:true});
 function addRoad(x,z,level=0){if(roads.some(r=>r.userData.x===x&&r.userData.z===z&&r.userData.level===level)){toast('ถนนมีอยู่แล้ว');return}const r=new THREE.Group();const slab=new THREE.Mesh(new THREE.BoxGeometry(.94,.055,.94),new THREE.MeshStandardMaterial({color:0x46535c,roughness:.95}));slab.position.y=.03;r.add(slab);const stripe=new THREE.Mesh(new THREE.BoxGeometry(.06,.012,.68),new THREE.MeshBasicMaterial({color:0xe8c68a}));stripe.position.y=.064;r.add(stripe);r.position.set(x,level*2.5,z);r.userData={x,z,level};scene.add(r);roads.push(r);updateHUD();toast('วางถนนแล้ว • ชั้น L'+level)}
 function makeBuilding(type,x,z,level=0){const g=new THREE.Group();let base,top;
 const concrete=new THREE.MeshStandardMaterial({color:0xb9c6c8,roughness:.8}),glass=new THREE.MeshStandardMaterial({color:0x68bdc9,metalness:.25,roughness:.2,transparent:true,opacity:.85}),orange=new THREE.MeshStandardMaterial({color:0xd8784e,roughness:.8});
@@ -451,15 +507,15 @@ function updateConstructionJobs(elapsed){
  if(completed){updateHUD();save(false)}
 }
 
-document.querySelector('#place').onclick=()=>{if(!selected){toast('แตะเลือกช่องตารางก่อน');return}const x=selected.userData.x,z=selected.userData.z,occupied=buildings.some(b=>b.userData.x===x&&b.userData.z===z&&(b.userData.level||0)===currentLevel)||constructionSites.some(s=>s.data.x===x&&s.data.z===z&&s.data.level===currentLevel);if(occupied){toast('ช่องนี้มีอาคารหรือกำลังก่อสร้างอยู่แล้ว');return}const type=document.querySelector('#building').value,recipe=recipes[type];if(!recipe){toast('ไม่พบสูตรวัสดุของอาคาร');return}if(credits<recipe.credit){toast('เครดิตจำลองไม่เพียงพอ');return}for(const key of ['metal','polymer','electronics'])if(resources[key]<recipe[key]){toast('วัสดุไม่เพียงพอ: '+key);return}credits-=recipe.credit;for(const key of ['metal','polymer','electronics'])resources[key]-=recipe[key];const data={id:type+'-'+Date.now(),x,z,type,level:currentLevel,startedAt:Date.now(),durationMs:60000};createConstructionSite(data);updateHUD();save(false);renderConstructionJobs();toast('เริ่มก่อสร้าง '+buildingNames[type]+' • ใช้เวลาจำลอง 60 วินาที')};
-document.querySelector('#remove').onclick=()=>{if(!selected)return;const i=buildings.findIndex(b=>b.userData.x===selected.userData.x&&b.userData.z===selected.userData.z&&b.userData.level===currentLevel);if(i>=0){scene.remove(buildings[i]);buildings.splice(i,1);updateHUD();toast('รื้อถอนอาคารแล้ว');return}const ri=roads.findIndex(r=>r.userData.x===selected.userData.x&&r.userData.z===selected.userData.z&&r.userData.level===currentLevel);if(ri>=0){scene.remove(roads[ri]);roads.splice(ri,1);updateHUD();toast('รื้อถอนถนนแล้ว');return}toast('ไม่มีสิ่งปลูกสร้างในช่องนี้')};
+document.querySelector('#place').onclick=async()=>{if(!selected){toast('แตะเลือกช่องตารางก่อน');return}const x=selected.userData.x,z=selected.userData.z,occupied=buildings.some(b=>b.userData.x===x&&b.userData.z===z&&(b.userData.level||0)===currentLevel)||constructionSites.some(s=>s.data.x===x&&s.data.z===z&&s.data.level===currentLevel);if(occupied){toast('ช่องนี้มีอาคารหรือกำลังก่อสร้างอยู่แล้ว');return}const type=document.querySelector('#building').value;if(onlineUser){await placeOnline(type,x,z,currentLevel);return}const recipe=recipes[type];if(!recipe){toast('ไม่พบสูตรวัสดุของอาคาร');return}if(credits<recipe.credit){toast('เครดิตจำลองไม่เพียงพอ');return}for(const key of ['metal','polymer','electronics'])if(resources[key]<recipe[key]){toast('วัสดุไม่เพียงพอ: '+key);return}credits-=recipe.credit;for(const key of ['metal','polymer','electronics'])resources[key]-=recipe[key];const data={id:type+'-'+Date.now(),x,z,type,level:currentLevel,startedAt:Date.now(),durationMs:60000};createConstructionSite(data);updateHUD();save(false);renderConstructionJobs();toast('เริ่มก่อสร้าง '+buildingNames[type]+' • ใช้เวลาจำลอง 60 วินาที')};
+document.querySelector('#remove').onclick=async()=>{if(!selected)return;const x=selected.userData.x,z=selected.userData.z;const item=buildings.find(b=>b.userData.x===x&&b.userData.z===z&&b.userData.level===currentLevel)||roads.find(b=>b.userData.x===x&&b.userData.z===z&&b.userData.level===currentLevel);if(item?.userData?.recordId&&onlineUser){if(item.userData.ownerId!==onlineUser.id){toast('รื้อถอนได้เฉพาะสิ่งปลูกสร้างของสมาชิกเจ้าของ');return}const r=await marsDB.rpc('mars_city_remove_structure',{p_building_id:item.userData.recordId});if(r.error){toast(r.error.message);return}await loadOnlineCity();toast('รื้อถอนและซิงก์โลกออนไลน์แล้ว');return}const i=buildings.indexOf(item);if(i>=0){scene.remove(item);buildings.splice(i,1);updateHUD();toast('รื้อถอนอาคารแล้ว');return}const ri=roads.indexOf(item);if(ri>=0){scene.remove(item);roads.splice(ri,1);updateHUD();toast('รื้อถอนถนนแล้ว');return}toast('ไม่มีสิ่งปลูกสร้างในช่องนี้')};
 function setMode(v){buildMode=v;roadMode=false;document.querySelector('#walk').classList.toggle('active',!v);document.querySelector('#buildMode').classList.toggle('active',v);cells.forEach(c=>c.material.opacity=v?.12:0);updateHUD()}
 document.querySelector('#roadMode').onclick=()=>{roadMode=!roadMode;buildMode=false;cells.forEach(c=>c.material.opacity=roadMode?.12:0);toast(roadMode?'แตะช่องเพื่อวางถนน':'ปิดโหมดถนน')};document.querySelector('#level').onchange=e=>{currentLevel=Number(e.target.value);toast('เลือกชั้น L'+currentLevel)};document.querySelector('#walk').onclick=()=>setMode(false);document.querySelector('#buildMode').onclick=()=>setMode(true);
 document.querySelectorAll('[data-m]').forEach(b=>{const k=b.dataset.m;b.addEventListener('pointerdown',e=>{e.preventDefault();if(k==='jump'){avatar.position.y=.6;return}keys[k]=true});['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,()=>keys[k]=false))});
 addEventListener('keydown',e=>{const map={w:'forward',ArrowUp:'forward',s:'back',ArrowDown:'back',a:'left',ArrowLeft:'left',d:'right',ArrowRight:'right'};if(map[e.key])keys[map[e.key]]=true});addEventListener('keyup',e=>{const map={w:'forward',ArrowUp:'forward',s:'back',ArrowDown:'back',a:'left',ArrowLeft:'left',d:'right',ArrowRight:'right'};if(map[e.key])keys[map[e.key]]=false});
 document.querySelector('#reset').onclick=()=>{camYaw=0;camPitch=.24;distance=6;toast('รีเซ็ตมุมกล้องแล้ว')};document.querySelector('#home').onclick=()=>location.href='./index.html';
-function save(showToast=true){const data={credits,resources,buildings:buildings.map(b=>b.userData),roads:roads.map(r=>r.userData),jobs:constructionSites.map(s=>s.data)};localStorage.setItem('mars-city-thirdperson',JSON.stringify(data));if(showToast)toast('บันทึกเมืองไว้ในอุปกรณ์นี้แล้ว')}
-document.querySelector('#save').onclick=()=>save(true);
+function save(showToast=true){const data={credits,resources,buildings:buildings.filter(b=>!b.userData.remote).map(b=>b.userData),roads:roads.filter(b=>!b.userData.remote).map(r=>r.userData),jobs:constructionSites.map(s=>s.data)};localStorage.setItem('mars-city-thirdperson',JSON.stringify(data));if(showToast)toast(onlineUser?'เมืองบันทึกบนโลกออนไลน์แล้ว':'บันทึกเมืองไว้ในอุปกรณ์นี้แล้ว')}
+document.querySelector('#save').onclick=()=>save(true);document.querySelector('#cityAccount').onclick=loginCity;connectCityOnline().catch(e=>{console.warn(e);toast('ระบบสมาชิกออนไลน์ยังไม่พร้อม: '+(e.message||e));});
 try{const data=JSON.parse(localStorage.getItem('mars-city-thirdperson')||'null');if(data){credits=data.credits??credits;Object.assign(resources,data.resources||{});(data.buildings||[]).forEach(b=>{const g=makeBuilding(b.type,b.x,b.z,b.level||0);g.userData={...b,level:b.level||0};buildings.push(g)});(data.roads||[]).forEach(r=>addRoad(r.x,r.z,r.level||0));(data.jobs||[]).forEach(j=>{if(j&&Number.isFinite(j.startedAt)&&Number.isFinite(j.durationMs)&&j.durationMs>0&&buildingNames[j.type])createConstructionSite(j)});updateHUD();renderConstructionJobs()}}catch(e){console.warn('Could not restore local construction save',e)}
 function makeColonist(color,x,z){const p=new THREE.Group();const body=new THREE.Mesh(new THREE.CapsuleGeometry(.12,.3,4,7),new THREE.MeshStandardMaterial({color}));body.position.y=.32;p.add(body);const head=new THREE.Mesh(new THREE.SphereGeometry(.105,10,8),new THREE.MeshStandardMaterial({color:0xd9b89f}));head.position.y=.58;p.add(head);p.position.set(x,.04,z);scene.add(p);return p}
 const colonists=[makeColonist(0x68c9d8,-1,1),makeColonist(0xe7b46d,1,0),makeColonist(0x8bd49b,0,-1)];document.querySelector('#npcCount').textContent=colonists.length;
