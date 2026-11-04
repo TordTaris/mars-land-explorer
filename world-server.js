@@ -3,7 +3,7 @@
 'use strict';
 const CONFIG={url:'https://tppgfxsdeuujidcjnfdl.supabase.co',key:'sb_publishable_xQ0_NkSu2TMeIyJnAE94kw_WWQT2T3E'};
 const $=id=>document.getElementById(id);
-const S={db:null,user:null,channel:null,parcels:[],claims:[],structures:[],events:[]};
+const S={db:null,user:null,channel:null,parcels:[],claims:[],structures:[],events:[],mlcMarket:[]};
 function status(message,ok=false){const el=$('worldServerStatus');if(el){el.textContent=(ok?'● ONLINE · ':'○ SERVER · ')+message;el.style.color=ok?'#a8e4bd':'#e9bd8d';}}
 function emitAuth(){document.dispatchEvent(new CustomEvent('mars-auth-state',{detail:{user:S.user}}));}
 function authView(){const el=$('worldServerUser');if(el)el.textContent=S.user?'สมาชิกออนไลน์: '+(S.user.email||S.user.id):'ยังไม่ได้เข้าสู่ระบบ';const out=$('worldServerLogout');if(out)out.style.display=S.user?'block':'none';}
@@ -17,9 +17,9 @@ async function refresh(){
   S.db.from('world_events').select('id,event_type,parcel_id,payload,created_at').order('created_at',{ascending:false}).limit(30)
  ]);
  const err=p.error||a.error||b.error||c.error;if(err){status(err.message);return {error:err};}
- S.parcels=p.data||[];S.claims=a.data||[];S.structures=b.data||[];S.events=c.data||[];counts();
- document.dispatchEvent(new CustomEvent('mars-world-updated',{detail:{parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,user:S.user}}));
- return {data:{parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events}};
+ S.parcels=p.data||[];S.claims=a.data||[];S.structures=b.data||[];S.events=c.data||[];const market=await S.db.from('mars_mlc_parcel_market').select('parcel_id,price_mlc,is_listed');S.mlcMarket=market.error?[]:(market.data||[]);if(market.error)console.warn('MLC parcel market is not ready:',market.error.message);counts();
+ document.dispatchEvent(new CustomEvent('mars-world-updated',{detail:{parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,mlcMarket:S.mlcMarket,user:S.user}}));
+ return {data:{parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,mlcMarket:S.mlcMarket}};
 }
 function subscribe(){
  if(S.channel)S.db.removeChannel(S.channel);
@@ -101,6 +101,32 @@ async function transferMlc(recipient,amount){
  return refreshed.error?{data:result.data,syncWarning:refreshed.error.message}:result;
 }
 
-window.MarsWorldServer={connect,auth,logout,refresh,claim,build,loadM003PrivateBase,walletBalances,grantMlcStarter,transferMlc,getState:()=>({user:S.user,parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,db:S.db})};
+
+async function reserveParcel(parcel){
+ if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบก่อนจองแปลง'}};
+ const result=await S.db.rpc('mars_mlc_reserve_parcel',{p_parcel_id:parcel});
+ if(result.error)return result;
+ const synced=await refresh();
+ return synced?.error?{data:result.data,syncWarning:synced.error.message}:result;
+}
+async function purchaseParcel(parcel){
+ if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบก่อนซื้อแปลง'}};
+ const result=await S.db.rpc('mars_mlc_purchase_parcel',{p_parcel_id:parcel});
+ if(result.error)return result;
+ const [synced,wallet]=await Promise.all([refresh(),walletBalances()]);
+ return {data:result.data,syncWarning:synced?.error?.message||wallet?.error?.message||null};
+}
+async function setParcelListing(parcel,isListed,price){
+ if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบก่อนจัดการประกาศขาย'}};
+ const result=await S.db.rpc('mars_mlc_set_parcel_listing',{
+  p_parcel_id:parcel,p_is_listed:!!isListed,
+  p_price_mlc:isListed?Number(price):null
+ });
+ if(result.error)return result;
+ const synced=await refresh();
+ return synced?.error?{data:result.data,syncWarning:synced.error.message}:result;
+}
+
+window.MarsWorldServer={connect,auth,logout,refresh,claim,build,loadM003PrivateBase,walletBalances,grantMlcStarter,transferMlc,reserveParcel,purchaseParcel,setParcelListing,getState:()=>({user:S.user,parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,mlcMarket:S.mlcMarket,db:S.db})};
 document.addEventListener('DOMContentLoaded',connect);
 })();
