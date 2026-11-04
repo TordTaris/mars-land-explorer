@@ -34,7 +34,7 @@ h1{font-size:clamp(24px,5vw,38px);margin:7px 0}.sub{color:var(--muted);line-heig
 <div class="card"><small>MY STRUCTURES</small><div class="value" id="mine">—</div><span class="unit">สิ่งปลูกสร้างของบัญชีนี้</span></div>
 </section>
 <section class="layout">
-<div class="card"><h2 class="section-title">GLOBAL CONSTRUCTION FEED</h2><div id="feed" class="empty">กำลังโหลดข้อมูลอาคาร…</div></div>
+<div class="card"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><h2 class="section-title" style="margin:0">GLOBAL ACTIVITY FEED</h2><button id="refreshWorld" type="button" style="border:1px solid var(--line);background:#14283d;color:var(--text);border-radius:8px;padding:7px 10px;font:inherit;font-size:11px">↻ รีเฟรช</button></div><div id="feed" class="empty" style="margin-top:12px">กำลังโหลดกิจกรรมจากโลกออนไลน์…</div></div>
 <div class="card"><h2 class="section-title">M-003 OWNER STATUS</h2>
 <div class="item"><span>พื้นที่</span><b>M-003</b></div>
 <div class="item"><span>เจ้าของ</span><b id="owner">กำลังตรวจสอบ</b></div>
@@ -55,21 +55,42 @@ h1{font-size:clamp(24px,5vw,38px);margin:7px 0}.sub{color:var(--muted);line-heig
 <script src="./world-server.js"></script>
 <script>
 const $=id=>document.getElementById(id);
+const eventLabel=(e)=>{
+ const type=e.event_type||'world_update';
+ const payload=e.payload||{};
+ if(type==='structure_built') return 'ก่อสร้าง '+(payload.type||'สิ่งปลูกสร้าง');
+ if(type==='parcel_claimed') return 'จับจองพื้นที่';
+ return type.replaceAll('_',' ');
+};
 function render(e){
  const d=e?.detail||window.MarsWorldServer?.getState?.()||{};
- const parcels=d.parcels||[],claims=d.claims||[],structures=d.structures||[],user=d.user;
- $('parcels').textContent=parcels.length;$('claims').textContent=claims.length;$('structures').textContent=structures.length;
+ const parcels=d.parcels||[],claims=d.claims||[],structures=d.structures||[],events=d.events||[],user=d.user;
+ $('parcels').textContent=parcels.length;
+ $('claims').textContent=claims.length;
+ $('structures').textContent=structures.length;
  $('mine').textContent=user?structures.filter(x=>x.owner_id===user.id).length:'—';
  const own=claims.find(x=>x.parcel_id==='M-003');
  $('owner').textContent=own?(user&&own.owner_id===user.id?'บัญชีของคุณ':'มีเจ้าของแล้ว'):'ยังไม่มีเจ้าของ';
- const plant=structures.find(x=>x.parcel_id==='M-003'&&String(x.structure_type).includes('นิวเคลียร์'));
+ const plant=structures.find(x=>x.parcel_id==='M-003'&&x.structure_type==='โรงไฟฟ้านิวเคลียร์ขนาดใหญ่');
  $('nuclear').textContent=plant?'ติดตั้งแล้ว':'ยังไม่พบในฐานข้อมูล';
  $('access').textContent=user&&own&&own.owner_id===user.id?'OWNER VERIFIED':'จำกัดสิทธิ์';
  const feed=$('feed');feed.replaceChildren();
- if(!structures.length){feed.textContent='ยังไม่มีสิ่งปลูกสร้างที่บันทึกในระบบ';feed.className='empty';}
- else{feed.className='';structures.slice().reverse().slice(0,12).forEach(s=>{const row=document.createElement('div');row.className='item';const left=document.createElement('span');left.textContent=s.parcel_id;const right=document.createElement('b');right.textContent=s.structure_type+(s.level?' · Lv.'+s.level:'');row.append(left,right);feed.append(row);});}
+ const rows=events.length?events.slice().sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)).slice(0,12):structures.slice().sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)).slice(0,12).map(s=>({event_type:'structure_built',parcel_id:s.parcel_id,payload:{type:s.structure_type},created_at:s.created_at}));
+ if(!rows.length){feed.textContent='ยังไม่มีกิจกรรมในระบบ';feed.className='empty';return;}
+ feed.className='';
+ rows.forEach(item=>{
+  const row=document.createElement('div');row.className='item';
+  const left=document.createElement('span');left.textContent=(item.parcel_id||'LOCAL MARS')+' · '+eventLabel(item);
+  const right=document.createElement('b');
+  const time=item.created_at?new Date(item.created_at).toLocaleString('th-TH',{dateStyle:'short',timeStyle:'short'}):'—';
+  right.textContent=time;row.append(left,right);feed.append(row);
+ });
 }
 document.addEventListener('mars-world-updated',e=>{render(e);$('status').textContent='● ONLINE · REALTIME';});
 document.addEventListener('mars-auth-state',()=>render());
+$('refreshWorld').addEventListener('click',async()=>{
+ const btn=$('refreshWorld');btn.disabled=true;btn.textContent='กำลังรีเฟรช…';
+ try{await window.MarsWorldServer?.refresh?.();render();}finally{btn.disabled=false;btn.textContent='↻ รีเฟรช';}
+});
 setTimeout(()=>{render();const s=window.MarsWorldServer?.getState?.();if(s?.db)$('status').textContent='● CONNECTED · SYNCING';},1200);
 </script></body></html>
