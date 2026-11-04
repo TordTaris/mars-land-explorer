@@ -1,6 +1,6 @@
-// MARS LAND live-update service worker
+// LOCAL MARS live-update service worker
 // Network-first: deployed website changes are fetched online automatically.
-const CACHE = "mars-land-live-v18";
+const CACHE = "local-mars-live-v19";
 const CORE = ["./", "./index.html", "./city.html", "./underground.html", "./manifest.webmanifest", "./icon.svg"];
 
 self.addEventListener("install", event => {
@@ -11,7 +11,7 @@ self.addEventListener("install", event => {
 self.addEventListener("activate", event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.filter(key => key.startsWith("mars-land-") && key !== CACHE).map(key => caches.delete(key)));
+    await Promise.all(keys.filter(key => (key.startsWith("mars-land-") || key.startsWith("local-mars-")) && key !== CACHE).map(key => caches.delete(key)));
     await self.clients.claim();
   })());
 });
