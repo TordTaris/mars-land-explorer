@@ -354,7 +354,7 @@ const pairs=[["LOCAL MARS","LOCAL MARS"],["PLANET EXPLORER","PLANET EXPLORER"],[
 const thToEn=new Map(pairs),enToTh=new Map(pairs.map(([th,en])=>[en,th]));
 const region=(navigator.language||'').toLowerCase();
 const zone=Intl.DateTimeFormat().resolvedOptions().timeZone||'';
-const detected=(region.startsWith('th')||zone==='Asia/Bangkok'||zone.startsWith('Asia/'))?'th':'en';
+const detected=(region.startsWith('th')||zone==='Asia/Bangkok'||zone==='Asia/Bangkok')?'th':'en';
 let lang=localStorage.getItem('localMarsLanguage')||detected;
 if(!['th','en'].includes(lang))lang=detected;
 const clean=s=>s.replace(/\\s+/g,' ').trim();
