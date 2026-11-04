@@ -1,3 +1,27 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#182c40"/><stop offset="1" stop-color="#050b14"/></linearGradient><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f2d89e"/><stop offset="1" stop-color="#b98949"/></linearGradient><linearGradient id="mars" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d98c63"/><stop offset="1" stop-color="#713b32"/></linearGradient></defs>
-<rect width="512" height="512" rx="112" fill="url(#bg)"/><circle cx="256" cy="256" r="194" fill="none" stroke="url(#gold)" stroke-width="5" opacity=".9"/><circle cx="256" cy="256" r="163" fill="url(#mars)"/><path d="M104 224c52-34 96-30 144-7 52 25 102 33 160 2M120 294c57-24 99-19 143 1 42 20 84 22 127 2" fill="none" stroke="#f1bd8b" stroke-width="15" stroke-linecap="round" opacity=".55"/><path d="M175 178h162M256 178v154" fill="none" stroke="#f7e7c5" stroke-width="7" opacity=".65"/><text x="256" y="282" text-anchor="middle" font-family="Arial,sans-serif" font-size="92" font-weight="900" letter-spacing="-8" fill="#fff5dc">LM</text><path d="M167 364h178" stroke="url(#gold)" stroke-width="6" stroke-linecap="round"/></svg>
+  <defs>
+    <linearGradient id="space" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#1b3046"/><stop offset="1" stop-color="#050b15"/></linearGradient>
+    <radialGradient id="mars" cx="34%" cy="27%" r="75%"><stop stop-color="#f2b17e"/><stop offset=".42" stop-color="#c66b4c"/><stop offset="1" stop-color="#642d2c"/></radialGradient>
+    <linearGradient id="orbit" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff0c7"/><stop offset=".5" stop-color="#d6ae70"/><stop offset="1" stop-color="#8d633c"/></linearGradient>
+    <clipPath id="planet"><circle cx="256" cy="256" r="145"/></clipPath>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="12"/></filter>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#space)"/>
+  <circle cx="256" cy="256" r="188" fill="#d47e55" opacity=".12" filter="url(#shadow)"/>
+  <ellipse cx="256" cy="256" rx="211" ry="79" transform="rotate(-27 256 256)" fill="none" stroke="url(#orbit)" stroke-width="12" opacity=".95"/>
+  <circle cx="256" cy="256" r="145" fill="url(#mars)"/>
+  <g clip-path="url(#planet)" fill="none" stroke-linecap="round">
+    <path d="M95 194c43-25 72-19 105-4 33 15 64 12 101-8 31-17 64-15 103 2" stroke="#f6c49a" stroke-width="20" opacity=".32"/>
+    <path d="M104 285c47-29 81-27 119-8 40 20 73 19 111-3 25-14 54-14 83-2" stroke="#542d2b" stroke-width="24" opacity=".34"/>
+    <path d="M138 344c36-18 64-16 91-4 37 16 67 13 104-9" stroke="#f0a77a" stroke-width="12" opacity=".28"/>
+  </g>
+  <g fill="#5b302d" opacity=".42">
+    <circle cx="188" cy="166" r="17"/><circle cx="315" cy="204" r="12"/><circle cx="235" cy="285" r="21"/><circle cx="340" cy="302" r="15"/><circle cx="170" cy="319" r="10"/>
+  </g>
+  <g fill="none" stroke="#f7c69e" opacity=".42">
+    <circle cx="188" cy="166" r="9" stroke-width="3"/><circle cx="315" cy="204" r="6" stroke-width="2"/><circle cx="235" cy="285" r="12" stroke-width="3"/><circle cx="340" cy="302" r="8" stroke-width="2"/>
+  </g>
+  <path d="M111 330c70 78 221 90 310 5" fill="none" stroke="#fff0c7" stroke-width="5" opacity=".55" stroke-linecap="round"/>
+  <circle cx="447" cy="167" r="9" fill="#f4d79c"/>
+  <circle cx="83" cy="341" r="5" fill="#f4d79c" opacity=".8"/>
+</svg>
