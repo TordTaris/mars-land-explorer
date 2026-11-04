@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#081321">
+<title>LOCAL MARS | Civilization Network</title>
+<style>
+:root{color-scheme:dark;--bg:#07101c;--panel:#102238;--line:#b99a625c;--gold:#dfbd7d;--text:#f4eddf;--muted:#a8b8c8;--green:#8de4bd}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 0,#26384b,#07101c 65%);color:var(--text);font:14px system-ui,sans-serif;min-height:100vh}
+header{position:sticky;top:0;z-index:5;padding:14px 18px;background:#071321eF;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px;backdrop-filter:blur(16px)}
+.brand{font-weight:900;letter-spacing:2px}.brand b{color:var(--gold)}.status{font-size:11px;color:var(--green)}
+main{max-width:1100px;margin:auto;padding:22px 16px 50px}.eyebrow{font-size:10px;letter-spacing:2px;color:var(--gold);font-weight:800}
+h1{font-size:clamp(24px,5vw,38px);margin:7px 0}.sub{color:var(--muted);line-height:1.6;max-width:720px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:22px 0}
+.card{background:linear-gradient(145deg,#142b42,#0a1726);border:1px solid var(--line);border-radius:15px;padding:16px;box-shadow:0 12px 32px #0004}
+.card small{display:block;color:var(--muted);font-size:10px;letter-spacing:1px}.value{font-size:28px;font-weight:850;margin:7px 0;color:#fff}.unit{font-size:11px;color:var(--gold)}
+.layout{display:grid;grid-template-columns:1.25fr .75fr;gap:14px}.section-title{font-size:12px;letter-spacing:1.4px;color:var(--gold);margin:0 0 12px}
+.item{padding:11px 0;border-bottom:1px solid #ffffff16;display:flex;justify-content:space-between;gap:12px}.item:last-child{border:0}.item span{color:var(--muted)}.item b{text-align:right;overflow-wrap:anywhere}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}a.btn{display:inline-block;text-decoration:none;color:var(--text);border:1px solid var(--line);padding:10px 13px;border-radius:10px;background:#14283d;font-weight:700}a.btn.primary{background:linear-gradient(120deg,#dfbd7d,#9c7540);color:#17120a}
+.notice{font-size:11px;color:var(--muted);line-height:1.6;margin-top:14px}
+.empty{color:var(--muted);padding:14px 0;font-size:12px}
+@media(max-width:760px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.layout{grid-template-columns:1fr}.value{font-size:24px}header{padding:11px 13px}}
+</style></head>
+<body>
+<header><div class="brand">LOCAL <b>MARS</b> <span style="font-size:10px;color:#9eb1c5">/ CIVILIZATION NETWORK</span></div><div class="status" id="status">กำลังเชื่อมต่อโลกออนไลน์…</div></header>
+<main>
+<div class="eyebrow">PLANETARY CIVILIZATION NETWORK · LIVE WORLD</div>
+<h1>ศูนย์บัญชาการอารยธรรมดาวอังคาร</h1>
+<p class="sub">ภาพรวมข้อมูลพื้นที่และสิ่งปลูกสร้างจากฐานข้อมูลส่วนกลาง สมาชิกที่ออนไลน์สามารถติดตามความเปลี่ยนแปลงของโลกเดียวกันได้</p>
+<section class="grid">
+<div class="card"><small>REGISTERED PARCELS</small><div class="value" id="parcels">—</div><span class="unit">แปลงพื้นที่ในระบบ</span></div>
+<div class="card"><small>CLAIMED PARCELS</small><div class="value" id="claims">—</div><span class="unit">พื้นที่มีเจ้าของ</span></div>
+<div class="card"><small>GLOBAL STRUCTURES</small><div class="value" id="structures">—</div><span class="unit">สิ่งปลูกสร้างทั้งหมด</span></div>
+<div class="card"><small>MY STRUCTURES</small><div class="value" id="mine">—</div><span class="unit">สิ่งปลูกสร้างของบัญชีนี้</span></div>
+</section>
+<section class="layout">
+<div class="card"><h2 class="section-title">GLOBAL CONSTRUCTION FEED</h2><div id="feed" class="empty">กำลังโหลดข้อมูลอาคาร…</div></div>
+<div class="card"><h2 class="section-title">M-003 OWNER STATUS</h2>
+<div class="item"><span>พื้นที่</span><b>M-003</b></div>
+<div class="item"><span>เจ้าของ</span><b id="owner">กำลังตรวจสอบ</b></div>
+<div class="item"><span>โรงไฟฟ้านิวเคลียร์</span><b id="nuclear">กำลังตรวจสอบ</b></div>
+<div class="item"><span>สิทธิ์ศูนย์ควบคุม</span><b id="access">กำลังตรวจสอบ</b></div>
+<p class="notice">ข้อมูลสิทธิ์อ้างอิงจากบัญชีสมาชิกที่เข้าสู่ระบบเท่านั้น รายละเอียดฐานใต้ดินยังคงสงวนไว้สำหรับเจ้าของพื้นที่</p>
+</div>
+</section>
+<section class="card" style="margin-top:14px"><h2 class="section-title">ASSET & NETWORK ROADMAP</h2>
+<div class="item"><span>หน่วยแสดงมูลค่าเป้าหมาย</span><b>ETH · รอเชื่อมระบบกระเป๋าเงินจริง</b></div>
+<div class="item"><span>การชำระเงินจริง</span><b>PromptPay · แยกจากมูลค่าจำลอง</b></div>
+<div class="item"><span>ข้อมูลอาคาร</span><b>Supabase Realtime</b></div>
+<p class="notice">ระบบยังไม่แปลงยอด MLC เดิมเป็น ETH และไม่มีการแสดงราคา ETH หรือยอดสินทรัพย์ดิจิทัลที่ยังไม่ได้ยืนยันจากธุรกรรมจริง</p>
+<div class="actions"><a class="btn primary" href="./index.html">กลับสู่ดาวอังคาร</a><a class="btn" href="./m003-base.html">ศูนย์ฐานใต้ดิน M-003</a><a class="btn" href="./city.html">เข้าสู่เมืองจำลอง</a></div>
+</section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="./world-server.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+function render(e){
+ const d=e?.detail||window.MarsWorldServer?.getState?.()||{};
+ const parcels=d.parcels||[],claims=d.claims||[],structures=d.structures||[],user=d.user;
+ $('parcels').textContent=parcels.length;$('claims').textContent=claims.length;$('structures').textContent=structures.length;
+ $('mine').textContent=user?structures.filter(x=>x.owner_id===user.id).length:'—';
+ const own=claims.find(x=>x.parcel_id==='M-003');
+ $('owner').textContent=own?(user&&own.owner_id===user.id?'บัญชีของคุณ':'มีเจ้าของแล้ว'):'ยังไม่มีเจ้าของ';
+ const plant=structures.find(x=>x.parcel_id==='M-003'&&String(x.structure_type).includes('นิวเคลียร์'));
+ $('nuclear').textContent=plant?'ติดตั้งแล้ว':'ยังไม่พบในฐานข้อมูล';
+ $('access').textContent=user&&own&&own.owner_id===user.id?'OWNER VERIFIED':'จำกัดสิทธิ์';
+ const feed=$('feed');feed.replaceChildren();
+ if(!structures.length){feed.textContent='ยังไม่มีสิ่งปลูกสร้างที่บันทึกในระบบ';feed.className='empty';}
+ else{feed.className='';structures.slice().reverse().slice(0,12).forEach(s=>{const row=document.createElement('div');row.className='item';const left=document.createElement('span');left.textContent=s.parcel_id;const right=document.createElement('b');right.textContent=s.structure_type+(s.level?' · Lv.'+s.level:'');row.append(left,right);feed.append(row);});}
+}
+document.addEventListener('mars-world-updated',e=>{render(e);$('status').textContent='● ONLINE · REALTIME';});
+document.addEventListener('mars-auth-state',()=>render());
+setTimeout(()=>{render();const s=window.MarsWorldServer?.getState?.();if(s?.db)$('status').textContent='● CONNECTED · SYNCING';},1200);
+</script></body></html>
