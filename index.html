@@ -26,11 +26,12 @@ button,input,select{font:inherit}button{border:1px solid #38506d;background:#172
 header{z-index:5;min-height:64px;background:linear-gradient(90deg,#07101fee,#0d1a2bb8 65%,transparent);border-bottom:1px solid #6aa0c044}.brand{font-size:21px;text-shadow:0 2px 16px #ff895b66}.brand span{color:#ffad6b}
 .panel{z-index:4;background:linear-gradient(145deg,#112943f2,#091728f2);border:1px solid #5a83a5a8;box-shadow:0 15px 38px #0008,inset 0 1px #ffffff12;backdrop-filter:blur(18px)}.left{top:82px;width:min(245px,25vw)}.right{top:82px;width:min(265px,27vw)}h3{color:#6ee8f4;text-shadow:0 0 14px #48d9e944}.bottom{z-index:6;background:#091729ed;border:1px solid #507391;box-shadow:0 10px 32px #0009;backdrop-filter:blur(18px)}.bottom button{background:linear-gradient(145deg,#1c3854,#102239)}.bottom button.active,button.primary{background:linear-gradient(120deg,#e8754d,#ffb16b);color:#1c1110}
 @media(max-width:760px){header{min-height:52px;padding:8px 10px}.brand{font-size:16px}.left{top:auto;bottom:76px;left:8px;width:calc(47vw - 8px);max-height:37dvh;overflow:auto;padding:9px}.right{top:72px;right:8px;width:calc(50vw - 8px);max-height:calc(100dvh - 165px);padding:9px}.bottom{left:8px;right:8px;transform:none;justify-content:flex-start;overflow-x:auto;max-width:none;bottom:7px}.bottom button{padding:8px 10px;font-size:10px}}
-</style>
+.resource-chip{min-width:94px;padding:7px 11px;border:1px solid #5b83a5a6;border-radius:12px;background:linear-gradient(145deg,#142b45ee,#09182bee);box-shadow:0 8px 22px #0006;text-align:center;font-size:10px;color:#b6c9dc}.resource-chip b{display:block;font-size:15px;color:#fff}.resource-chip small{display:block;font-size:9px;color:#79efad}@media(max-width:760px){.resourcebar{top:56px!important;left:8px!important;right:8px!important;transform:none!important;gap:4px!important}.resource-chip{min-width:0;flex:1;padding:5px 3px;font-size:9px}.resource-chip b{font-size:12px}}</style>
 </head>
 <body>
 <div id="scene"></div>
 <header><div class="brand">🔴 MARS <span>LAND</span> <small style="font-size:10px;color:#91a5bd">2.0</small></div><div class="status">● LOCAL DEMO MODE</div></header>
+<div class="resourcebar" style="position:fixed;z-index:5;top:13px;left:50%;transform:translateX(-50%);display:flex;gap:7px;pointer-events:none"><div class="resource-chip">💎 <b>12,850</b><small>เครดิตทดลอง</small></div><div class="resource-chip">🪙 <b>8,760</b><small>โลหะ</small></div><div class="resource-chip">⚡ <b>98%</b><small>พลังงาน</small></div></div>
 <section class="panel left">
 <h3>MISSION CONTROL</h3>
 <div class="metric"><span>Planet</span><b>Mars / Sol 001</b></div>
