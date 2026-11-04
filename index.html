@@ -191,6 +191,13 @@ header .brand .brand-lockup small{display:block!important;color:#aebdca!importan
 @media(max-width:650px){header .brand{gap:7px!important}header .brand .brand-insignia{flex-basis:32px;width:32px;height:32px;border-radius:50%}header .brand .brand-lockup strong{font-size:12px;letter-spacing:1.7px}header .brand .brand-lockup small{font-size:6px!important;letter-spacing:1.05px!important}}
 @media(max-width:360px){header .brand .brand-lockup small{display:none!important}}
 </style>
+<style id="mlc-wallet-access-fix">
+.mlc-wallet-overlay{display:none;position:fixed;right:12px;bottom:78px;z-index:80;width:min(370px,calc(100vw - 24px));max-height:min(72vh,620px);overflow:auto;margin:0!important;padding:14px!important;border:1px solid #c5a56b99!important;background:linear-gradient(145deg,#172a40,#0b1727)!important;box-shadow:0 18px 55px #000c!important}
+.mlc-wallet-overlay.is-open{display:block!important}
+.mlc-wallet-overlay>div:first-child{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.bottom button[data-tab="wallet"]{border-color:#c5a56b!important;color:#f0d18e!important}
+@media(max-width:650px){.mlc-wallet-overlay{right:10px;bottom:74px;width:min(360px,calc(100vw - 20px));max-height:70vh}}
+</style>
 </head>
 <body>
 <div id="scene"></div>
@@ -221,9 +228,20 @@ header .brand .brand-lockup small{display:block!important;color:#aebdca!importan
 <button class="full" id="build">🏗️ วางอาคารบนแปลง</button>
 <button class="full" id="closePlotPanel">ปิดรายละเอียดพื้นที่</button>
 </div>
-<section class="plot" id="mlcWalletPanel" style="margin-top:12px;border-color:#c5a56b99;background:linear-gradient(145deg,#172a40,#0b1727)">
+
+<h3 style="margin-top:16px">MY COLONY</h3>
+<div class="metric"><span>แปลงที่จอง</span><b id="owned">0</b></div>
+<div class="metric"><span>อาคารที่สร้าง</span><b id="buildings">0</b></div>
+<button class="full" id="account">เข้าสู่ระบบ / สมัครสมาชิก</button>
+<div class="small" id="worldServerUser">กำลังตรวจสอบบัญชีออนไลน์…</div>
+<div class="small" id="worldServerCounts">กำลังโหลดข้อมูลโลก…</div>
+<button class="full" id="worldServerLogout" style="display:none">ออกจากระบบ</button>
+<div class="small">พื้นที่และทรัพยากรเป็นข้อมูลจำลองภายในระบบ ไม่ใช่กรรมสิทธิ์หรือการซื้อขายเงินจริง</div>
+</section>
+<nav class="bottom"><button class="active" data-tab="explore">🌎 สำรวจ</button><button data-tab="market">🪙 ตลาดจำลอง</button><button data-tab="colony">🏙️ เมืองของฉัน</button><button data-tab="city">🏗️ จำลองก่อสร้าง</button><button data-tab="underground">🏚️ ฐาน 24 ชั้น</button><a href="./civilization.html" style="display:inline-flex;align-items:center;white-space:nowrap;text-decoration:none;color:#f4e8d1;border:1px solid #b99a636e;background:linear-gradient(145deg,#172b40,#0b1727);border-radius:10px;padding:10px 13px;font-size:11px;font-weight:700">🌐 อารยธรรม</a><button data-tab="account">👤 สมาชิก</button><button data-tab="wallet" aria-controls="mlcWalletPanel">🪙 MLC</button></nav>
+<section class="plot mlc-wallet-overlay" id="mlcWalletPanel" aria-label="MLC Wallet">
  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-  <strong style="color:#e7c17d;letter-spacing:1px">MLC WALLET</strong>
+  <strong style="color:#e7c17d;letter-spacing:1px">MLC WALLET</strong><button type="button" id="mlcWalletClose" aria-label="ปิดกระเป๋า MLC" style="padding:5px 9px">✕</button>
   <span style="font-size:9px;color:#9eb3c8">IN-GAME CURRENCY</span>
  </div>
  <div style="display:flex;justify-content:space-between;align-items:center;margin:8px 0">
@@ -239,16 +257,6 @@ header .brand .brand-lockup small{display:block!important;color:#aebdca!importan
  </div>
  <div class="small" style="font-size:9px;margin-top:8px">MLC เป็นแต้ม/สกุลเงินจำลองภายใน LOCAL MARS เท่านั้น ไม่ใช่ USD, คริปโต หรือเงินที่แลกคืนได้ และไม่เกี่ยวข้องกับ PromptPay</div>
 </section>
-<h3 style="margin-top:16px">MY COLONY</h3>
-<div class="metric"><span>แปลงที่จอง</span><b id="owned">0</b></div>
-<div class="metric"><span>อาคารที่สร้าง</span><b id="buildings">0</b></div>
-<button class="full" id="account">เข้าสู่ระบบ / สมัครสมาชิก</button>
-<div class="small" id="worldServerUser">กำลังตรวจสอบบัญชีออนไลน์…</div>
-<div class="small" id="worldServerCounts">กำลังโหลดข้อมูลโลก…</div>
-<button class="full" id="worldServerLogout" style="display:none">ออกจากระบบ</button>
-<div class="small">พื้นที่และทรัพยากรเป็นข้อมูลจำลองภายในระบบ ไม่ใช่กรรมสิทธิ์หรือการซื้อขายเงินจริง</div>
-</section>
-<nav class="bottom"><button class="active" data-tab="explore">🌎 สำรวจ</button><button data-tab="market">🪙 ตลาดจำลอง</button><button data-tab="colony">🏙️ เมืองของฉัน</button><button data-tab="city">🏗️ จำลองก่อสร้าง</button><button data-tab="underground">🏚️ ฐาน 24 ชั้น</button><a href="./civilization.html" style="display:inline-flex;align-items:center;white-space:nowrap;text-decoration:none;color:#f4e8d1;border:1px solid #b99a636e;background:linear-gradient(145deg,#172b40,#0b1727);border-radius:10px;padding:10px 13px;font-size:11px;font-weight:700">🌐 อารยธรรม</a><button data-tab="account">👤 สมาชิก</button></nav>
 <div id="toast"></div>
 <div id="login"><div class="panel modal"><h3>สมาชิก LOCAL MARS ONLINE</h3>
 <input id="username" placeholder="ชื่อสมาชิก (ใช้ตอนสมัคร)">
@@ -477,6 +485,7 @@ document.querySelector('#claim').onclick=async()=>{if(!selected)return;const res
 const renderMlcBalance=balances=>{const el=document.querySelector('#mlcBalance');if(el)el.textContent=(Number(balances?.mlc)||0).toLocaleString('en-US')+' MLC';};
 document.addEventListener('mars-wallet-updated',e=>renderMlcBalance(e.detail));
 document.addEventListener('mars-auth-state',async()=>{const world=window.MarsWorldServer?.getState?.();if(world?.user){const result=await window.MarsWorldServer.walletBalances();if(result?.data)renderMlcBalance(result.data);}else renderMlcBalance({mlc:0});});
+document.querySelector('#mlcWalletClose').onclick=()=>document.querySelector('#mlcWalletPanel')?.classList.remove('is-open');
 document.querySelector('#mlcStarter').onclick=async()=>{
  const world=window.MarsWorldServer?.getState?.();
  if(!world?.user){toast('กรุณาเข้าสู่ระบบเพื่อรับ MLC');openLogin();return;}
@@ -538,7 +547,7 @@ document.querySelector('#navUnderground').onclick=()=>location.href='./undergrou
 document.querySelector('#navMarket').onclick=()=>toast('ตลาดจำลอง: เลือกแปลงบนดาวเพื่อดูราคาและสถานะ');
 document.querySelector('#rotate').onclick=()=>{auto=!auto;controls.autoRotate=auto;document.querySelector('#rotate').textContent='หมุนอัตโนมัติ: '+(auto?'เปิด':'ปิด');document.querySelector('#rotate').classList.toggle('active',auto)};
 document.querySelector('#reset').onclick=()=>{camera.position.set(0,0,3.55);controls.target.set(0,0,0);controls.update()};
-document.querySelectorAll('.bottom button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.bottom button').forEach(x=>x.classList.remove('active'));b.classList.add('active');const tab=b.dataset.tab;if(tab==='city'){location.href='./city.html';return}if(tab==='underground'){location.href='./underground.html';return}if(tab==='market'){toast('ตลาดที่ดิน: แตะจุดสีฟ้าบนดาวเพื่อดูแปลง')}if(tab==='colony'){toast(`เมืองของคุณมี ${state.owned.length} แปลง และ ${Object.keys(state.buildings).length} อาคาร`)}if(tab==='account')openLogin()});
+document.querySelectorAll('.bottom button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.bottom button').forEach(x=>x.classList.remove('active'));b.classList.add('active');const tab=b.dataset.tab;if(tab==='city'){location.href='./city.html';return}if(tab==='underground'){location.href='./underground.html';return}if(tab==='wallet'){document.querySelector('#mlcWalletPanel')?.classList.toggle('is-open');return}if(tab==='market'){toast('ตลาดที่ดิน: แตะจุดสีฟ้าบนดาวเพื่อดูแปลง')}if(tab==='colony'){toast(`เมืองของคุณมี ${state.owned.length} แปลง และ ${Object.keys(state.buildings).length} อาคาร`)}if(tab==='account')openLogin()});
 // Restore locally saved constructions on every app launch, then merge online structures when connected.
 const restoredStructures=Object.entries(state.buildings).map(([parcel_id,building])=>({id:'local-'+parcel_id,parcel_id,structure_type:typeMap[building]||building,owner_id:'local'}));
 renderSharedBuildings(restoredStructures);
