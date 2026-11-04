@@ -40,7 +40,11 @@ async function auth(mode){
  const email=($('email')?.value||'').trim(),password=$('password')?.value||'',name=($('username')?.value||'').trim();
  if(!email||password.length<8)return {error:{message:'กรอกอีเมลและรหัสผ่านอย่างน้อย 8 ตัวอักษร'}};
  let result;
- if(mode==='signup')result=await S.db.auth.signUp({email,password,options:{data:{display_name:name||'Explorer'}}});
+ if(mode==='signup'){
+  // Return confirmed users to the deployed GitHub Pages app, never the local Vite server.
+  const emailRedirectTo=new URL('./',window.location.href).href;
+  result=await S.db.auth.signUp({email,password,options:{emailRedirectTo,data:{display_name:name||'Explorer'}}});
+ }
  else result=await S.db.auth.signInWithPassword({email,password});
  if(result.error){status(result.error.message);return {error:result.error};}
  S.user=result.data.session?.user||null;authView();
