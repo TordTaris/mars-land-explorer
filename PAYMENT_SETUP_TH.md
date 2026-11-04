@@ -20,7 +20,7 @@ on conflict (user_id) do nothing;
 ใช้ UUID เดียวกันเป็นค่า `MARS_OWNER_USER_ID` ใน Edge Function secrets
 
 ## 3) Set actual THB parcel prices
-ราคาจำลองเดิมเป็นเพียงมูลค่าอ้างอิง USD ไม่ใช่เงินบาทและห้ามนำไปใช้เป็นราคาเงินจริง
+ราคาที่แสดงในหน้าสำรวจเป็นมูลค่าอ้างอิง THB ของระบบจำลอง ส่วนยอดชำระเงินจริงต้องสร้างรายการผ่าน PromptPay และยืนยันจาก webhook เท่านั้น
 ตั้งราคาจริงต่อแปลงหลังตัดสินใจราคาและได้รับการอนุมัติจาก Stripe:
 ```sql
 update public.world_parcels
