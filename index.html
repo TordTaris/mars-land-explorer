@@ -550,7 +550,8 @@ relayBeacon.position.set(0,.125,0);relaySatellite.add(relayBeacon);
 // No visible orbital beam or trajectory line is rendered.
 // Keep the orbital plane for satellite/aircraft movement, without drawing its path.
 const relayOrbitRotation=new THREE.Euler(1.05,.25,.2);const relayOrbitQuaternion=new THREE.Quaternion().setFromEuler(relayOrbitRotation);
-relaySatellite.scale.setScalar(.72);group.add(relaySatellite);
+// Compact, legible relay satellite: reduced to 0.28 scale relative to the Mars globe.
+relaySatellite.scale.setScalar(.28);group.add(relaySatellite);
 
 // MARS ATMOSPHERIC TRANSPORT — two clearly visible 3D craft flying above the surface.
 // Atmospheric vehicles remain animated; the visible orbital guide ring is removed.
