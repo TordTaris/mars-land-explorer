@@ -30,27 +30,68 @@ button.action{border:1px solid #a88d5b;background:#1b2c40;color:#f5e8cd;border-r
 <section class="card" style="margin-top:14px"><div class="eyebrow">TOP SECRET // EYES ONLY · OWNER FILE</div><h2 style="margin:7px 0">M-003 SYSTEM DATABASE: PROJECT DIMENSION GATE</h2><p>TOP SECRET simulation records for the M-003 owner, covering dimensional gate and matter-transfer systems.</p><a class="action" href="./m003-dimension-gate.html" style="display:inline-block;text-decoration:none;border:1px solid #a88d5b;background:#1b2c40;color:#f5e8cd;border-radius:9px;padding:10px 12px">OPEN TOP SECRET DATABASE →</a></section>
 <section class="layout"><div class="card"><h2>FACILITY DIRECTORY · SELECT A LEVEL TO VIEW SYSTEM DATA</h2><div class="floors" id="floors"></div></div><div class="card"><h2>LEVEL INFORMATION</h2><div class="detail" id="detail"><p>Select a level to view its facility system details.</p></div><p style="font-size:10px">This is a LOCAL MARS simulation, not a real-world facility.</p><button class="action" onclick="location.href='./index.html'">← RETURN TO MARS</button></div></section>
 </main>
-<section id="gate"><div class="eyebrow">M-003 SECURITY GATE</div><h2 id="gateTitle">VERIFYING OWNER AUTHORIZATION</h2><p id="gateText">Underground base data is available only to the registered owner of M-003.</p><button class="action" onclick="location.href='./index.html'">RETURN TO EXPLORATION</button></section>
+<section id="gate"><div class="eyebrow">M-003 SECURITY GATE</div><h2 id="gateTitle">VERIFYING OWNER AUTHORIZATION</h2><p id="gateText">Underground base data is available only to the registered owner of M-003.</p>
+<div id="securityForm" hidden style="margin:18px auto 0;max-width:380px;text-align:left">
+<label for="m003Password" style="display:block;color:var(--gold);font-size:11px;margin:10px 0 6px">SECURITY PASSWORD</label>
+<input id="m003Password" type="password" minlength="10" maxlength="128" autocomplete="current-password" placeholder="Enter your security password" style="width:100%;padding:12px;border-radius:9px;border:1px solid var(--line);background:#071321;color:#fff">
+<div id="confirmWrap" hidden><label for="m003Confirm" style="display:block;color:var(--gold);font-size:11px;margin:10px 0 6px">CONFIRM PASSWORD</label><input id="m003Confirm" type="password" minlength="10" maxlength="128" autocomplete="new-password" placeholder="Re-enter your password" style="width:100%;padding:12px;border-radius:9px;border:1px solid var(--line);background:#071321;color:#fff"></div>
+<button class="action" id="unlockM003" type="button" style="margin-top:12px;width:100%">VERIFY AND OPEN BASE</button>
+<p id="securityHint" style="font-size:10px;margin:9px 0 0">Use at least 10 characters. Do not share this password.</p>
+</div>
+<button class="action" onclick="location.href='./index.html'">RETURN TO EXPLORATION</button></section>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script><script src="./world-server.js"></script>
 <script>
 const gateTitle=document.querySelector('#gateTitle'),gateText=document.querySelector('#gateText'),connection=document.querySelector('#connection');
-let loaded=false;
-async function verifyAndLoad(){
- if(loaded)return;const world=window.MarsWorldServer?.getState?.();const user=world?.user;
- if(!user){connection.textContent='LOCKED';gateTitle.textContent='SIGN-IN REQUIRED';gateText.textContent='Return to LOCAL MARS and sign in with your member account.';return;}
- const owns=(world.claims||[]).some(c=>c.parcel_id==='M-003'&&c.owner_id===user.id);
- if(!owns){connection.textContent='ACCESS DENIED';gateTitle.textContent='M-003 OWNER ACCESS ONLY';gateText.textContent='The signed-in account is not authorized to access the underground facility database.';return;}
- connection.textContent='OWNER VERIFIED';
- const result=await window.MarsWorldServer.loadM003PrivateBase();
- if(result?.error){gateTitle.textContent='UNABLE TO LOAD FACILITY DATA';gateText.textContent=result.error.message||'Please verify that Supabase migration 008 has been applied.';return;}
- const rows=result.data||[];if(!rows.length){gateTitle.textContent='NO FACILITY DATA';gateText.textContent='No underground level records were found in the database.';return;}
- loaded=true;document.querySelector('#gate').hidden=true;document.querySelector('#content').hidden=false;
+const securityForm=document.querySelector('#securityForm'),passwordInput=document.querySelector('#m003Password'),confirmWrap=document.querySelector('#confirmWrap'),confirmInput=document.querySelector('#m003Confirm'),unlockButton=document.querySelector('#unlockM003'),securityHint=document.querySelector('#securityHint');
+let loaded=false,setupMode=false,busy=false;
+function showSecurity(hasPassword){
+ setupMode=!hasPassword;
+ gateTitle.textContent=setupMode?'SET YOUR M-003 SECURITY PASSWORD':'ENTER SECURITY PASSWORD';
+ gateText.textContent=setupMode?'Create a separate password to protect access to the M-003 underground base. This password is separate from your LOCAL MARS sign-in.':'Owner verified. Enter your M-003 security password to unlock the underground base.';
+ connection.textContent='PASSWORD REQUIRED';
+ securityForm.hidden=false;confirmWrap.hidden=!setupMode;
+ passwordInput.value='';confirmInput.value='';
+ passwordInput.autocomplete=setupMode?'new-password':'current-password';
+ unlockButton.textContent=setupMode?'SET PASSWORD AND OPEN BASE':'VERIFY AND OPEN BASE';
+}
+async function renderBase(rows){
+ if(!rows.length){gateTitle.textContent='NO FACILITY DATA';gateText.textContent='No underground level records were found in the database.';return;}
+ loaded=true;document.querySelector('#gate').hidden=true;document.querySelector('#content').hidden=false;connection.textContent='M-003 UNLOCKED';
  const list=document.querySelector('#floors'),detail=document.querySelector('#detail');
  rows.forEach((r,index)=>{const b=document.createElement('button');b.className='floor';b.innerHTML='<b>LEVEL '+String(r.floor_no).padStart(2,'0')+'</b><span></span><small></small>';b.querySelector('span').textContent=r.room_name;b.querySelector('small').textContent=r.system_status;b.onclick=()=>{list.querySelectorAll('.floor').forEach(x=>x.classList.remove('active'));b.classList.add('active');detail.innerHTML='';const h=document.createElement('h3');h.textContent='LEVEL '+String(r.floor_no).padStart(2,'0')+' · '+r.room_name;const p=document.createElement('p');p.textContent=r.description;const badge=document.createElement('span');badge.className='pill';badge.textContent=r.system_status;detail.append(h,p,badge)};list.appendChild(b);if(index===0)b.click();});
 }
+async function verifyAndLoad(){
+ if(loaded)return;
+ const world=window.MarsWorldServer?.getState?.(),user=world?.user;
+ if(!user){connection.textContent='LOCKED';gateTitle.textContent='SIGN-IN REQUIRED';gateText.textContent='Return to LOCAL MARS and sign in with your member account.';securityForm.hidden=true;return;}
+ const owns=(world.claims||[]).some(c=>c.parcel_id==='M-003'&&c.owner_id===user.id);
+ if(!owns){connection.textContent='ACCESS DENIED';gateTitle.textContent='M-003 OWNER ACCESS ONLY';gateText.textContent='The signed-in account is not authorized to access the underground facility database.';securityForm.hidden=true;return;}
+ connection.textContent='OWNER VERIFIED';
+ const result=await window.MarsWorldServer.m003Access('status');
+ if(result?.error){gateTitle.textContent='SECURITY SERVICE UNAVAILABLE';gateText.textContent=result.error.message+' Apply Supabase migration 022 and deploy the m003-access Edge Function.';return;}
+ showSecurity(Boolean(result.data?.has_password));
+}
+unlockButton.addEventListener('click',async()=>{
+ if(busy)return;
+ const password=passwordInput.value;
+ if(password.length<10||password.length>128){securityHint.textContent='Password must contain 10–128 characters.';return;}
+ if(setupMode&&password!==confirmInput.value){securityHint.textContent='The passwords do not match.';return;}
+ busy=true;unlockButton.disabled=true;unlockButton.textContent='CHECKING…';securityHint.textContent='Verifying securely…';
+ try{
+  if(setupMode){
+   const setup=await window.MarsWorldServer.m003Access('setup',password,confirmInput.value);
+   if(setup?.error){securityHint.textContent=setup.error.message;return;}
+  }
+  const result=await window.MarsWorldServer.m003Access('verify',password);
+  if(result?.error){securityHint.textContent=result.error.message;return;}
+  if(result.data?.needs_setup){showSecurity(false);securityHint.textContent='Set your security password to continue.';return;}
+  await renderBase(result.data?.data||[]);
+ }catch(error){securityHint.textContent='Security check failed. Please try again.';}
+ finally{busy=false;if(!loaded){unlockButton.disabled=false;unlockButton.textContent=setupMode?'SET PASSWORD AND OPEN BASE':'VERIFY AND OPEN BASE';}}
+});
 document.addEventListener('mars-auth-state',()=>{loaded=false;verifyAndLoad()});
 document.addEventListener('mars-world-updated',()=>{loaded=false;verifyAndLoad()});
 setTimeout(verifyAndLoad,900);
-</script> 
+<\/script> 
 <script src="./easy-play.js" defer></script>
 </body></html>
