@@ -1,0 +1,15 @@
+(()=>{'use strict';
+const PDS='https://pds.nasa.gov/api/search/1/products?limit=8&keywords=Mars';
+const DSN='https://eyes.nasa.gov/apps/dsn-now/dsn.html';
+const $=id=>document.getElementById(id);
+if(!$('lm-nasa-data'))return;
+const status=(id,msg,ok)=>{const e=$(id);if(e){e.textContent=msg;e.style.color=ok?'#8df0c4':'#ffd18b';}};
+const stamp=()=>new Intl.DateTimeFormat('en-GB',{dateStyle:'medium',timeStyle:'medium',timeZone:'UTC'}).format(new Date())+' UTC';
+const val=v=>Array.isArray(v)?val(v[0]):v&&typeof v==='object'?(v.value||v.title||v.name||''):v==null?'':String(v);
+function rowsOf(p){if(Array.isArray(p))return p;for(const k of ['data','results','items','products','member'])if(Array.isArray(p?.[k]))return p[k];if(p&&typeof p==='object')for(const v of Object.values(p))if(Array.isArray(v)&&v.length&&typeof v[0]==='object')return v;return [];}
+function render(p){const out=$('lm-pds-results');if(!out)return;out.replaceChildren();const rows=rowsOf(p);if(!rows.length){const e=document.createElement('p');e.textContent='No product records returned. Open the official archive to broaden the search.';out.append(e);return;}rows.slice(0,8).forEach((r,i)=>{const card=document.createElement('div');card.style.cssText='padding:7px 8px;margin-top:6px;border:1px solid #284c60;border-radius:8px;background:#071725';const h=document.createElement('b');h.style.cssText='display:block;color:#d8f4ff;font-size:10px';h.textContent=val(r.title||r['pds:Identification_Area.pds:title']||r.name)||'Mars science data product';const m=document.createElement('small');m.style.cssText='display:block;color:#9bb8c7;font-size:9px;overflow-wrap:anywhere;margin-top:3px';m.textContent=val(r.lidvid||r.lid||r.id)||('PDS archive record '+(i+1));card.append(h,m);out.append(card);});}
+async function refresh(){const b=$('lm-pds-refresh');if(b)b.disabled=true;status('lm-pds-state','● REQUESTING NASA PDS',false);try{const r=await fetch(PDS,{headers:{Accept:'application/json'},cache:'no-store',signal:AbortSignal.timeout(15000)});if(!r.ok)throw Error('NASA PDS HTTP '+r.status);render(await r.json());status('lm-pds-state','● ARCHIVE RESPONSE RECEIVED',true);$('lm-pds-updated').textContent='Last checked: '+stamp();}catch(err){status('lm-pds-state','○ PDS UNAVAILABLE · RETRY',false);const out=$('lm-pds-results');if(out){out.replaceChildren();const p=document.createElement('p');p.textContent='NASA PDS could not be reached from this browser/network. No sample data is shown as live.';out.append(p);}console.warn('LOCAL MARS PDS bridge:',err);}finally{if(b)b.disabled=false;}}
+$('lm-pds-refresh')?.addEventListener('click',refresh);$('lm-pds-link').href=PDS;$('lm-dsn-link').href=DSN;
+$('lm-dsn-toggle')?.addEventListener('click',()=>{const f=$('lm-dsn-frame'),open=f.style.display==='none';f.style.display=open?'block':'none';$('lm-dsn-toggle').textContent=open?'HIDE LIVE DSN VIEW':'SHOW LIVE DSN VIEW';if(open&&!f.dataset.loaded){f.src=DSN;f.dataset.loaded='true';}});
+refresh();window.setInterval(refresh,15*60*1000);
+})();
