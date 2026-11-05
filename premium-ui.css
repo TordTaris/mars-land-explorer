@@ -143,3 +143,88 @@ body.authenticated.plot-selected .right #saveParcelListing{
  .panel,.card,.modal,.directory,.detail{border-radius:14px!important}
  header{padding-top:max(10px,env(safe-area-inset-top))!important}
 }
+
+
+/* LOCAL MARS — LUXURY REFINEMENT · v4-69 */
+:root{
+  --lm-bg:#040812;
+  --lm-surface:#0a1525;
+  --lm-surface-2:#101f32;
+  --lm-border:rgba(214,185,132,.34);
+  --lm-gold:#d9b979;
+  --lm-gold-bright:#f2dfb8;
+  --lm-text:#f5f0e6;
+  --lm-muted:#aeb9c7;
+  --lm-cyan:#8fcbd0;
+  --lm-shadow:0 22px 58px rgba(0,0,0,.48);
+}
+html{
+  background:
+    radial-gradient(ellipse at 50% 38%,rgba(30,55,78,.25),transparent 58%),
+    #040812!important;
+}
+body{
+  background:
+    radial-gradient(ellipse at 50% 46%,rgba(18,38,59,.32),transparent 56%),
+    linear-gradient(180deg,#050b16 0%,#040812 72%,#030711 100%)!important;
+  color:var(--lm-text)!important;
+}
+header{
+  border:1px solid rgba(214,185,132,.48)!important;
+  border-radius:22px!important;
+  background:linear-gradient(112deg,rgba(5,13,25,.985),rgba(13,29,46,.96) 52%,rgba(5,12,23,.985))!important;
+  box-shadow:0 16px 42px rgba(0,0,0,.46),inset 0 1px rgba(255,255,255,.075)!important;
+}
+.brand{letter-spacing:.14em!important}
+.brand strong{font-weight:780!important;letter-spacing:.16em!important}
+.brand small{letter-spacing:.13em!important;color:#aebdca!important}
+.panel,.card,.hero,.directory,.detail,.modal,#gate{
+  background:linear-gradient(148deg,rgba(14,28,45,.96),rgba(6,14,26,.985))!important;
+  border-color:rgba(214,185,132,.36)!important;
+  box-shadow:0 18px 46px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.055)!important;
+}
+h1,h2,h3,.section-title{
+  color:var(--lm-gold-bright)!important;
+  letter-spacing:.075em!important;
+}
+p,.small,.hint,.note,.muted{color:var(--lm-muted)}
+button,.action,.lm-command-dock .lm-dock-item{
+  border-radius:12px!important;
+  letter-spacing:.035em!important;
+}
+button.primary,.action.primary,.lm-command-dock .lm-dock-item.active{
+  background:linear-gradient(128deg,#ecd39d 0%,#d1ad6f 48%,#a77c47 100%)!important;
+  border-color:#f1d9a8!important;
+  color:#17130d!important;
+  box-shadow:0 8px 24px rgba(181,139,75,.2),inset 0 1px rgba(255,255,255,.42)!important;
+}
+input,select,textarea{
+  border-color:rgba(214,185,132,.32)!important;
+  background:linear-gradient(145deg,#07111e,#0a1929)!important;
+}
+:focus-visible{
+  outline:2px solid #e4c78f!important;
+  outline-offset:3px;
+}
+.lm-command-dock{
+  border-color:rgba(214,185,132,.52)!important;
+  background:linear-gradient(105deg,rgba(4,11,21,.99),rgba(13,27,43,.98) 52%,rgba(4,11,21,.99))!important;
+  box-shadow:0 18px 48px rgba(0,0,0,.62),inset 0 1px rgba(255,255,255,.08)!important;
+}
+.lm-command-dock .lm-dock-item{
+  background:linear-gradient(155deg,rgba(17,35,54,.92),rgba(7,17,30,.98))!important;
+}
+.lm-command-dock .lm-dock-item.active{
+  box-shadow:0 7px 22px rgba(185,145,83,.2),inset 0 1px rgba(255,255,255,.35)!important;
+}
+.status,.resource-chip{
+  border-color:rgba(214,185,132,.4)!important;
+  background:linear-gradient(145deg,rgba(18,36,54,.96),rgba(7,17,29,.98))!important;
+}
+a{color:#a9d9dc}
+a:hover{color:#f0d8a8}
+@media(max-width:760px){
+  header{border-radius:18px!important}
+  .brand{letter-spacing:.1em!important}
+  .panel,.card,.hero,.directory,.detail{box-shadow:0 14px 34px rgba(0,0,0,.38),inset 0 1px rgba(255,255,255,.045)!important}
+}

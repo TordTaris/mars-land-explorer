@@ -71,7 +71,7 @@ jobs:
           assert manifest.get("display") == "standalone", "PWA standalone display missing"
           assert any(icon.get("sizes") == "192x192" for icon in manifest.get("icons", [])), "192px PWA icon declaration missing"
           assert any(icon.get("sizes") == "512x512" for icon in manifest.get("icons", [])), "512px PWA icon declaration missing"
-          assert 'const CACHE = "local-mars-v4-68"' in sw, "service worker cache version not bumped"
+          assert 'const CACHE = "local-mars-v4-69"' in sw, "service worker cache version not bumped"
           assert 'id="local-mars-mobile-header-and-aegis-scale-v462"' in html, "mobile header and AEGIS layout fix missing"
           assert "colonyRoot.scale.setScalar(.30)" in html, "planetary AEGIS scale missing"
           assert "relaySatellite.scale.setScalar(.18)" in html, "planetary satellite scale missing"
