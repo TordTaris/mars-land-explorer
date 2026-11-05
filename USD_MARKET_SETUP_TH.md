@@ -107,3 +107,14 @@ Migration 019 เป็น migration เพิ่มเติมหลัง 018
 - ห้ามเปิด Live mode จนกว่าจะทดสอบ success, cancel, expiry, duplicate event, amount/currency mismatch, concurrent purchase และ payout reconciliation ผ่าน
 - `mars_owner_wallet_entries_usd.net_amount_cents` ยังไม่ใช่ยอดสุทธิหลังหักค่าธรรมเนียม Stripe; รายการขายเริ่มเป็น pending และต้องกระทบยอดกับ Stripe balance transactions ก่อนบันทึกยอดถอน
 - การชำระเงินที่ถูกตั้ง `refund_required=true` ต้องตรวจสอบและคืนเงินใน Stripe Dashboard ด้วยตนเองก่อนปิดเคส
+
+
+## 11) Deploy Edge Functions จาก GitHub Actions
+
+เพิ่ม workflow `.github/workflows/deploy-supabase-functions.yml` สำหรับกด deploy ด้วยตนเองหลัง merge PR เข้าสู่ `main`:
+- เพิ่ม GitHub Repository → Settings → Secrets and variables → Actions → New repository secret
+- ตั้ง `SUPABASE_ACCESS_TOKEN` เป็น Supabase Personal Access Token และ `SUPABASE_PROJECT_REF` เป็น Project Reference ของโปรเจกต์เดียวกับที่เว็บใช้อยู่
+- ตั้ง Edge Function secrets ใน Supabase Dashboard → Edge Functions → Secrets ให้ครบตามหัวข้อ 8 ก่อน deploy
+- เปิด GitHub → Actions → Deploy LOCAL MARS Supabase Edge Functions → Run workflow (เลือก `main`)
+- Workflow จะ deploy เฉพาะ Edge Functions ไม่ได้เปลี่ยนข้อมูลฐานข้อมูลและไม่รัน migrations ให้อัตโนมัติ
+- ห้ามใส่ Service Role Key, Stripe Secret Key หรือ Webhook Secret ลงใน source code, commit หรือข้อความแชต
