@@ -40,3 +40,14 @@ PromptPay รองรับ THB ไม่ใช่ USD ดังนั้นห
 ## 5) อัตราแลกเปลี่ยนที่อัปเดตอัตโนมัติ
 Migration นี้บันทึกอัตราอ้างอิงตามวันที่เท่านั้น ยังไม่มีงาน scheduled updater
 ก่อนเปิดใช้งานจริง ต้องเพิ่ม Edge Function ฝั่งเซิร์ฟเวอร์ที่ดึงอัตราจากแหล่งเชื่อถือได้, บันทึกเวลา/แหล่งที่มา, จัดการกรณี API ล่ม และกำหนดอายุข้อมูลสูงสุด ห้ามดึงอัตราจาก browser หรือ hardcode เป็นราคาปัจจุบัน
+
+## 6) อัปเดตอัตรา USD/THB อัตโนมัติ (ต้องตั้งค่าก่อนใช้งาน)
+มี Edge Function `refresh-fx-rates` และ GitHub Actions workflow `.github/workflows/refresh-fx.yml` แล้ว
+- ใช้ ExchangeRate-API keyed endpoint ซึ่งเป็นอัตราอ้างอิงรายวัน ไม่ใช่ราคาซื้อขายแบบ tick-by-tick
+- ต้องตรวจสอบแผน/สิทธิ์การใช้งานและการเผยแพร่ข้อมูลอัตราในแอปสาธารณะกับผู้ให้บริการก่อนเปิดใช้
+- ตั้ง Supabase Edge Function Secrets: `EXCHANGERATE_API_KEY`, `FX_REFRESH_SECRET`
+- ตั้ง GitHub repository Actions Secret ชื่อ `FX_REFRESH_SECRET` ให้เป็นค่าเดียวกัน
+- Deploy: `supabase functions deploy refresh-fx-rates --no-verify-jwt --project-ref YOUR_PROJECT_REF`
+- หลัง merge workflow เข้า default branch แล้ว Actions จะเรียกทุกวัน 02:17 UTC และสามารถกด Run workflow เองได้
+- หาก secret/API key ไม่ครบ workflow จะ fail อย่างชัดเจน ไม่สร้างอัตราปลอม
+- ระบบจะเก็บเวลาอัปเดตและเวลาที่ provider คาดว่าจะอัปเดตครั้งถัดไป พร้อมปฏิเสธข้อมูลเก่ากว่า 72 ชั่วโมง
