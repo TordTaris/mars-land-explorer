@@ -1,41 +1,52 @@
-# MARS LAND 2.0
+# LOCAL MARS 4.0 — Planetary Civilization Network
 
-เว็บจำลองดาวอังคารแบบ 3D สำหรับเปิดผ่านเบราว์เซอร์บนคอมพิวเตอร์และ Android
+LOCAL MARS is a browser-based planetary settlement simulation published as a static site through GitHub Pages.
 
-- เว็บไซต์ที่ตั้งค่าไว้: https://tordtaris.github.io/mars-land-explorer/
+- Live site: https://tordtaris.github.io/mars-land-explorer/
 - Repository: https://github.com/TordTaris/mars-land-explorer
+- Production branch: `main`
+- Release line: `4.0`
 
-## ฐานใต้ดิน 24 ชั้น (Underground 24)\n\nเปิดโมดูลจำลองได้ที่ https://tordtaris.github.io/mars-land-explorer/underground.html หรือกดปุ่ม **ฐาน 24 ชั้น** จากหน้า MARS LAND\n\n- ผังฐานแนวตัดขวาง B01–B24 เลือกแต่ละชั้นเพื่อดูหน้าที่และรายละเอียด\n- หน้าติดตามทรัพยากรจำลอง: ออกซิเจน น้ำ พลังงาน และอาหาร\n- สวิตช์ทดลองเปิด/ปิดระบบหมุนเวียนอากาศ กำจัด CO₂ รีไซเคิลน้ำ ผลิตออกซิเจน อาหาร และไฟฟ้าสำรอง\n- เดินเวลาจำลองทีละวันเพื่อสังเกตผลกระทบของระบบที่หยุดทำงาน\n\n> โมดูลนี้เป็นต้นแบบแนวคิดเพื่อการเรียนรู้ ไม่ใช่แบบวิศวกรรมที่ผ่านการรับรอง ค่าทรัพยากรและระยะพึ่งพาตนเองเป็นค่าตัวอย่าง ไม่ใช้ยืนยันความปลอดภัยหรือความสามารถในการอยู่อาศัยจริง\n\n## เผยแพร่เว็บไซต์ฟรี
+## Release 4.0 deployment hardening
 
-โปรเจกต์นี้เป็น static site ใช้ GitHub Pages และ GitHub Actions โดยไม่ต้องใช้ Lovable, ไม่ต้องมี build server และไม่ต้องใส่เครดิตบริการเสียเงิน
+This release corrects the GitHub Pages artifact so it includes the complete application shell, not only the three primary HTML pages. The deployment now validates and publishes:
 
-เมื่อ push ไปที่ branch `main` workflow `.github/workflows/deploy-pages.yml` จะ:
-1. ตรวจไฟล์ HTML, manifest, ไอคอน, เส้นทาง PWA และ import ของ Three.js
-2. ตรวจ syntax ของ JavaScript ด้วย Node.js
-3. คัดลอกไฟล์เว็บไปยังโฟลเดอร์ `_site`
-4. เผยแพร่ด้วย GitHub Pages
+- Planet Explorer (`index.html`)
+- City Builder (`city.html`)
+- Underground Base 24 (`underground.html`)
+- M-003 private facility page (`m003-base.html`)
+- Civilization page (`civilization.html`)
+- Shared online client (`world-server.js`)
+- Thai and English dictionaries (`locales/th.json`, `locales/en.json`) and language engine (`i18n.js`)
+- PWA manifest, icon and versioned service worker
 
-## ใช้งานบน Android
+The workflow runs asset checks and JavaScript syntax checks before publishing. A failed validation stops deployment rather than publishing an incomplete artifact.
 
-1. เปิดเว็บไซต์ด้วย Chrome
-2. อนุญาตให้โหลด JavaScript และเชื่อมต่ออินเทอร์เน็ตเพื่อโหลด Three.js และพื้นผิวดาวจาก CDN
-3. ลากเพื่อหมุนดาว ใช้สองนิ้วเพื่อซูม และแตะจุดแปลงเพื่อดูรายละเอียด
-4. หาก Chrome แสดงคำสั่งติดตั้ง สามารถเลือกเมนู **เพิ่มลงในหน้าจอหลัก** ได้
+## Systems and currency boundaries
 
-ไฟล์ manifest, service worker และไอคอนใช้ relative paths เพื่อรองรับ URL แบบ GitHub Pages project site ที่มีส่วนต่อท้าย `/mars-land-explorer/`
+- THB is a reference/display currency for the separate PromptPay checkout flow. The current configured display multiplier is 1.8x; it is not an exchange rate or a promise of monetary value.
+- MLC is a separate closed-loop simulated in-app currency for parcel reservations, purchases and member-to-member marketplace activity.
+- MLC is not THB, ETH, cryptocurrency, cash, a deposit, or a redeemable financial asset.
+- Parcel ownership and construction are simulation records, not legal ownership of land on Mars.
+- M-003 and the 24-level underground facility are fictional simulation features.
 
-## ขอบเขตของโหมดทดลอง
+## GitHub Pages deployment
 
-- โปรไฟล์ การจองแปลง และอาคารเก็บไว้ใน `localStorage` ของอุปกรณ์/เบราว์เซอร์เครื่องนั้น
-- ข้อมูลไม่ซิงก์ระหว่างสมาชิกหรืออุปกรณ์ และการจองไม่ใช่กรรมสิทธิ์ในที่ดินจริง
-- ไม่มีการซื้อขาย การชำระเงินจริง หรือระบบสมาชิกออนไลน์ที่เปิดใช้งาน
-- ไฟล์ `world-server.js` และ SQL ในโฟลเดอร์ `supabase/` เป็นส่วนเตรียมระบบเท่านั้น ยังไม่ได้เชื่อมเข้าหน้าเว็บที่เผยแพร่
-- Service worker เก็บเฉพาะโครงหน้าเว็บและไฟล์พื้นฐานไว้ใช้งานซ้ำ; ไลบรารี Three.js และ OrbitControls มาจาก jsDelivr CDN จึงยังต้องใช้อินเทอร์เน็ตเพื่อเริ่มฉาก 3D; พื้นผิวดาวสร้างภายในเครื่อง
-- เว็บไซต์นี้เป็นเว็บแอป ไม่ใช่ไฟล์ APK สำหรับติดตั้งแบบ native
+Every push to `main`, and manual workflow dispatch, runs:
 
-## ตรวจสอบสถานะเผยแพร่
+1. Required route, localization, PWA and asset validation.
+2. JavaScript syntax checks for the main explorer, city builder, underground simulator, language engine, world server and service worker.
+3. Complete static artifact assembly, including localization files and the M-003/civilization pages.
+4. Deployment to GitHub Pages.
 
-ดูผลล่าสุดได้ที่แท็บ Actions:
-https://github.com/TordTaris/mars-land-explorer/actions
+Check [GitHub Actions](https://github.com/TordTaris/mars-land-explorer/actions). The release is live only after **Deploy LOCAL MARS to GitHub Pages** finishes with a successful status.
 
-ต้องเห็น workflow **Deploy Mars Local to GitHub Pages** เป็น `success` ก่อนถือว่าการเผยแพร่ของ commit นั้นเสร็จสมบูรณ์
+## Online services — setup still required
+
+The static GitHub Pages deployment does not itself run PostgreSQL or enable Supabase. Shared accounts, realtime world sync, wallet ledger and MLC marketplace operations require the Supabase schema/migrations and correct project configuration to be applied in the Supabase project.
+
+See [WORLD_SERVER_SETUP_TH.md](./WORLD_SERVER_SETUP_TH.md). Never put a Supabase `service_role` key or database password in browser code.
+
+## Underground Base 24 safety note
+
+The underground base is a fictional educational simulation. Resource readings and life-support controls are illustrative only and are not engineering specifications or evidence of real-world habitability.
