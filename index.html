@@ -472,7 +472,44 @@ body.authenticated #scene{background:radial-gradient(ellipse at 50% 48%,#25364b 
 #lmSystemHubFloat small{display:block;margin-top:3px;color:#a7c2d3;font-size:7px;letter-spacing:1.1px;font-weight:700}
 #lmSystemHubFloat:active{transform:scale(.97)}
 @media(max-width:600px){#lmSystemHubFloat{top:calc(env(safe-area-inset-top,0px) + 62px);right:9px;min-height:40px;padding:7px 10px;font-size:9px}#lmSystemHubFloat small{font-size:6px}}
-</style></head>
+</style><style id="local-mars-layout-refinement">
+/* Keep the system launcher clear of the live network strip and side panels. */
+#lmSystemHubFloat{
+ position:fixed;z-index:10020;top:calc(env(safe-area-inset-top,0px) + 76px);
+ left:50%;right:auto;transform:translateX(-50%);display:flex;align-items:center;gap:9px;
+ min-height:42px;padding:7px 13px;border:1px solid #e1bd79;border-radius:13px;
+ background:linear-gradient(135deg,#273b50f5,#0a1a2bf5);color:#fff0cf;
+ box-shadow:0 8px 26px #0009,0 0 18px #e2bd7933;font:800 10px/1.2 system-ui,sans-serif;
+ letter-spacing:1px;cursor:pointer;backdrop-filter:blur(12px);white-space:nowrap
+}
+#lmSystemHubFloat .hub-icon{font-size:17px;color:#80e5ee}
+#lmSystemHubFloat small{display:block;margin-top:3px;color:#a7c2d3;font-size:7px;letter-spacing:1.1px;font-weight:700}
+#lmSystemHubFloat:active{transform:translateX(-50%) scale(.97)}
+header{gap:12px;min-width:0}
+header .brand{min-width:0;flex:0 1 auto}
+header .status{min-width:0;max-width:min(48vw,360px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:0 1 auto}
+.panel.right{width:min(238px,44vw);max-height:calc(100dvh - 170px);overscroll-behavior:contain}
+.panel.right .small,.panel.right .metric b{overflow-wrap:anywhere}
+@media(max-width:760px){
+ header{gap:7px;padding:8px 10px}
+ header .status{max-width:43vw;font-size:7px;padding:4px 6px;letter-spacing:.4px}
+ #lmSystemHubFloat{top:calc(env(safe-area-inset-top,0px) + 70px);min-height:38px;padding:6px 10px;font-size:9px}
+ #lmSystemHubFloat small{font-size:6px}
+ .panel.left{top:120px;bottom:76px;width:calc(44vw - 8px);max-height:none;overflow:auto}
+ .panel.right{top:120px;right:8px;width:calc(44vw - 8px);max-height:calc(100dvh - 205px);padding:8px;overflow:auto}
+ .panel.right h3,.panel.left h3{font-size:10px;letter-spacing:.6px}
+ .panel.right .small,.panel.left .small{font-size:9px;line-height:1.35}
+ .panel.right button,.panel.left button{font-size:9px;padding:7px 6px}
+}
+@media(max-width:380px){
+ header .brand{font-size:14px}
+ header .status{max-width:39vw;font-size:6px}
+ #lmSystemHubFloat{top:calc(env(safe-area-inset-top,0px) + 66px)}
+ .panel.left,.panel.right{width:calc(43vw - 7px);padding:7px}
+}
+@media(prefers-reduced-motion:reduce){#lmSystemHubFloat:active{transform:translateX(-50%)}}
+</style>
+</head>
 <body>\n<div id="lmStartup" role="status" aria-live="polite"><div id="lmStartupCard"><div id="lmStartupMark">LOCAL <b>MARS</b></div><div id="lmStartupText">INITIALIZING PLANETARY SYSTEMS…</div><div id="lmStartupTrack"></div></div></div>
 <script>
 (()=> {
