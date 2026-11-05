@@ -530,6 +530,55 @@ body.lm-star-view-mode #lmSystemHubFloat{display:flex!important}
 }
 @media(max-width:360px){.lm-command-dock{gap:2px!important;padding:4px!important}.lm-command-dock>.lm-dock-item{min-height:50px!important;padding:5px 1px!important}.lm-command-dock .lm-dock-icon{font-size:16px!important}.lm-command-dock .lm-dock-label{font-size:7px!important}}
 </style>
+
+<style id="local-mars-mobile-layout-v451">
+/* Mobile HUD: keep the header, orbital status, parcel card and dock in separate lanes. */
+#lmSystemHubFloat{display:none!important}
+#lm-satellite-link{
+ top:calc(env(safe-area-inset-top,0px) + 58px)!important;
+ right:10px!important;left:auto!important;
+ width:min(270px,calc(100vw - 20px))!important;
+ max-height:30dvh!important;overflow:auto!important;
+ padding:9px 11px!important;border-radius:12px!important;
+ z-index:18!important;
+}
+body.authenticated.plot-selected .right{
+ left:14px!important;right:14px!important;bottom:calc(102px + env(safe-area-inset-bottom,0px))!important;
+ width:auto!important;max-height:min(34dvh,390px)!important;
+ padding:10px!important;overflow:auto!important;
+ border-radius:16px!important;z-index:32!important;
+}
+body.authenticated.plot-selected .right>#plotActions{margin-top:4px!important}
+body.authenticated.plot-selected .right #plotActions .plot{
+ margin:5px 0!important;padding:10px!important;border-radius:12px!important;
+}
+body.authenticated.plot-selected .right #plotName{font-size:clamp(19px,5vw,25px)!important}
+body.authenticated.plot-selected .right #plotMlcPrice{font-size:clamp(21px,5.5vw,28px)!important}
+body.authenticated.plot-selected .right #plotUsdPrice{font-size:clamp(19px,5vw,25px)!important}
+body.authenticated.plot-selected .right #buyMlc{
+ min-height:48px!important;margin-top:7px!important;padding:10px!important;
+ font-size:clamp(12px,3.3vw,15px)!important;border-radius:12px!important;
+}
+body.authenticated .lm-command-dock{
+ bottom:max(8px,env(safe-area-inset-bottom))!important;
+}
+@media(max-width:650px){
+ #lm-satellite-link{top:calc(env(safe-area-inset-top,0px) + 54px)!important;right:8px!important;width:min(250px,calc(100vw - 16px))!important;max-height:27dvh!important;padding:8px 9px!important}
+ #lm-satellite-link>div{font-size:9px!important}
+ #lm-satellite-link button{min-height:38px!important;margin-top:6px!important}
+ body.authenticated.plot-selected .right{left:10px!important;right:10px!important;bottom:calc(91px + env(safe-area-inset-bottom,0px))!important;max-height:32dvh!important;padding:9px!important}
+ body.authenticated.plot-selected .right #plotActions .plot{padding:8px!important}
+ body.authenticated.plot-selected .right #plotMlcStatus,
+ body.authenticated.plot-selected .right #plotMlcBalance,
+ body.authenticated.plot-selected .right #plotUsdNote{font-size:10px!important;line-height:1.35!important}
+ body.authenticated.plot-selected .right #buyMlc{min-height:44px!important}
+ body.authenticated .lm-command-dock{gap:4px!important;padding:6px!important}
+}
+@media(max-height:700px){
+ body.authenticated.plot-selected .right{max-height:29dvh!important;bottom:calc(88px + env(safe-area-inset-bottom,0px))!important}
+ #lm-satellite-link{max-height:24dvh!important}
+}
+</style>
 </head>
 <body>\n<div id="lmStartup" role="status" aria-live="polite"><div id="lmStartupCard"><div id="lmStartupMark">LOCAL <b>MARS</b></div><div id="lmStartupText">INITIALIZING PLANETARY SYSTEMS…</div><div id="lmStartupTrack"></div></div></div>
 <script>
