@@ -833,7 +833,7 @@ header .status{flex:0 1 40%!important;width:auto!important;min-width:0!important
 <div class="metric"><span>Planet</span><b>Mars / Sol 001</b></div>
 <div class="metric"><span>Selected Plot</span><b id="selected">No selection</b></div>
 <div class="metric"><span>Coordinates</span><b id="coords">—</b></div>
-<div class="metric"><span>Plots</span><b>12 parcels</b></div>
+<div class="metric"><span>Plots</span><b>19 parcels</b></div>
 <div class="small">Select a mission to begin your journey across Mars.</div>
 <button id="navExplore">🌐　Explore Mars</button>
 <button id="navNewExplorer" class="primary">🚀　NEW EXPLORER ZONE</button>
@@ -1169,7 +1169,9 @@ const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamp
 const parcels=[
 ['M-001',-160,-55,120],['M-002',-93,-26,157],['M-003',-26,3,9999999],['M-004',41,32,231],
 ['M-005',108,-49,268],['M-006',175,-20,305],['M-007',-118,9,342],['M-008',-51,38,379],
-['M-009',16,-43,156],['M-010',83,-14,193],['M-011',150,15,230],['M-012',-143,44,267]
+['M-009',16,-43,156],['M-010',83,-14,193],['M-011',150,15,230],['M-012',-143,44,267],
+['M-013',-88,55,420],['M-014',-34,-68,450],['M-015',28,62,480],['M-016',78,5,510],
+['M-017',138,-58,540],['M-018',-174,-2,570],['M-019',5,24,600]
 ] .map(p=>({id:p[0],lon:p[1],lat:p[2],price:Math.round(p[3]*1.8),owner:null,building:null}));
 const markerMat=(color)=>new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:.3});
 const markers=[];
