@@ -43,10 +43,16 @@ jobs:
           deno-version: v2.x
       - name: Type-check FX Edge Function
         run: deno check supabase/functions/refresh-fx-rates/index.ts
+      - name: Type-check USD Checkout and Stripe webhook functions
+        run: |
+          deno check supabase/functions/create-usd-checkout/index.ts
+          deno check supabase/functions/stripe-webhook/index.ts
       - name: Check migration and FX function files exist
         run: |
           test -s supabase/migrations/016_usd_market_standard.sql
           test -s supabase/migrations/017_fx_provider_freshness.sql
+          test -s supabase/migrations/018_usd_parcel_checkout.sql
+          test -s supabase/functions/create-usd-checkout/index.ts
           test -s supabase/functions/refresh-fx-rates/index.ts
           grep -q "sale_price_usd" world-server.js
           grep -q "USD Checkout" index.html
