@@ -59,7 +59,6 @@ Deno.serve(async (req) => {
     }
     const form = new URLSearchParams();
     form.set("mode", "payment");
-    form.set("payment_method_types[0]", "card");
     form.set("line_items[0][quantity]", "1");
     form.set("line_items[0][price_data][currency]", "usd");
     form.set("line_items[0][price_data][unit_amount]", String(order.amount_cents));
