@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#091522">
+<meta name="description" content="Install LOCAL MARS on Android, iPhone, iPad or desktop as a Progressive Web App.">
+<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml">
+<title>Get the LOCAL MARS App</title>
+<style>
+:root{color-scheme:dark;--bg:#07111d;--line:#b99a636e;--gold:#e4bd70;--muted:#a8b8c9;--text:#f7f0e4}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0,#26384e 0,#0b1727 48%,#050a12 100%);color:var(--text);font:15px system-ui,sans-serif}
+a,button{font:inherit}a{color:inherit}.wrap{width:min(920px,calc(100% - 28px));margin:auto;padding:26px 0 48px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:38px}.brand{font-weight:900;letter-spacing:2px;font-size:20px}.brand b{color:var(--gold)}.back{color:#e8d4a8;text-decoration:none;border:1px solid var(--line);padding:9px 13px;border-radius:10px}
+.hero{text-align:center;padding:28px 10px 34px}.orb{width:94px;height:94px;margin:0 auto 18px;border-radius:50%;display:grid;place-items:center;font-size:48px;background:radial-gradient(circle at 35% 30%,#f6d49b,#bd724d 46%,#392a2d 75%);box-shadow:0 0 55px #d59a5a44}.eyebrow{color:var(--gold);font-size:11px;font-weight:800;letter-spacing:3px}.hero h1{font-size:clamp(30px,6vw,52px);margin:10px 0}.hero p{max-width:620px;margin:0 auto;color:var(--muted);line-height:1.7}
+.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:24px}button,.primary{border:1px solid var(--line);border-radius:12px;padding:13px 20px;background:#14283d;color:var(--text);font-weight:800;text-decoration:none;cursor:pointer}.primary{background:linear-gradient(120deg,#e4bd70,#a87c3d);color:#17110a;border-color:#f0d69d}.status{min-height:22px;margin-top:12px;color:#a8d9c0;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:22px}.card{background:linear-gradient(145deg,#122940ee,#0a1727ee);border:1px solid var(--line);border-radius:17px;padding:20px;min-height:190px}.card .emoji{font-size:28px}.card h2{font-size:17px;margin:10px 0 7px}.card p,.card li{color:var(--muted);font-size:13px;line-height:1.65}.card ol{padding-left:19px}.note{margin-top:18px;padding:15px 17px;border:1px solid #7e9bb144;border-radius:13px;color:var(--muted);font-size:12px;line-height:1.7}.note strong{color:#e8d4a8}footer{text-align:center;color:#8194a9;font-size:11px;margin-top:28px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.card{min-height:0}.hero{padding-top:14px}header{margin-bottom:20px}}
+</style>
+</head>
+<body><div class="wrap">
+<header><div class="brand">LOCAL <b>MARS</b></div><a class="back" href="./index.html">← Open App</a></header>
+<main>
+<section class="hero"><div class="orb" aria-hidden="true">🔴</div><div class="eyebrow">OFFICIAL APP INSTALLATION</div>
+<h1>Take LOCAL MARS with you.</h1>
+<p>Install the LOCAL MARS web app on your device for a full-screen experience and access to previously cached pages. No app-store account is required.</p>
+<div class="actions"><button class="primary" id="installButton" type="button">⬇ Install LOCAL MARS</button><a class="primary" href="./index.html">Launch Web App ↗</a></div>
+<div class="status" id="installStatus" role="status" aria-live="polite"></div></section>
+<section class="grid" aria-label="Installation instructions">
+<article class="card"><div class="emoji">🤖</div><h2>Android</h2><ol><li>Open this page in Chrome.</li><li>Tap <b>Install LOCAL MARS</b>. If unavailable, open the ⋮ menu.</li><li>Choose <b>Install app</b> or <b>Add to Home screen</b>.</li><li>Confirm. Find LOCAL MARS on your home screen.</li></ol></article>
+<article class="card"><div class="emoji">🍎</div><h2>iPhone &amp; iPad</h2><ol><li>Open this page in Safari.</li><li>Tap the Share button.</li><li>Choose <b>Add to Home Screen</b>.</li><li>Tap Add to finish installation.</li></ol></article>
+<article class="card"><div class="emoji">💻</div><h2>Windows, Mac &amp; Chromebook</h2><ol><li>Open this page in Chrome or Edge.</li><li>Use the install icon in the address bar, or open the browser menu.</li><li>Select <b>Install LOCAL MARS</b> and confirm.</li></ol></article>
+</section>
+<div class="note"><strong>About this download:</strong> LOCAL MARS is currently distributed as a Progressive Web App (PWA) through this official website. This page does not provide a native Android APK, iOS IPA, or Play Store/App Store listing. Installation options depend on your device and browser. Some features require an internet connection; offline access is limited to pages and resources already cached on your device.</div>
+</main><footer>LOCAL MARS — Living Civilization · Web App Distribution</footer></div>
+<script>
+(()=>{let promptEvent=null;const button=document.getElementById('installButton'),status=document.getElementById('installStatus');const installed=()=>window.matchMedia('(display-mode:standalone)').matches||navigator.standalone===true;const say=m=>status.textContent=m;
+if(installed()){button.textContent='✓ LOCAL MARS Installed';button.disabled=true;say('The app is already running in installed mode.');}
+window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();promptEvent=event;button.textContent='⬇ Install Now';say('Your browser supports direct installation.');});
+button.addEventListener('click',async()=>{if(promptEvent){promptEvent.prompt();const result=await promptEvent.userChoice;say(result?.outcome==='accepted'?'Installation accepted. Follow your device prompts.':'Installation was not completed. Use the device instructions below.');promptEvent=null;return;}say(/iPad|iPhone|iPod/.test(navigator.userAgent)?'In Safari, tap Share, then Add to Home Screen.':'Open your browser menu and choose Install app or Add to Home screen, if available.');});
+window.addEventListener('appinstalled',()=>{button.textContent='✓ LOCAL MARS Installed';button.disabled=true;say('LOCAL MARS was installed successfully.');});
+if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>{}));
+})();
+</script></body></html>
