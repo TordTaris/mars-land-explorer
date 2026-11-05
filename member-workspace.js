@@ -1,0 +1,27 @@
+/* LOCAL MARS member workspace — reads the shared authenticated database only. */
+(()=>{'use strict';
+const $=id=>document.getElementById(id),overlay=$('lmWorkspaceOverlay'),open=$('lmWorkspaceOpen'),close=$('lmWorkspaceClose'),refreshButton=$('lmWorkspaceRefresh');
+if(!overlay||!open)return;
+let db=null,user=null,channel=null,loading=false;
+const tables=['mars_cities','mars_city_buildings','world_structures','mars_city_national_flags','mars_underground_cells','world_claims'];
+const labels={structure_built:'Structure built',parcel_claimed:'Parcel claimed',city_created:'City created',building_placed:'Building placed'};
+const thaiLabels={structure_built:'สร้างสิ่งปลูกสร้าง',parcel_claimed:'ครอบครองพื้นที่',city_created:'สร้างเมือง',building_placed:'วางสิ่งปลูกสร้าง'};
+const lang=()=>window.LOCAL_MARS_I18N?.language||document.documentElement.lang||'en';
+function localize(){const th=lang()==='th';overlay.querySelectorAll('[data-lm-en]').forEach(el=>{el.textContent=th?el.dataset.lmTh:el.dataset.lmEn;});}
+function state(){try{return window.MarsWorldServer?.getState?.()||null}catch(_){return null}}
+async function syncState(){const s=state();if(s){db=s.db||db;user=s.user||null;}const identity=$('lmWorkspaceIdentity');if(identity)identity.textContent=user?(user.email||user.id):(lang()==='th'?'ยังไม่ได้เข้าสู่ระบบสมาชิก':'Not signed in');}
+function setStatus(message,ok=false){const el=$('lmWorkspaceStatus');if(el){el.textContent=message;el.style.color=ok?'#9ce5bd':'#b9d8e8';}}
+function setCount(id,value){const el=$(id);if(el)el.textContent=String(value??0);}
+async function count(table,column='owner_id'){const result=await db.from(table).select(column,{count:'exact',head:true}).eq(column,user.id);if(result.error)throw result.error;return result.count||0;}
+function renderEvents(rows){const host=$('lmWorkspaceActivity');if(!host)return;host.replaceChildren();if(!rows?.length){host.textContent=lang()==='th'?'ยังไม่มีกิจกรรมล่าสุด':'No recent activity yet.';return;}for(const row of rows){const line=document.createElement('div');line.className='lm-ws-event';const name=document.createElement('span');name.textContent=((lang()==='th'?thaiLabels:labels)[row.event_type]||row.event_type||'Activity')+(row.parcel_id?' · '+row.parcel_id:'');const time=document.createElement('time');time.textContent=row.created_at?new Intl.DateTimeFormat(lang()==='th'?'th-TH':'en-US',{dateStyle:'short',timeStyle:'short'}).format(new Date(row.created_at)):'';line.append(name,time);host.append(line);}}
+async function load(){if(!overlay.classList.contains('open')||loading)return;await syncState();if(!db){setStatus(lang()==='th'?'กำลังเชื่อมต่อฐานข้อมูล…':'Connecting to shared database…');return;}if(!user){['lmWsCities','lmWsBuildings','lmWsStructures','lmWsFlags','lmWsUnderground','lmWsParcels'].forEach(id=>setCount(id,'—'));setStatus(lang()==='th'?'เข้าสู่ระบบเพื่อดูและสร้างผลงานที่บันทึกออนไลน์':'Sign in to view and create your saved online work.');renderEvents([]);return;}loading=true;setStatus(lang()==='th'?'กำลังซิงก์ข้อมูลสมาชิก…':'Syncing member data…');try{const results=await Promise.all([count('mars_cities'),count('mars_city_buildings'),count('world_structures'),count('mars_city_national_flags'),count('mars_underground_cells'),count('world_claims')]);['lmWsCities','lmWsBuildings','lmWsStructures','lmWsFlags','lmWsUnderground','lmWsParcels'].forEach((id,i)=>setCount(id,results[i]));const events=await db.from('world_events').select('event_type,parcel_id,created_at').order('created_at',{ascending:false}).limit(6);if(events.error)throw events.error;renderEvents(events.data||[]);setStatus((lang()==='th'?'ซิงก์ออนไลน์แล้ว · อัปเดต ':'ONLINE · Updated ')+new Intl.DateTimeFormat(lang()==='th'?'th-TH':'en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'}).format(new Date()),true);}catch(error){console.error('LOCAL MARS workspace sync:',error);setStatus((lang()==='th'?'ซิงก์ไม่สำเร็จ: ':'Sync failed: ')+(error.message||'Database unavailable'));}finally{loading=false;}}
+function subscribe(){if(!db||channel)return;channel=db.channel('local-mars-member-workspace').on('postgres_changes',{event:'*',schema:'public',table:'world_events'},()=>load());for(const table of tables)channel.on('postgres_changes',{event:'*',schema:'public',table},()=>load());channel.subscribe(status=>{if(status==='SUBSCRIBED'&&overlay.classList.contains('open'))load();});}
+function show(){overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';localize();syncState().then(load);}
+function hide(){overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true');document.body.style.overflow='';open.focus();}
+open.addEventListener('click',show);close?.addEventListener('click',hide);refreshButton?.addEventListener('click',load);overlay.addEventListener('click',e=>{if(e.target===overlay)hide();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('open'))hide();});
+document.addEventListener('mars-auth-state',e=>{user=e.detail?.user||null;if(overlay.classList.contains('open'))load();});
+document.addEventListener('mars-world-updated',()=>{if(overlay.classList.contains('open'))load();});
+document.addEventListener('local-mars-language-change',()=>{localize();if(overlay.classList.contains('open'))load();});
+document.addEventListener('DOMContentLoaded',()=>{syncState().then(()=>{if(db)subscribe();});});
+const ready=setInterval(()=>{const s=state();if(s?.db){clearInterval(ready);db=s.db;user=s.user||null;subscribe();}},300);
+})();
