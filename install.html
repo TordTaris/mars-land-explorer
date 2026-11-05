@@ -2,42 +2,51 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#091522">
-<meta name="description" content="Install LOCAL MARS on Android, iPhone, iPad or desktop as a Progressive Web App.">
+<meta name="theme-color" content="#080f1c">
+<meta name="description" content="Install LOCAL MARS on Android or add the web app to your device.">
 <link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml">
-<title>Get the LOCAL MARS App</title>
+<title>LOCAL MARS — Installation Center</title>
 <style>
-:root{color-scheme:dark;--bg:#07111d;--line:#b99a636e;--gold:#e4bd70;--muted:#a8b8c9;--text:#f7f0e4}
-*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0,#26384e 0,#0b1727 48%,#050a12 100%);color:var(--text);font:15px system-ui,sans-serif}
-a,button{font:inherit}a{color:inherit}.wrap{width:min(920px,calc(100% - 28px));margin:auto;padding:26px 0 48px}
-header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:38px}.brand{font-weight:900;letter-spacing:2px;font-size:20px}.brand b{color:var(--gold)}.back{color:#e8d4a8;text-decoration:none;border:1px solid var(--line);padding:9px 13px;border-radius:10px}
-.hero{text-align:center;padding:28px 10px 34px}.orb{width:94px;height:94px;margin:0 auto 18px;border-radius:50%;display:grid;place-items:center;font-size:48px;background:radial-gradient(circle at 35% 30%,#f6d49b,#bd724d 46%,#392a2d 75%);box-shadow:0 0 55px #d59a5a44}.eyebrow{color:var(--gold);font-size:11px;font-weight:800;letter-spacing:3px}.hero h1{font-size:clamp(30px,6vw,52px);margin:10px 0}.hero p{max-width:620px;margin:0 auto;color:var(--muted);line-height:1.7}
-.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:24px}button,.primary{border:1px solid var(--line);border-radius:12px;padding:13px 20px;background:#14283d;color:var(--text);font-weight:800;text-decoration:none;cursor:pointer}.primary{background:linear-gradient(120deg,#e4bd70,#a87c3d);color:#17110a;border-color:#f0d69d}.status{min-height:22px;margin-top:12px;color:#a8d9c0;font-size:13px}
-.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:22px}.card{background:linear-gradient(145deg,#122940ee,#0a1727ee);border:1px solid var(--line);border-radius:17px;padding:20px;min-height:190px}.card .emoji{font-size:28px}.card h2{font-size:17px;margin:10px 0 7px}.card p,.card li{color:var(--muted);font-size:13px;line-height:1.65}.card ol{padding-left:19px}.note{margin-top:18px;padding:15px 17px;border:1px solid #7e9bb144;border-radius:13px;color:var(--muted);font-size:12px;line-height:1.7}.note strong{color:#e8d4a8}footer{text-align:center;color:#8194a9;font-size:11px;margin-top:28px}
-@media(max-width:700px){.grid{grid-template-columns:1fr}.card{min-height:0}.hero{padding-top:14px}header{margin-bottom:20px}}
+:root{color-scheme:dark;--bg:#060c16;--panel:#101e30;--line:#b99a635c;--gold:#e5c27e;--gold2:#a77b42;--text:#f6f0e5;--muted:#a8b8c9;--blue:#162c43}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -8%,#31445a 0,#111e30 38%,#060c16 78%);color:var(--text);font:15px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+a,button{font:inherit}.wrap{width:min(980px,calc(100% - 30px));margin:auto;padding:22px 0 48px}
+header{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:28px}.brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:2px}.brand img{width:38px;height:38px;filter:drop-shadow(0 0 12px #e0ad6955)}.brand span{color:var(--gold)}.back{color:#e8d6b3;text-decoration:none;border:1px solid var(--line);padding:8px 13px;border-radius:10px;background:#0b1726}
+.hero{text-align:center;padding:26px 16px 32px;position:relative}.app-icon{width:132px;height:132px;display:block;margin:0 auto 20px;border-radius:30px;box-shadow:0 18px 55px #0008,0 0 36px #d5a66b2a;animation:float 5s ease-in-out infinite}.eyebrow{color:var(--gold);font-size:10px;font-weight:850;letter-spacing:3.5px}.hero h1{font-size:clamp(30px,6vw,54px);line-height:1.08;letter-spacing:-1.5px;margin:12px 0}.hero h1 span{color:var(--gold)}.hero p{max-width:650px;margin:0 auto;color:var(--muted);line-height:1.8}.actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:25px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid var(--line);border-radius:13px;padding:13px 20px;background:linear-gradient(145deg,#192f47,#0d1a2a);color:var(--text);font-weight:800;text-decoration:none;cursor:pointer;transition:transform .18s,border-color .18s}.btn:hover{transform:translateY(-2px);border-color:#e5c27e}.btn.gold{background:linear-gradient(120deg,#f0d89e,#bd8c4e);border-color:#f4dca8;color:#1a140c;box-shadow:0 9px 25px #d2a45c35}.status{min-height:24px;margin-top:13px;color:#a8d9c0;font-size:13px}
+.section-label{text-align:center;color:#d8bd88;font-size:10px;font-weight:850;letter-spacing:3px;margin:14px 0}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:15px}.card{position:relative;overflow:hidden;background:linear-gradient(145deg,#142941ed,#091626f5);border:1px solid var(--line);border-radius:18px;padding:20px;min-height:210px;box-shadow:0 12px 34px #0003}.card:before{content:"";position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,transparent,#dfbd7d,transparent);opacity:.7}.card .symbol{width:44px;height:44px;border:1px solid #c5a56b55;border-radius:13px;display:grid;place-items:center;font-size:23px;background:#d6b67512}.card h2{font-size:17px;margin:13px 0 6px}.card p,.card li{color:var(--muted);font-size:13px;line-height:1.7}.card ol{padding-left:19px;margin-bottom:0}.tag{display:inline-block;margin-top:9px;border:1px solid #c5a56b55;color:#e5c88f;border-radius:20px;padding:3px 9px;font-size:10px;font-weight:800;letter-spacing:.5px}.download-card{grid-column:span 3;display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:0}.download-card p{max-width:560px;margin:5px 0 0}.download-card .btn{white-space:nowrap}.note{margin-top:17px;padding:15px 17px;border:1px solid #7e9bb144;border-radius:13px;color:var(--muted);font-size:12px;line-height:1.75;background:#081321a8}.note strong{color:#e8d4a8}footer{text-align:center;color:#8194a9;font-size:11px;margin-top:28px}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.download-card{grid-column:auto;display:block}.download-card .btn{margin-top:14px;width:100%}.card{min-height:0}.hero{padding:16px 7px 26px}.app-icon{width:112px;height:112px}.wrap{padding-top:16px}}
+@media(prefers-reduced-motion:reduce){.app-icon{animation:none}.btn{transition:none}}
 </style>
 </head>
 <body><div class="wrap">
-<header><div class="brand">LOCAL <b>MARS</b></div><a class="back" href="./index.html">← Open App</a></header>
+<header><div class="brand"><img src="./icon.svg" alt=""><div>LOCAL <span>MARS</span></div></div><a class="back" href="./index.html">← Open App</a></header>
 <main>
-<section class="hero"><div class="orb" aria-hidden="true">🔴</div><div class="eyebrow">OFFICIAL APP INSTALLATION</div>
-<h1>Take LOCAL MARS with you.</h1>
-<p>Install the LOCAL MARS web app on your device for a full-screen experience and access to previously cached pages. No app-store account is required.</p>
-<div class="actions"><button class="primary" id="installButton" type="button">⬇ Install LOCAL MARS</button><a class="primary" href="./index.html">Launch Web App ↗</a></div>
-<div class="status" id="installStatus" role="status" aria-live="polite"></div></section>
-<section class="grid" aria-label="Installation instructions">
-<article class="card"><div class="emoji">🤖</div><h2>Android</h2><ol><li>Open this page in Chrome.</li><li>Tap <b>Install LOCAL MARS</b>. If unavailable, open the ⋮ menu.</li><li>Choose <b>Install app</b> or <b>Add to Home screen</b>.</li><li>Confirm. Find LOCAL MARS on your home screen.</li></ol></article>
-<article class="card"><div class="emoji">🍎</div><h2>iPhone &amp; iPad</h2><ol><li>Open this page in Safari.</li><li>Tap the Share button.</li><li>Choose <b>Add to Home Screen</b>.</li><li>Tap Add to finish installation.</li></ol></article>
-<article class="card"><div class="emoji">💻</div><h2>Windows, Mac &amp; Chromebook</h2><ol><li>Open this page in Chrome or Edge.</li><li>Use the install icon in the address bar, or open the browser menu.</li><li>Select <b>Install LOCAL MARS</b> and confirm.</li></ol></article>
+<section class="hero">
+<img class="app-icon" src="./icon.svg" alt="LOCAL MARS planet emblem">
+<div class="eyebrow">OFFICIAL INSTALLATION CENTER</div>
+<h1>Explore beyond <span>Earth.</span></h1>
+<p>Bring LOCAL MARS to your device. Choose the Android app package or install the web app for a clean, full-screen experience.</p>
+<div class="actions">
+<a class="btn gold" href="https://github.com/TordTaris/mars-land-explorer/releases/latest/download/app-debug.apk">⬇ Download Android APK</a>
+<button class="btn" id="installButton" type="button">＋ Install Web App</button>
+</div>
+<div class="status" id="installStatus" role="status" aria-live="polite"></div>
 </section>
-<div class="note"><strong>About this download:</strong> LOCAL MARS is currently distributed as a Progressive Web App (PWA) through this official website. This page does not provide a native Android APK, iOS IPA, or Play Store/App Store listing. Installation options depend on your device and browser. Some features require an internet connection; offline access is limited to pages and resources already cached on your device.</div>
-</main><footer>LOCAL MARS — Living Civilization · Web App Distribution</footer></div>
+<div class="section-label">CHOOSE YOUR PLATFORM</div>
+<section class="grid" aria-label="Installation options">
+<article class="card"><div class="symbol">🤖</div><h2>Android App</h2><p>Download the LOCAL MARS APK directly from the official GitHub release, then open the downloaded file and confirm installation.</p><span class="tag">ANDROID · APK</span></article>
+<article class="card"><div class="symbol">📱</div><h2>iPhone &amp; iPad</h2><ol><li>Open this page in Safari.</li><li>Tap Share.</li><li>Choose Add to Home Screen.</li><li>Tap Add to finish.</li></ol><span class="tag">IOS · WEB APP</span></article>
+<article class="card"><div class="symbol">💻</div><h2>Desktop</h2><ol><li>Open this page in Chrome or Edge.</li><li>Use the install icon in the address bar or browser menu.</li><li>Select Install LOCAL MARS.</li></ol><span class="tag">WINDOWS · MAC · CHROMEBOOK</span></article>
+<article class="card download-card"><div><h2>Prefer the browser version?</h2><p>Install LOCAL MARS as a Progressive Web App (PWA). On supported browsers, use the button above or your browser menu to add it to your home screen.</p></div><a class="btn" href="./index.html">Launch Web App ↗</a></article>
+</section>
+<div class="note"><strong>Important:</strong> The Android APK is a debug-signed test build and is not a Google Play release. It opens the live LOCAL MARS website in an Android WebView and requires an internet connection. The in-app land, resources and credits are simulation features, not legal property or redeemable currency.</div>
+</main><footer>LOCAL MARS — LIVING CIVILIZATION · OFFICIAL DISTRIBUTION</footer></div>
 <script>
 (()=>{let promptEvent=null;const button=document.getElementById('installButton'),status=document.getElementById('installStatus');const installed=()=>window.matchMedia('(display-mode:standalone)').matches||navigator.standalone===true;const say=m=>status.textContent=m;
-if(installed()){button.textContent='✓ LOCAL MARS Installed';button.disabled=true;say('The app is already running in installed mode.');}
-window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();promptEvent=event;button.textContent='⬇ Install Now';say('Your browser supports direct installation.');});
-button.addEventListener('click',async()=>{if(promptEvent){promptEvent.prompt();const result=await promptEvent.userChoice;say(result?.outcome==='accepted'?'Installation accepted. Follow your device prompts.':'Installation was not completed. Use the device instructions below.');promptEvent=null;return;}say(/iPad|iPhone|iPod/.test(navigator.userAgent)?'In Safari, tap Share, then Add to Home Screen.':'Open your browser menu and choose Install app or Add to Home screen, if available.');});
-window.addEventListener('appinstalled',()=>{button.textContent='✓ LOCAL MARS Installed';button.disabled=true;say('LOCAL MARS was installed successfully.');});
+if(installed()){button.textContent='✓ Web App Installed';button.disabled=true;say('LOCAL MARS is already installed in web app mode.');}
+window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();promptEvent=event;button.textContent='＋ Install Now';say('Your browser supports direct web app installation.');});
+button.addEventListener('click',async()=>{if(promptEvent){promptEvent.prompt();const result=await promptEvent.userChoice;say(result?.outcome==='accepted'?'Installation accepted. Follow your device prompts.':'Installation was not completed. Use your browser menu or platform instructions.');promptEvent=null;return;}say(/iPad|iPhone|iPod/.test(navigator.userAgent)?'In Safari, tap Share, then Add to Home Screen.':'Open your browser menu and choose Install app or Add to Home screen, if available.');});
+window.addEventListener('appinstalled',()=>{button.textContent='✓ Web App Installed';button.disabled=true;say('LOCAL MARS web app installed successfully.');});
 if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>{}));
 })();
 </script></body></html>
