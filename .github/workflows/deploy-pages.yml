@@ -35,7 +35,7 @@ jobs:
               "index.html", "install.html", "member-workspace.js", "city.html", "underground.html", "mission-trainer.html",
               "m003-base.html", "m003-dimension-gate.html", "top-secret-demo.html",
               "civilization.html", "i18n.js", "premium-ui.css",
-              "world-server.js", "multiverse.js", "easy-play.js",
+              "world-server.js", "nasa-data.js", "multiverse.js", "easy-play.js",
               "manifest.webmanifest", "sw.js", "icon.svg",
               "locales/th.json", "locales/en.json",
           ]
@@ -69,7 +69,7 @@ jobs:
           assert manifest.get("display") == "standalone", "PWA standalone display missing"
           assert any(icon.get("sizes") == "192x192" for icon in manifest.get("icons", [])), "192px PWA icon declaration missing"
           assert any(icon.get("sizes") == "512x512" for icon in manifest.get("icons", [])), "512px PWA icon declaration missing"
-          assert 'const CACHE = "local-mars-v4-38"' in sw, "service worker cache version not bumped"
+          assert 'const CACHE = "local-mars-v4-39"' in sw, "service worker cache version not bumped"
           assert "navigator.serviceWorker.register('./sw.js'" in html, "service worker registration missing"
           assert manifest.get("start_url") == "./" and manifest.get("scope") == "./", "manifest paths must be relative to the GitHub Pages project root"
           assert th and en, "Thai and English dictionaries must not be empty"
@@ -139,7 +139,7 @@ jobs:
       - name: Prepare complete static site
         run: |
           mkdir -p _site
-          cp index.html install.html city.html underground.html mission-trainer.html m003-base.html m003-dimension-gate.html top-secret-demo.html civilization.html i18n.js premium-ui.css world-server.js member-workspace.js multiverse.js easy-play.js manifest.webmanifest sw.js icon.svg _site/
+          cp index.html install.html city.html underground.html mission-trainer.html m003-base.html m003-dimension-gate.html top-secret-demo.html civilization.html i18n.js premium-ui.css world-server.js nasa-data.js member-workspace.js multiverse.js easy-play.js manifest.webmanifest sw.js icon.svg _site/
           cp -R locales _site/locales
           cp -R parcels _site/parcels
           touch _site/.nojekyll
