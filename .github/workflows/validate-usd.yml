@@ -26,16 +26,22 @@ jobs:
           import re
           from pathlib import Path
           html = Path("index.html").read_text(encoding="utf-8")
-          scripts = re.findall(r"<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)</script>", html, re.I)
-          if not scripts:
-              raise SystemExit("No inline scripts found")
-          for i, script in enumerate(scripts):
-              if not script.strip():
+          matches = re.finditer(r"<script(?P<attrs>[^>]*)>(?P<body>[\\s\\S]*?)</script>", html, re.I)
+          count = 0
+          for i, match in enumerate(matches):
+              attrs = match.group("attrs")
+              body = match.group("body")
+              if re.search(r"\\bsrc=", attrs, re.I) or re.search(r"\\btype=[\"']importmap[\"']", attrs, re.I):
                   continue
-              Path(f"/tmp/local-mars-inline-{i}.js").write_text(script, encoding="utf-8")
-          print(f"Extracted {len(scripts)} inline script blocks")
+              if not body.strip():
+                  continue
+              Path(f"/tmp/local-mars-inline-{i}.mjs").write_text(body, encoding="utf-8")
+              count += 1
+          if not count:
+              raise SystemExit("No executable inline scripts found")
+          print(f"Extracted {count} executable inline script blocks")
           PY
-          for file in /tmp/local-mars-inline-*.js; do
+          for file in /tmp/local-mars-inline-*.mjs; do
             [ -f "$file" ] && node --check "$file"
           done
       - uses: denoland/setup-deno@v2
