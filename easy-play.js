@@ -5,11 +5,11 @@
 if(document.getElementById('lmEasyPlay'))return;
 const path=location.pathname.split('/').pop()||'index.html';
 const pages=[
- {file:'index.html',icon:'🌍',th:'สำรวจดาวอังคาร',en:'Explore Mars',desc:'ดูดาวเคราะห์ เลือกพื้นที่ และเริ่มต้นสำรวจ'},
- {file:'city.html',icon:'🏗️',th:'เมืองและการก่อสร้าง',en:'City Builder',desc:'เดินสำรวจ วางสิ่งปลูกสร้าง และจัดการวัสดุ'},
- {file:'underground.html',icon:'🛰️',th:'ฐานใต้ดิน 24 ชั้น',en:'Underground 24',desc:'เลือกชั้น ดูระบบยังชีพ และเปิด Multiverse'},
- {file:'m003-base.html',icon:'🔐',th:'ฐานส่วนตัว M-003',en:'M-003 Private Base',desc:'พื้นที่ควบคุมสิทธิ์สำหรับเจ้าของ M-003'},
- {file:'civilization.html',icon:'🌐',th:'เครือข่ายอารยธรรม',en:'Civilization Network',desc:'ติดตามเมือง โครงสร้าง และกิจกรรมออนไลน์'}
+ {file:'index.html',icon:'🌍',th:'สำรวจดาวอังคาร',en:'Explore Mars',desc:'ดูดาวเคราะห์ เลือกพื้นที่ และเริ่มต้นสำรวจ',descEn:'View the planet, choose a parcel, and start exploring'},
+ {file:'city.html',icon:'🏗️',th:'เมืองและการก่อสร้าง',en:'City Builder',desc:'เดินสำรวจ วางสิ่งปลูกสร้าง และจัดการวัสดุ',descEn:'Explore, place structures, and manage materials'},
+ {file:'underground.html',icon:'🛰️',th:'ฐานใต้ดิน 24 ชั้น',en:'Underground 24',desc:'เลือกชั้น ดูระบบยังชีพ และเปิด Multiverse',descEn:'Choose a level, check life support, and open Multiverse'},
+ {file:'m003-base.html',icon:'🔐',th:'ฐานส่วนตัว M-003',en:'M-003 Private Base',desc:'พื้นที่ควบคุมสิทธิ์สำหรับเจ้าของ M-003',descEn:'Restricted area for the M-003 owner'},
+ {file:'civilization.html',icon:'🌐',th:'เครือข่ายอารยธรรม',en:'Civilization Network',desc:'ติดตามเมือง โครงสร้าง และกิจกรรมออนไลน์',descEn:'Monitor colonies, structures, and online activity'}
 ];
 const isTh=()=>((window.LOCAL_MARS_I18N?.language)||document.documentElement.lang||'th').toLowerCase().startsWith('th');
 const t=(th,en)=>isTh()?th:en;
@@ -40,19 +40,19 @@ const panel=document.createElement('div');panel.id='lmEasyPlayPanel';panel.inner
 document.body.append(root,panel);
 const $=s=>panel.querySelector(s),trigger=root.querySelector('button');
 const stepsFor=()=>({
- 'index.html':[['หมุนดาว','ลากเพื่อหมุนดาวเคราะห์ และใช้นิ้วบีบเพื่อซูม'],['เลือกพื้นที่','แตะพื้นที่หรือแปลงที่ต้องการเพื่อดูรายละเอียด'],['เริ่มทำงาน','ใช้เมนูด้านล่างเพื่อเข้าเมือง ฐานใต้ดิน และระบบอื่น']],
- 'city.html':[['เดินสำรวจ','ใช้ปุ่มทิศทางบนหน้าจอเพื่อเคลื่อนที่'],['เลือกเครื่องมือ','เลือกประเภทอาคารก่อนแตะตำแหน่งวาง'],['ตรวจสอบงาน','ดูแถบวัสดุและความคืบหน้าก่อนยืนยันก่อสร้าง']],
- 'underground.html':[['เลือกชั้น','แตะหมายเลขชั้นเพื่อดูห้องและระบบของชั้นนั้น'],['เปิดจักรวาล','กด MULTIVERSE เพื่อสลับหรือสร้างจักรวาลจำลอง'],['ติดตามทรัพยากร','ตรวจค่าออกซิเจน น้ำ ไฟฟ้า และอาหาร']],
- 'm003-base.html':[['ยืนยันบัญชี','เข้าสู่ระบบด้วยบัญชีที่ได้รับสิทธิ์เจ้าของ M-003'],['เลือกชั้น','แตะรายการ LEVEL เพื่อดูรายละเอียด'],['ความปลอดภัย','หน้านี้จำกัดสิทธิ์ ไม่เปิดข้อมูลฐานให้ผู้ใช้ทั่วไป']],
- 'civilization.html':[['ดูสถานะออนไลน์','ตรวจสถานะการเชื่อมต่อและการซิงค์'],['ตรวจสิ่งปลูกสร้าง','ดูรายการโครงสร้างและพื้นที่ที่มีข้อมูล'],['รีเฟรช','กดรีเฟรชเมื่ออยากดึงข้อมูลล่าสุด']]
+ 'index.html':[['หมุนดาว','ลากเพื่อหมุนดาวเคราะห์ และใช้นิ้วบีบเพื่อซูม','Drag to rotate the planet and pinch to zoom'],['เลือกพื้นที่','แตะพื้นที่หรือแปลงที่ต้องการเพื่อดูรายละเอียด','Tap a location or parcel to view its details'],['เริ่มทำงาน','ใช้เมนูด้านล่างเพื่อเข้าเมือง ฐานใต้ดิน และระบบอื่น','Use the bottom menu to open the city, underground base, and other systems']],
+ 'city.html':[['เดินสำรวจ','ใช้ปุ่มทิศทางบนหน้าจอเพื่อเคลื่อนที่','Use the on-screen directional pad to move around'],['เลือกเครื่องมือ','เลือกประเภทอาคารก่อนแตะตำแหน่งวาง','Choose a building type, then tap where you want to place it'],['ตรวจสอบงาน','ดูแถบวัสดุและความคืบหน้าก่อนยืนยันก่อสร้าง','Check materials and progress before confirming construction']],
+ 'underground.html':[['เลือกชั้น','แตะหมายเลขชั้นเพื่อดูห้องและระบบของชั้นนั้น','Tap a level number to view its rooms and systems'],['เปิดจักรวาล','กด MULTIVERSE เพื่อสลับหรือสร้างจักรวาลจำลอง','Press MULTIVERSE to switch or create a simulated universe'],['ติดตามทรัพยากร','ตรวจค่าออกซิเจน น้ำ ไฟฟ้า และอาหาร','Monitor oxygen, water, power, and food levels']],
+ 'm003-base.html':[['ยืนยันบัญชี','เข้าสู่ระบบด้วยบัญชีที่ได้รับสิทธิ์เจ้าของ M-003','Sign in with an account authorized as the M-003 owner'],['เลือกชั้น','แตะรายการ LEVEL เพื่อดูรายละเอียด','Tap a LEVEL entry to view its details'],['ความปลอดภัย','หน้านี้จำกัดสิทธิ์ ไม่เปิดข้อมูลฐานให้ผู้ใช้ทั่วไป','This page is restricted and does not expose base data to public users']],
+ 'civilization.html':[['ดูสถานะออนไลน์','ตรวจสถานะการเชื่อมต่อและการซิงค์','Check the connection and synchronization status'],['ตรวจสิ่งปลูกสร้าง','ดูรายการโครงสร้างและพื้นที่ที่มีข้อมูล','Review registered structures and parcels'],['รีเฟรช','กดรีเฟรชเมื่ออยากดึงข้อมูลล่าสุด','Press refresh to retrieve the latest data']]
 });
 function render(){
  const th=isTh(),steps=stepsFor()[path]||stepsFor()['index.html'];
  $('#lmEasyTitle').textContent=t('เริ่มเล่น LOCAL MARS','Start playing LOCAL MARS');
  $('#lmEasyIntro').textContent=t('ทำตาม 3 ขั้นตอนของหน้านี้ได้เลย ไม่ต้องจำเมนูทั้งหมด','Follow these three steps for this page. You do not need to memorize every menu.');
- $('#lmEasySteps').innerHTML=steps.map((s,i)=>'<div class="lm-easy-step"><span class="lm-easy-num">'+(i+1)+'</span><div><b>'+t(s[0],['Rotate the planet','Choose a location','Open a feature'][i]||s[0])+'</b><small>'+t(s[1],['Drag to rotate the planet and pinch to zoom','Tap a parcel to see its details','Use the bottom menu to open other systems'][i]||s[1])+'</small></div></div>').join('');
+ $('#lmEasySteps').innerHTML=steps.map((s,i)=>'<div class="lm-easy-step"><span class="lm-easy-num">'+(i+1)+'</span><div><b>'+t(s[0],['Rotate the planet','Explore the city','Check the underground base'][i]||s[0])+'</b><small>'+t(s[1],s[2]||s[1])+'</small></div></div>').join('');
  $('#lmEasyNavTitle').textContent=t('เมนูทางลัด','Quick navigation');
- $('#lmEasyLinks').innerHTML=pages.map(p=>'<a href="./'+p.file+'" '+(path===p.file?'aria-current="page"':'')+'><span>'+p.icon+'</span><span><b>'+t(p.th,p.en)+'</b><br><small style="color:#9db4c8">'+p.desc+'</small></span></a>').join('');
+ $('#lmEasyLinks').innerHTML=pages.map(p=>'<a href="./'+p.file+'" '+(path===p.file?'aria-current="page"':'')+'><span>'+p.icon+'</span><span><b>'+t(p.th,p.en)+'</b><br><small style="color:#9db4c8">'+t(p.desc,p.descEn||p.desc)+'</small></span></a>').join('');
  $('#lmEasyFoot').textContent=t('หมายเหตุ: บางฟังก์ชันต้องเข้าสู่ระบบหรือเชื่อมต่อฐานข้อมูลก่อนใช้งาน การจำลอง Multiverse ปัจจุบันเก็บข้อมูลในเบราว์เซอร์เครื่องนี้ ไม่ใช่การซิงค์ข้ามผู้ใช้','Note: Some features require sign-in or database connectivity. The current Multiverse simulation is stored in this browser and is not shared online.');
  trigger.querySelector('span').textContent=t('คู่มือ / เมนู','Guide / Menu');
 }
