@@ -1,7 +1,7 @@
 {
   "name": "LOCAL MARS — Planetary Civilization Network",
   "short_name": "LOCAL MARS",
-  "lang": "th",
+  "lang": "en",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
