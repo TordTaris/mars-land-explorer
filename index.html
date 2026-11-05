@@ -763,6 +763,7 @@ function launchSmallSatellite(){
  relaySatellite.position.set(0,0,1.025);
  relaySatellite.lookAt(camera.position);
  toast('LAUNCH SEQUENCE INITIATED · SMALL SATELLITE ASCENDING');
+ window.MarsWorldServer?.recordActivity?.('satellite_launch','orbital_asset','relay-satellite',{orbit:'low_mars_orbit',simulation:true}).then(result=>{if(result?.error)console.warn('Satellite launch history was not saved:',result.error.message);}).catch(error=>console.warn('Satellite launch history was not saved:',error));
  const launchButton=document.querySelector('#navSatellite');
  if(launchButton){launchButton.classList.add('active');launchButton.textContent='🛰️ Satellite Active';}
 }
