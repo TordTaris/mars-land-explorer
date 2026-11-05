@@ -1,0 +1,30 @@
+name: Validate LOCAL MARS global network
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main, "feature/global-world-network-main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  global-network:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate shared world client
+        run: node --check world-server.js
+      - name: Validate global realtime migration
+        run: |
+          test -s supabase/migrations/020_global_world_realtime.sql
+          grep -q "supabase_realtime" supabase/migrations/020_global_world_realtime.sql
+          grep -q "world_parcels" supabase/migrations/020_global_world_realtime.sql
+          grep -q "mars_city_national_flags" supabase/migrations/020_global_world_realtime.sql
+          grep -q "presenceState" world-server.js
+          grep -q "trackPresence" world-server.js
