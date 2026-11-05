@@ -1,0 +1,56 @@
+name: Validate LOCAL MARS Mission Trainer
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "mission-trainer.html"
+      - "index.html"
+      - "sw.js"
+      - ".github/workflows/validate-mission-trainer.yml"
+  push:
+    branches: [main]
+    paths:
+      - "mission-trainer.html"
+      - "index.html"
+      - "sw.js"
+      - ".github/workflows/validate-mission-trainer.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mission-trainer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate Mission Trainer route, safety copy, offline cache and JavaScript
+        run: |
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+
+          page = Path("mission-trainer.html")
+          assert page.is_file(), "Mission Trainer page is missing"
+          html = page.read_text(encoding="utf-8")
+          assert "Build a Resilient Mars Outpost" in html
+          assert "EDUCATIONAL SIMULATION" in html
+          assert "NASA is not affiliated" in html
+          assert "localStorage" in html, "Local progress persistence is missing"
+
+          scripts = re.findall(r"<script(?:\s[^>]*)?>([\s\S]*?)</script>", html, re.I)
+          assert len(scripts) == 1, f"Expected one inline application script, found {len(scripts)}"
+          Path("/tmp/mission-trainer.js").write_text(scripts[0], encoding="utf-8")
+
+          index = Path("index.html").read_text(encoding="utf-8")
+          sw = Path("sw.js").read_text(encoding="utf-8")
+          assert 'href="./mission-trainer.html"' in index, "Explorer navigation link is missing"
+          assert '"./mission-trainer.html"' in sw, "Offline cache entry is missing"
+          print("Mission Trainer route, navigation, offline cache and educational safety labels validated.")
+          PY
+          node --check /tmp/mission-trainer.js
+          node --check sw.js

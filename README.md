@@ -12,6 +12,7 @@ LOCAL MARS is a browser-based planetary settlement simulation published as a sta
 This release corrects the GitHub Pages artifact so it includes the complete application shell, not only the three primary HTML pages. The deployment now validates and publishes:
 
 - Planet Explorer (`index.html`)
+- Mars Mission Trainer (`mission-trainer.html`) — 10-day educational resource-management scenario
 - City Builder (`city.html`)
 - Underground Base 24 (`underground.html`)
 - M-003 private facility page (`m003-base.html`)
@@ -35,8 +36,8 @@ The workflow runs asset checks and JavaScript syntax checks before publishing. A
 Every push to `main`, and manual workflow dispatch, runs:
 
 1. Required route, localization, PWA and asset validation.
-2. JavaScript syntax checks for the main explorer, city builder, underground simulator, language engine, world server and service worker.
-3. Complete static artifact assembly, including localization files and the M-003/civilization pages.
+2. JavaScript syntax checks for the main explorer, city builder, mission trainer, underground simulator, language engine, world server and service worker.
+3. Complete static artifact assembly, including localization files, the Mission Trainer, and the M-003/civilization pages.
 4. Deployment to GitHub Pages.
 
 Check [GitHub Actions](https://github.com/TordTaris/mars-land-explorer/actions). The release is live only after **Deploy LOCAL MARS to GitHub Pages** finishes with a successful status.
@@ -50,3 +51,8 @@ See [WORLD_SERVER_SETUP_TH.md](./WORLD_SERVER_SETUP_TH.md) and [USD_MARKET_SETUP
 ## Underground Base 24 safety note
 
 The underground base is a fictional educational simulation. Resource readings and life-support controls are illustrative only and are not engineering specifications or evidence of real-world habitability.
+
+
+## Mars Mission Trainer
+
+The Mission Trainer is a standalone, browser-based educational scenario with a 10-day resource-management loop for oxygen, water, power, food, and system integrity. Players choose one operation per day, review telemetry, and track a scenario score. Progress is stored locally in the browser. All values and rules are simplified game assumptions; the module is not a life-support model, engineering specification, NASA product, or NASA-endorsed tool.
