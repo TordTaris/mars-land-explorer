@@ -33,7 +33,7 @@ Deno.serve(async (req) => {
     let siteUrl: URL;
     try { siteUrl = new URL(siteUrlRaw); } catch { return json({ error: "SITE_URL is invalid" }, 503); }
     if (siteUrl.protocol !== "https:") return json({ error: "SITE_URL must use HTTPS" }, 503);
-    const siteBase = siteUrl.toString().replace(/\\/+$/, "");
+    const siteBase = siteUrl.toString().replace(/\/+$/, "");
     const auth = req.headers.get("Authorization") ?? "";
     if (!auth.startsWith("Bearer ")) return json({ error: "กรุณาเข้าสู่ระบบก่อนซื้อพื้นที่" }, 401);
     const userRes = await fetch(`${supabaseUrl}/auth/v1/user`, {
