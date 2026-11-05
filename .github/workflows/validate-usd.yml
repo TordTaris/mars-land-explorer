@@ -38,6 +38,11 @@ jobs:
           for file in /tmp/local-mars-inline-*.js; do
             [ -f "$file" ] && node --check "$file"
           done
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Type-check FX Edge Function
+        run: deno check supabase/functions/refresh-fx-rates/index.ts
       - name: Check migration and FX function files exist
         run: |
           test -s supabase/migrations/016_usd_market_standard.sql
