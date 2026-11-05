@@ -1,10 +1,10 @@
 // LOCAL MARS v4.0 — network-first updates with complete offline app shell.
-const CACHE = "local-mars-v4-8";
+const CACHE = "local-mars-v4-9";
 const CORE = [
   "./", "./index.html", "./city.html", "./underground.html",
   "./m003-base.html", "./m003-dimension-gate.html", "./civilization.html", "./i18n.js",
   "./world-server.js", "./multiverse.js", "./easy-play.js", "./locales/th.json", "./locales/en.json",
-  "./manifest.webmanifest", "./icon.svg"
+  "./manifest.webmanifest", "./icon.svg", "./premium-ui.css"
 ];
 
 self.addEventListener("install", event => {
