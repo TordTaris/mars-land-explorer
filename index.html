@@ -218,8 +218,20 @@ body.authenticated.plot-selected .right button:disabled{opacity:.45!important;cu
 @media(max-width:650px){body.authenticated.plot-selected .right{left:10px!important;right:10px!important;bottom:65px!important;width:auto!important;max-height:42dvh!important;padding:11px!important}body.authenticated.plot-selected .right #plotActions .plot{padding:11px!important}body.authenticated.plot-selected .right #plotUsdPrice{font-size:23px!important}body.authenticated.plot-selected .right #claim{min-height:46px!important}}
 </style>
 <link rel="stylesheet" href="./premium-ui.css?v=20261106">
+<style id="local-mars-fast-start">
+#lmStartup{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 42%,#1b2b3d,#050a13 72%);color:#f2e4c6;transition:opacity .35s ease,visibility .35s ease}
+#lmStartup.is-ready{opacity:0;visibility:hidden;pointer-events:none}
+#lmStartupCard{width:min(310px,calc(100vw - 44px));padding:23px 20px;border:1px solid #c5a56b88;border-radius:18px;background:#091827ed;text-align:center;box-shadow:0 20px 60px #0009}
+#lmStartupMark{font-size:24px;letter-spacing:3px;font-weight:900}
+#lmStartupMark b{color:#dfbd7d}
+#lmStartupText{margin-top:12px;color:#b9c8d8;font-size:11px;letter-spacing:1px}
+#lmStartupTrack{height:3px;margin-top:17px;border-radius:9px;background:#26384b;overflow:hidden}
+#lmStartupTrack:after{content:"";display:block;width:42%;height:100%;background:linear-gradient(90deg,#9b7443,#f0d49a);border-radius:9px;animation:lmStartupMove 1.1s ease-in-out infinite alternate}
+@keyframes lmStartupMove{from{transform:translateX(-12%)}to{transform:translateX(150%)}}
+@media(prefers-reduced-motion:reduce){#lmStartupTrack:after{animation:none;width:70%}#lmStartup{transition:none}}
+</style>
 </head>
-<body>
+<body>\n<div id="lmStartup" role="status" aria-live="polite"><div id="lmStartupCard"><div id="lmStartupMark">LOCAL <b>MARS</b></div><div id="lmStartupText">INITIALIZING PLANETARY SYSTEMS…</div><div id="lmStartupTrack"></div></div></div>
 <div id="scene"></div>
 <header><div class="brand"><span class="brand-insignia" aria-hidden="true"><img src="./icon.svg" alt=""></span><span class="brand-lockup"><strong>LOCAL <b>MARS</b></strong><small>PLANETARY CIVILIZATION NETWORK</small></span></div><div class="status" id="worldServerStatus">CONNECTING TO MARS NETWORK…</div></header>
 <section class="panel left">
@@ -306,7 +318,7 @@ const group=new THREE.Group();scene.add(group);
 const marsMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:1});
 function makeMarsTexture(){
  // Deterministic procedural albedo + relief: no paid texture service or API required.
- const canvas=document.createElement('canvas');canvas.width=1536;canvas.height=768;
+ const canvas=document.createElement('canvas');canvas.width=768;canvas.height=384;
  const ctx=canvas.getContext('2d',{willReadFrequently:true}),img=ctx.createImageData(canvas.width,canvas.height);
  const W=canvas.width,H=canvas.height;
  for(let y=0;y<H;y++)for(let x=0;x<W;x++){
@@ -325,7 +337,7 @@ function makeMarsTexture(){
  ctx.putImageData(img,0,0);
  let seed=271828;const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
  // Crater rims, shadowed bowls and ejecta; larger basins mixed with fine impact marks.
- for(let k=0;k<520;k++){
+ for(let k=0;k<280;k++){
   const x=rnd()*W,y=20+rnd()*(H-40),r=1.2+Math.pow(rnd(),2.1)*31;
   const g=ctx.createRadialGradient(x-r*.12,y-r*.16,r*.12,x,y,r);
   g.addColorStop(0,'rgba(48,27,24,.30)');g.addColorStop(.56,'rgba(76,39,31,.18)');
@@ -343,7 +355,7 @@ function makeMarsTexture(){
 }
 function sixty(v){return Math.round(v)}
 function thirty(v){return Math.round(v)}
-marsMat.map=makeMarsTexture();marsMat.bumpMap=marsMat.map;marsMat.bumpScale=.075;marsMat.roughness=.96;marsMat.metalness=0;
+// Render the planet immediately with a lightweight base material; detailed terrain is applied after first paint.\nmarsMat.roughness=.96;marsMat.metalness=0;
 
 const mars=new THREE.Mesh(new THREE.SphereGeometry(1,112,80),marsMat);group.add(mars);
 // Thin atmospheric limb gives the planet a dusty, sunlit edge (visual effect, not weather simulation).
@@ -605,7 +617,8 @@ document.querySelectorAll('.bottom button').forEach(b=>b.onclick=()=>{document.q
 const restoredStructures=Object.entries(state.buildings).map(([parcel_id,building])=>({id:'local-'+parcel_id,parcel_id,structure_type:typeMap[building]||building,owner_id:'local'}));
 renderSharedBuildings(restoredStructures);
 updateStats();if(state.profile)document.querySelector('#account').textContent='👤 '+state.profile.name;
-function animate(){requestAnimationFrame(animate);controls.update();const t=Date.now()*.001;turbine.rotation.y=t*1.8;beacon.material.opacity=.55+Math.sin(t*3)*.4;beaconLight.intensity=.45+Math.sin(t*3)*.3;renderer.render(scene,camera)}animate();
+let firstPlanetFrame=false;
+function animate(){requestAnimationFrame(animate);controls.update();const t=Date.now()*.001;turbine.rotation.y=t*1.8;beacon.material.opacity=.55+Math.sin(t*3)*.4;beaconLight.intensity=.45+Math.sin(t*3)*.3;renderer.render(scene,camera);if(!firstPlanetFrame){firstPlanetFrame=true;const startup=document.getElementById('lmStartup');if(startup){const label=document.getElementById('lmStartupText');if(label)label.textContent='PLANET ONLINE · LOADING TERRAIN DETAILS';setTimeout(()=>startup.classList.add('is-ready'),180);}setTimeout(()=>{try{const texture=makeMarsTexture();marsMat.map=texture;marsMat.bumpMap=texture;marsMat.bumpScale=.075;marsMat.needsUpdate=true;}catch(error){console.warn('LOCAL MARS terrain detail skipped:',error);}},80);}}animate();
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
 </script>
 <script>
