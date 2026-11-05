@@ -246,6 +246,7 @@ header #lmLanguage{display:inline-flex!important;visibility:visible!important;op
 </select>
 <button class="full" id="build">🏗️ วางอาคารบนแปลง</button>
 <button class="full" id="openConstruction3D">🏗️ เปิด Construction Simulation 3D</button>
+ <button class="full" id="openM003Base" style="display:none">🔐 OPEN M-003 PRIVATE BASE</button>
 <button class="full" id="closePlotPanel">ปิดรายละเอียดพื้นที่</button>
 </div>
 
@@ -499,9 +500,10 @@ parcels.forEach(p=>{const m=new THREE.Mesh(new THREE.SphereGeometry(.025,12,12),
  const zoneLabel=document.createElement('div');zoneLabel.textContent='NEW EXPLORER ZONE';Object.assign(zoneLabel.style,{position:'absolute',color:'#a9f4ff',font:'800 9px system-ui',letterSpacing:'1.5px',textShadow:'0 0 10px #38cdeeff',whiteSpace:'nowrap',pointerEvents:'none'});
 const ray=new THREE.Raycaster(),pointer=new THREE.Vector2();let selected=null,auto=true;
 function openM003Base(){const world=window.MarsWorldServer?.getState?.();if(!world?.user){toast('กรุณาเข้าสู่ระบบเพื่อยืนยันสิทธิ์เจ้าของ M-003');openLogin();return;}const owns=(world.claims||[]).some(c=>c.parcel_id==='M-003'&&c.owner_id===world.user.id);if(!owns){toast('ฟังก์ชันลับนี้สงวนสิทธิ์เฉพาะเจ้าของพื้นที่ M-003');return;}location.href='./m003-base.html';}
-renderer.domElement.addEventListener('pointerup',e=>{pointer.x=e.clientX/innerWidth*2-1;pointer.y=-(e.clientY/innerHeight)*2+1;ray.setFromCamera(pointer,camera);const factoryHits=ray.intersectObjects([...buildingMeshes.values()],true);if(factoryHits.length){let node=factoryHits[0].object;while(node&&!node.userData?.localMarsAction)node=node.parent;if(node?.userData?.localMarsAction==='open-m003-base'){openM003Base();return;}}const hits=ray.intersectObjects(markers);if(hits.length){selectPlot(hits[0].object.userData.plot)}});
+renderer.domElement.addEventListener('pointerup',e=>{pointer.x=e.clientX/innerWidth*2-1;pointer.y=-(e.clientY/innerHeight)*2+1;ray.setFromCamera(pointer,camera);const hits=ray.intersectObjects(markers,false);if(hits.length){selectPlot(hits[0].object.userData.plot);return;}});
 function selectPlot(p){
  selected=p;const world=window.MarsWorldServer?.getState?.()||{};
+  const m003Entry=document.querySelector("#openM003Base");if(m003Entry)m003Entry.style.display=p.id==="M-003"?"block":"none";
  const listing=(world.mlcMarket||[]).find(x=>x.parcel_id===p.id);
  const claim=(world.claims||[]).find(x=>x.parcel_id===p.id);
  const isOwner=!!(world.user&&claim?.owner_id===world.user.id);
@@ -595,6 +597,7 @@ document.querySelector('#build').onclick=async()=>{
  finally{button.disabled=false;button.textContent='🏗️ วางอาคารบนแปลง';}
 };
 document.querySelector('#openConstruction3D').onclick=()=>{if(!selected){toast('กรุณาเลือกแปลงดาวอังคารก่อน');return;}location.href='./city.html?parcel='+encodeURIComponent(selected.id);};
+ document.querySelector('#openM003Base').onclick=()=>{if(!selected||selected.id!=='M-003'){toast('Select M-003 first');return;}openM003Base();};
  document.querySelector('#closePlotPanel').onclick=()=>{document.body.classList.remove('plot-selected');selected=null;document.querySelector('#plotActions').style.display='none';document.querySelector('#plotInfo').style.display='block';};
 function openLogin(){document.querySelector('#login').style.display='grid'}
 document.querySelector('#account').onclick=openLogin;document.querySelector('#closeLogin').onclick=()=>document.querySelector('#login').style.display='none';
