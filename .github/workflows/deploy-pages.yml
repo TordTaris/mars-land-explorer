@@ -32,7 +32,7 @@ jobs:
           from pathlib import Path
 
           required = [
-              "index.html", "install.html", "city.html", "underground.html", "mission-trainer.html",
+              "index.html", "install.html", "member-workspace.js", "city.html", "underground.html", "mission-trainer.html",
               "m003-base.html", "m003-dimension-gate.html", "top-secret-demo.html",
               "civilization.html", "i18n.js", "premium-ui.css",
               "world-server.js", "multiverse.js", "easy-play.js",
@@ -60,11 +60,13 @@ jobs:
 
           assert '<link rel="manifest" href="./manifest.webmanifest">' in html, "manifest link missing"
           assert 'id="local-mars-install-controller"' in html, "LOCAL MARS install controller missing"
+assert 'id="lmWorkspaceOverlay"' in html and 'id="lmWorkspaceOpen"' in html, "member workspace dashboard missing"
+assert '<script src="./member-workspace.js" defer></script>' in html, "member workspace script missing"
           assert 'id="lmInstallAppBtn"' in html, "install button missing"
           assert manifest.get("display") == "standalone", "PWA standalone display missing"
           assert any(icon.get("sizes") == "192x192" for icon in manifest.get("icons", [])), "192px PWA icon declaration missing"
           assert any(icon.get("sizes") == "512x512" for icon in manifest.get("icons", [])), "512px PWA icon declaration missing"
-          assert 'const CACHE = "local-mars-v4-16"' in sw, "service worker cache version not bumped"
+          assert 'const CACHE = "local-mars-v4-17"' in sw, "service worker cache version not bumped"
           assert "navigator.serviceWorker.register('./sw.js'" in html, "service worker registration missing"
           assert manifest.get("start_url") == "./" and manifest.get("scope") == "./", "manifest paths must be relative to the GitHub Pages project root"
           assert th and en, "Thai and English dictionaries must not be empty"
