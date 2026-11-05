@@ -42,7 +42,7 @@ jobs:
           assert "NASA is not affiliated" in html
           assert "localStorage" in html, "Local progress persistence is missing"
 
-          scripts = re.findall(r"<script(?:\\s[^>]*)?>([\\s\\S]*?)</script>", html, re.I)
+          scripts = re.findall(r"<script(?:\s[^>]*)?>([\s\S]*?)</script>", html, re.I)
           assert len(scripts) == 1, f"Expected one inline application script, found {len(scripts)}"
           Path("/tmp/mission-trainer.js").write_text(scripts[0], encoding="utf-8")
 
