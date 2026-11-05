@@ -106,7 +106,7 @@ jobs:
           assert "const floors=[" in underground_script.group(1), "24-level base data missing"
           Path("/tmp/mars-underground.js").write_text(underground_script.group(1), encoding="utf-8")
 
-          mission_script = re.search(r"<script>\\s*(.*?)\\s*</script>", mission, re.S)
+          mission_script = re.search(r"<script>\s*(.*?)\s*</script>", mission, re.S)
           assert mission_script, "Mission Trainer script missing"
           Path("/tmp/mars-mission.js").write_text(mission_script.group(1), encoding="utf-8")
 
