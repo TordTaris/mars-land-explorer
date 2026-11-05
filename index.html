@@ -1240,7 +1240,7 @@ function renderSharedBuildings(structures){
    const beacon=add(new THREE.SphereGeometry(.012,12,8),glass,.0,.22,-.015);
    const beaconLight=new THREE.PointLight(0x5ce8ff,.65,.22);beaconLight.position.copy(beacon.position);site.add(beaconLight);
    // Reduce the overall footprint and height together so the complex reads as a believable outpost at planetary scale.
-   site.scale.setScalar(.23);
+   site.scale.setScalar(.35);
    site.position.copy(normal);site.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),normal.clone().normalize());site.userData.localMarsAction='open-m003-base';
    group.add(site);buildingMeshes.set(item.id||String(index),site);return;
   }
