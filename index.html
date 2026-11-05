@@ -466,6 +466,12 @@ body.authenticated #scene{background:radial-gradient(ellipse at 50% 48%,#25364b 
 .lm-system-state{position:absolute;left:55px;bottom:7px;color:#8fdcc9;font-size:7px;font-style:normal;font-weight:800;letter-spacing:1px}
 .lm-system-card[data-system-target="satellite"] .lm-system-state{color:#e4c27c}
 @media(max-width:760px){.lm-systems-overview{gap:5px}.lm-systems-overview>div{padding:8px 6px}.lm-systems-overview small{font-size:7px}.lm-systems-overview b{font-size:15px}.lm-systems-overview span{font-size:8px}.lm-system-card .lm-system-art{width:29px;height:36px}.lm-system-state{left:45px;font-size:6px}}
+</style><style id="local-mars-visible-system-hub">
+#lmSystemHubFloat{position:fixed;z-index:10020;top:calc(env(safe-area-inset-top,0px) + 66px);right:14px;display:flex;align-items:center;gap:9px;min-height:44px;padding:8px 13px;border:1px solid #e1bd79;border-radius:13px;background:linear-gradient(135deg,#273b50f5,#0a1a2bf5);color:#fff0cf;box-shadow:0 8px 26px #0009,0 0 18px #e2bd7933;font:800 10px/1.2 system-ui,sans-serif;letter-spacing:1px;cursor:pointer;backdrop-filter:blur(12px)}
+#lmSystemHubFloat .hub-icon{font-size:17px;color:#80e5ee}
+#lmSystemHubFloat small{display:block;margin-top:3px;color:#a7c2d3;font-size:7px;letter-spacing:1.1px;font-weight:700}
+#lmSystemHubFloat:active{transform:scale(.97)}
+@media(max-width:600px){#lmSystemHubFloat{top:calc(env(safe-area-inset-top,0px) + 62px);right:9px;min-height:40px;padding:7px 10px;font-size:9px}#lmSystemHubFloat small{font-size:6px}}
 </style></head>
 <body>\n<div id="lmStartup" role="status" aria-live="polite"><div id="lmStartupCard"><div id="lmStartupMark">LOCAL <b>MARS</b></div><div id="lmStartupText">INITIALIZING PLANETARY SYSTEMS…</div><div id="lmStartupTrack"></div></div></div>
 <script>
@@ -580,6 +586,7 @@ body.authenticated #scene{background:radial-gradient(ellipse at 50% 48%,#25364b 
 <div class="lm-menu-heading lm-language-heading">LANGUAGE / ภาษา</div>
 <div id="lmMenuLanguage" role="group" aria-label="Select language"><button type="button" data-language="th" aria-label="ภาษาไทย" title="ภาษาไทย" aria-pressed="false">🇹🇭 ไทย</button><button type="button" data-language="en" aria-label="English" title="English" aria-pressed="true">🇺🇸 EN</button></div></div>
  
+<button id="lmSystemHubFloat" type="button" aria-controls="lmSystemsOverlay" aria-expanded="false"><span class="hub-icon">▦</span><span>SYSTEM HUB<small>11 MODULES · OPEN DIRECTORY</small></span></button>
 <section id="lmSystemsOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="lmSystemsTitle">
  <div id="lmSystemsCard">
   <div class="lm-systems-head">
@@ -1280,6 +1287,7 @@ if ('serviceWorker' in navigator) {
 (()=>{
  const overlay=document.getElementById('lmSystemsOverlay');
  const toggle=document.getElementById('lmSystemsToggle');
+ const floatToggle=document.getElementById('lmSystemHubFloat');
  const close=document.getElementById('lmSystemsClose');
  const search=document.getElementById('lmSystemsSearch');
  const empty=document.getElementById('lmSystemsEmpty');
@@ -1290,19 +1298,20 @@ if ('serviceWorker' in navigator) {
   guide?.setAttribute('hidden','');
   guideToggle?.setAttribute('aria-expanded','false');
   overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');
-  toggle.setAttribute('aria-expanded','true');
+  toggle.setAttribute('aria-expanded','true');floatToggle?.setAttribute('aria-expanded','true');
   window.setTimeout(()=>search.focus(),40);
  };
  const shut=()=>{
   overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true');
-  toggle.setAttribute('aria-expanded','false');toggle.focus();
+  toggle.setAttribute('aria-expanded','false');floatToggle?.setAttribute('aria-expanded','false');
  };
  toggle.addEventListener('click',()=>overlay.classList.contains('open')?shut():open());
+ floatToggle?.addEventListener('click',()=>overlay.classList.contains('open')?shut():open());
  close.addEventListener('click',shut);
  overlay.addEventListener('click',event=>{if(event.target===overlay)shut();});
  guideToggle?.addEventListener('click',()=>{
   const willOpen=guide?.hasAttribute('hidden');
-  overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true');toggle.setAttribute('aria-expanded','false');
+  overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true');toggle.setAttribute('aria-expanded','false');floatToggle?.setAttribute('aria-expanded','false');
   if(guide){if(willOpen)guide.removeAttribute('hidden');else guide.setAttribute('hidden','');}
   guideToggle.setAttribute('aria-expanded',String(!!willOpen));
  });
@@ -1327,8 +1336,8 @@ if ('serviceWorker' in navigator) {
  const actions={
   explore:()=>document.querySelector('.lm-command-dock [data-tab="explore"]')?.click(),
   market:()=>document.querySelector('.lm-command-dock [data-tab="market"]')?.click(),
-  city:()=>location.href='./city.html',
-  underground:()=>location.href='./underground.html',
+  city:()=>document.getElementById('navCity')?.click(),
+  underground:()=>document.getElementById('navUnderground')?.click(),
   satellite:()=>document.querySelector('.lm-command-dock [data-tab="satellite"]')?.click(),
   workspace:()=>document.getElementById('lmWorkspaceOpen')?.click(),
   account:()=>document.querySelector('.lm-command-dock [data-tab="account"]')?.click(),
