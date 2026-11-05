@@ -139,11 +139,12 @@ jobs:
       - name: Prepare complete static site
         run: |
           mkdir -p _site
-          cp index.html install.html city.html underground.html mission-trainer.html m003-base.html m003-dimension-gate.html top-secret-demo.html civilization.html i18n.js premium-ui.css world-server.js multiverse.js easy-play.js manifest.webmanifest sw.js icon.svg _site/
+          cp index.html install.html city.html underground.html mission-trainer.html m003-base.html m003-dimension-gate.html top-secret-demo.html civilization.html i18n.js premium-ui.css world-server.js member-workspace.js multiverse.js easy-play.js manifest.webmanifest sw.js icon.svg _site/
           cp -R locales _site/locales
           cp -R parcels _site/parcels
           touch _site/.nojekyll
           test -s _site/install.html
+          test -s _site/member-workspace.js
           test -s _site/locales/th.json
           test -s _site/locales/en.json
           test -s _site/mission-trainer.html
