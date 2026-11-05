@@ -1,0 +1,25 @@
+name: Refresh USD-THB reference rate
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 2 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Refresh protected FX reference
+        env:
+          FX_REFRESH_SECRET: ${{ secrets.FX_REFRESH_SECRET }}
+        run: |
+          set -euo pipefail
+          test -n "$FX_REFRESH_SECRET"
+          curl --fail-with-body --silent --show-error \
+            -X POST "https://tppgfxsdeuujidcjnfdl.supabase.co/functions/v1/refresh-fx-rates" \
+            -H "x-fx-refresh-secret: $FX_REFRESH_SECRET" \
+            -H "Content-Type: application/json" \
+            --data '{}'
