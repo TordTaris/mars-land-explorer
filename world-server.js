@@ -10,12 +10,17 @@ function authView(){const el=$('worldServerUser');if(el)el.textContent=S.user?'�
 function counts(){const el=$('worldServerCounts');if(el)el.textContent='พื้นที่จอง '+S.claims.length+' · อาคาร '+S.structures.length;}
 async function refresh(){
  if(!S.db)return;
- const [p,a,b,c]=await Promise.all([
+ let [p,a,b,c]=await Promise.all([
   S.db.from('world_parcels').select('id,latitude,longitude,area_sqm,terrain,resource,base_price,sale_price_usd,is_for_sale'),
   S.db.from('world_claims').select('parcel_id,owner_id,claimed_at'),
   S.db.from('world_structures').select('id,parcel_id,owner_id,structure_type,level,created_at'),
   S.db.from('world_events').select('id,event_type,parcel_id,payload,created_at').order('created_at',{ascending:false}).limit(30)
  ]);
+ // Keep the shared world online while an operator is applying migration 016.
+ if(p.error && /sale_price_usd|is_for_sale|column/i.test(p.error.message||'')){
+  const legacy=await S.db.from('world_parcels').select('id,latitude,longitude,area_sqm,terrain,resource,base_price');
+  if(!legacy.error)p={data:(legacy.data||[]).map(row=>({...row,sale_price_usd:null,is_for_sale:false})),error:null};
+ }
  const err=p.error||a.error||b.error||c.error;if(err){status(err.message);return {error:err};}
  S.parcels=p.data||[];S.claims=a.data||[];S.structures=b.data||[];S.events=c.data||[];const market=await S.db.from('mars_mlc_parcel_market').select('parcel_id,price_mlc,is_listed');S.mlcMarket=market.error?[]:(market.data||[]);if(market.error)console.warn('MLC parcel market is not ready:',market.error.message);counts();
  document.dispatchEvent(new CustomEvent('mars-world-updated',{detail:{parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,mlcMarket:S.mlcMarket,user:S.user}}));
