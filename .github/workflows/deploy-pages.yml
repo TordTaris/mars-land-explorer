@@ -60,7 +60,7 @@ jobs:
 
           assert '<link rel="manifest" href="./manifest.webmanifest">' in html, "manifest link missing"
           assert 'id="local-mars-install-controller"' in html, "LOCAL MARS install controller missing"
-assert 'id="lmWorkspaceOverlay"' in html and 'id="lmWorkspaceOpen"' in html, "member workspace dashboard missing"
+assert 'id="lmWorkspaceOverlay"' in html and 'id="lmWorkspaceOpen"' in html and 'id="lmWorkspaceCreations"' in html, "member workspace dashboard missing"
 assert '<script src="./member-workspace.js" defer></script>' in html, "member workspace script missing"
           assert 'id="lmInstallAppBtn"' in html, "install button missing"
           assert manifest.get("display") == "standalone", "PWA standalone display missing"
