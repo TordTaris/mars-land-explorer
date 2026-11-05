@@ -225,8 +225,8 @@ header #lmLanguage{display:inline-flex!important;visibility:visible!important;op
 <h3>LAND EXPLORER</h3>
 <div id="plotInfo" class="small">ดาวอังคารจำลอง • ลากเพื่อหมุน / บีบนิ้วเพื่อซูม • แตะหมุดเพื่อสำรวจแปลง</div>
 <div id="plotActions" style="display:none">
-<div class="plot"><strong id="plotName">M-001</strong><small id="plotMeta">พื้นที่จำลอง</small><div style="margin-top:8px">มูลค่า <b id="plotPrice">฿216 THB</b><div class="small">มูลค่าอ้างอิง THB สำหรับระบบจำลอง การชำระเงินจริงต้องผ่าน PromptPay</div></div></div>
-<button class="primary full" id="claim">ซื้อด้วย PromptPay (THB)</button>
+<div class="plot"><strong id="plotName">M-001</strong><small id="plotMeta">พื้นที่จำลอง</small><div style="margin-top:10px">ราคาซื้อขายหลัก <b id="plotUsdPrice" style="font-size:18px;color:#f0d18e">$— USD</b><div class="small" id="plotUsdNote">ราคาขาย USD จะแสดงเมื่อแปลงได้รับการกำหนดราคาและเปิดขาย</div></div><div style="margin-top:9px;padding-top:8px;border-top:1px solid #ffffff20">มูลค่าเศรษฐกิจจำลอง <b id="plotPrice">— MLC</b><div class="small">MLC ใช้แยกต่างหากภายในระบบจำลอง ไม่ใช่ USD หรือเงินสด</div></div></div>
+<button class="primary full" id="claim" disabled>ซื้อพื้นที่ด้วย USD ผ่าน Stripe</button>
 <div class="plot" style="margin-top:9px;border:1px solid #c5a56b66">
  <div class="small">ราคาตลาดภายใน LOCAL MARS</div>
  <div style="font-size:18px;font-weight:850;color:#f0d18e;margin:4px 0"><span id="plotMlcPrice">— MLC</span></div>
@@ -512,9 +512,12 @@ function selectPlot(p){
  document.querySelector("#plotName").textContent=p.id;
  document.querySelector("#building").querySelector('option[value="NuclearPlant"]').disabled=p.id!=="M-003";
  document.querySelector("#plotMeta").textContent="พิกัด "+p.lat+"°N / "+p.lon+"°E • "+(claim?"มีเจ้าของแล้ว":"ยังไม่มีเจ้าของ");
- document.querySelector("#plotPrice").textContent="฿"+Number(p.price).toLocaleString("th-TH")+" THB";
- document.querySelector("#claim").disabled=!!claim;
- document.querySelector("#claim").textContent=claim?"มีเจ้าของแล้ว":"ซื้อด้วย PromptPay (THB)";
+ document.querySelector("#plotPrice").textContent=Number(p.price).toLocaleString("en-US")+" MLC";
+ const usdPrice=Number.isFinite(Number(p.salePriceUsd))&&Number(p.salePriceUsd)>0?Number(p.salePriceUsd):null;
+ document.querySelector("#plotUsdPrice").textContent=usdPrice?"$"+usdPrice.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})+" USD":"ยังไม่กำหนด USD";
+ document.querySelector("#plotUsdNote").textContent=usdPrice?"ราคา USD จากฐานข้อมูล · ชำระผ่าน Stripe Checkout":"แปลงนี้ยังไม่มีราคาขาย USD หรือยังไม่เปิดขาย";
+ document.querySelector("#claim").disabled=!!claim||!usdPrice;
+ document.querySelector("#claim").textContent=claim?"มีเจ้าของแล้ว":usdPrice?"ซื้อพื้นที่ด้วย USD ผ่าน Stripe":"ยังไม่เปิดขายด้วย USD";
  document.querySelector("#plotMlcPrice").textContent=listing?Number(listing.price_mlc).toLocaleString("en-US")+" MLC":"ไม่เปิดขาย";
  document.querySelector("#plotMlcStatus").textContent=claim?(isOwner?(listing?.is_listed?"แปลงของคุณ · เปิดประกาศขาย":"แปลงของคุณ · ยังไม่ประกาศขาย"):(listing?.is_listed?"เจ้าของประกาศขาย":"มีเจ้าของ · ไม่เปิดขาย")):(listing?.is_listed?"ว่าง · จองหรือซื้อได้ด้วย MLC":"ยังไม่เปิดขายด้วย MLC");
  document.querySelector("#reserveMlc").disabled=!listing?.is_listed||isOwner;
@@ -530,7 +533,7 @@ parcels.forEach(p=>{if(state.owned.includes(p.id))p.owner=state.profile?.name||'
 function save(){localStorage.setItem('localmars-demo',JSON.stringify(state));updateStats()}
 function updateStats(){const world=window.MarsWorldServer?.getState?.();const user=world?.user;document.querySelector('#owned').textContent=user?(world.claims||[]).filter(x=>x.owner_id===user.id).length:0;document.querySelector('#buildings').textContent=user?(world.structures||[]).filter(x=>x.owner_id===user.id).length:0;markers.forEach(m=>m.material.color.set(m.userData.plot.owner?0xffa45f:0x55dce8))}
 function toast(s){const t=document.querySelector('#toast');t.textContent=s;t.style.display='block';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.style.display='none',2600)}
-document.querySelector('#claim').onclick=async()=>{if(!selected)return;const result=await window.MarsWorldServer?.claim(selected.id);if(result?.error){toast(result.error.message);if(!window.MarsWorldServer?.getState().user)openLogin();return;}};
+document.querySelector('#claim').onclick=async()=>{if(!selected)return;const world=window.MarsWorldServer?.getState?.();if(!world?.user){toast('กรุณาเข้าสู่ระบบก่อนซื้อพื้นที่ด้วย USD');openLogin();return;}const result=await window.MarsWorldServer?.claimUsd(selected.id);if(result?.error){toast(result.error.message);if(!window.MarsWorldServer?.getState?.().user)openLogin();return;}};
 const runParcelAction=async(buttonId,action,successText)=>{
  if(!selected)return;const world=window.MarsWorldServer?.getState?.();
  if(!world?.user){toast('กรุณาเข้าสู่ระบบก่อนทำรายการ');openLogin();return;}
@@ -599,7 +602,7 @@ document.querySelector('#loginBtn').onclick=async()=>{const r=await window.MarsW
 document.querySelector('#signInBtn').onclick=async()=>{const r=await window.MarsWorldServer?.auth('signin');if(r?.error){toast(r.error.message);return;}document.querySelector('#login').style.display='none';toast('เข้าสู่ระบบออนไลน์สำเร็จ')};
 document.querySelector('#worldServerLogout').onclick=async()=>{await window.MarsWorldServer?.logout();toast('ออกจากระบบแล้ว')};
 document.addEventListener('mars-auth-state',e=>{document.body.classList.toggle('authenticated',!!e.detail?.user);document.body.classList.toggle('plot-selected',!!e.detail?.user&&!!selected);if(e.detail?.user){document.querySelector('#login').style.display='none';toast('ยินดีต้อนรับสู่ดาวอังคาร · Planet Explorer');}else{document.body.classList.remove('authenticated');}});
-document.addEventListener('mars-world-updated',e=>{const d=e.detail||{};document.body.classList.toggle('authenticated',!!d.user);document.body.classList.toggle('plot-selected',!!d.user&&!!selected);parcels.forEach(p=>{const canonical=d.parcels?.find(x=>x.id===p.id);if(canonical&&Number.isFinite(Number(canonical.base_price)))p.price=Number(canonical.base_price);const claim=d.claims?.find(x=>x.parcel_id===p.id);p.owner=claim?claim.owner_id:null;const structure=d.structures?.find(x=>x.parcel_id===p.id);p.building=structure?.structure_type||null;});renderSharedBuildings(d.structures||[]);const mine=d.claims?.filter(x=>x.owner_id===d.user?.id)||[];document.querySelector('#owned').textContent=mine.length;document.querySelector('#buildings').textContent=(d.structures||[]).filter(x=>x.owner_id===d.user?.id).length;markers.forEach(m=>m.material.color.set(m.userData.plot.owner?0xffa45f:0x55dce8));if(selected)selectPlot(selected);});
+document.addEventListener('mars-world-updated',e=>{const d=e.detail||{};document.body.classList.toggle('authenticated',!!d.user);document.body.classList.toggle('plot-selected',!!d.user&&!!selected);parcels.forEach(p=>{const canonical=d.parcels?.find(x=>x.id===p.id);if(canonical&&Number.isFinite(Number(canonical.base_price)))p.price=Number(canonical.base_price);p.salePriceUsd=canonical?.is_for_sale&&Number.isFinite(Number(canonical.sale_price_usd))?Number(canonical.sale_price_usd):null;const claim=d.claims?.find(x=>x.parcel_id===p.id);p.owner=claim?claim.owner_id:null;const structure=d.structures?.find(x=>x.parcel_id===p.id);p.building=structure?.structure_type||null;});renderSharedBuildings(d.structures||[]);const mine=d.claims?.filter(x=>x.owner_id===d.user?.id)||[];document.querySelector('#owned').textContent=mine.length;document.querySelector('#buildings').textContent=(d.structures||[]).filter(x=>x.owner_id===d.user?.id).length;markers.forEach(m=>m.material.color.set(m.userData.plot.owner?0xffa45f:0x55dce8));if(selected)selectPlot(selected);});
 document.querySelector('#navExplore').onclick=()=>{toast('แตะจุดสีฟ้าบนดาวเพื่อเลือกแปลงสำรวจ')};
  document.querySelector('#navNewExplorer').onclick=()=>{
    controls.autoRotate=false;auto=false;document.querySelector('#rotate').textContent='หมุนอัตโนมัติ: ปิด';document.querySelector('#rotate').classList.remove('active');
