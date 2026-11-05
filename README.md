@@ -45,7 +45,7 @@ Check [GitHub Actions](https://github.com/TordTaris/mars-land-explorer/actions).
 
 The static GitHub Pages deployment does not itself run PostgreSQL or enable Supabase. Shared accounts, realtime world sync, wallet ledger and MLC marketplace operations require the Supabase schema/migrations and correct project configuration to be applied in the Supabase project.
 
-See [WORLD_SERVER_SETUP_TH.md](./WORLD_SERVER_SETUP_TH.md). Never put a Supabase `service_role` key or database password in browser code.
+See [WORLD_SERVER_SETUP_TH.md](./WORLD_SERVER_SETUP_TH.md) and [USD_MARKET_SETUP_TH.md](./USD_MARKET_SETUP_TH.md) before enabling USD parcel checkout. Never put a Supabase `service_role` key or database password in browser code.
 
 ## Underground Base 24 safety note
 

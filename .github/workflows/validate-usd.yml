@@ -1,0 +1,67 @@
+name: Validate LOCAL MARS USD rollout
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main, "feature/usd-market-standard"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check world server JavaScript
+        run: node --check world-server.js
+      - name: Check inline JavaScript in index.html
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          html = Path("index.html").read_text(encoding="utf-8")
+          matches = re.finditer(r"<script(?P<attrs>[^>]*)>(?P<body>[\s\S]*?)</script>", html, re.I)
+          count = 0
+          for i, match in enumerate(matches):
+              attrs = match.group("attrs")
+              body = match.group("body")
+              if re.search(r"\bsrc=", attrs, re.I) or re.search(r"\btype=[\"']importmap[\"']", attrs, re.I):
+                  continue
+              if not body.strip():
+                  continue
+              Path(f"/tmp/local-mars-inline-{i}.mjs").write_text(body, encoding="utf-8")
+              count += 1
+          if not count:
+              raise SystemExit("No executable inline scripts found")
+          print(f"Extracted {count} executable inline script blocks")
+          PY
+          for file in /tmp/local-mars-inline-*.mjs; do
+            [ -f "$file" ] && node --check "$file"
+          done
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Type-check FX Edge Function
+        run: deno check supabase/functions/refresh-fx-rates/index.ts
+      - name: Type-check USD Checkout and Stripe webhook functions
+        run: |
+          deno check supabase/functions/create-usd-checkout/index.ts
+          deno check supabase/functions/stripe-webhook/index.ts
+      - name: Check migration and FX function files exist
+        run: |
+          test -s supabase/migrations/016_usd_market_standard.sql
+          test -s supabase/migrations/017_fx_provider_freshness.sql
+          test -s supabase/migrations/018_usd_parcel_checkout.sql
+          test -s supabase/migrations/019_usd_checkout_recovery.sql
+          test -s .github/workflows/deploy-supabase-functions.yml
+          test -s supabase/functions/create-usd-checkout/index.ts
+          test -s supabase/functions/refresh-fx-rates/index.ts
+          grep -q "sale_price_usd" world-server.js
+          grep -q "USD Checkout" index.html
+          ! grep -q "payment_method_types" supabase/functions/create-usd-checkout/index.ts

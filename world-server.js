@@ -13,11 +13,12 @@ async function trackPresence(channel){try{await channel.track({client_type:S.use
 async function refresh(){
  if(!S.db)return;
  const [p,a,b,c]=await Promise.all([
-  S.db.from('world_parcels').select('id,latitude,longitude,area_sqm,terrain,resource,base_price'),
+  S.db.from('world_parcels').select('id,latitude,longitude,area_sqm,terrain,resource,base_price,sale_price_usd,is_for_sale'),
   S.db.from('world_claims').select('parcel_id,owner_id,claimed_at'),
   S.db.from('world_structures').select('id,parcel_id,owner_id,structure_type,level,created_at'),
   S.db.from('world_events').select('id,event_type,parcel_id,payload,created_at').order('created_at',{ascending:false}).limit(30)
  ]);
+ if(p.error && /sale_price_usd|is_for_sale|column/i.test(p.error.message||'')){const legacy=await S.db.from('world_parcels').select('id,latitude,longitude,area_sqm,terrain,resource,base_price');if(!legacy.error)p={data:(legacy.data||[]).map(row=>({...row,sale_price_usd:null,is_for_sale:false})),error:null};}
  const err=p.error||a.error||b.error||c.error;if(err){status(err.message);return {error:err};}
  S.parcels=p.data||[];S.claims=a.data||[];S.structures=b.data||[];S.events=c.data||[];const market=await S.db.from('mars_mlc_parcel_market').select('parcel_id,price_mlc,is_listed');S.mlcMarket=market.error?[]:(market.data||[]);if(market.error)console.warn('MLC parcel market is not ready:',market.error.message);counts();
  document.dispatchEvent(new CustomEvent('mars-world-updated',{detail:{parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,mlcMarket:S.mlcMarket,user:S.user}}));
@@ -98,10 +99,14 @@ async function auth(mode){
 async function logout(){if(S.db)await S.db.auth.signOut();S.user=null;authView();emitAuth();status('ออกจากระบบแล้ว');}
 async function claim(parcel){
  if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบออนไลน์ก่อนซื้อพื้นที่'}};
- const {data,error}=await S.db.functions.invoke('create-promptpay-checkout',{body:{parcel_id:parcel}});
- if(error){const message=error.message||'ยังไม่สามารถเริ่มชำระเงินได้';status(message);return {error:{message}};}
- if(!data?.checkout_url){const message=data?.error||'ยังไม่ได้รับลิงก์ชำระเงิน';status(message);return {error:{message}};}
- status('กำลังเปิดหน้าชำระ PromptPay…',true);
+ return {error:{message:'ปิดการชำระ PromptPay สำหรับการซื้อพื้นที่ใหม่แล้ว กรุณาใช้ USD Checkout'}};
+}
+async function claimUsd(parcel){
+ if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบออนไลน์ก่อนซื้อพื้นที่'}};
+ const {data,error}=await S.db.functions.invoke('create-usd-checkout',{body:{parcel_id:parcel}});
+ if(error){const message=error.message||'ยังไม่สามารถเริ่ม USD Checkout ได้';status(message);return {error:{message}};}
+ if(!data?.checkout_url||String(data.currency).toLowerCase()!=='usd'){const message=data?.error||'ข้อมูล USD Checkout ไม่ถูกต้อง';status(message);return {error:{message}};}
+ status('กำลังเปิดหน้า Stripe USD Checkout…',true);
  window.location.assign(data.checkout_url);
  return {data};
 }
@@ -167,6 +172,6 @@ async function setParcelListing(parcel,isListed,price){
  return synced?.error?{data:result.data,syncWarning:synced.error.message}:result;
 }
 
-window.MarsWorldServer={connect,auth,logout,refresh,claim,build,loadM003PrivateBase,walletBalances,grantMlcStarter,transferMlc,reserveParcel,purchaseParcel,setParcelListing,getState:()=>({user:S.user,parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,mlcMarket:S.mlcMarket,db:S.db})};
+window.MarsWorldServer={connect,auth,logout,refresh,claim,claimUsd,build,loadM003PrivateBase,walletBalances,grantMlcStarter,transferMlc,reserveParcel,purchaseParcel,setParcelListing,getState:()=>({user:S.user,parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,mlcMarket:S.mlcMarket,db:S.db})};
 document.addEventListener('DOMContentLoaded',connect);
 })();
