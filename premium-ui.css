@@ -1,0 +1,62 @@
+/* LOCAL MARS — unified premium English interface */
+:root{
+  color-scheme:dark;
+  --lm-bg:#070d17;--lm-surface:#0d1b2c;--lm-surface-2:#12263b;
+  --lm-border:rgba(203,174,119,.34);--lm-gold:#dfbd7d;
+  --lm-text:#f4f0e7;--lm-muted:#a6b5c6;--lm-cyan:#76dce8;
+  --lm-green:#8de4bd;--lm-shadow:0 16px 42px rgba(0,0,0,.38);
+}
+html{background:var(--lm-bg);scroll-behavior:smooth}
+body{color:var(--lm-text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
+::selection{background:rgba(223,189,125,.3);color:#fff}
+:focus-visible{outline:2px solid var(--lm-cyan)!important;outline-offset:3px}
+header{isolation:isolate}
+header,.panel,.card,.hero,.modal,.directory,.detail,#gate{
+  border-color:var(--lm-border);
+  box-shadow:var(--lm-shadow),inset 0 1px rgba(255,255,255,.045);
+}
+h1,h2,h3{letter-spacing:.025em}
+h1{line-height:1.12}
+h2,h3{color:var(--lm-gold)}
+p,.small,.hint,.note{line-height:1.65}
+button,.action,select,input,textarea{
+  font:inherit;transition:background .18s ease,border-color .18s ease,transform .18s ease,box-shadow .18s ease;
+}
+button,.action{
+  min-height:38px;border:1px solid rgba(194,166,111,.42);
+  border-radius:10px;background:linear-gradient(145deg,#1a3047,#0e1d30);
+  color:var(--lm-text);font-weight:650;letter-spacing:.01em;
+}
+button:hover,.action:hover{border-color:var(--lm-gold);box-shadow:0 7px 20px rgba(0,0,0,.22);transform:translateY(-1px)}
+button:disabled{opacity:.48;cursor:not-allowed;transform:none;box-shadow:none}
+button.primary,.action.primary{
+  border:1px solid #f0d49a;background:linear-gradient(120deg,#dfb86e,#a77a3e);
+  color:#1b160f;font-weight:850;box-shadow:0 7px 22px rgba(185,139,67,.18)
+}
+input,select,textarea{
+  color:var(--lm-text);background:#081523;border:1px solid #405a73;border-radius:9px;
+}
+input::placeholder,textarea::placeholder{color:#8295aa}
+.status,.pill,.directory-live{
+  border-radius:999px;letter-spacing:.045em;font-weight:750;
+}
+.metric,.row{border-color:rgba(255,255,255,.09)}
+.plot,.job-card,.build-progress,.system,.detail,.metric,.stat{
+  border-radius:12px;
+}
+.bottom{padding:7px;border-radius:14px;max-width:calc(100vw - 20px)}
+.bottom button{white-space:nowrap}
+a{color:var(--lm-cyan);text-underline-offset:3px}
+a:hover{color:#c3f5fa}
+#toast,.toast{border-radius:12px;box-shadow:var(--lm-shadow);z-index:80}
+#lmLanguage,.lm-language-slot{display:none!important}
+@media(max-width:760px){
+  body{font-size:13px}
+  .panel,.card{border-radius:13px}
+  button,.action{min-height:36px}
+  header{gap:8px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+}
