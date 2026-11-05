@@ -59,3 +59,32 @@ Migration นี้บันทึกอัตราอ้างอิงตา�
 - ฟังก์ชัน PromptPay เดิมถูกปิดใน world-server.js เพื่อป้องกันการส่งผู้ใช้ไปชำระ THB ระหว่างการย้ายระบบ
 - MLC market ยังคงทำงานแยกจากราคา USD ตามเดิม
 - เพิ่ม workflow `.github/workflows/validate-usd.yml` สำหรับตรวจ syntax JavaScript และไฟล์ migration ทุกครั้งที่ PR มีการเปลี่ยนแปลง
+
+## 8) เปิดใช้งาน USD Checkout (ต้องทำครบก่อนเปิดขาย)
+โค้ด USD Checkout และ webhook แยกจาก PromptPay เดิมแล้ว โดยใช้ Stripe card ในสกุล USD
+
+1. สำรองฐานข้อมูล แล้วรัน SQL ตามลำดับ: migration 016 → 017 → 018
+2. Deploy Edge Functions:
+```bash
+supabase functions deploy create-usd-checkout --project-ref YOUR_PROJECT_REF
+supabase functions deploy stripe-webhook --no-verify-jwt --project-ref YOUR_PROJECT_REF
+supabase functions deploy refresh-fx-rates --no-verify-jwt --project-ref YOUR_PROJECT_REF
+```
+3. ตั้ง Supabase secrets เดิมให้ครบ: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `MARS_OWNER_USER_ID`, `SITE_URL`, `SITE_ORIGIN`
+4. ใช้ Stripe TEST secret key ก่อน และตั้ง webhook endpoint เดิมให้รับ `checkout.session.completed` กับ `checkout.session.async_payment_succeeded`
+5. กำหนดราคา USD และเปิดขายเฉพาะแปลงที่ผ่านการตรวจแล้ว ตัวอย่างทดสอบ (ห้ามใช้เป็นราคาขายจริงโดยอัตโนมัติ):
+```sql
+update public.world_parcels
+set sale_price_usd = 9.99, is_for_sale = true
+where id = 'M-001';
+``
+6. ตรวจว่า UI แสดงราคา USD และปุ่มซื้อเปิดเฉพาะแปลงที่มีราคา USD และยังไม่มีเจ้าของ
+7. ทดสอบจ่ายสำเร็จ, ยกเลิก, session หมดอายุ, webhook ซ้ำ, currency ผิด, amount ผิด และซื้อแปลงเดียวกันพร้อมกัน
+8. ตรวจ `mars_usd_parcel_orders`, `world_claims`, `mars_owner_wallet_entries_usd` ว่ามีรายการเดียวและยอดตรงกัน
+
+ข้อควรระวัง:
+- migration 018 สร้างคำสั่งซื้อและ ledger USD แยกจากตาราง THB เดิม ไม่แก้ยอด THB เก่า
+- Stripe Checkout รองรับ USD แต่การเปิดใช้จริงขึ้นกับการอนุมัติบัญชี/ประเภทธุรกิจและประเทศของบัญชี Stripe
+- ปุ่มซื้อจะแสดงได้เมื่อแปลงมี `sale_price_usd` และ `is_for_sale=true`; การชำระจะสำเร็จได้ก็ต่อเมื่อ migrations/functions/secrets/webhook ถูก deploy ครบ
+- รายได้สุทธิและการถอนยังไม่ถือว่าพร้อม เพราะต้อง reconcile ค่าธรรมเนียมและ payout จาก Stripe
+- ราคาแปลงดาวอังคารเป็นราคาสินทรัพย์จำลอง/ราคาเสนอขายของแพลตฟอร์ม ไม่ใช่ราคาตลาดอสังหาริมทรัพย์จริงหรือกรรมสิทธิ์บนดาวอังคาร
