@@ -65,7 +65,7 @@ jobs:
               path = icon.get("src", "").removeprefix("./")
               assert path and Path(path).is_file(), f"manifest icon missing: {path}"
 
-          importmap = re.search(r'<script type="importmap">\\s*(.*?)\\s*</script>', html, re.S)
+          importmap = re.search(r'<script type="importmap">\s*(.*?)\s*</script>', html, re.S)
           assert importmap, "Three.js import map missing"
           imports = json.loads(importmap.group(1)).get("imports", {})
           assert imports.get("three", "").endswith("/build/three.module.js"), "Three.js module mapping missing"
@@ -87,17 +87,17 @@ jobs:
           for n in range(1, 13):
               assert f'"./parcels/M-{n:03}/index.html"' in sw, f"parcel offline cache entry missing: M-{n:03}"
 
-          module = re.search(r'<script type="module">\\s*(.*?)\\s*</script>', html, re.S)
+          module = re.search(r'<script type="module">\s*(.*?)\s*</script>', html, re.S)
           assert module, "application module missing"
           Path("/tmp/mars-main.mjs").write_text(module.group(1), encoding="utf-8")
 
-          city_module = re.search(r'<script type="module">\\s*(.*?)\\s*</script>', city, re.S)
+          city_module = re.search(r'<script type="module">\s*(.*?)\s*</script>', city, re.S)
           assert city_module, "city builder module missing"
           assert 'id="constructionList"' in city, "construction progress panel missing"
           assert "function updateConstructionJobs" in city, "construction simulation loop missing"
           Path("/tmp/mars-city.mjs").write_text(city_module.group(1), encoding="utf-8")
 
-          underground_script = re.search(r'<script>\\s*(.*?)\\s*</script>', underground, re.S)
+          underground_script = re.search(r'<script>\s*(.*?)\s*</script>', underground, re.S)
           assert underground_script, "underground simulator script missing"
           assert "const floors=[" in underground_script.group(1), "24-level base data missing"
           Path("/tmp/mars-underground.js").write_text(underground_script.group(1), encoding="utf-8")
