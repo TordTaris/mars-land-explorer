@@ -32,7 +32,7 @@ jobs:
           from pathlib import Path
 
           required = [
-              "index.html", "city.html", "underground.html",
+              "index.html", "city.html", "underground.html", "mission-trainer.html",
               "m003-base.html", "m003-dimension-gate.html", "top-secret-demo.html",
               "civilization.html", "i18n.js", "premium-ui.css",
               "world-server.js", "multiverse.js", "easy-play.js",
@@ -51,6 +51,7 @@ jobs:
           html = Path("index.html").read_text(encoding="utf-8")
           city = Path("city.html").read_text(encoding="utf-8")
           underground = Path("underground.html").read_text(encoding="utf-8")
+          mission = Path("mission-trainer.html").read_text(encoding="utf-8")
           dimension_gate = Path("m003-dimension-gate.html").read_text(encoding="utf-8")
           manifest = json.loads(Path("manifest.webmanifest").read_text(encoding="utf-8"))
           sw = Path("sw.js").read_text(encoding="utf-8")
@@ -74,9 +75,12 @@ jobs:
           assert "location.href='./city.html'" in html and "location.href='./underground.html'" in html, "main navigation target missing"
           assert 'href="./m003-dimension-gate.html"' in Path("m003-base.html").read_text(encoding="utf-8"), "M-003 Dimension Gate link missing"
           assert "PROJECT DIMENSION GATE" in dimension_gate, "Dimension Gate page content missing"
+          assert "Build a Resilient Mars Outpost" in mission, "Mission Trainer content missing"
+          assert "EDUCATIONAL SIMULATION" in mission and "NASA is not affiliated" in mission, "Mission Trainer scientific boundary missing"
+          assert 'href="./mission-trainer.html"' in html, "Mission Trainer navigation link missing"
 
           for asset in (
-              '"./"', '"./index.html"', '"./city.html"', '"./underground.html"',
+              '"./"', '"./index.html"', '"./city.html"', '"./underground.html"', '"./mission-trainer.html"',
               '"./m003-base.html"', '"./m003-dimension-gate.html"', '"./top-secret-demo.html"',
               '"./civilization.html"', '"./i18n.js"', '"./premium-ui.css"',
               '"./world-server.js"', '"./multiverse.js"', '"./easy-play.js"',
@@ -102,11 +106,16 @@ jobs:
           assert "const floors=[" in underground_script.group(1), "24-level base data missing"
           Path("/tmp/mars-underground.js").write_text(underground_script.group(1), encoding="utf-8")
 
+          mission_script = re.search(r"<script>\\s*(.*?)\\s*</script>", mission, re.S)
+          assert mission_script, "Mission Trainer script missing"
+          Path("/tmp/mars-mission.js").write_text(mission_script.group(1), encoding="utf-8")
+
           print("LOCAL MARS: app routes, all 12 parcel routes, M-003, TOP SECRET demo, premium assets, TH/EN dictionaries and PWA assets validated.")
           PY
           node --check /tmp/mars-main.mjs
           node --check /tmp/mars-city.mjs
           node --check /tmp/mars-underground.js
+          node --check /tmp/mars-mission.js
           node --check sw.js
           node --check world-server.js
           node --check multiverse.js
@@ -119,12 +128,13 @@ jobs:
       - name: Prepare complete static site
         run: |
           mkdir -p _site
-          cp index.html city.html underground.html m003-base.html m003-dimension-gate.html top-secret-demo.html civilization.html i18n.js premium-ui.css world-server.js multiverse.js easy-play.js manifest.webmanifest sw.js icon.svg _site/
+          cp index.html city.html underground.html mission-trainer.html m003-base.html m003-dimension-gate.html top-secret-demo.html civilization.html i18n.js premium-ui.css world-server.js multiverse.js easy-play.js manifest.webmanifest sw.js icon.svg _site/
           cp -R locales _site/locales
           cp -R parcels _site/parcels
           touch _site/.nojekyll
           test -s _site/locales/th.json
           test -s _site/locales/en.json
+          test -s _site/mission-trainer.html
           test -s _site/m003-base.html
           test -s _site/m003-dimension-gate.html
           test -s _site/top-secret-demo.html
