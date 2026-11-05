@@ -26,12 +26,12 @@ jobs:
           import re
           from pathlib import Path
           html = Path("index.html").read_text(encoding="utf-8")
-          matches = re.finditer(r"<script(?P<attrs>[^>]*)>(?P<body>[\\s\\S]*?)</script>", html, re.I)
+          matches = re.finditer(r"<script(?P<attrs>[^>]*)>(?P<body>[\s\S]*?)</script>", html, re.I)
           count = 0
           for i, match in enumerate(matches):
               attrs = match.group("attrs")
               body = match.group("body")
-              if re.search(r"\\bsrc=", attrs, re.I) or re.search(r"\\btype=[\"']importmap[\"']", attrs, re.I):
+              if re.search(r"\bsrc=", attrs, re.I) or re.search(r"\btype=[\"']importmap[\"']", attrs, re.I):
                   continue
               if not body.strip():
                   continue
