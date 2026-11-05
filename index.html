@@ -624,7 +624,7 @@ relayBeacon.position.set(0,.125,0);relaySatellite.add(relayBeacon);
 // Keep the orbital plane for satellite/aircraft movement, without drawing its path.
 const relayOrbitRotation=new THREE.Euler(1.05,.25,.2);const relayOrbitQuaternion=new THREE.Quaternion().setFromEuler(relayOrbitRotation);
 // Realistic compact relay satellite: keep the spacecraft visually small against the Mars globe.
-relaySatellite.scale.setScalar(.22);
+relaySatellite.scale.setScalar(.42);
 
 // MARS ATMOSPHERIC TRANSPORT — two clearly visible 3D craft flying above the surface.
 // Atmospheric vehicles remain animated; the visible orbital guide ring is removed.
@@ -842,6 +842,17 @@ function launchSmallSatellite(){
  if(launchButton){launchButton.classList.add('active');launchButton.textContent='🛰️ Satellite Active';}
 }
 document.querySelector('#navSatellite').onclick=launchSmallSatellite;
+// Restore the already-deployed exploration satellite on every app start.
+// This is a visual simulation state only; it does not create a new database launch event.
+(function restoreOrbitalSatellite(){
+ const cameraFacing=new THREE.Vector3(0,0,1).applyQuaternion(relayOrbitQuaternion.clone().invert());
+ satelliteOrbitStartAngle=Math.atan2(cameraFacing.z,cameraFacing.x);
+ satelliteLaunchAt=Date.now()-12000;
+ group.add(relaySatellite);
+ relaySatellite.visible=true;
+ relaySatellite.position.set(0,0,1.22);
+ relaySatellite.quaternion.copy(relayOrbitQuaternion);
+})();
 function toast(s){const t=document.querySelector('#toast');t.textContent=s;t.style.display='block';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.style.display='none',2600)}
 document.querySelector('#claim').onclick=async()=>{if(!selected)return;const world=window.MarsWorldServer?.getState?.();if(!world?.user){toast('Sign in to purchase land with USD');openLogin();return;}const result=await window.MarsWorldServer?.claimUsd(selected.id);if(result?.error){toast(result.error.message);if(!window.MarsWorldServer?.getState?.().user)openLogin();return;}};
 const runParcelAction=async(buttonId,action,successText)=>{
