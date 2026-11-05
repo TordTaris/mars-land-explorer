@@ -137,7 +137,7 @@ jobs:
         with:
           path: _site
 
-      - name: Cancel stale GitHub Pages deployment lock
+      - name: Attempt to cancel stale GitHub Pages deployment lock
         uses: actions/github-script@v7
         with:
           script: |
@@ -149,11 +149,9 @@ jobs:
               });
               core.notice(`Cancelled stale GitHub Pages deployment ${blockedSha}.`);
             } catch (error) {
-              if (error.status === 404) {
-                core.warning(`GitHub Pages did not find a cancellable deployment for ${blockedSha}; continuing to deploy.`);
-              } else {
-                throw error;
-              }
+              // GitHub may report a stale backend lock as "finished" even while
+              // deploy-pages still rejects the next build. Never block a new deploy here.
+              core.warning(`Pages cancel endpoint returned ${error.status || 'an error'}: ${error.message}. Continuing to the normal deployment step.`);
             }
 
       - name: Deploy to GitHub Pages
