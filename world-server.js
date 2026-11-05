@@ -106,6 +106,15 @@ async function claim(parcel){
  return {data};
  */
 }
+async function claimUsd(parcel){
+ if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบออนไลน์ก่อนซื้อพื้นที่'}};
+ const {data,error}=await S.db.functions.invoke('create-usd-checkout',{body:{parcel_id:parcel}});
+ if(error){const message=error.message||'ยังไม่สามารถเริ่ม USD Checkout ได้';status(message);return {error:{message}};}
+ if(!data?.checkout_url||String(data.currency).toLowerCase()!=='usd'){const message=data?.error||'ข้อมูล USD Checkout ไม่ถูกต้อง';status(message);return {error:{message}};}
+ status('กำลังเปิดหน้า Stripe USD Checkout…',true);
+ window.location.assign(data.checkout_url);
+ return {data};
+}
 async function build(parcel,type){
  if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบออนไลน์ก่อนก่อสร้าง'}};
  if(!parcel||!type)return {error:{message:'ข้อมูลแปลงหรือประเภทอาคารไม่ครบ'}};
@@ -168,6 +177,6 @@ async function setParcelListing(parcel,isListed,price){
  return synced?.error?{data:result.data,syncWarning:synced.error.message}:result;
 }
 
-window.MarsWorldServer={connect,auth,logout,refresh,claim,build,loadM003PrivateBase,walletBalances,grantMlcStarter,transferMlc,reserveParcel,purchaseParcel,setParcelListing,getState:()=>({user:S.user,parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,mlcMarket:S.mlcMarket,db:S.db})};
+window.MarsWorldServer={connect,auth,logout,refresh,claim,claimUsd,build,loadM003PrivateBase,walletBalances,grantMlcStarter,transferMlc,reserveParcel,purchaseParcel,setParcelListing,getState:()=>({user:S.user,parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,mlcMarket:S.mlcMarket,db:S.db})};
 document.addEventListener('DOMContentLoaded',connect);
 })();
