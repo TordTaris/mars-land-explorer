@@ -494,7 +494,7 @@ relayBeam.position.set(0,-.34,0);relaySatellite.add(relayBeam);
 const relayOrbitPath=new THREE.Mesh(new THREE.TorusGeometry(1.23,.004,6,160),new THREE.MeshBasicMaterial({color:0x62e4f2,transparent:true,opacity:.32}));
 const relayOrbitRotation=new THREE.Euler(1.05,.25,.2);const relayOrbitQuaternion=new THREE.Quaternion().setFromEuler(relayOrbitRotation);
 relayOrbitPath.rotation.copy(relayOrbitRotation);group.add(relayOrbitPath);
-relaySatellite.scale.setScalar(2.5);group.add(relaySatellite);
+relaySatellite.scale.setScalar(.72);group.add(relaySatellite);
 
 // MARS ATMOSPHERIC TRANSPORT — two clearly visible 3D craft flying above the surface.
 const airTrafficOrbit=new THREE.Mesh(new THREE.TorusGeometry(1.105,.008,8,180),new THREE.MeshBasicMaterial({color:0x63e8f5,transparent:true,opacity:.62}));
