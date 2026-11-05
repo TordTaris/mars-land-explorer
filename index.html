@@ -257,6 +257,36 @@ body.authenticated.plot-selected .right button:disabled{opacity:.45!important;cu
 #lmMenuLanguage button:focus-visible{outline:2px solid #72dce9;outline-offset:2px}
 @media(max-width:760px){#lmMenuLanguage{gap:2px;padding:3px}#lmMenuLanguage button{width:29px;height:29px;min-width:29px;font-size:17px}}
 </style>
+
+<style id="local-mars-member-workspace-style">
+#lmWorkspaceOpen{white-space:nowrap}
+#lmWorkspaceOverlay{display:none;position:fixed;inset:0;z-index:10020;background:#030914df;backdrop-filter:blur(9px);align-items:center;justify-content:center;padding:12px}
+#lmWorkspaceOverlay.open{display:flex}
+#lmWorkspaceCard{width:min(980px,100%);max-height:min(92dvh,900px);overflow:auto;overscroll-behavior:contain;background:linear-gradient(145deg,#10253b,#081321);border:1px solid #b99a6380;border-radius:20px;padding:clamp(14px,3vw,26px);box-shadow:0 25px 90px #000b;color:#f3f6fb}
+#lmWorkspaceHeader{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+#lmWorkspaceHeader h2{margin:4px 0;font-size:clamp(22px,4vw,30px);color:#f0d18e}
+#lmWorkspaceHeader button{border:1px solid #5a7591;background:#162d45;border-radius:10px;padding:9px 12px;color:#fff}
+.lm-ws-eyebrow{font-size:10px;letter-spacing:2px;color:#70ddea;font-weight:800}
+#lmWorkspaceIdentity{font-size:12px;color:#a8bfd4;overflow-wrap:anywhere}
+#lmWorkspaceStatus{padding:9px 11px;border:1px solid #45617c;border-radius:10px;background:#0a1b2c;color:#b9d8e8;font-size:11px;margin:12px 0}
+.lm-ws-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:12px 0 22px}
+.lm-ws-metric{padding:12px;border:1px solid #49698788;border-radius:12px;background:linear-gradient(145deg,#18334e,#0b1b2d)}
+.lm-ws-metric small{display:block;color:#9eb6cc;font-size:9px;letter-spacing:1px}
+.lm-ws-metric b{display:block;font-size:25px;color:#fff;margin-top:4px}
+#lmWorkspaceCard h3{font-size:11px;letter-spacing:1.5px;color:#e6c27e;margin:18px 0 9px}
+.lm-ws-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.lm-ws-links a{display:grid;grid-template-columns:30px 1fr;align-items:center;column-gap:8px;padding:12px;text-decoration:none;color:#f4f7fc;background:#132b43;border:1px solid #476987;border-radius:12px;min-width:0}
+.lm-ws-links a>span{grid-row:span 2;font-size:23px}
+.lm-ws-links a b{font-size:12px}
+.lm-ws-links a small{font-size:10px;color:#a9bfd3;line-height:1.4}
+.lm-ws-links a:active{transform:scale(.99);border-color:#e6c27e}
+.lm-ws-activity{display:grid;gap:7px;color:#b3c5d8;font-size:11px}
+.lm-ws-event{padding:8px 10px;border-radius:9px;background:#0a1a2b;border:1px solid #304b65;display:flex;justify-content:space-between;gap:12px}
+.lm-ws-event span{overflow-wrap:anywhere}.lm-ws-event time{white-space:nowrap;color:#829db5;font-size:10px}
+.lm-ws-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:15px;color:#8ea8bf;font-size:10px}
+.lm-ws-footer button{border:1px solid #5a7591;background:#172e46;color:#fff;border-radius:9px;padding:8px 12px}
+@media(max-width:650px){#lmWorkspaceOverlay{padding:6px}#lmWorkspaceCard{max-height:96dvh;border-radius:15px;padding:12px}.lm-ws-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.lm-ws-metric{padding:9px}.lm-ws-metric b{font-size:21px}.lm-ws-links{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.lm-ws-links a{padding:9px;grid-template-columns:24px 1fr}.lm-ws-links a>span{font-size:19px}.lm-ws-links a b{font-size:11px}.lm-ws-links a small{font-size:9px}.lm-ws-footer{align-items:flex-start}}
+</style>
 </head>
 <body>\n<div id="lmStartup" role="status" aria-live="polite"><div id="lmStartupCard"><div id="lmStartupMark">LOCAL <b>MARS</b></div><div id="lmStartupText">INITIALIZING PLANETARY SYSTEMS…</div><div id="lmStartupTrack"></div></div></div>
 <script>
@@ -314,7 +344,35 @@ body.authenticated.plot-selected .right button:disabled{opacity:.45!important;cu
 <button class="full" id="worldServerLogout" style="display:none">Sign Out</button>
 <div class="small">Land and resources are simulated in-app assets, not legal property or real-world transactions.</div>
 </section>
-<nav class="bottom"><div id="lmMenuLanguage" role="group" aria-label="Select language"><button type="button" data-language="th" aria-label="ภาษาไทย" title="ภาษาไทย" aria-pressed="false">🇹🇭</button><button type="button" data-language="en" aria-label="English" title="English" aria-pressed="true">🇺🇸</button></div><button class="active" data-tab="explore">🌎 Explore</button><button data-tab="market">🪙 MLC Market</button><button data-tab="colony">🏙️ My Colony</button><button data-tab="city">🏗️ City Builder</button><button data-tab="underground">🏚️ Underground</button><a href="./civilization.html" style="display:inline-flex;align-items:center;white-space:nowrap;text-decoration:none;color:#f4e8d1;border:1px solid #b99a636e;background:linear-gradient(145deg,#172b40,#0b1727);border-radius:10px;padding:10px 13px;font-size:11px;font-weight:700">🌐 Civilization</a><a href="./mission-trainer.html" style="display:inline-flex;align-items:center;white-space:nowrap;text-decoration:none;color:#f4e8d1;border:1px solid #69d9e86e;background:linear-gradient(145deg,#172b40,#0b1727);border-radius:10px;padding:10px 13px;font-size:11px;font-weight:700">🚀 Mission Trainer</a><button data-tab="account">👤 Account</button><button data-tab="wallet" aria-controls="mlcWalletPanel">🪙 MLC</button><a href="./install.html" style="display:inline-flex;align-items:center;white-space:nowrap;text-decoration:none;color:#f4e8d1;border:1px solid #d5b36d;background:linear-gradient(145deg,#4a3a23,#17283a);border-radius:10px;padding:10px 13px;font-size:11px;font-weight:800">⬇ Install App</a></nav>
+<nav class="bottom"><div id="lmMenuLanguage" role="group" aria-label="Select language"><button type="button" data-language="th" aria-label="ภาษาไทย" title="ภาษาไทย" aria-pressed="false">🇹🇭</button><button type="button" data-language="en" aria-label="English" title="English" aria-pressed="true">🇺🇸</button></div><button class="active" data-tab="explore">🌎 Explore</button><button data-tab="market">🪙 MLC Market</button><button data-tab="colony">🏙️ My Colony</button><button data-tab="city">🏗️ City Builder</button><button data-tab="underground">🏚️ Underground</button><a href="./civilization.html" style="display:inline-flex;align-items:center;white-space:nowrap;text-decoration:none;color:#f4e8d1;border:1px solid #b99a636e;background:linear-gradient(145deg,#172b40,#0b1727);border-radius:10px;padding:10px 13px;font-size:11px;font-weight:700">🌐 Civilization</a><a href="./mission-trainer.html" style="display:inline-flex;align-items:center;white-space:nowrap;text-decoration:none;color:#f4e8d1;border:1px solid #69d9e86e;background:linear-gradient(145deg,#172b40,#0b1727);border-radius:10px;padding:10px 13px;font-size:11px;font-weight:700">🚀 Mission Trainer</a><button type="button" id="lmWorkspaceOpen" style="border:1px solid #61dce8;background:linear-gradient(145deg,#17364a,#10243a);font-weight:800">📁 My Workspace</button><button data-tab="account">👤 Account</button><button data-tab="wallet" aria-controls="mlcWalletPanel">🪙 MLC</button><a href="./install.html" style="display:inline-flex;align-items:center;white-space:nowrap;text-decoration:none;color:#f4e8d1;border:1px solid #d5b36d;background:linear-gradient(145deg,#4a3a23,#17283a);border-radius:10px;padding:10px 13px;font-size:11px;font-weight:800">⬇ Install App</a></nav>
+ 
+<section id="lmWorkspaceOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="lmWorkspaceTitle">
+ <div id="lmWorkspaceCard">
+  <header id="lmWorkspaceHeader"><div><div class="lm-ws-eyebrow">LOCAL MARS · MEMBER HUB</div><h2 id="lmWorkspaceTitle" data-lm-en="My Workspace" data-lm-th="พื้นที่สมาชิกของฉัน">My Workspace</h2><div id="lmWorkspaceIdentity" aria-live="polite">Checking member session…</div></div><button type="button" id="lmWorkspaceClose" aria-label="Close workspace">✕</button></header>
+  <div id="lmWorkspaceStatus" role="status" aria-live="polite">Connecting to shared database…</div>
+  <div class="lm-ws-metrics">
+   <div class="lm-ws-metric"><small data-lm-en="MY CITIES" data-lm-th="เมืองของฉัน">MY CITIES</small><b id="lmWsCities">—</b></div>
+   <div class="lm-ws-metric"><small data-lm-en="CITY BUILDINGS" data-lm-th="สิ่งปลูกสร้างในเมือง">CITY BUILDINGS</small><b id="lmWsBuildings">—</b></div>
+   <div class="lm-ws-metric"><small data-lm-en="PLANET STRUCTURES" data-lm-th="สิ่งปลูกสร้างบนดาว">PLANET STRUCTURES</small><b id="lmWsStructures">—</b></div>
+   <div class="lm-ws-metric"><small data-lm-en="NATIONAL FLAGS" data-lm-th="ธงประจำเมือง">NATIONAL FLAGS</small><b id="lmWsFlags">—</b></div>
+   <div class="lm-ws-metric"><small data-lm-en="UNDERGROUND CELLS" data-lm-th="พื้นที่ใต้ดิน">UNDERGROUND CELLS</small><b id="lmWsUnderground">—</b></div>
+   <div class="lm-ws-metric"><small data-lm-en="OWNED PARCELS" data-lm-th="แปลงพื้นที่ของฉัน">OWNED PARCELS</small><b id="lmWsParcels">—</b></div>
+  </div>
+  <h3 data-lm-en="CONTINUE BUILDING" data-lm-th="ไปยังระบบสร้างและจัดการ">CONTINUE BUILDING</h3>
+  <div class="lm-ws-links">
+   <a href="./city.html"><span>🏙️</span><b data-lm-en="3D City Builder" data-lm-th="สร้างเมือง 3 มิติ">3D City Builder</b><small data-lm-en="Place buildings and manage resources" data-lm-th="วางสิ่งปลูกสร้างและจัดการทรัพยากร">Place buildings and manage resources</small></a>
+   <a href="./underground.html"><span>🏚️</span><b data-lm-en="Underground Network" data-lm-th="ระบบฐานใต้ดิน">Underground Network</b><small data-lm-en="Build and edit your underground rooms" data-lm-th="สร้างและแก้ไขพื้นที่ใต้ดิน">Build and edit your underground rooms</small></a>
+   <a href="./civilization.html"><span>🌐</span><b data-lm-en="Civilization Network" data-lm-th="เครือข่ายอารยธรรม">Civilization Network</b><small data-lm-en="View the shared planetary activity" data-lm-th="ติดตามกิจกรรมของโลกส่วนกลาง">View the shared planetary activity</small></a>
+   <a href="./m003-base.html"><span>🔐</span><b data-lm-en="M-003 Secure Base" data-lm-th="ฐานรักษาความปลอดภัย M-003">M-003 Secure Base</b><small data-lm-en="Protected access · member verification" data-lm-th="ต้องยืนยันตัวตนก่อนเข้าใช้งาน">Protected access · member verification</small></a>
+   <a href="./mission-trainer.html"><span>🚀</span><b data-lm-en="Mission Trainer" data-lm-th="ศูนย์ฝึกภารกิจ">Mission Trainer</b><small data-lm-en="Plan and train planetary missions" data-lm-th="วางแผนและฝึกภารกิจดาวเคราะห์">Plan and train planetary missions</small></a>
+   <a href="./"><span>🪐</span><b data-lm-en="Planet Explorer" data-lm-th="สำรวจดาวเคราะห์">Planet Explorer</b><small data-lm-en="Explore parcels and build on owned land" data-lm-th="สำรวจแปลงและก่อสร้างบนพื้นที่ของคุณ">Explore parcels and build on owned land</small></a>
+  </div>
+  <h3 data-lm-en="GLOBAL ACTIVITY" data-lm-th="กิจกรรมล่าสุดของโลก">GLOBAL ACTIVITY</h3>
+  <div id="lmWorkspaceActivity" class="lm-ws-activity">Sign in to view your saved creations and live activity.</div>
+  <div class="lm-ws-footer"><span data-lm-en="Changes sync through the shared LOCAL MARS database." data-lm-th="ข้อมูลซิงก์ผ่านฐานข้อมูล LOCAL MARS ส่วนกลาง">Changes sync through the shared LOCAL MARS database.</span><button type="button" id="lmWorkspaceRefresh">↻ <span data-lm-en="Refresh" data-lm-th="รีเฟรช">Refresh</span></button></div>
+ </div>
+</section>
+
 <section class="plot mlc-wallet-overlay" id="mlcWalletPanel" aria-label="MLC Wallet">
  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
   <strong style="color:#e7c17d;letter-spacing:1px">MLC WALLET</strong><button type="button" id="mlcWalletClose" aria-label="Close MLC wallet" style="padding:5px 9px">✕</button>
@@ -680,6 +738,7 @@ if ('serviceWorker' in navigator) {
 (()=>{function dock(){const b=document.getElementById('lmLanguage');if(!b||b.dataset.docked)return;const candidates=['header','.topbar','.top-bar','.header','.nav-header','.toolbar'];let host=null;for(const s of candidates){const e=document.querySelector(s);if(e&&e.getBoundingClientRect().width>0){host=e;break}}if(!host){const nav=document.querySelector('nav');if(nav)host=nav}if(!host)return;let slot=host.querySelector('.lm-language-slot');if(!slot){slot=document.createElement('div');slot.className='lm-language-slot';host.appendChild(slot)}slot.appendChild(b);b.classList.add('lm-language-dock');b.dataset.docked='1'}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',dock,{once:true});else dock();new MutationObserver(dock).observe(document.body,{childList:true,subtree:true});})();
 </script> <script src="./i18n.js"></script>
 <script src="./easy-play.js" defer></script>
+<script src="./member-workspace.js" defer></script>
 
 <div id="lmInstallDock" hidden role="region" aria-label="Install LOCAL MARS">
   <div><strong>LOCAL MARS APP</strong><small>Install on your device · Offline-ready</small></div>
