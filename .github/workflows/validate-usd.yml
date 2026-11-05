@@ -1,0 +1,47 @@
+name: Validate LOCAL MARS USD rollout
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main, "feature/usd-market-standard"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check world server JavaScript
+        run: node --check world-server.js
+      - name: Check inline JavaScript in index.html
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          html = Path("index.html").read_text(encoding="utf-8")
+          scripts = re.findall(r"<script(?![^>]*\\bsrc=)[^>]*>([\\s\\S]*?)</script>", html, re.I)
+          if not scripts:
+              raise SystemExit("No inline scripts found")
+          for i, script in enumerate(scripts):
+              if not script.strip():
+                  continue
+              Path(f"/tmp/local-mars-inline-{i}.js").write_text(script, encoding="utf-8")
+          print(f"Extracted {len(scripts)} inline script blocks")
+          PY
+          for file in /tmp/local-mars-inline-*.js; do
+            [ -f "$file" ] && node --check "$file"
+          done
+      - name: Check migration and FX function files exist
+        run: |
+          test -s supabase/migrations/016_usd_market_standard.sql
+          test -s supabase/migrations/017_fx_provider_freshness.sql
+          test -s supabase/functions/refresh-fx-rates/index.ts
+          grep -q "sale_price_usd" world-server.js
+          grep -q "USD Checkout" index.html
