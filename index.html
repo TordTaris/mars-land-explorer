@@ -359,6 +359,39 @@ body.authenticated #scene{background:radial-gradient(ellipse at 50% 48%,#25364b 
  body.authenticated .bottom{left:8px!important;right:8px!important;padding:7px!important;gap:4px!important}
  body.authenticated .bottom button{min-height:58px!important;padding:8px 7px!important;font-size:10px!important}
 }
+
+/* LOCAL MARS · premium command dock refresh */
+.lm-command-dock{
+ width:min(1120px,calc(100vw - 32px))!important;left:50%!important;right:auto!important;bottom:max(14px,env(safe-area-inset-bottom))!important;transform:translateX(-50%)!important;
+ display:flex!important;align-items:stretch!important;justify-content:center!important;gap:7px!important;padding:9px!important;
+ overflow-x:auto!important;overflow-y:hidden!important;scrollbar-width:none!important;
+ border:1px solid rgba(220,190,128,.62)!important;border-radius:22px!important;
+ background:linear-gradient(115deg,rgba(6,17,31,.97),rgba(12,31,48,.96) 52%,rgba(7,19,34,.98))!important;
+ box-shadow:0 16px 48px #000b,inset 0 1px #ffffff18,0 0 28px #63d9ef12!important;
+ backdrop-filter:blur(22px) saturate(145%)!important;z-index:40!important;
+}
+.lm-command-dock::-webkit-scrollbar{display:none}
+.lm-command-dock .lm-dock-item{
+ position:relative!important;display:flex!important;flex:1 0 78px!important;min-width:72px!important;min-height:66px!important;
+ flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:5px!important;
+ padding:8px 9px!important;margin:0!important;border:1px solid transparent!important;border-radius:15px!important;
+ background:linear-gradient(145deg,#142a40aa,#0a1a2baa)!important;color:#b9c9d7!important;
+ text-decoration:none!important;white-space:nowrap!important;box-shadow:none!important;transition:background .18s ease,border-color .18s ease,transform .18s ease!important;
+}
+.lm-command-dock .lm-dock-icon{display:block!important;font-size:21px!important;line-height:1!important;filter:drop-shadow(0 2px 5px #0008)}
+.lm-command-dock .lm-dock-label{display:block!important;font-size:9px!important;font-weight:800!important;letter-spacing:.45px!important;line-height:1.1!important;color:inherit!important}
+.lm-command-dock .lm-dock-item.active{border-color:#e2bd79!important;background:linear-gradient(145deg,#6b512b,#28364a)!important;color:#fff0cf!important;box-shadow:inset 0 1px #fff3,0 4px 16px #d8ae5b20!important}
+.lm-command-dock .lm-dock-item.active:after{content:"";position:absolute;bottom:4px;left:35%;right:35%;height:2px;border-radius:4px;background:#f0cd87;box-shadow:0 0 10px #f0cd87}
+.lm-command-dock .lm-dock-item:hover{border-color:#7bcbd477!important;background:linear-gradient(145deg,#1b3c54,#10253a)!important;color:#f5e8cf!important;transform:translateY(-2px)}
+.lm-command-dock .lm-dock-guide{border-color:#b99a6366!important;color:#efd7a9!important}
+@media(max-width:760px){
+ .lm-command-dock{width:calc(100vw - 16px)!important;justify-content:flex-start!important;gap:4px!important;padding:7px!important;bottom:max(8px,env(safe-area-inset-bottom))!important;border-radius:18px!important}
+ .lm-command-dock .lm-dock-item{flex:0 0 68px!important;min-width:68px!important;min-height:59px!important;padding:7px 5px!important;border-radius:12px!important;gap:4px!important}
+ .lm-command-dock .lm-dock-icon{font-size:19px!important}
+ .lm-command-dock .lm-dock-label{font-size:8px!important;letter-spacing:.15px!important}
+ body.authenticated .lm-command-dock{left:8px!important;right:8px!important;width:auto!important;transform:none!important}
+}
+@media(max-width:360px){.lm-command-dock .lm-dock-item{flex-basis:62px!important;min-width:62px!important}}
 </style>
 </head>
 <body>\n<div id="lmStartup" role="status" aria-live="polite"><div id="lmStartupCard"><div id="lmStartupMark">LOCAL <b>MARS</b></div><div id="lmStartupText">INITIALIZING PLANETARY SYSTEMS…</div><div id="lmStartupTrack"></div></div></div>
@@ -418,7 +451,21 @@ body.authenticated #scene{background:radial-gradient(ellipse at 50% 48%,#25364b 
 <button class="full" id="worldServerLogout" style="display:none">Sign Out</button>
 <div class="small">Land and resources are simulated in-app assets, not legal property or real-world transactions.</div>
 </section>
-<nav class="bottom"><button type="button" id="lmMenuToggle" aria-expanded="false" aria-controls="lmMenuDropdown">📘 Guide</button><button class="active" data-tab="explore">🌎 Explore</button><button type="button" id="navSatellite" data-tab="satellite">🛰️ Launch Satellite</button><button data-tab="market">🪙 MLC Market</button><button data-tab="colony">🏙️ My Colony</button><button data-tab="city">🏗️ City Builder</button><button data-tab="underground">🏚️ Underground</button><a href="./civilization.html" style="display:inline-flex;align-items:center;white-space:nowrap;text-decoration:none;color:#f4e8d1;border:1px solid #b99a636e;background:linear-gradient(145deg,#172b40,#0b1727);border-radius:10px;padding:10px 13px;font-size:11px;font-weight:700">🌐 Civilization</a><a href="./mission-trainer.html" style="display:inline-flex;align-items:center;white-space:nowrap;text-decoration:none;color:#f4e8d1;border:1px solid #69d9e86e;background:linear-gradient(145deg,#172b40,#0b1727);border-radius:10px;padding:10px 13px;font-size:11px;font-weight:700">🚀 Mission Trainer</a><button type="button" id="lmWorkspaceOpen" style="border:1px solid #61dce8;background:linear-gradient(145deg,#17364a,#10243a);font-weight:800">📁 My Workspace</button><button data-tab="account">👤 Account</button><button data-tab="wallet" aria-controls="mlcWalletPanel">🪙 MLC</button><a href="./install.html" style="display:inline-flex;align-items:center;white-space:nowrap;text-decoration:none;color:#f4e8d1;border:1px solid #d5b36d;background:linear-gradient(145deg,#4a3a23,#17283a);border-radius:10px;padding:10px 13px;font-size:11px;font-weight:800">⬇ Install App</a></nav>
+<nav class="bottom lm-command-dock" aria-label="LOCAL MARS primary navigation">
+<button type="button" id="lmMenuToggle" class="lm-dock-item lm-dock-guide" aria-expanded="false" aria-controls="lmMenuDropdown"><span class="lm-dock-icon">📘</span><span class="lm-dock-label">Guide</span></button>
+<button class="active lm-dock-item" data-tab="explore"><span class="lm-dock-icon">🌎</span><span class="lm-dock-label">Explore</span></button>
+<button type="button" id="navSatellite" class="lm-dock-item" data-tab="satellite"><span class="lm-dock-icon">🛰️</span><span class="lm-dock-label">Orbit</span></button>
+<button class="lm-dock-item" data-tab="market"><span class="lm-dock-icon">🪙</span><span class="lm-dock-label">Market</span></button>
+<button class="lm-dock-item" data-tab="colony"><span class="lm-dock-icon">🏙️</span><span class="lm-dock-label">Colony</span></button>
+<button class="lm-dock-item" data-tab="city"><span class="lm-dock-icon">🏗️</span><span class="lm-dock-label">Build</span></button>
+<button class="lm-dock-item" data-tab="underground"><span class="lm-dock-icon">🏚️</span><span class="lm-dock-label">Underground</span></button>
+<a class="lm-dock-item" href="./civilization.html"><span class="lm-dock-icon">🌐</span><span class="lm-dock-label">Civilization</span></a>
+<a class="lm-dock-item" href="./mission-trainer.html"><span class="lm-dock-icon">🚀</span><span class="lm-dock-label">Missions</span></a>
+<button type="button" id="lmWorkspaceOpen" class="lm-dock-item"><span class="lm-dock-icon">📁</span><span class="lm-dock-label">Workspace</span></button>
+<button class="lm-dock-item" data-tab="account"><span class="lm-dock-icon">👤</span><span class="lm-dock-label">Account</span></button>
+<button class="lm-dock-item" data-tab="wallet" aria-controls="mlcWalletPanel"><span class="lm-dock-icon">💠</span><span class="lm-dock-label">MLC Wallet</span></button>
+<a class="lm-dock-item" href="./install.html"><span class="lm-dock-icon">⬇️</span><span class="lm-dock-label">Install</span></a>
+</nav>
 <div id="lmMenuDropdown" hidden>
 <div class="lm-menu-heading">LOCAL MARS GUIDE</div>
 <div class="lm-guide-copy">
