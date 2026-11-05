@@ -866,4 +866,5 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
 <script id="local-mars-language-dock">
 (()=>{function dock(){const b=document.getElementById('lmLanguage');if(!b||b.dataset.docked)return;const candidates=['header','.topbar','.top-bar','.header','.nav-header','.toolbar'];let host=null;for(const s of candidates){const e=document.querySelector(s);if(e&&e.getBoundingClientRect().width>0){host=e;break}}if(!host){const nav=document.querySelector('nav');if(nav)host=nav}if(!host)return;let slot=host.querySelector('.lm-language-slot');if(!slot){slot=document.createElement('div');slot.className='lm-language-slot';host.appendChild(slot)}slot.appendChild(b);b.classList.add('lm-language-dock');b.dataset.docked='1'}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',dock,{once:true});else dock();new MutationObserver(dock).observe(document.body,{childList:true,subtree:true});})();
 </script> <script src="./i18n.js"></script>
+<script src="./easy-play.js" defer></script>
 </body></html>
