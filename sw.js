@@ -1,17 +1,26 @@
-// LOCAL MARS live-update service worker
-// Network-first: deployed website changes are fetched online automatically.
-const CACHE = "local-mars-live-v65";
-const CORE = ["./", "./index.html", "./city.html", "./underground.html", "./m003-base.html", "./civilization.html", "./i18n.js", "./world-server.js", "./locales/th.json", "./locales/en.json", "./manifest.webmanifest", "./icon.svg"];
+// LOCAL MARS v4.0 — network-first updates with complete offline app shell.
+const CACHE = "local-mars-v4-0";
+const CORE = [
+  "./", "./index.html", "./city.html", "./underground.html",
+  "./m003-base.html", "./civilization.html", "./i18n.js",
+  "./world-server.js", "./locales/th.json", "./locales/en.json",
+  "./manifest.webmanifest", "./icon.svg"
+];
 
 self.addEventListener("install", event => {
-  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(CORE)));
-  self.skipWaiting();
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE);
+    await cache.addAll(CORE);
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener("activate", event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.filter(key => (key.startsWith("mars-land-") || key.startsWith("local-mars-")) && key !== CACHE).map(key => caches.delete(key)));
+    await Promise.all(keys
+      .filter(key => (key.startsWith("mars-land-") || key.startsWith("local-mars-")) && key !== CACHE)
+      .map(key => caches.delete(key)));
     await self.clients.claim();
   })());
 });
@@ -23,7 +32,7 @@ self.addEventListener("fetch", event => {
   event.respondWith((async () => {
     try {
       const fresh = await fetch(request, { cache: "no-store" });
-      if (fresh.ok && request.method === "GET") {
+      if (fresh.ok) {
         const cache = await caches.open(CACHE);
         await cache.put(request, fresh.clone());
       }
