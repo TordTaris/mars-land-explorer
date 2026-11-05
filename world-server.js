@@ -120,7 +120,7 @@ async function build(parcel,type){
  const synced=await refresh();if(synced?.error)return {data:r.data,syncWarning:synced.error.message};
  return r;
 }
-async function loadM003PrivateBase(){if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบออนไลน์ก่อน'}};const {data,error}=await S.db.from('m003_private_base').select('floor_no,room_name,description,system_status').order('floor_no');if(error)return {error};return {data:data||[]};}
+async function m003Access(action,password='',confirmPassword=''){if(!S.db||!S.user)return {error:{message:'Sign in is required'}};const {data,error}=await S.db.functions.invoke('m003-access',{body:{action,password,confirm_password:confirmPassword}});if(error)return {error:{message:data?.error||error.message||'M-003 security request failed'}};if(data?.error)return {error:{message:data.error}};return {data};}
 
 async function walletBalances(){
  if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบออนไลน์ก่อน'}};
@@ -172,6 +172,6 @@ async function setParcelListing(parcel,isListed,price){
  return synced?.error?{data:result.data,syncWarning:synced.error.message}:result;
 }
 
-window.MarsWorldServer={connect,auth,logout,refresh,claim,claimUsd,build,loadM003PrivateBase,walletBalances,grantMlcStarter,transferMlc,reserveParcel,purchaseParcel,setParcelListing,getState:()=>({user:S.user,parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,mlcMarket:S.mlcMarket,db:S.db})};
+window.MarsWorldServer={connect,auth,logout,refresh,claim,claimUsd,build,m003Access,walletBalances,grantMlcStarter,transferMlc,reserveParcel,purchaseParcel,setParcelListing,getState:()=>({user:S.user,parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,mlcMarket:S.mlcMarket,db:S.db})};
 document.addEventListener('DOMContentLoaded',connect);
 })();
