@@ -1,0 +1,71 @@
+name: Validate LOCAL MARS PWA installation
+
+on:
+  pull_request:
+    paths:
+      - "index.html"
+      - "manifest.webmanifest"
+      - "sw.js"
+      - ".github/workflows/validate-pwa-install.yml"
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "manifest.webmanifest"
+      - "sw.js"
+      - ".github/workflows/validate-pwa-install.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  pwa-install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate install UI, manifest and offline cache
+        run: |
+          python3 - <<'PY'
+          import json, re
+          from pathlib import Path
+
+          html = Path("index.html").read_text(encoding="utf-8")
+          manifest = json.loads(Path("manifest.webmanifest").read_text(encoding="utf-8"))
+          sw = Path("sw.js").read_text(encoding="utf-8")
+
+          required_html = [
+              'id="lmInstallDock"',
+              'id="lmInstallAppBtn"',
+              'id="lmInstallDialog"',
+              'id="local-mars-install-controller"',
+              "beforeinstallprompt",
+              "appinstalled",
+              "serviceWorker.getRegistration",
+          ]
+          for item in required_html:
+              assert item in html, f"install feature missing: {item}"
+
+          assert manifest.get("display") == "standalone", "PWA display must be standalone"
+          assert manifest.get("start_url") == "./", "PWA start_url must respect GitHub Pages project path"
+          assert manifest.get("scope") == "./", "PWA scope must respect GitHub Pages project path"
+          assert manifest.get("prefer_related_applications") is False, "PWA must prefer web installation"
+          icons = manifest.get("icons", [])
+          assert any(icon.get("sizes") == "192x192" for icon in icons), "192x192 install icon declaration missing"
+          assert any(icon.get("sizes") == "512x512" for icon in icons), "512x512 install icon declaration missing"
+          for icon in icons:
+              path = icon.get("src", "").removeprefix("./")
+              assert path and Path(path).is_file(), f"manifest icon not found: {path}"
+
+          assert 'const CACHE = "local-mars-v4-15"' in sw, "service worker cache version was not bumped"
+          assert '"./manifest.webmanifest"' in sw and '"./icon.svg"' in sw, "PWA core assets missing from offline cache"
+
+          marker = '<script id="local-mars-install-controller">'
+          assert marker in html, "install controller script not found"
+          script_start = html.index(marker) + len(marker)
+          script_end = html.index("</script>", script_start)
+          Path("/tmp/local-mars-install.js").write_text(html[script_start:script_end], encoding="utf-8")
+          print("LOCAL MARS PWA install UI, browser events, manifest and offline cache validated.")
+          PY
+          node --check /tmp/local-mars-install.js

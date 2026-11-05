@@ -230,6 +230,25 @@ body.authenticated.plot-selected .right button:disabled{opacity:.45!important;cu
 @keyframes lmStartupMove{from{transform:translateX(-12%)}to{transform:translateX(150%)}}
 @media(prefers-reduced-motion:reduce){#lmStartupTrack:after{animation:none;width:70%}#lmStartup{transition:none}}
 </style>
+
+<style id="local-mars-install-center">
+#lmInstallDock{position:fixed;z-index:60;right:16px;bottom:82px;display:flex;align-items:center;gap:9px;padding:8px 10px 8px 12px;border:1px solid #d7b57599;border-radius:14px;background:linear-gradient(145deg,#10243aF5,#071321F5);box-shadow:0 12px 34px #0009;color:#f6e9ce;backdrop-filter:blur(16px);font:12px system-ui,sans-serif}
+#lmInstallDock[hidden]{display:none!important}
+#lmInstallDock strong{display:block;font-size:11px;letter-spacing:.8px}
+#lmInstallDock small{display:block;color:#aebed0;font-size:9px;margin-top:2px}
+#lmInstallAppBtn{border:1px solid #f0d49a;background:linear-gradient(120deg,#e4bd70,#a87c3d);color:#1b140b;border-radius:9px;padding:9px 12px;font-weight:900;font-size:11px;white-space:nowrap}
+#lmInstallDialog{position:fixed;z-index:100;inset:0;display:none;place-items:center;padding:18px;background:#020711d9;color:#f7f0e4;font:14px system-ui,sans-serif}
+#lmInstallDialog.open{display:grid}
+#lmInstallCard{width:min(420px,100%);padding:22px;border:1px solid #d3b274;border-radius:18px;background:linear-gradient(145deg,#14283e,#071321);box-shadow:0 24px 70px #000b}
+#lmInstallCard h2{margin:0 0 8px;color:#e7c887;font-size:19px}
+#lmInstallCard p,#lmInstallCard li{color:#c2cfdd;font-size:12px;line-height:1.65}
+#lmInstallCard ol{padding-left:20px}
+#lmInstallCard .lm-install-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+#lmInstallCard button{padding:10px 13px}
+#lmInstallClose{margin-left:auto}
+@media(max-width:650px){#lmInstallDock{right:8px;bottom:74px;left:8px;justify-content:space-between;padding:7px 8px}#lmInstallDock small{font-size:8px}#lmInstallAppBtn{padding:9px 10px}}
+@media(display-mode:standalone){#lmInstallDock{display:none!important}}
+</style>
 </head>
 <body>\n<div id="lmStartup" role="status" aria-live="polite"><div id="lmStartupCard"><div id="lmStartupMark">LOCAL <b>MARS</b></div><div id="lmStartupText">INITIALIZING PLANETARY SYSTEMS…</div><div id="lmStartupTrack"></div></div></div>
 <script>
@@ -653,4 +672,67 @@ if ('serviceWorker' in navigator) {
 (()=>{function dock(){const b=document.getElementById('lmLanguage');if(!b||b.dataset.docked)return;const candidates=['header','.topbar','.top-bar','.header','.nav-header','.toolbar'];let host=null;for(const s of candidates){const e=document.querySelector(s);if(e&&e.getBoundingClientRect().width>0){host=e;break}}if(!host){const nav=document.querySelector('nav');if(nav)host=nav}if(!host)return;let slot=host.querySelector('.lm-language-slot');if(!slot){slot=document.createElement('div');slot.className='lm-language-slot';host.appendChild(slot)}slot.appendChild(b);b.classList.add('lm-language-dock');b.dataset.docked='1'}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',dock,{once:true});else dock();new MutationObserver(dock).observe(document.body,{childList:true,subtree:true});})();
 </script> <script src="./i18n.js"></script>
 <script src="./easy-play.js" defer></script>
+
+<div id="lmInstallDock" hidden role="region" aria-label="Install LOCAL MARS">
+  <div><strong>LOCAL MARS APP</strong><small>Install on your device · Offline-ready</small></div>
+  <button id="lmInstallAppBtn" type="button">⬇ INSTALL</button>
+</div>
+<div id="lmInstallDialog" role="dialog" aria-modal="true" aria-labelledby="lmInstallTitle">
+  <div id="lmInstallCard">
+    <div style="display:flex;align-items:center;gap:10px"><h2 id="lmInstallTitle">Install LOCAL MARS</h2><button id="lmInstallClose" type="button" aria-label="Close install guide">✕</button></div>
+    <p>Install the web app on your device for an app-like experience and access to previously cached pages.</p>
+    <div id="lmInstallDynamic">
+      <ol><li>Open this site in Chrome on Android.</li><li>Tap the browser menu (⋮).</li><li>Select <b>Install app</b> or <b>Add to Home screen</b>.</li><li>Confirm. LOCAL MARS will appear on your home screen.</li></ol>
+      <p>On iPhone/iPad: open in Safari, tap Share, then choose “Add to Home Screen”.</p>
+    </div>
+    <p style="font-size:10px;color:#8fa6bd">LOCAL MARS is a Progressive Web App (PWA), not a Play Store APK. Installation availability depends on browser and device support.</p>
+    <div class="lm-install-actions"><button id="lmInstallConfirm" class="primary" type="button">Got it</button><button id="lmCheckUpdate" type="button">Check for updates</button></div>
+    <p id="lmInstallStatus" aria-live="polite" style="min-height:18px;margin-bottom:0"></p>
+  </div>
+</div>
+<script id="local-mars-install-controller">
+(()=>{
+ const dock=document.getElementById('lmInstallDock'), installBtn=document.getElementById('lmInstallAppBtn');
+ const dialog=document.getElementById('lmInstallDialog'), closeBtn=document.getElementById('lmInstallClose');
+ const confirmBtn=document.getElementById('lmInstallConfirm'), updateBtn=document.getElementById('lmCheckUpdate');
+ const dynamic=document.getElementById('lmInstallDynamic'), status=document.getElementById('lmInstallStatus');
+ if(!dock||!installBtn||!dialog)return;
+ let installPrompt=null, registration=null;
+ const isInstalled=()=>window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+ const openGuide=()=>{dialog.classList.add('open');closeBtn?.focus()};
+ const closeGuide=()=>dialog.classList.remove('open');
+ const showDock=()=>{if(!isInstalled())dock.hidden=false};
+ window.addEventListener('beforeinstallprompt',event=>{
+   event.preventDefault();installPrompt=event;showDock();
+   dynamic.innerHTML='<p>Your device supports direct installation. Select <b>Install now</b> to add LOCAL MARS to your home screen.</p>';
+   confirmBtn.textContent='Install now';
+ });
+ window.addEventListener('appinstalled',()=>{
+   installPrompt=null;dock.hidden=true;status.textContent='LOCAL MARS installed successfully.';
+ });
+ installBtn.addEventListener('click',openGuide);
+ closeBtn?.addEventListener('click',closeGuide);
+ confirmBtn?.addEventListener('click',async()=>{
+   if(!installPrompt){closeGuide();return}
+   installPrompt.prompt();
+   const choice=await installPrompt.userChoice;
+   status.textContent=choice?.outcome==='accepted'?'Installation accepted. Follow your device prompts.':'Installation was not completed. Use the browser menu instructions above.';
+   installPrompt=null;confirmBtn.textContent='Got it';
+ });
+ dialog.addEventListener('click',event=>{if(event.target===dialog)closeGuide()});
+ document.addEventListener('keydown',event=>{if(event.key==='Escape')closeGuide()});
+ updateBtn?.addEventListener('click',async()=>{
+   status.textContent='Checking for updates…';
+   try{
+     if(!('serviceWorker' in navigator)){status.textContent='Offline updates are not supported in this browser.';return}
+     registration=registration||await navigator.serviceWorker.getRegistration('./');
+     if(!registration){status.textContent='Offline service is not registered yet. Reload the page and try again.';return}
+     await registration.update();
+     status.textContent=registration.waiting?'A new version is ready. Close and reopen LOCAL MARS to apply it.':'Update check complete. You are using the latest available version.';
+   }catch(error){status.textContent='Could not check for updates. Please try again later.';console.warn('LOCAL MARS update check:',error)}
+ });
+ if(!isInstalled())showDock();
+ if('serviceWorker' in navigator)navigator.serviceWorker.ready.then(reg=>{registration=reg}).catch(()=>{});
+})();
+</script>
 </body></html>
