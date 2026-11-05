@@ -388,10 +388,13 @@ function renderSharedBuildings(structures){
    const red=new THREE.MeshStandardMaterial({color:0xc85d48,metalness:.25,roughness:.48});
    const add=(geo,mat,x,y,z)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);site.add(m);return m;};
    const box=(x,y,z,w,h,d,mat)=>add(new THREE.BoxGeometry(w,h,d),mat,x,y,z);
-   // Broad industrial foundation and marked perimeter.
-   add(new THREE.CylinderGeometry(.34,.36,.018,48),dark,0,.009,0);
-   const apron=add(new THREE.CylinderGeometry(.315,.315,.006,48),concrete,0,.021,0);
-   const fence=add(new THREE.TorusGeometry(.335,.004,6,96),hazard,0,.027,0);fence.rotation.x=Math.PI/2;
+   // Compact, terrain-hugging foundation: an oval service apron rather than an oversized circular pad.
+   const foundation=add(new THREE.CylinderGeometry(.305,.325,.014,48),dark,0,.008,0);
+   foundation.scale.set(1.08,1,.88);
+   const apron=add(new THREE.CylinderGeometry(.282,.282,.005,48),concrete,0,.018,0);
+   apron.scale.set(1.08,1,.88);
+   const fence=add(new THREE.TorusGeometry(.302,.0028,6,96),hazard,0,.024,0);
+   fence.scale.set(1.08,1,.88);fence.rotation.x=Math.PI/2;
    // Main reactor containment block: tall, rectangular and heavily ribbed.
    box(-.105,.105,-.015,.17,.17,.19,concrete);
    box(-.105,.194,-.015,.19,.012,.205,steel);
@@ -439,6 +442,8 @@ function renderSharedBuildings(structures){
    // Beacon and high-contrast perimeter warning lights.
    const beacon=add(new THREE.SphereGeometry(.012,12,8),glass,.0,.22,-.015);
    const beaconLight=new THREE.PointLight(0x5ce8ff,.65,.22);beaconLight.position.copy(beacon.position);site.add(beaconLight);
+   // Reduce the overall footprint and height together so the complex reads as a believable outpost at planetary scale.
+   site.scale.setScalar(.84);
    site.position.copy(normal);site.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),normal.clone().normalize());site.userData.localMarsAction='open-m003-base';
    group.add(site);buildingMeshes.set(item.id||String(index),site);return;
   }
