@@ -1,3 +1,5 @@
+> **ประกาศ:** การซื้อพื้นที่ใหม่ใช้ USD ผ่าน Stripe Checkout เท่านั้น; PromptPay THB เป็นระบบเดิมสำหรับประวัติรายการเก่าและปิดการซื้อพื้นที่ใหม่แล้ว ดูขั้นตอน USD ที่ [USD_MARKET_SETUP_TH.md](./USD_MARKET_SETUP_TH.md)
+
 # LOCAL MARS — PromptPay setup (Thai)
 
 สถานะ: เตรียมโค้ดแล้ว แต่ยังไม่เปิดรับเงินจริงจนกว่าจะ deploy functions, ตั้ง secrets, เปิด PromptPay และทดสอบครบ
