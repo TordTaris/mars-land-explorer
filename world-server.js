@@ -3,7 +3,7 @@
 'use strict';
 const CONFIG={url:'https://tppgfxsdeuujidcjnfdl.supabase.co',key:'sb_publishable_xQ0_NkSu2TMeIyJnAE94kw_WWQT2T3E'};
 const $=id=>document.getElementById(id);
-const S={db:null,user:null,channel:null,parcels:[],claims:[],structures:[],events:[],mlcMarket:[]};
+const S={db:null,user:null,channel:null,reconnectTimer:null,refreshTimer:null,reconnectAttempt:0,lifecycleBound:false,parcels:[],claims:[],structures:[],events:[],mlcMarket:[]};
 function status(message,ok=false){const el=$('worldServerStatus');if(el){el.textContent=(ok?'● ONLINE · ':'○ SERVER · ')+message;el.style.color=ok?'#a8e4bd':'#e9bd8d';}}
 function emitAuth(){document.dispatchEvent(new CustomEvent('mars-auth-state',{detail:{user:S.user}}));}
 function authView(){const el=$('worldServerUser');if(el)el.textContent=S.user?'สมาชิกออนไลน์: '+(S.user.email||S.user.id):'ยังไม่ได้เข้าสู่ระบบ';const out=$('worldServerLogout');if(out)out.style.display=S.user?'block':'none';}
@@ -21,19 +21,51 @@ async function refresh(){
  document.dispatchEvent(new CustomEvent('mars-world-updated',{detail:{parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,mlcMarket:S.mlcMarket,user:S.user}}));
  return {data:{parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,mlcMarket:S.mlcMarket}};
 }
+function scheduleRefresh(){
+ if(S.refreshTimer)clearTimeout(S.refreshTimer);
+ S.refreshTimer=setTimeout(()=>{S.refreshTimer=null;refresh().catch(err=>console.warn('LOCAL MARS refresh failed:',err));},180);
+}
+function scheduleReconnect(){
+ if(!S.db||S.reconnectTimer)return;
+ const delay=Math.min(1000*Math.pow(2,Math.min(S.reconnectAttempt,5)),30000);
+ S.reconnectAttempt++;
+ status('Realtime หลุด · กำลังเชื่อมต่อใหม่ใน '+Math.ceil(delay/1000)+' วินาที');
+ S.reconnectTimer=setTimeout(()=>{S.reconnectTimer=null;if(S.db)subscribe();},delay);
+}
+function bindLifecycle(){
+ if(S.lifecycleBound)return;
+ S.lifecycleBound=true;
+ window.addEventListener('online',()=>{S.reconnectAttempt=0;subscribe();});
+ document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState!=='visible'||!S.db)return;
+  if(!S.channel||S.channel.state!=='joined')subscribe();
+  else scheduleRefresh();
+ });
+}
 function subscribe(){
- if(S.channel)S.db.removeChannel(S.channel);
- S.channel=S.db.channel('mars-land-global')
- .on('postgres_changes',{event:'*',schema:'public',table:'world_parcels'},refresh)
- .on('postgres_changes',{event:'*',schema:'public',table:'world_claims'},refresh)
- .on('postgres_changes',{event:'*',schema:'public',table:'world_structures'},refresh)
- .on('postgres_changes',{event:'*',schema:'public',table:'world_events'},refresh)
- .on('postgres_changes',{event:'*',schema:'public',table:'mars_mlc_parcel_market'},refresh)
- .subscribe(st=>{if(st==='SUBSCRIBED'){status('เชื่อมต่อโลกออนไลน์แล้ว',true);refresh();}else if(st==='CHANNEL_ERROR'||st==='TIMED_OUT')status('Realtime ขาดการเชื่อมต่อ');});
+ if(!S.db)return;
+ if(S.reconnectTimer){clearTimeout(S.reconnectTimer);S.reconnectTimer=null;}
+ const previous=S.channel;S.channel=null;
+ if(previous)S.db.removeChannel(previous).catch(err=>console.warn('LOCAL MARS channel cleanup:',err));
+ const channel=S.db.channel('mars-land-global')
+ .on('postgres_changes',{event:'*',schema:'public',table:'world_parcels'},scheduleRefresh)
+ .on('postgres_changes',{event:'*',schema:'public',table:'world_claims'},scheduleRefresh)
+ .on('postgres_changes',{event:'*',schema:'public',table:'world_structures'},scheduleRefresh)
+ .on('postgres_changes',{event:'*',schema:'public',table:'world_events'},scheduleRefresh)
+ .on('postgres_changes',{event:'*',schema:'public',table:'mars_mlc_parcel_market'},scheduleRefresh);
+ S.channel=channel;
+ channel.subscribe(st=>{
+  if(S.channel!==channel)return;
+  if(st==='SUBSCRIBED'){
+   S.reconnectAttempt=0;status('เชื่อมต่อโลกออนไลน์แล้ว',true);scheduleRefresh();
+  }else if(st==='CHANNEL_ERROR'||st==='TIMED_OUT'||st==='CLOSED'){
+   scheduleReconnect();
+  }
+ });
 }
 async function connect(){
  if(!window.supabase){status('โหลด Supabase client ไม่สำเร็จ');return {error:'client_missing'};}
- S.db=window.supabase.createClient(CONFIG.url,CONFIG.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+ S.db=window.supabase.createClient(CONFIG.url,CONFIG.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});bindLifecycle();
  const {data,error}=await S.db.auth.getSession();if(error){status(error.message);return {error};}
  S.user=data.session?.user||null;authView();emitAuth();subscribe();if(S.user)walletBalances();
  S.db.auth.onAuthStateChange((_event,session)=>{S.user=session?.user||null;authView();emitAuth();refresh();if(S.user)walletBalances();});
