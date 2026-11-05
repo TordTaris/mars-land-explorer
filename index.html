@@ -1297,7 +1297,25 @@ for(let i=0;i<3;i++){const blade=new THREE.Mesh(new THREE.BoxGeometry(.004,.042,
 const colonyTag=document.createElement('div');colonyTag.id='mars-colony-tag';colonyTag.textContent='AEGIS SETTLEMENT  •  HABITAT / POWER / SCIENCE';
 Object.assign(colonyTag.style,{position:'fixed',left:'50%',top:'calc(50% + 108px)',transform:'translateX(-50%)',zIndex:'2',padding:'5px 8px',border:'1px solid #d9b87988',borderRadius:'9px',background:'#081522c9',color:'#f4dfb5',font:'8px system-ui',letterSpacing:'.8px',textAlign:'center',pointerEvents:'none',maxWidth:'90vw'});document.body.appendChild(colonyTag);
 
-parcels.forEach(p=>{const m=new THREE.Mesh(new THREE.SphereGeometry(.015,12,12),markerMat(0x55dce8));m.position.copy(pos(p.lon,p.lat,1.014));m.userData.plot=p;group.add(m);markers.push(m)});
+parcels.forEach(p=>{
+ const isNewParcel=Number(p.id.slice(2))>=13;
+ const normal=pos(p.lon,p.lat,isNewParcel?1.022:1.014);
+ const m=new THREE.Mesh(
+  new THREE.SphereGeometry(isNewParcel?.022:.015,isNewParcel?18:12,isNewParcel?14:12),
+  isNewParcel?new THREE.MeshBasicMaterial({color:0xffd58a}):markerMat(0x55dce8)
+ );
+ m.position.copy(normal);m.userData.plot=p;
+ if(isNewParcel){
+  // New M-013–M-019 sites use a larger gold beacon and surface ring for easy visual discovery.
+  m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),normal.clone().normalize());
+  const ring=new THREE.Mesh(
+   new THREE.TorusGeometry(.038,.0028,8,48),
+   new THREE.MeshBasicMaterial({color:0xffd58a,transparent:true,opacity:.96,side:THREE.DoubleSide,depthWrite:false})
+  );
+  ring.rotation.x=Math.PI/2;ring.position.y=-.004;m.add(ring);
+ }
+ group.add(m);markers.push(m);
+});
  // NEW EXPLORER ZONE — dedicated landing and training area (visual landmark, not a purchasable parcel).
  const explorerZone=new THREE.Group();group.add(explorerZone);
  const explorerNormal=pos(-45,-12,1.0);explorerZone.position.copy(explorerNormal);
