@@ -860,7 +860,8 @@ parcels.forEach(p=>{if(state.owned.includes(p.id))p.owner=state.profile?.name||'
 function save(){localStorage.setItem('localmars-demo',JSON.stringify(state));updateStats()}
 function updateStats(){const world=window.MarsWorldServer?.getState?.();const user=world?.user;document.querySelector('#owned').textContent=user?(world.claims||[]).filter(x=>x.owner_id===user.id).length:0;document.querySelector('#buildings').textContent=user?(world.structures||[]).filter(x=>x.owner_id===user.id).length:0;markers.forEach(m=>m.material.color.set(m.userData.plot.owner?0xffa45f:0x55dce8))}
 // Deterministic orbital clock: the simulated satellite advances in UTC even while this page is closed.
-const SATELLITE_ORBIT_EPOCH=Date.UTC(2026,10,6,0,0,0);
+// Fixed launch epoch: 2026-11-06 05:02 ICT. Never reset on refresh or app restart.
+const SATELLITE_ORBIT_EPOCH=Date.UTC(2026,10,5,22,2,0);
 const SATELLITE_ORBIT_PERIOD_SECONDS=7200; // illustrative two-hour orbit
 let satelliteLaunchAt=SATELLITE_ORBIT_EPOCH;
 let satelliteOrbitStartAngle=0;
