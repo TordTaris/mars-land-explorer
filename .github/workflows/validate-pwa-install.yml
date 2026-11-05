@@ -61,9 +61,11 @@ jobs:
           assert 'const CACHE = "local-mars-v4-15"' in sw, "service worker cache version was not bumped"
           assert '"./manifest.webmanifest"' in sw and '"./icon.svg"' in sw, "PWA core assets missing from offline cache"
 
-          match = re.search(r'<script id="local-mars-install-controller">([\\s\\S]*?)</script>', html)
-          assert match, "install controller script not found"
-          Path("/tmp/local-mars-install.js").write_text(match.group(1), encoding="utf-8")
+          marker = '<script id="local-mars-install-controller">'
+          assert marker in html, "install controller script not found"
+          script_start = html.index(marker) + len(marker)
+          script_end = html.index("</script>", script_start)
+          Path("/tmp/local-mars-install.js").write_text(html[script_start:script_end], encoding="utf-8")
           print("LOCAL MARS PWA install UI, browser events, manifest and offline cache validated.")
           PY
           node --check /tmp/local-mars-install.js
