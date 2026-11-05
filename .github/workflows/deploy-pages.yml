@@ -52,6 +52,7 @@ jobs:
           city = Path("city.html").read_text(encoding="utf-8")
           underground = Path("underground.html").read_text(encoding="utf-8")
           mission = Path("mission-trainer.html").read_text(encoding="utf-8")
+          workspace = Path("member-workspace.js").read_text(encoding="utf-8")
           dimension_gate = Path("m003-dimension-gate.html").read_text(encoding="utf-8")
           manifest = json.loads(Path("manifest.webmanifest").read_text(encoding="utf-8"))
           sw = Path("sw.js").read_text(encoding="utf-8")
@@ -60,8 +61,10 @@ jobs:
 
           assert '<link rel="manifest" href="./manifest.webmanifest">' in html, "manifest link missing"
           assert 'id="local-mars-install-controller"' in html, "LOCAL MARS install controller missing"
-assert 'id="lmWorkspaceOverlay"' in html and 'id="lmWorkspaceOpen"' in html and 'id="lmWorkspaceCreations"' in html, "member workspace dashboard missing"
-assert '<script src="./member-workspace.js" defer></script>' in html, "member workspace script missing"
+          assert 'id="lmWorkspaceOverlay"' in html and 'id="lmWorkspaceOpen"' in html and 'id="lmWorkspaceCreations"' in html, "member workspace dashboard missing"
+          assert '<script src="./member-workspace.js" defer></script>' in html, "member workspace script missing"
+          assert "postgres_changes" in workspace and ".eq(column,user.id)" in workspace, "member workspace must use owner-scoped Realtime data"
+          assert "mars_city_buildings" in workspace and "mars_underground_cells" in workspace, "member creation modules missing from workspace"
           assert 'id="lmInstallAppBtn"' in html, "install button missing"
           assert manifest.get("display") == "standalone", "PWA standalone display missing"
           assert any(icon.get("sizes") == "192x192" for icon in manifest.get("icons", [])), "192px PWA icon declaration missing"
