@@ -12,3 +12,7 @@ create table if not exists public.m003_access_credentials (
 alter table public.m003_access_credentials enable row level security;
 revoke all on public.m003_access_credentials from anon, authenticated, public;
 comment on table public.m003_access_credentials is 'M-003 second-factor credentials; accessible only by trusted server-side function using service role.';
+-- Remove direct authenticated reads so the second-factor gate cannot be bypassed with the public client.
+drop policy if exists m003_private_base_owner_read on public.m003_private_base;
+revoke all on public.m003_private_base from anon, authenticated, public;
+
