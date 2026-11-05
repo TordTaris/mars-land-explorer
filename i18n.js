@@ -15,6 +15,14 @@ async function init(){try{const [th,en]=await Promise.all([fetch('./locales/th.j
 try{language=localStorage.getItem('local-mars-language')==='th'?'th':'en'}catch(_){}
 document.documentElement.lang=language;document.documentElement.dataset.language=language;
 window.LOCAL_MARS_I18N={get language(){return language;},setLanguage,t,formatDate,refresh:()=>process(document)};
-document.addEventListener('click',event=>{const button=event.target.closest?.('#lmMenuLanguage button[data-language]');if(button)setLanguage(button.dataset.language);});
+function closeMenu(){const panel=document.getElementById('lmMenuDropdown'),toggle=document.getElementById('lmMenuToggle');if(panel)panel.hidden=true;if(toggle)toggle.setAttribute('aria-expanded','false');}
+document.addEventListener('click',event=>{
+ const languageButton=event.target.closest?.('#lmMenuLanguage button[data-language]');
+ if(languageButton){setLanguage(languageButton.dataset.language);closeMenu();return;}
+ const toggle=event.target.closest?.('#lmMenuToggle');
+ if(toggle){const panel=document.getElementById('lmMenuDropdown');if(!panel)return;const opening=panel.hidden;panel.hidden=!opening;toggle.setAttribute('aria-expanded',String(opening));return;}
+ if(!event.target.closest?.('#lmMenuDropdown'))closeMenu();
+});
+document.addEventListener('keydown',event=>{if(event.key==='Escape')closeMenu();});
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
