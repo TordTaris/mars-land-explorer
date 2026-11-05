@@ -1,3 +1,5 @@
+> **คำเตือน:** เอกสารนี้เป็นคู่มือระบบ PromptPay THB รุ่นเดิมเท่านั้น บน branch USD checkout ถูกปิดไว้แล้ว ห้าม deploy/เปิดใช้ PromptPay สำหรับราคา USD ให้ใช้ [USD_MARKET_SETUP_TH.md](./USD_MARKET_SETUP_TH.md) และ migration 018 แทน
+
 # LOCAL MARS — PromptPay setup (Thai)
 
 สถานะ: เตรียมโค้ดแล้ว แต่ยังไม่เปิดรับเงินจริงจนกว่าจะ deploy functions, ตั้ง secrets, เปิด PromptPay และทดสอบครบ
