@@ -93,9 +93,12 @@ wallet_check as (
 ),
 migration_check as (
   select 'MIGRATIONS'::text, 'supabase_migrations.schema_migrations',
-    case when to_regclass('supabase_migrations.schema_migrations') is null then 'NOT_FOUND'
+    case when to_regclass('supabase_migrations.schema_migrations') is null then 'INFO'
          else 'PRESENT' end,
-    'SQL Editor manual runs may not appear in the CLI migration history'
+    case when to_regclass('supabase_migrations.schema_migrations') is null
+         then 'No CLI migration history table; normal when SQL was run manually in Supabase SQL Editor. Not an app schema failure.'
+         else 'CLI migration history table exists'
+    end
 )
 select * from table_checks
 union all select * from column_checks
