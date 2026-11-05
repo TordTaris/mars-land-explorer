@@ -6,6 +6,7 @@ on:
       - "index.html"
       - "manifest.webmanifest"
       - "sw.js"
+      - "member-workspace.js"
       - ".github/workflows/validate-pwa-install.yml"
   push:
     branches: [main]
@@ -34,6 +35,7 @@ jobs:
           html = Path("index.html").read_text(encoding="utf-8")
           manifest = json.loads(Path("manifest.webmanifest").read_text(encoding="utf-8"))
           sw = Path("sw.js").read_text(encoding="utf-8")
+          workspace = Path("member-workspace.js").read_text(encoding="utf-8")
 
           required_html = [
               'id="lmInstallDock"',
@@ -58,7 +60,10 @@ jobs:
               path = icon.get("src", "").removeprefix("./")
               assert path and Path(path).is_file(), f"manifest icon not found: {path}"
 
-          assert 'const CACHE = "local-mars-v4-15"' in sw, "service worker cache version was not bumped"
+          assert 'const CACHE = "local-mars-v4-17"' in sw, "service worker cache version was not bumped"
+          assert '"./member-workspace.js"' in sw, "member workspace missing from offline cache"
+          assert '<script src="./member-workspace.js" defer></script>' in html, "member workspace script missing"
+          assert "postgres_changes" in workspace, "member workspace Realtime subscription missing"
           assert '"./manifest.webmanifest"' in sw and '"./icon.svg"' in sw, "PWA core assets missing from offline cache"
 
           marker = '<script id="local-mars-install-controller">'
