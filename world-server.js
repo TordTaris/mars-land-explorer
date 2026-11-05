@@ -57,6 +57,7 @@ function subscribe(){
  .on('postgres_changes',{event:'*',schema:'public',table:'world_structures'},scheduleRefresh)
  .on('postgres_changes',{event:'*',schema:'public',table:'world_events'},scheduleRefresh)
  .on('postgres_changes',{event:'*',schema:'public',table:'mars_mlc_parcel_market'},scheduleRefresh)
+ .on('postgres_changes',{event:'INSERT',schema:'public',table:'mars_wallet_ledger',filter:S.user?'user_id=eq.'+S.user.id:undefined},()=>{if(S.user)walletBalances();})
  .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_national_flags'},scheduleRefresh)
  .on('postgres_changes',{event:'*',schema:'public',table:'mars_cities'},scheduleRefresh)
  .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_buildings'},scheduleRefresh)
@@ -76,7 +77,7 @@ async function connect(){
  S.db=window.supabase.createClient(CONFIG.url,CONFIG.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});bindLifecycle();
  const {data,error}=await S.db.auth.getSession();if(error){status(error.message);return {error};}
  S.user=data.session?.user||null;authView();emitAuth();subscribe();if(S.user)walletBalances();
- S.db.auth.onAuthStateChange((_event,session)=>{S.user=session?.user||null;authView();emitAuth();if(S.channel)trackPresence(S.channel);refresh();if(S.user)walletBalances();});
+ S.db.auth.onAuthStateChange((_event,session)=>{S.user=session?.user||null;authView();emitAuth();subscribe();refresh();if(S.user)walletBalances();});
  return {data:{user:S.user}};
 }
 async function auth(mode){
