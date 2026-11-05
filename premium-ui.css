@@ -60,3 +60,86 @@ a:hover{color:#c3f5fa}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
 }
+
+/* LOCAL MARS — LUXURY VISUAL IDENTITY RESTORE · v4-56 */
+:root{
+ --lm-bg:#050914;--lm-surface:#0b1728;--lm-surface-2:#12243a;
+ --lm-border:rgba(211,181,126,.42);--lm-gold:#e2c48b;--lm-gold-bright:#f4dfb4;
+ --lm-text:#f7f1e6;--lm-muted:#b6bdc8;--lm-cyan:#8bcbd4;
+ --lm-shadow:0 18px 48px rgba(0,0,0,.48);
+}
+html,body{background-color:#050914!important;color:var(--lm-text)}
+body{font-family:Inter,"Segoe UI",system-ui,sans-serif;letter-spacing:.008em}
+header{
+ background:linear-gradient(100deg,rgba(4,10,21,.97),rgba(12,25,41,.91) 58%,rgba(5,12,23,.94))!important;
+ border-bottom:1px solid rgba(226,196,139,.42)!important;
+ box-shadow:0 8px 32px #0006,inset 0 1px #fff1!important;
+ backdrop-filter:blur(18px) saturate(130%)!important;
+}
+.brand,.brand strong{color:#f6eddd!important;text-shadow:0 2px 16px #0008}
+.brand span,.brand small{color:var(--lm-gold)!important}
+.status,.resource-chip{
+ border:1px solid rgba(211,181,126,.48)!important;
+ background:linear-gradient(145deg,rgba(24,39,57,.96),rgba(8,19,33,.97))!important;
+ color:#e7d5b3!important;box-shadow:0 8px 24px #0005,inset 0 1px #fff1!important;
+}
+.panel,.card,.modal,.directory,.detail,.hero,#gate{
+ background:linear-gradient(148deg,rgba(14,29,47,.97),rgba(6,15,28,.98))!important;
+ border:1px solid rgba(211,181,126,.43)!important;border-radius:17px!important;
+ box-shadow:0 18px 48px #0009,inset 0 1px rgba(255,255,255,.055)!important;
+ backdrop-filter:blur(18px) saturate(125%);
+}
+.panel h3,.card h3,.directory h2,.directory h3{color:var(--lm-gold-bright)!important;letter-spacing:1.25px}
+.metric,.row,.plot,.job-card,.build-progress,.system,.stat{border-color:rgba(226,196,139,.17)!important}
+button,.action,.lm-command-dock .lm-dock-item{
+ border:1px solid rgba(211,181,126,.34)!important;
+ background:linear-gradient(145deg,#1a2d43,#0b192b)!important;
+ color:#f4ead8!important;box-shadow:inset 0 1px #ffffff0c!important;
+}
+button:hover,.action:hover,.lm-command-dock .lm-dock-item:hover{
+ border-color:rgba(244,223,180,.82)!important;
+ background:linear-gradient(145deg,#263b52,#12243a)!important;
+ box-shadow:0 8px 24px #0007,0 0 18px #d8b87818!important;
+}
+button.primary,.action.primary,.lm-command-dock .lm-dock-item.active{
+ border:1px solid #f0d49a!important;
+ background:linear-gradient(120deg,#e3c184,#ad824b)!important;
+ color:#21190f!important;font-weight:800!important;
+ box-shadow:0 7px 24px #b88c4b2b,inset 0 1px #fff8!important;
+}
+input,select,textarea{
+ background:linear-gradient(145deg,#071321,#0b1b2c)!important;
+ border:1px solid rgba(211,181,126,.35)!important;color:#f7f1e6!important;
+}
+a{color:#a8dce0}
+a:hover{color:#f1d59e}
+.lm-command-dock{
+ border:1px solid rgba(226,196,139,.58)!important;
+ background:linear-gradient(110deg,rgba(5,13,25,.98),rgba(18,34,52,.97),rgba(5,13,25,.98))!important;
+ box-shadow:0 18px 50px #000c,inset 0 1px #fff2,0 0 24px #c8a66b12!important;
+}
+.lm-command-dock .lm-dock-item.active{
+ border-color:#f0d49a!important;background:linear-gradient(145deg,#dfbd7d,#a77a43)!important;color:#21190f!important;
+}
+body.authenticated.plot-selected .right{
+ border-color:rgba(226,196,139,.68)!important;
+ background:linear-gradient(150deg,rgba(18,34,52,.985),rgba(6,15,28,.99))!important;
+ box-shadow:0 22px 64px #000c,inset 0 1px #fff1!important;
+}
+body.authenticated.plot-selected .right #plotActions .plot{
+ border-color:rgba(226,196,139,.34)!important;
+ background:linear-gradient(145deg,#172a40,#0a192b)!important;
+}
+body.authenticated.plot-selected .right #buyMlc{
+ border:1px solid #e7cb91!important;
+ background:linear-gradient(120deg,#d9b777,#a77a43)!important;
+ color:#21190f!important;font-weight:850!important;
+ box-shadow:0 8px 22px #b88c4b22!important;
+}
+body.authenticated.plot-selected .right #saveParcelListing{
+ border:1px solid #c9ad78!important;background:linear-gradient(120deg,#344b5e,#1c3044)!important;color:#f7eddb!important;
+}
+@media(max-width:760px){
+ .panel,.card,.modal,.directory,.detail{border-radius:14px!important}
+ header{padding-top:max(10px,env(safe-area-inset-top))!important}
+}
