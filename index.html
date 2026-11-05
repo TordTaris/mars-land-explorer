@@ -454,6 +454,18 @@ body.authenticated #scene{background:radial-gradient(ellipse at 50% 48%,#25364b 
  .lm-systems-foot{flex-direction:column}
 }
 @media(prefers-reduced-motion:reduce){.lm-system-card{transition:none}}
+</style><style id="local-mars-system-dashboard-cards">
+.lm-systems-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:0 0 12px}
+.lm-systems-overview>div{min-width:0;padding:10px 12px;border:1px solid #b99a634d;border-radius:12px;background:linear-gradient(145deg,#182f45,#091827)}
+.lm-systems-overview small,.lm-systems-overview span{display:block;color:#91a8bc;font-size:8px;letter-spacing:.8px}
+.lm-systems-overview b{display:block;margin:4px 0 2px;color:#f0d18e;font-size:18px;letter-spacing:.6px}
+.lm-systems-overview span{font-size:9px;letter-spacing:0}
+.lm-system-card{position:relative;overflow:hidden;padding-right:9px;padding-bottom:22px}
+.lm-system-card:after{content:"";position:absolute;width:76px;height:76px;right:-25px;top:-26px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#dcb97955,#5bd9e811 58%,transparent 70%);pointer-events:none}
+.lm-system-card .lm-system-art{display:grid;place-items:center;width:34px;height:42px;grid-row:1/3;border:1px solid #b99a6355;border-radius:11px;background:linear-gradient(145deg,#263e55,#0a1727);box-shadow:0 5px 18px #0005}
+.lm-system-state{position:absolute;left:55px;bottom:7px;color:#8fdcc9;font-size:7px;font-style:normal;font-weight:800;letter-spacing:1px}
+.lm-system-card[data-system-target="satellite"] .lm-system-state{color:#e4c27c}
+@media(max-width:760px){.lm-systems-overview{gap:5px}.lm-systems-overview>div{padding:8px 6px}.lm-systems-overview small{font-size:7px}.lm-systems-overview b{font-size:15px}.lm-systems-overview span{font-size:8px}.lm-system-card .lm-system-art{width:29px;height:36px}.lm-system-state{left:45px;font-size:6px}}
 </style></head>
 <body>\n<div id="lmStartup" role="status" aria-live="polite"><div id="lmStartupCard"><div id="lmStartupMark">LOCAL <b>MARS</b></div><div id="lmStartupText">INITIALIZING PLANETARY SYSTEMS…</div><div id="lmStartupTrack"></div></div></div>
 <script>
@@ -574,37 +586,42 @@ body.authenticated #scene{background:radial-gradient(ellipse at 50% 48%,#25364b 
    <div><div class="lm-systems-eyebrow">LOCAL MARS · SYSTEM DIRECTORY</div><h2 id="lmSystemsTitle">Explore all systems</h2><p>Find a destination, tool or member service.</p></div>
    <button type="button" id="lmSystemsClose" aria-label="Close system directory">✕</button>
   </div>
+  <div class="lm-systems-overview" aria-label="Systems overview">
+   <div><small>REGISTERED MODULES</small><b id="lmSystemsCount">11</b><span>system destinations</span></div>
+   <div><small>LIVE APP LAYER</small><b>WEB</b><span>LOCAL MARS interface</span></div>
+   <div><small>NETWORK MODEL</small><b>HYBRID</b><span>database + simulation</span></div>
+  </div>
   <label class="lm-systems-search"><span>⌕</span><input id="lmSystemsSearch" type="search" placeholder="Search systems, e.g. wallet, base, missions…" autocomplete="off"></label>
   <div id="lmSystemsEmpty" hidden>No matching systems. Try another keyword.</div>
   <div class="lm-system-group" data-system-group="explore">
    <h3>01 · EXPLORE & LAND</h3>
    <div class="lm-system-grid">
-    <button class="lm-system-card" data-system-target="explore"><span>🌎</span><b>Planet Explorer</b><small>Rotate Mars and inspect parcels</small></button>
-    <button class="lm-system-card" data-system-target="market"><span>🪙</span><b>Land Marketplace</b><small>Browse land listings and MLC prices</small></button>
+    <button class="lm-system-card" data-system-target="explore"><span class="lm-system-art">🌎</span><b>Planet Explorer</b><small>Rotate Mars and inspect parcels</small><em class="lm-system-state">APP MODULE</em></button>
+    <button class="lm-system-card" data-system-target="market"><span class="lm-system-art">🪙</span><b>Land Marketplace</b><small>Browse land listings and MLC prices</small><em class="lm-system-state">APP MODULE</em></button>
    </div>
   </div>
   <div class="lm-system-group" data-system-group="development">
    <h3>02 · COLONY & ENGINEERING</h3>
    <div class="lm-system-grid">
-    <button class="lm-system-card" data-system-target="city"><span>🏗️</span><b>3D City Builder</b><small>Build and manage settlements</small></button>
-    <button class="lm-system-card" data-system-target="underground"><span>🛰️</span><b>Underground Facility</b><small>Explore protected base systems</small></button>
-    <a class="lm-system-card" href="./civilization.html"><span>🌐</span><b>Civilization Network</b><small>View the wider planetary network</small></a>
+    <button class="lm-system-card" data-system-target="city"><span class="lm-system-art">🏗️</span><b>3D City Builder</b><small>Build and manage settlements</small><em class="lm-system-state">APP MODULE</em></button>
+    <button class="lm-system-card" data-system-target="underground"><span class="lm-system-art">🛰️</span><b>Underground Facility</b><small>Explore protected base systems</small><em class="lm-system-state">APP MODULE</em></button>
+    <a class="lm-system-card" href="./civilization.html"><span class="lm-system-art">🌐</span><b>Civilization Network</b><small>View the wider planetary network</small><em class="lm-system-state">APP MODULE</em></a>
    </div>
   </div>
   <div class="lm-system-group" data-system-group="operations">
    <h3>03 · MISSIONS & NETWORK</h3>
    <div class="lm-system-grid">
-    <button class="lm-system-card" data-system-target="satellite"><span>🛰️</span><b>Orbital Operations</b><small>Open the simulated satellite link</small></button>
-    <a class="lm-system-card" href="./mission-trainer.html"><span>🚀</span><b>Mission Trainer</b><small>Learn mission procedures</small></a>
+    <button class="lm-system-card" data-system-target="satellite"><span class="lm-system-art">🛰️</span><b>Orbital Operations</b><small>Open the simulated satellite link</small><em class="lm-system-state">SIMULATION</em></button>
+    <a class="lm-system-card" href="./mission-trainer.html"><span class="lm-system-art">🚀</span><b>Mission Trainer</b><small>Learn mission procedures</small><em class="lm-system-state">APP MODULE</em></a>
    </div>
   </div>
   <div class="lm-system-group" data-system-group="member">
    <h3>04 · MEMBER SERVICES</h3>
    <div class="lm-system-grid">
-    <button class="lm-system-card" data-system-target="workspace"><span>📁</span><b>My Workspace</b><small>View your projects and activity</small></button>
-    <button class="lm-system-card" data-system-target="account"><span>👤</span><b>Member Account</b><small>Sign in and manage your session</small></button>
-    <button class="lm-system-card" data-system-target="wallet"><span>💠</span><b>MLC Wallet</b><small>View your in-app MLC balance</small></button>
-    <a class="lm-system-card" href="./install.html"><span>⬇️</span><b>Install App</b><small>Install LOCAL MARS on this device</small></a>
+    <button class="lm-system-card" data-system-target="workspace"><span class="lm-system-art">📁</span><b>My Workspace</b><small>View your projects and activity</small><em class="lm-system-state">MEMBER ACCESS</em></button>
+    <button class="lm-system-card" data-system-target="account"><span class="lm-system-art">👤</span><b>Member Account</b><small>Sign in and manage your session</small><em class="lm-system-state">MEMBER ACCESS</em></button>
+    <button class="lm-system-card" data-system-target="wallet"><span class="lm-system-art">💠</span><b>MLC Wallet</b><small>View your in-app MLC balance</small><em class="lm-system-state">MEMBER ACCESS</em></button>
+    <a class="lm-system-card" href="./install.html"><span class="lm-system-art">⬇️</span><b>Install App</b><small>Install LOCAL MARS on this device</small><em class="lm-system-state">APP MODULE</em></a>
    </div>
   </div>
   <div class="lm-systems-foot"><span>LOCAL MARS · PLANETARY CIVILIZATION NETWORK</span><span>Choose a system to continue</span></div>
@@ -1304,7 +1321,9 @@ if ('serviceWorker' in navigator) {
    group.hidden=groupVisible===0;if(groupVisible)visible+=groupVisible;
   });
   empty.hidden=visible!==0;
+  const count=document.getElementById('lmSystemsCount');if(count)count.textContent=String(visible);
  });
+ const count=document.getElementById('lmSystemsCount');if(count)count.textContent=String(overlay.querySelectorAll('.lm-system-card').length);
  const actions={
   explore:()=>document.querySelector('.lm-command-dock [data-tab="explore"]')?.click(),
   market:()=>document.querySelector('.lm-command-dock [data-tab="market"]')?.click(),
