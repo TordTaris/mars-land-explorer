@@ -4,14 +4,14 @@
 **Applicant format:** Individual participant; join or form a team if additional skills are needed.  
 **Proposed official challenge:** Build a Junior Astronaut Mission Trainer  
 **Event dates:** 14–15 November 2026  
-**Status:** Draft for the participant to review and submit through their own NASA Space Apps account.
+**Status:** Draft only; not submitted. NASA's global page says registration remains open through the event close, but the Thailand online organizer currently marks local registration as closed. Ask the organizer about late entry or use the official NASA Virtual Universal Event route if available.
 
 ### Project summary (submission-ready draft)
 LOCAL MARS is an interactive browser-based Mars settlement simulation that turns the challenges of building an off-world outpost into a visual learning experience. For the NASA Space Apps Challenge, we propose a focused Mission Habitat Trainer mode in which learners make a sequence of settlement decisions and observe the trade-offs between power, food production, life-support reserves, radiation protection, and habitat capacity.
 
-The current LOCAL MARS prototype provides a planetary exploration interface and settlement-construction experience. During the hackathon, we will build a clearly separated educational scenario layer, document its assumptions, and connect selected inputs to traceable NASA or other authoritative open datasets where suitable. The experience will explain why a settlement decision helps or harms mission resilience rather than presenting a single unexplained score.
+The current LOCAL MARS prototype provides a planetary exploration interface and settlement-construction experience. A first standalone Mission Trainer page has also been implemented: a 10-day resource-management scenario covering oxygen, water, power, food, and system integrity, with one operation per day, a mission log, score, and local browser save. The next development step is to document assumptions and connect selected inputs to traceable NASA or other authoritative open datasets where suitable. The experience will explain why a settlement decision helps or harms mission resilience rather than presenting a single unexplained score.
 
-This is an educational simulation, not a certified engineering tool. All simplified values will be labelled as assumptions, and real scientific data will be cited with units, source links, and retrieval dates.
+This is an educational simulation, not a certified engineering tool. The current prototype uses simplified game values and does not yet integrate NASA datasets. Any future scientific data will be cited with units, source links, and retrieval dates.
 
 ### Problem
 A young learner may see a Mars base as a collection of buildings without understanding the interdependence of its systems. A shortage of power can affect water processing and food production; additional shielding can consume mass and construction resources; expanding a habitat can increase life-support demand. Learners need an accessible way to explore these connected decisions.
