@@ -401,6 +401,59 @@ body.authenticated #scene{background:radial-gradient(ellipse at 50% 48%,#25364b 
 #parcelOwnerTools input{margin-top:6px}
 #parcelOwnerTools button{font-size:11px}
 @media(max-width:650px){body.authenticated.plot-selected .right #plotActions{display:block!important}#plotActions .plot{padding:9px}#plotMlcPrice{font-size:18px!important}}
+</style><style id="local-mars-system-architecture">
+/* Unified information architecture: keep the planetary scene primary, surface secondary systems through a searchable directory. */
+.lm-command-dock{width:min(720px,calc(100vw - 36px))!important;justify-content:center!important;gap:7px!important}
+.lm-command-dock>.lm-dock-item{flex:1 1 0!important;min-width:0!important;max-width:112px!important}
+.lm-command-dock>[data-tab="city"],.lm-command-dock>[data-tab="underground"],
+.lm-command-dock>a.lm-dock-item,.lm-command-dock>#lmWorkspaceOpen,
+.lm-command-dock>[data-tab="account"],.lm-command-dock>[data-tab="wallet"]{display:none!important}
+.lm-command-dock .lm-dock-systems{border-color:#74d9e777!important;color:#a8eff5!important;background:linear-gradient(145deg,#15394b,#0a1a2b)!important}
+.lm-command-dock .lm-dock-systems[aria-expanded="true"]{border-color:#e2bd79!important;color:#fff0cf!important;background:linear-gradient(145deg,#6b512b,#28364a)!important}
+#lmSystemsOverlay{display:none;position:fixed;inset:0;z-index:10040;align-items:center;justify-content:center;padding:clamp(8px,2vw,22px);background:#020711df;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+#lmSystemsOverlay.open{display:flex}
+#lmSystemsCard{width:min(920px,100%);max-height:min(92dvh,900px);overflow:auto;overscroll-behavior:contain;padding:clamp(14px,2.5vw,25px);border:1px solid #c5a56b99;border-radius:22px;background:radial-gradient(ellipse at 90% 0%,#24405a 0,transparent 42%),linear-gradient(145deg,#10253b,#071321 72%);box-shadow:0 28px 90px #000c;color:#f5f0e6}
+.lm-systems-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px}
+.lm-systems-eyebrow{font-size:9px;font-weight:900;letter-spacing:2px;color:#72dce9}
+.lm-systems-head h2{margin:5px 0 4px;color:#f0d18e;font-size:clamp(20px,3.5vw,29px);letter-spacing:.2px}
+.lm-systems-head p{margin:0;color:#a9bdcf;font-size:12px}
+#lmSystemsClose{flex:0 0 38px;width:38px;height:38px;padding:0;border-radius:11px;font-size:17px}
+.lm-systems-search{display:flex;align-items:center;gap:10px;height:46px;padding:0 13px;border:1px solid #64819a88;border-radius:12px;background:#061321cc;color:#e9d6ac}
+.lm-systems-search>span{font-size:23px;line-height:1}
+.lm-systems-search input{width:100%;height:100%;border:0;outline:0;background:transparent;color:#f4f7fb;font-size:13px}
+.lm-systems-search input::placeholder{color:#7f95aa}
+.lm-system-group{margin-top:20px}
+.lm-system-group h3{margin:0 0 9px;color:#dcbf83;font-size:10px;letter-spacing:1.5px}
+.lm-system-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.lm-system-card{display:grid;grid-template-columns:34px minmax(0,1fr);grid-template-rows:auto auto;align-items:center;column-gap:9px;min-width:0;min-height:72px;padding:12px;text-align:left;text-decoration:none;border:1px solid #45617caa;border-radius:13px;background:linear-gradient(145deg,#17334d,#0a1a2b);color:#f5f1e8;box-shadow:inset 0 1px #ffffff0b;transition:border-color .18s,transform .18s,background .18s}
+.lm-system-card:hover,.lm-system-card:focus-visible{border-color:#dfbd7d;background:linear-gradient(145deg,#21415b,#10243a);transform:translateY(-1px);outline:none}
+.lm-system-card>span{grid-row:1/3;font-size:25px;text-align:center}
+.lm-system-card b{font-size:12px;line-height:1.25;overflow-wrap:anywhere}
+.lm-system-card small{margin-top:3px;color:#9fb3c7;font-size:9px;line-height:1.4}
+#lmSystemsEmpty{padding:20px 8px;text-align:center;color:#9fb3c7;font-size:12px}
+.lm-systems-foot{display:flex;justify-content:space-between;gap:10px;margin-top:20px;padding-top:12px;border-top:1px solid #ffffff18;color:#7892a9;font-size:8px;letter-spacing:.8px}
+#lmSystemsOverlay [hidden]{display:none!important}
+@media(max-width:760px){
+ .lm-command-dock{width:calc(100vw - 16px)!important;gap:4px!important;padding:6px!important;bottom:max(8px,env(safe-area-inset-bottom))!important}
+ .lm-command-dock>.lm-dock-item{flex:1 1 0!important;min-width:0!important;max-width:none!important;min-height:55px!important;padding:6px 2px!important;gap:3px!important}
+ .lm-command-dock .lm-dock-icon{font-size:18px!important}
+ .lm-command-dock .lm-dock-label{font-size:8px!important;letter-spacing:0!important}
+ #lmSystemsCard{max-height:95dvh;border-radius:16px;padding:13px}
+ .lm-system-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ .lm-system-card{min-height:67px;padding:9px;grid-template-columns:28px minmax(0,1fr);column-gap:7px}
+ .lm-system-card>span{font-size:21px}
+ .lm-system-card b{font-size:11px}
+ .lm-system-card small{font-size:8px}
+ .lm-systems-foot{font-size:7px}
+ #lm-satellite-link{top:57px!important;right:8px!important;width:min(178px,calc(52vw - 10px))!important;padding:8px!important;font-size:8px!important}
+ #mars-air-traffic{top:20%!important;max-width:82vw!important;font-size:8px!important;padding:6px 9px!important}
+}
+@media(max-width:380px){
+ .lm-command-dock .lm-dock-label{font-size:7px!important}
+ .lm-system-grid{grid-template-columns:1fr}
+ .lm-systems-foot{flex-direction:column}
+}
+@media(prefers-reduced-motion:reduce){.lm-system-card{transition:none}}
 </style></head>
 <body>\n<div id="lmStartup" role="status" aria-live="polite"><div id="lmStartupCard"><div id="lmStartupMark">LOCAL <b>MARS</b></div><div id="lmStartupText">INITIALIZING PLANETARY SYSTEMS…</div><div id="lmStartupTrack"></div></div></div>
 <script>
@@ -486,6 +539,7 @@ body.authenticated #scene{background:radial-gradient(ellipse at 50% 48%,#25364b 
 <button type="button" id="navSatellite" class="lm-dock-item" data-tab="satellite"><span class="lm-dock-icon">🛰️</span><span class="lm-dock-label">Orbit</span></button>
 <button class="lm-dock-item" data-tab="market"><span class="lm-dock-icon">🪙</span><span class="lm-dock-label">Market</span></button>
 <button class="lm-dock-item" data-tab="colony"><span class="lm-dock-icon">🏙️</span><span class="lm-dock-label">Colony</span></button>
+<button type="button" id="lmSystemsToggle" class="lm-dock-item lm-dock-systems" aria-expanded="false" aria-controls="lmSystemsOverlay"><span class="lm-dock-icon">▦</span><span class="lm-dock-label">Systems</span></button>
 <button class="lm-dock-item" data-tab="city"><span class="lm-dock-icon">🏗️</span><span class="lm-dock-label">Build</span></button>
 <button class="lm-dock-item" data-tab="underground"><span class="lm-dock-icon">🏚️</span><span class="lm-dock-label">Underground</span></button>
 <a class="lm-dock-item" href="./civilization.html"><span class="lm-dock-icon">🌐</span><span class="lm-dock-label">Civilization</span></a>
@@ -514,6 +568,48 @@ body.authenticated #scene{background:radial-gradient(ellipse at 50% 48%,#25364b 
 <div class="lm-menu-heading lm-language-heading">LANGUAGE / ภาษา</div>
 <div id="lmMenuLanguage" role="group" aria-label="Select language"><button type="button" data-language="th" aria-label="ภาษาไทย" title="ภาษาไทย" aria-pressed="false">🇹🇭 ไทย</button><button type="button" data-language="en" aria-label="English" title="English" aria-pressed="true">🇺🇸 EN</button></div></div>
  
+<section id="lmSystemsOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="lmSystemsTitle">
+ <div id="lmSystemsCard">
+  <div class="lm-systems-head">
+   <div><div class="lm-systems-eyebrow">LOCAL MARS · SYSTEM DIRECTORY</div><h2 id="lmSystemsTitle">Explore all systems</h2><p>Find a destination, tool or member service.</p></div>
+   <button type="button" id="lmSystemsClose" aria-label="Close system directory">✕</button>
+  </div>
+  <label class="lm-systems-search"><span>⌕</span><input id="lmSystemsSearch" type="search" placeholder="Search systems, e.g. wallet, base, missions…" autocomplete="off"></label>
+  <div id="lmSystemsEmpty" hidden>No matching systems. Try another keyword.</div>
+  <div class="lm-system-group" data-system-group="explore">
+   <h3>01 · EXPLORE & LAND</h3>
+   <div class="lm-system-grid">
+    <button class="lm-system-card" data-system-target="explore"><span>🌎</span><b>Planet Explorer</b><small>Rotate Mars and inspect parcels</small></button>
+    <button class="lm-system-card" data-system-target="market"><span>🪙</span><b>Land Marketplace</b><small>Browse land listings and MLC prices</small></button>
+   </div>
+  </div>
+  <div class="lm-system-group" data-system-group="development">
+   <h3>02 · COLONY & ENGINEERING</h3>
+   <div class="lm-system-grid">
+    <button class="lm-system-card" data-system-target="city"><span>🏗️</span><b>3D City Builder</b><small>Build and manage settlements</small></button>
+    <button class="lm-system-card" data-system-target="underground"><span>🛰️</span><b>Underground Facility</b><small>Explore protected base systems</small></button>
+    <a class="lm-system-card" href="./civilization.html"><span>🌐</span><b>Civilization Network</b><small>View the wider planetary network</small></a>
+   </div>
+  </div>
+  <div class="lm-system-group" data-system-group="operations">
+   <h3>03 · MISSIONS & NETWORK</h3>
+   <div class="lm-system-grid">
+    <button class="lm-system-card" data-system-target="satellite"><span>🛰️</span><b>Orbital Operations</b><small>Open the simulated satellite link</small></button>
+    <a class="lm-system-card" href="./mission-trainer.html"><span>🚀</span><b>Mission Trainer</b><small>Learn mission procedures</small></a>
+   </div>
+  </div>
+  <div class="lm-system-group" data-system-group="member">
+   <h3>04 · MEMBER SERVICES</h3>
+   <div class="lm-system-grid">
+    <button class="lm-system-card" data-system-target="workspace"><span>📁</span><b>My Workspace</b><small>View your projects and activity</small></button>
+    <button class="lm-system-card" data-system-target="account"><span>👤</span><b>Member Account</b><small>Sign in and manage your session</small></button>
+    <button class="lm-system-card" data-system-target="wallet"><span>💠</span><b>MLC Wallet</b><small>View your in-app MLC balance</small></button>
+    <a class="lm-system-card" href="./install.html"><span>⬇️</span><b>Install App</b><small>Install LOCAL MARS on this device</small></a>
+   </div>
+  </div>
+  <div class="lm-systems-foot"><span>LOCAL MARS · PLANETARY CIVILIZATION NETWORK</span><span>Choose a system to continue</span></div>
+ </div>
+</section>
 <section id="lmWorkspaceOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="lmWorkspaceTitle">
  <div id="lmWorkspaceCard">
   <header id="lmWorkspaceHeader"><div><div class="lm-ws-eyebrow">LOCAL MARS · MEMBER HUB</div><h2 id="lmWorkspaceTitle" data-lm-en="My Workspace" data-lm-th="พื้นที่สมาชิกของฉัน">My Workspace</h2><div id="lmWorkspaceIdentity" aria-live="polite">Checking member session…</div></div><button type="button" id="lmWorkspaceClose" aria-label="Close workspace">✕</button></header>
@@ -1163,4 +1259,64 @@ if ('serviceWorker' in navigator) {
  if('serviceWorker' in navigator)navigator.serviceWorker.ready.then(reg=>{registration=reg}).catch(()=>{});
 })();
 </script>
-</body></html>
+<script id="local-mars-system-directory">
+(()=>{
+ const overlay=document.getElementById('lmSystemsOverlay');
+ const toggle=document.getElementById('lmSystemsToggle');
+ const close=document.getElementById('lmSystemsClose');
+ const search=document.getElementById('lmSystemsSearch');
+ const empty=document.getElementById('lmSystemsEmpty');
+ if(!overlay||!toggle||!close||!search)return;
+ const guide=document.getElementById('lmMenuDropdown');
+ const guideToggle=document.getElementById('lmMenuToggle');
+ const open=()=>{
+  guide?.setAttribute('hidden','');
+  guideToggle?.setAttribute('aria-expanded','false');
+  overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');
+  toggle.setAttribute('aria-expanded','true');
+  window.setTimeout(()=>search.focus(),40);
+ };
+ const shut=()=>{
+  overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true');
+  toggle.setAttribute('aria-expanded','false');toggle.focus();
+ };
+ toggle.addEventListener('click',()=>overlay.classList.contains('open')?shut():open());
+ close.addEventListener('click',shut);
+ overlay.addEventListener('click',event=>{if(event.target===overlay)shut();});
+ guideToggle?.addEventListener('click',()=>{
+  const willOpen=guide?.hasAttribute('hidden');
+  overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true');toggle.setAttribute('aria-expanded','false');
+  if(guide){if(willOpen)guide.removeAttribute('hidden');else guide.setAttribute('hidden','');}
+  guideToggle.setAttribute('aria-expanded',String(!!willOpen));
+ });
+ document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'&&overlay.classList.contains('open'))shut();
+  if(event.key==='Escape'&&guide&&!guide.hasAttribute('hidden')){guide.setAttribute('hidden','');guideToggle?.setAttribute('aria-expanded','false');}
+ });
+ search.addEventListener('input',()=>{
+  const q=search.value.trim().toLowerCase();let visible=0;
+  overlay.querySelectorAll('.lm-system-group').forEach(group=>{
+   let groupVisible=0;
+   group.querySelectorAll('.lm-system-card').forEach(card=>{
+    const show=!q||card.textContent.toLowerCase().includes(q);
+    card.hidden=!show;if(show)groupVisible++;
+   });
+   group.hidden=groupVisible===0;if(groupVisible)visible+=groupVisible;
+  });
+  empty.hidden=visible!==0;
+ });
+ const actions={
+  explore:()=>document.querySelector('.lm-command-dock [data-tab="explore"]')?.click(),
+  market:()=>document.querySelector('.lm-command-dock [data-tab="market"]')?.click(),
+  city:()=>location.href='./city.html',
+  underground:()=>location.href='./underground.html',
+  satellite:()=>document.querySelector('.lm-command-dock [data-tab="satellite"]')?.click(),
+  workspace:()=>document.getElementById('lmWorkspaceOpen')?.click(),
+  account:()=>document.querySelector('.lm-command-dock [data-tab="account"]')?.click(),
+  wallet:()=>document.querySelector('.lm-command-dock [data-tab="wallet"]')?.click()
+ };
+ overlay.querySelectorAll('[data-system-target]').forEach(card=>card.addEventListener('click',()=>{
+  const target=card.dataset.systemTarget;shut();actions[target]?.();
+ }));
+})();
+</script></body></html>
