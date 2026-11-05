@@ -511,8 +511,8 @@ function selectPlot(p){
  const usdPrice=Number.isFinite(Number(p.salePriceUsd))&&Number(p.salePriceUsd)>0?Number(p.salePriceUsd):null;
  document.querySelector("#plotUsdPrice").textContent=usdPrice?"$"+usdPrice.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})+" USD":"ยังไม่กำหนด USD";
  document.querySelector("#plotUsdNote").textContent=usdPrice?"ราคาอ้างอิงจากข้อมูล USD ในฐานข้อมูล · ยังไม่เปิดรับชำระเงินจริง":"ไม่มีราคา USD ที่ยืนยันสำหรับแปลงนี้";
- document.querySelector("#claim").disabled=true;
- document.querySelector("#claim").textContent=claim?"มีเจ้าของแล้ว":"USD Checkout ยังไม่เปิดใช้งาน";
+ document.querySelector("#claim").disabled=!!claim||!usdPrice;
+ document.querySelector("#claim").textContent=claim?"มีเจ้าของแล้ว":usdPrice?"ชำระด้วย USD (บัตร)":"ยังไม่กำหนดราคา USD";
  document.querySelector("#plotMlcPrice").textContent=listing?Number(listing.price_mlc).toLocaleString("en-US")+" MLC":"ไม่เปิดขาย";
  document.querySelector("#plotMlcStatus").textContent=claim?(isOwner?(listing?.is_listed?"แปลงของคุณ · เปิดประกาศขาย":"แปลงของคุณ · ยังไม่ประกาศขาย"):(listing?.is_listed?"เจ้าของประกาศขาย":"มีเจ้าของ · ไม่เปิดขาย")):(listing?.is_listed?"ว่าง · จองหรือซื้อได้ด้วย MLC":"ยังไม่เปิดขายด้วย MLC");
  document.querySelector("#reserveMlc").disabled=!listing?.is_listed||isOwner;
@@ -528,7 +528,7 @@ parcels.forEach(p=>{if(state.owned.includes(p.id))p.owner=state.profile?.name||'
 function save(){localStorage.setItem('localmars-demo',JSON.stringify(state));updateStats()}
 function updateStats(){const world=window.MarsWorldServer?.getState?.();const user=world?.user;document.querySelector('#owned').textContent=user?(world.claims||[]).filter(x=>x.owner_id===user.id).length:0;document.querySelector('#buildings').textContent=user?(world.structures||[]).filter(x=>x.owner_id===user.id).length:0;markers.forEach(m=>m.material.color.set(m.userData.plot.owner?0xffa45f:0x55dce8))}
 function toast(s){const t=document.querySelector('#toast');t.textContent=s;t.style.display='block';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.style.display='none',2600)}
-document.querySelector('#claim').onclick=async()=>{if(!selected)return;const result=await window.MarsWorldServer?.claim(selected.id);if(result?.error){toast(result.error.message);if(!window.MarsWorldServer?.getState().user)openLogin();return;}};
+document.querySelector('#claim').onclick=async()=>{if(!selected)return;const result=await window.MarsWorldServer?.claimUsd(selected.id);if(result?.error){toast(result.error.message);if(!window.MarsWorldServer?.getState().user)openLogin();return;}};
 const runParcelAction=async(buttonId,action,successText)=>{
  if(!selected)return;const world=window.MarsWorldServer?.getState?.();
  if(!world?.user){toast('กรุณาเข้าสู่ระบบก่อนทำรายการ');openLogin();return;}
