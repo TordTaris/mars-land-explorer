@@ -529,10 +529,7 @@ const mars=new THREE.Mesh(new THREE.SphereGeometry(1,112,80),marsMat);group.add(
 // Thin atmospheric limb gives the planet a dusty, sunlit edge (visual effect, not weather simulation).
 const glow=new THREE.Mesh(new THREE.SphereGeometry(1.035,64,64),new THREE.MeshBasicMaterial({color:0xe88b62,transparent:true,opacity:.105,side:THREE.BackSide,depthWrite:false}));group.add(glow);
 const atmosphere=new THREE.Mesh(new THREE.SphereGeometry(1.012,64,64),new THREE.MeshBasicMaterial({color:0x9b4938,transparent:true,opacity:.035,side:THREE.FrontSide,depthWrite:false}));group.add(atmosphere);
-const orbit=new THREE.Mesh(new THREE.TorusGeometry(1.34,.003,8,180),new THREE.MeshBasicMaterial({color:0xd7b778,transparent:true,opacity:.22}));
-orbit.rotation.set(1.12,.18,.32);group.add(orbit);
-const orbit2=new THREE.Mesh(new THREE.TorusGeometry(1.48,.0018,6,180),new THREE.MeshBasicMaterial({color:0x6bcce8,transparent:true,opacity:.12}));
-orbit2.rotation.set(.72,-.4,.9);group.add(orbit2);
+// Orbital guide rings removed for a clean, unobstructed planet view.
 
 // M-003 orbital relay satellite — visible landmark in the main 3D Mars explorer.
 const relaySatellite=new THREE.Group();
@@ -552,14 +549,12 @@ const relayBeacon=new THREE.Mesh(new THREE.SphereGeometry(.014,12,8),new THREE.M
 relayBeacon.position.set(0,.125,0);relaySatellite.add(relayBeacon);
 const relayBeam=new THREE.Mesh(new THREE.CylinderGeometry(.008,.035,.58,12,1,true),new THREE.MeshBasicMaterial({color:0x56e6f4,transparent:true,opacity:.2,side:THREE.DoubleSide,depthWrite:false}));
 relayBeam.position.set(0,-.34,0);relaySatellite.add(relayBeam);
-const relayOrbitPath=new THREE.Mesh(new THREE.TorusGeometry(1.23,.004,6,160),new THREE.MeshBasicMaterial({color:0x62e4f2,transparent:true,opacity:.32}));
+// Keep the orbital plane for satellite/aircraft movement, without drawing its path.
 const relayOrbitRotation=new THREE.Euler(1.05,.25,.2);const relayOrbitQuaternion=new THREE.Quaternion().setFromEuler(relayOrbitRotation);
-relayOrbitPath.rotation.copy(relayOrbitRotation);group.add(relayOrbitPath);
 relaySatellite.scale.setScalar(.72);group.add(relaySatellite);
 
 // MARS ATMOSPHERIC TRANSPORT — two clearly visible 3D craft flying above the surface.
-const airTrafficOrbit=new THREE.Mesh(new THREE.TorusGeometry(1.105,.008,8,180),new THREE.MeshBasicMaterial({color:0x63e8f5,transparent:true,opacity:.62}));
-airTrafficOrbit.rotation.copy(relayOrbitRotation);group.add(airTrafficOrbit);
+// Atmospheric vehicles remain animated; the visible orbital guide ring is removed.
 const airTrafficGlow=new THREE.Mesh(new THREE.SphereGeometry(1.055,48,32),new THREE.MeshBasicMaterial({color:0x54cfe8,transparent:true,opacity:.035,side:THREE.BackSide,depthWrite:false}));
 group.add(airTrafficGlow);
 function buildMarsAircraft(kind){
