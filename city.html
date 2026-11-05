@@ -702,10 +702,31 @@ async function loginCity(){
  if(signup&&!r.data.session)toast('สมัครแล้ว กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ');else toast('เข้าสู่ระบบ LOCAL MARS สำเร็จ');
 }
 
-const root=document.querySelector('#world'),scene=new THREE.Scene();scene.background=new THREE.Color(0x8796a2);scene.fog=new THREE.Fog(0x8796a2,22,65);
+const root=document.querySelector('#world'),scene=new THREE.Scene();
+const marsSky=new THREE.Color(0x9b7160);scene.background=marsSky;scene.fog=new THREE.Fog(marsSky,22,65);
 const camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,120);const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;root.appendChild(renderer.domElement);
-scene.add(new THREE.HemisphereLight(0xdcecff,0x68402e,2));const sun=new THREE.DirectionalLight(0xffd4ad,2.4);sun.position.set(-12,22,10);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);scene.add(sun);
-const terrain=new THREE.Mesh(new THREE.PlaneGeometry(100,100,1,1),new THREE.MeshStandardMaterial({color:0x9b5942,roughness:1}));terrain.rotation.x=-Math.PI/2;terrain.receiveShadow=true;scene.add(terrain);
+scene.add(new THREE.HemisphereLight(0xffd8c4,0x563326,1.8));const sun=new THREE.DirectionalLight(0xffc18f,2.1);sun.position.set(-12,22,10);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);scene.add(sun);
+// Procedural Martian regolith: fine iron-rich dust, mineral flecks and shallow dune bands.
+const regolithCanvas=document.createElement('canvas');regolithCanvas.width=512;regolithCanvas.height=512;
+const regolithCtx=regolithCanvas.getContext('2d');
+const dune=regolithCtx.createLinearGradient(0,0,512,512);
+dune.addColorStop(0,'#9f6048');dune.addColorStop(.48,'#b07152');dune.addColorStop(1,'#854b3a');
+regolithCtx.fillStyle=dune;regolithCtx.fillRect(0,0,512,512);
+let regolithSeed=314159;const regolithRand=()=>{regolithSeed=(regolithSeed*1664525+1013904223)>>>0;return regolithSeed/4294967296};
+for(let i=0;i<4200;i++){
+ const x=regolithRand()*512,y=regolithRand()*512,r=.25+regolithRand()*1.7;
+ regolithCtx.fillStyle=regolithRand()>.48?'rgba(48,27,22,.16)':'rgba(244,173,126,.13)';
+ regolithCtx.beginPath();regolithCtx.arc(x,y,r,0,Math.PI*2);regolithCtx.fill();
+}
+for(let i=0;i<18;i++){
+ const y=i*31+regolithRand()*18;
+ regolithCtx.strokeStyle='rgba(66,36,28,.055)';regolithCtx.lineWidth=5+regolithRand()*12;
+ regolithCtx.beginPath();regolithCtx.moveTo(0,y);regolithCtx.bezierCurveTo(150,y-18,330,y+20,512,y-9);regolithCtx.stroke();
+}
+const regolithTexture=new THREE.CanvasTexture(regolithCanvas);
+regolithTexture.colorSpace=THREE.SRGBColorSpace;regolithTexture.wrapS=regolithTexture.wrapT=THREE.RepeatWrapping;regolithTexture.repeat.set(9,9);
+const regolithMaterial=new THREE.MeshStandardMaterial({color:0xffffff,map:regolithTexture,bumpMap:regolithTexture,bumpScale:.025,roughness:1});
+const terrain=new THREE.Mesh(new THREE.PlaneGeometry(100,100,1,1),regolithMaterial);terrain.rotation.x=-Math.PI/2;terrain.receiveShadow=true;scene.add(terrain);
 const grid=new THREE.GridHelper(50,50,0x79cbd0,0x5c7180);grid.position.y=.025;grid.material.transparent=true;grid.material.opacity=.28;scene.add(grid);
 let seed=1984;const rand=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
 for(let i=0;i<160;i++){const rock=new THREE.Mesh(new THREE.DodecahedronGeometry(.15+rand()*.65,0),new THREE.MeshStandardMaterial({color:new THREE.Color().setHSL(.04+rand()*.04,.35,.22+rand()*.2),roughness:1}));rock.position.set((rand()-.5)*85,.05,(rand()-.5)*85);rock.scale.y=.3+rand()*.5;rock.castShadow=true;scene.add(rock)}
