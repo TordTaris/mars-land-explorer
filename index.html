@@ -416,6 +416,10 @@ body.authenticated #scene{background:radial-gradient(ellipse at 50% 48%,#25364b 
  <div style="margin-top:7px;color:#a9c5d3">SATELLITE <b style="color:#f0d8a4">RECON-01</b></div>
  <div style="color:#a9c5d3">GROUND NODE <b style="color:#f0d8a4">M-003</b></div>
  <div style="color:#a9c5d3">CHANNEL <b style="color:#8feaff">SIMULATED RELAY</b></div>
+ <div style="display:flex;justify-content:space-between;gap:8px;margin-top:7px;padding-top:7px;border-top:1px solid #315365;color:#a9c5d3"><span>SERVICE MODE</span><b style="color:#7fffd0">24/7 SIMULATION</b></div>
+ <div style="display:flex;justify-content:space-between;gap:8px;color:#a9c5d3"><span>APP SESSION</span><b id="lm-satellite-session" style="color:#dffaff">STARTING</b></div>
+ <div style="display:flex;justify-content:space-between;gap:8px;color:#a9c5d3"><span>HEARTBEAT</span><b id="lm-satellite-heartbeat" style="color:#dffaff">—</b></div>
+ <div style="margin-top:5px;color:#829cac;font-size:8px;line-height:1.4">Simulated orbital link · runs while LOCAL MARS is open. Not a real spacecraft connection.</div>
  <button id="lm-satellite-reconnect" type="button" style="width:100%;margin-top:8px;padding:7px;border:1px solid #65d9e9aa;border-radius:8px;background:#12384a;color:#dffaff;font:700 9px system-ui;letter-spacing:.8px">RECONNECT LINK</button>
 </div>
 <header><div class="brand"><span class="brand-insignia" aria-hidden="true"><img src="./icon.svg" alt=""></span><span class="brand-lockup"><strong>LOCAL <b>MARS</b></strong><small>PLANETARY CIVILIZATION NETWORK</small></span></div><div class="status" id="worldServerStatus">CONNECTING TO MARS NETWORK…</div></header>
@@ -974,6 +978,31 @@ const landingTargets=[pos(-4,14,1.008),pos(4,14,1.008)];const landingNormals=lan
 const landingPads=landingTargets.map((target,i)=>{const pad=new THREE.Group();pad.position.copy(target);pad.quaternion.copy(landingOrientations[i]);group.add(pad);const deck=new THREE.Mesh(new THREE.CircleGeometry(.105,40),new THREE.MeshStandardMaterial({color:0x263746,metalness:.55,roughness:.62,transparent:true,opacity:.92,side:THREE.DoubleSide}));deck.rotation.x=-Math.PI/2;deck.position.y=.004;pad.add(deck);const rim=new THREE.Mesh(new THREE.TorusGeometry(.108,.004,8,48),new THREE.MeshBasicMaterial({color:i===0?0x65eaff:0xe6bd78,transparent:true,opacity:.95}));rim.rotation.x=-Math.PI/2;rim.position.y=.008;pad.add(rim);const inner=new THREE.Mesh(new THREE.TorusGeometry(.072,.0018,6,40),new THREE.MeshBasicMaterial({color:0xc7d9e5,transparent:true,opacity:.6}));inner.rotation.x=-Math.PI/2;inner.position.y=.009;pad.add(inner);for(let k=0;k<4;k++){const q=k*Math.PI/2;const light=new THREE.Mesh(new THREE.SphereGeometry(.006,8,6),new THREE.MeshBasicMaterial({color:0x6ee7ff}));light.position.set(Math.cos(q)*.094,.012,Math.sin(q)*.094);pad.add(light);}const shadow=new THREE.Mesh(new THREE.CircleGeometry(.095,32),new THREE.MeshBasicMaterial({color:0x05090f,transparent:true,opacity:.38,depthWrite:false,side:THREE.DoubleSide}));shadow.rotation.x=-Math.PI/2;shadow.position.y=.013;pad.add(shadow);return pad;});
 function animate(){requestAnimationFrame(animate);controls.update();const t=Date.now()*.001;const elapsed=(Date.now()-landingStart)/1000;landingCraft.forEach((craft,i)=>{const progress=THREE.MathUtils.clamp((elapsed-i*3)/22,0,1);const eased=progress*progress*(3-2*progress);const radius=1.43-(1.43-1.16)*eased;craft.position.copy(landingNormals[i]).multiplyScalar(radius);craft.quaternion.copy(landingOrientations[i]);craft.rotateY(i===0?0:Math.PI*.35);});if(arrivalStatus)arrivalStatus.textContent=elapsed<25?'DESCENT TO AEGIS LANDING PADS': 'BOTH SPACECRAFT LANDED · AEGIS SITE SECURE';if(satelliteLaunchAt){const launchElapsed=(Date.now()-satelliteLaunchAt)/1000;const ascent=THREE.MathUtils.clamp(launchElapsed/12,0,1);const orbitalRadius=1.045+(1.22-1.045)*(ascent*ascent*(3-2*ascent));const relayAngle=satelliteOrbitStartAngle+launchElapsed*.025;const relayPosition=new THREE.Vector3(orbitalRadius*Math.cos(relayAngle),0,orbitalRadius*Math.sin(relayAngle)).applyQuaternion(relayOrbitQuaternion);relaySatellite.position.copy(relayPosition);relaySatellite.quaternion.copy(relayOrbitQuaternion);relaySatellite.rotateY(-relayAngle+Math.PI/2);relayBeacon.material.color.setHex(Math.sin(t*4)>0?0x66efff:0x2ca9ff);}if(satelliteLinkConnected){const sameHemisphere=relaySatellite.position.dot(satelliteGroundStation.position)>.18;satelliteLinkLine.visible=sameHemisphere;satelliteLinkGeometry.setFromPoints([relaySatellite.position.clone(),satelliteGroundStation.position.clone()]);satelliteLinkLine.material.opacity=.52+Math.sin(t*3)*.24;stationBeacon.scale.setScalar(1+Math.sin(t*4)*.18);}turbine.rotation.y=t*1.8;beacon.material.opacity=.55+Math.sin(t*3)*.4;beaconLight.intensity=.45+Math.sin(t*3)*.3;renderer.render(scene,camera);if(!firstPlanetFrame){firstPlanetFrame=true;const startup=document.getElementById('lmStartup');if(startup){const label=document.getElementById('lmStartupText');if(label)label.textContent='PLANET ONLINE · LOADING TERRAIN DETAILS';setTimeout(()=>startup.classList.add('is-ready'),180);}setTimeout(()=>{try{const texture=makeMarsTexture();marsMat.map=texture;marsMat.bumpMap=texture;marsMat.bumpScale=.075;marsMat.needsUpdate=true;}catch(error){console.warn('LOCAL MARS terrain detail skipped:',error);}},80);}}animate();
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+</script>
+<script>
+ // 24/7 simulation heartbeat: reflects this browser session and network state only.
+ (()=>{
+  const state=document.getElementById('lm-satellite-link-state');
+  const session=document.getElementById('lm-satellite-session');
+  const beat=document.getElementById('lm-satellite-heartbeat');
+  if(!state||!session||!beat)return;
+  let lastBeat=Date.now();
+  const clock=()=>new Date().toLocaleTimeString('en-GB',{hour12:false});
+  const paint=()=>{
+   const online=navigator.onLine;
+   session.textContent=online?'ACTIVE':'OFFLINE';
+   session.style.color=online?'#7fffd0':'#ff927f';
+   beat.textContent=Date.now()-lastBeat<45000?'OK · '+clock():'STALE';
+   state.textContent=online?'● ONLINE · 24/7':'● NETWORK OFFLINE';
+   state.style.color=online?'#7fffd0':'#ff927f';
+  };
+  const pulse=()=>{lastBeat=Date.now();paint();};
+  window.addEventListener('online',pulse);
+  window.addEventListener('offline',paint);
+  window.setInterval(()=>navigator.onLine?pulse():paint(),30000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)pulse();});
+  pulse();
+ })();
 </script>
 <script>
 if ('serviceWorker' in navigator) {
