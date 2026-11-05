@@ -1,5 +1,5 @@
 // LOCAL MARS v4.0 — network-first updates with complete offline app shell.
-const CACHE = "local-mars-v4-12";
+const CACHE = "local-mars-v4-13";
 const CORE = [
   "./", "./index.html", "./city.html", "./underground.html",
   "./parcels/M-001/index.html",
@@ -24,7 +24,10 @@ const CORE = [
 self.addEventListener("install", event => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE);
-    await cache.addAll(CORE);
+    // Cache each core route independently: one missing optional page must not disable offline startup.
+    const results = await Promise.allSettled(CORE.map(path => cache.add(path)));
+    const failed = results.map((result,index)=>result.status==='rejected'?CORE[index]:null).filter(Boolean);
+    if (failed.length) console.warn('LOCAL MARS: optional offline assets skipped:', failed);
     await self.skipWaiting();
   })());
 });
@@ -44,16 +47,29 @@ self.addEventListener("fetch", event => {
   const url = new URL(request.url);
   if (request.method !== "GET" || url.origin !== self.location.origin) return;
   event.respondWith((async () => {
+    let timeoutId;
+    const controller = request.mode === "navigate" ? new AbortController() : null;
     try {
-      const fresh = await fetch(request, { cache: "no-store" });
+      const options = { cache: "no-store" };
+      if (controller) {
+        options.signal = controller.signal;
+        timeoutId = setTimeout(() => controller.abort(), 4500);
+      }
+      const fresh = await fetch(request, options);
       if (fresh.ok) {
         const cache = await caches.open(CACHE);
         await cache.put(request, fresh.clone());
       }
       return fresh;
     } catch (error) {
-      return (await caches.match(request)) ||
-        (request.mode === "navigate" ? await caches.match("./index.html") : Response.error());
+      const cached = await caches.match(request);
+      if (cached) return cached;
+      if (request.mode === "navigate") {
+        return (await caches.match("./index.html")) || Response.error();
+      }
+      return Response.error();
+    } finally {
+      if (timeoutId) clearTimeout(timeoutId);
     }
   })());
 });
