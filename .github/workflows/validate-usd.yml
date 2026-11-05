@@ -2,9 +2,9 @@ name: Validate LOCAL MARS USD rollout
 
 on:
   pull_request:
-    branches: [main]
-  push:
     branches: [main, "feature/usd-market-standard"]
+  push:
+    branches: [main, "feature/usd-market-standard", "feature/global-world-network"]
   workflow_dispatch:
 
 permissions:
@@ -59,6 +59,9 @@ jobs:
           test -s supabase/migrations/017_fx_provider_freshness.sql
           test -s supabase/migrations/018_usd_parcel_checkout.sql
           test -s supabase/migrations/019_usd_checkout_recovery.sql
+          test -s supabase/migrations/020_global_world_realtime.sql
+          grep -q "presenceState" world-server.js
+          grep -q "mars_city_national_flags" world-server.js
           test -s .github/workflows/deploy-supabase-functions.yml
           test -s supabase/functions/create-usd-checkout/index.ts
           test -s supabase/functions/refresh-fx-rates/index.ts
