@@ -10,7 +10,8 @@
 .file-note{padding:10px 12px;border-left:3px solid #d65b58;background:#34191d66;color:#d7c0c0;font-size:11px;line-height:1.6}
 .stamp{display:inline-block;color:#ff7771;border:2px solid #d65b58;padding:5px 9px;transform:rotate(-2deg);font-size:10px;font-weight:900;letter-spacing:2px}
 @media(max-width:620px){.grid{grid-template-columns:1fr}.file-meta{grid-template-columns:1fr 1fr}.meta-cell:last-child{grid-column:1/-1}}
-</style></head><body>
+</style><link rel="stylesheet" href="./premium-ui.css?v=20261106">
+</head><body>
 <header><div class="brand">LOCAL <b>MARS</b> / M-003</div><div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;justify-content:flex-end"><span class="stamp">TOP SECRET</span><div class="status" id="status">VERIFYING ACCESS</div></div></header>
 <main id="content" hidden>
 <section class="hero"><div class="classification">TOP SECRET // EYES ONLY // M-003</div><div class="eyebrow">CLASSIFIED SYSTEM DATABASE · EXPERIMENTAL DIVISION</div><h1>PROJECT DIMENSION GATE</h1>
@@ -30,4 +31,5 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script><script src="./world-server.js"></script><script>
 let done=false;async function verify(){if(done)return;const s=window.MarsWorldServer?.getState?.();const u=s?.user;if(!u){document.querySelector('#status').textContent='LOCKED';document.querySelector('#gateTitle').textContent='SIGN-IN REQUIRED';return}const owns=(s.claims||[]).some(c=>c.parcel_id==='M-003'&&c.owner_id===u.id);if(!owns){document.querySelector('#status').textContent='DENIED';document.querySelector('#gateTitle').textContent='ACCESS DENIED';document.querySelector('#gateText').textContent='This account is not the registered owner of M-003.';return}done=true;document.querySelector('#status').textContent='OWNER VERIFIED';document.querySelector('#gate').hidden=true;document.querySelector('#content').hidden=false}
 document.addEventListener('mars-auth-state',verify);document.addEventListener('mars-world-updated',verify);setTimeout(verify,1000);
-</script><script src="./easy-play.js" defer></script></body></html>
+</script><script src="./easy-play.js" defer></script><script src="./i18n.js"></script>
+</body></html>
