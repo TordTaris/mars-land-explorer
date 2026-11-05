@@ -232,6 +232,20 @@ body.authenticated.plot-selected .right button:disabled{opacity:.45!important;cu
 </style>
 </head>
 <body>\n<div id="lmStartup" role="status" aria-live="polite"><div id="lmStartupCard"><div id="lmStartupMark">LOCAL <b>MARS</b></div><div id="lmStartupText">INITIALIZING PLANETARY SYSTEMS…</div><div id="lmStartupTrack"></div></div></div>
+<script>
+(()=> {
+  const reveal = (message) => {
+    const overlay = document.getElementById('lmStartup');
+    if (!overlay || overlay.classList.contains('is-ready')) return;
+    const label = document.getElementById('lmStartupText');
+    if (label && message) label.textContent = message;
+    overlay.classList.add('is-ready');
+  };
+  window.addEventListener('error', () => setTimeout(() => reveal('STARTUP CONTINUES · 3D MAY BE UNAVAILABLE'), 1200), { once: true });
+  window.addEventListener('unhandledrejection', () => setTimeout(() => reveal('STARTUP CONTINUES · SOME SERVICES UNAVAILABLE'), 1200), { once: true });
+  setTimeout(() => reveal('STARTUP TIMEOUT · CONTINUE TO APP'), 12000);
+})();
+</script>
 <div id="scene"></div>
 <header><div class="brand"><span class="brand-insignia" aria-hidden="true"><img src="./icon.svg" alt=""></span><span class="brand-lockup"><strong>LOCAL <b>MARS</b></strong><small>PLANETARY CIVILIZATION NETWORK</small></span></div><div class="status" id="worldServerStatus">CONNECTING TO MARS NETWORK…</div></header>
 <section class="panel left">
@@ -355,7 +369,8 @@ function makeMarsTexture(){
 }
 function sixty(v){return Math.round(v)}
 function thirty(v){return Math.round(v)}
-// Render the planet immediately with a lightweight base material; detailed terrain is applied after first paint.\nmarsMat.roughness=.96;marsMat.metalness=0;
+// Render the planet immediately with a lightweight base material; detailed terrain is applied after first paint.
+marsMat.roughness=.96;marsMat.metalness=0;
 
 const mars=new THREE.Mesh(new THREE.SphereGeometry(1,112,80),marsMat);group.add(mars);
 // Thin atmospheric limb gives the planet a dusty, sunlit edge (visual effect, not weather simulation).
