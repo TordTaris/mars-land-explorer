@@ -245,20 +245,8 @@ body.authenticated.plot-selected .right button:disabled{opacity:.45!important;cu
 <h3>LAND EXPLORER</h3>
 <div id="plotInfo" class="small">Select a parcel marker to view its details. Drag to rotate and pinch to zoom.</div>
 <div id="plotActions" style="display:none">
-<div class="plot"><strong id="plotName">M-001</strong><small id="plotMeta">MARS LAND PARCEL</small><div style="margin-top:10px">PRIMARY SALE PRICE <b id="plotUsdPrice" style="font-size:18px;color:#f0d18e">$— USD</b><div class="small" id="plotUsdNote">USD pricing appears when this parcel is listed for sale.</div></div><div style="margin-top:9px;padding-top:8px;border-top:1px solid #ffffff20">SIMULATION VALUE <b id="plotPrice">— MLC</b><div class="small">MLC is a separate in-app simulation currency. It is not USD or cash.</div></div></div>
+<div class="plot"><strong id="plotName">M-001</strong><small id="plotMeta">MARS LAND PARCEL</small><div style="margin-top:10px"><span class="small">USD LIST PRICE</span><div><b id="plotUsdPrice" style="font-size:22px;color:#f0d18e">$— USD</b></div><div class="small" id="plotUsdNote">A USD price will appear when this parcel is listed for sale.</div></div></div>
 <button class="primary full" id="claim" disabled>Purchase with USD · Secure Checkout</button>
-<div class="plot" style="margin-top:9px;border:1px solid #c5a56b66">
- <div class="small">LOCAL MARS SIMULATION MARKET</div>
- <div style="font-size:18px;font-weight:850;color:#f0d18e;margin:4px 0"><span id="plotMlcPrice">— MLC</span></div>
- <div class="small" id="plotMlcStatus">Checking parcel availability…</div>
- <button class="full" id="reserveMlc" style="margin-top:8px">Reserve for 15 Minutes</button>
- <button class="primary full" id="buyMlc">Purchase with MLC</button>
- <div id="mlcSellerControls" style="display:none;border-top:1px solid #ffffff20;margin-top:8px;padding-top:8px">
-  <div class="small">Manage Your Listing</div>
-  <input id="listMlcPrice" type="number" min="1" max="1000000" step="1" placeholder="Set MLC listing price" style="width:100%;padding:9px;margin:6px 0;background:#081421;color:#fff;border:1px solid #526a82;border-radius:8px;font:inherit">
-  <button class="full" id="listMlc">List Parcel for MLC</button>
-  <button class="full" id="unlistMlc">Remove Listing</button>
- </div>
  <div class="small" style="font-size:9px;margin-top:7px">Reservations hold a parcel for 15 minutes at no charge. MLC is deducted only after database confirmation.</div>
 </div>
 <select id="building" class="full" style="padding:9px;background:#101d30;color:white;border:1px solid #38506d;border-radius:9px">
@@ -534,20 +522,6 @@ function selectPlot(p){
  document.querySelector("#plotName").textContent=p.id;
  document.querySelector("#building").querySelector('option[value="NuclearPlant"]').disabled=p.id!=="M-003";
  document.querySelector("#plotMeta").textContent="Coordinates "+p.lat+"°N / "+p.lon+"°E • "+(claim?"CLAIMED":"AVAILABLE");
- document.querySelector("#plotPrice").textContent=Number(p.price).toLocaleString("en-US")+" MLC";
- const usdPrice=Number.isFinite(Number(p.salePriceUsd))&&Number(p.salePriceUsd)>0?Number(p.salePriceUsd):null;
- document.querySelector("#plotUsdPrice").textContent=usdPrice?"$"+usdPrice.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})+" USD":"NOT LISTED IN USD";
- document.querySelector("#plotUsdNote").textContent=usdPrice?"USD sale price verified · Secure Stripe Checkout":"No USD listing is available for this parcel";
- document.querySelector("#claim").disabled=!!claim||!usdPrice;
- document.querySelector("#claim").textContent=claim?"Already owned":usdPrice?"Purchase with USD · Secure Checkout":"Not available for USD purchase";
- document.querySelector("#plotMlcPrice").textContent=listing?Number(listing.price_mlc).toLocaleString("en-US")+" MLC":"Not listed";
- document.querySelector("#plotMlcStatus").textContent=claim?(isOwner?(listing?.is_listed?"Your parcel · Listed for sale":"Your parcel · Not listed"):(listing?.is_listed?"Listed by owner":"Owned · Not for sale")):(listing?.is_listed?"Available · Reserve or purchase with MLC":"Not listed for MLC sale");
- document.querySelector("#reserveMlc").disabled=!listing?.is_listed||isOwner;
- document.querySelector("#buyMlc").disabled=!listing?.is_listed||isOwner;
- document.querySelector("#mlcSellerControls").style.display=isOwner?"block":"none";
- document.querySelector("#listMlcPrice").value=listing?.price_mlc||"";
- document.querySelector("#listMlc").style.display=listing?.is_listed?"none":"block";
- document.querySelector("#unlistMlc").style.display=listing?.is_listed?"block":"none";
  updateStats();
 }
 const state=JSON.parse(localStorage.getItem('localmars-demo')||localStorage.getItem('marsland-demo')||'{}');state.owned=state.owned||[];state.buildings=state.buildings||{};state.profile=state.profile||null;
@@ -565,14 +539,6 @@ const runParcelAction=async(buttonId,action,successText)=>{
  }catch(error){toast('Transaction failed: '+(error.message||'Please try again'));}
  finally{button.disabled=false;if(selected)selectPlot(selected);}
 };
-document.querySelector('#reserveMlc').onclick=()=>runParcelAction('#reserveMlc',id=>window.MarsWorldServer.reserveParcel(id),'Reservation confirmed · Held for 15 minutes');
-document.querySelector('#buyMlc').onclick=()=>runParcelAction('#buyMlc',id=>window.MarsWorldServer.purchaseParcel(id),'Parcel purchased with MLC');
-document.querySelector('#listMlc').onclick=async()=>{
- if(!selected)return;const price=Number(document.querySelector('#listMlcPrice').value);
- if(!Number.isSafeInteger(price)||price<1||price>1000000){toast('Enter a listing price between 1 and 1,000,000 MLC');return;}
- await runParcelAction('#listMlc',id=>window.MarsWorldServer.setParcelListing(id,true,price),'Parcel listed successfully');
-};
-document.querySelector('#unlistMlc').onclick=()=>runParcelAction('#unlistMlc',id=>window.MarsWorldServer.setParcelListing(id,false,null),'Listing removed');
 const renderMlcBalance=balances=>{const el=document.querySelector('#mlcBalance');if(el)el.textContent=(Number(balances?.mlc)||0).toLocaleString('en-US')+' MLC';};
 document.addEventListener('mars-wallet-updated',e=>renderMlcBalance(e.detail));
 document.addEventListener('mars-auth-state',async()=>{const world=window.MarsWorldServer?.getState?.();if(world?.user){const result=await window.MarsWorldServer.walletBalances();if(result?.data)renderMlcBalance(result.data);}else renderMlcBalance({mlc:0});});
