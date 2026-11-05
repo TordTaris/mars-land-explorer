@@ -560,7 +560,7 @@ const runParcelAction=async(buttonId,action,successText)=>{
  if(!world?.user){toast('Sign in to continue');openLogin();return;}
  const button=document.querySelector(buttonId);button.disabled=true;
  try{const result=await action(selected.id);if(result?.error)throw result.error;
-  toast(successText+(result?.syncWarning?' · กำลังซิงก์ข้อมูล':''));await window.MarsWorldServer.refresh();
+  toast(successText+(result?.syncWarning?' · Sync pending':''));await window.MarsWorldServer.refresh();
  }catch(error){toast('Transaction failed: '+(error.message||'Please try again'));}
  finally{button.disabled=false;if(selected)selectPlot(selected);}
 };
@@ -620,9 +620,9 @@ document.querySelector('#openConstruction3D').onclick=()=>{if(!selected){toast('
  document.querySelector('#closePlotPanel').onclick=()=>{document.body.classList.remove('plot-selected');selected=null;document.querySelector('#plotActions').style.display='none';document.querySelector('#plotInfo').style.display='block';};
 function openLogin(){document.querySelector('#login').style.display='grid'}
 document.querySelector('#account').onclick=openLogin;document.querySelector('#closeLogin').onclick=()=>document.querySelector('#login').style.display='none';
-document.querySelector('#loginBtn').onclick=async()=>{const r=await window.MarsWorldServer?.auth('signup');if(r?.error){toast(r.error.message);return;}if(r?.data?.needsEmailConfirmation){toast('Registration complete. Verify your email before signing in.');return;}document.querySelector('#login').style.display='none';toast('Create Accountสำเร็จ')};
+document.querySelector('#loginBtn').onclick=async()=>{const r=await window.MarsWorldServer?.auth('signup');if(r?.error){toast(r.error.message);return;}if(r?.data?.needsEmailConfirmation){toast('Registration complete. Verify your email before signing in.');return;}document.querySelector('#login').style.display='none';toast('Account created successfully')};
 document.querySelector('#signInBtn').onclick=async()=>{const r=await window.MarsWorldServer?.auth('signin');if(r?.error){toast(r.error.message);return;}document.querySelector('#login').style.display='none';toast('Signed in successfully')};
-document.querySelector('#worldServerLogout').onclick=async()=>{await window.MarsWorldServer?.logout();toast('Sign Outแล้ว')};
+document.querySelector('#worldServerLogout').onclick=async()=>{await window.MarsWorldServer?.logout();toast('Signed out')};
 document.addEventListener('mars-auth-state',e=>{document.body.classList.toggle('authenticated',!!e.detail?.user);document.body.classList.toggle('plot-selected',!!e.detail?.user&&!!selected);if(e.detail?.user){document.querySelector('#login').style.display='none';toast('Welcome to Mars · Planet Explorer');}else{document.body.classList.remove('authenticated');}});
 document.addEventListener('mars-world-updated',e=>{const d=e.detail||{};document.body.classList.toggle('authenticated',!!d.user);document.body.classList.toggle('plot-selected',!!d.user&&!!selected);parcels.forEach(p=>{const canonical=d.parcels?.find(x=>x.id===p.id);if(canonical&&Number.isFinite(Number(canonical.base_price)))p.price=Number(canonical.base_price);p.salePriceUsd=canonical?.is_for_sale&&Number.isFinite(Number(canonical.sale_price_usd))?Number(canonical.sale_price_usd):null;const claim=d.claims?.find(x=>x.parcel_id===p.id);p.owner=claim?claim.owner_id:null;const structure=d.structures?.find(x=>x.parcel_id===p.id);p.building=structure?.structure_type||null;});renderSharedBuildings(d.structures||[]);const mine=d.claims?.filter(x=>x.owner_id===d.user?.id)||[];document.querySelector('#owned').textContent=mine.length;document.querySelector('#buildings').textContent=(d.structures||[]).filter(x=>x.owner_id===d.user?.id).length;markers.forEach(m=>m.material.color.set(m.userData.plot.owner?0xffa45f:0x55dce8));if(selected)selectPlot(selected);});
 document.querySelector('#navExplore').onclick=()=>{toast('Select a blue marker on Mars to inspect a parcel')};
