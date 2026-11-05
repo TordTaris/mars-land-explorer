@@ -32,7 +32,7 @@ jobs:
 
           required = [
               "index.html", "city.html", "underground.html",
-              "m003-base.html", "civilization.html", "i18n.js",
+              "m003-base.html", "m003-dimension-gate.html", "civilization.html", "i18n.js",
               "world-server.js", "manifest.webmanifest", "sw.js", "icon.svg",
               "locales/th.json", "locales/en.json",
           ]
@@ -42,6 +42,7 @@ jobs:
           html = Path("index.html").read_text(encoding="utf-8")
           city = Path("city.html").read_text(encoding="utf-8")
           underground = Path("underground.html").read_text(encoding="utf-8")
+          dimension_gate = Path("m003-dimension-gate.html").read_text(encoding="utf-8")
           manifest = json.loads(Path("manifest.webmanifest").read_text(encoding="utf-8"))
           sw = Path("sw.js").read_text(encoding="utf-8")
           th = json.loads(Path("locales/th.json").read_text(encoding="utf-8"))
@@ -62,10 +63,12 @@ jobs:
           assert imports.get("three/addons/", "").endswith("/examples/jsm/"), "Three.js addons mapping missing"
           assert "from 'three/addons/controls/OrbitControls.js'" in html, "OrbitControls import missing"
           assert "location.href='./city.html'" in html and "location.href='./underground.html'" in html, "main navigation target missing"
+          assert 'href="./m003-dimension-gate.html"' in Path("m003-base.html").read_text(encoding="utf-8"), "M-003 Dimension Gate link missing"
+          assert "PROJECT DIMENSION GATE" in dimension_gate, "Dimension Gate page content missing"
 
           for asset in (
               '"./"', '"./index.html"', '"./city.html"', '"./underground.html"',
-              '"./m003-base.html"', '"./civilization.html"', '"./i18n.js"',
+              '"./m003-base.html"', '"./m003-dimension-gate.html"', '"./civilization.html"', '"./i18n.js"',
               '"./world-server.js"', '"./locales/th.json"', '"./locales/en.json"',
               '"./manifest.webmanifest"', '"./icon.svg"'
           ):
@@ -101,12 +104,13 @@ jobs:
       - name: Prepare complete static site
         run: |
           mkdir -p _site
-          cp index.html city.html underground.html m003-base.html civilization.html i18n.js world-server.js manifest.webmanifest sw.js icon.svg _site/
+          cp index.html city.html underground.html m003-base.html m003-dimension-gate.html civilization.html i18n.js world-server.js manifest.webmanifest sw.js icon.svg _site/
           cp -R locales _site/locales
           touch _site/.nojekyll
           test -s _site/locales/th.json
           test -s _site/locales/en.json
           test -s _site/m003-base.html
+          test -s _site/m003-dimension-gate.html
           test -s _site/civilization.html
 
       - name: Upload site artifact
