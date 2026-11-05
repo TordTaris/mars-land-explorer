@@ -393,7 +393,15 @@ body.authenticated #scene{background:radial-gradient(ellipse at 50% 48%,#25364b 
 }
 @media(max-width:360px){.lm-command-dock .lm-dock-item{flex-basis:62px!important;min-width:62px!important}}
 </style>
-</head>
+<style id="local-mars-land-mlc-market">
+#plotActions .plot{border-color:#c4a56a66;background:linear-gradient(145deg,#132b43,#0a1828)}
+#plotMlcPrice{display:inline-block;margin:3px 0;color:#f0d18e;text-shadow:0 0 14px #d6b66b33}
+#buyMlc{min-height:44px;letter-spacing:.25px}
+#buyMlc:disabled{opacity:.48;cursor:not-allowed;filter:saturate(.55)}
+#parcelOwnerTools input{margin-top:6px}
+#parcelOwnerTools button{font-size:11px}
+@media(max-width:650px){body.authenticated.plot-selected .right #plotActions{display:block!important}#plotActions .plot{padding:9px}#plotMlcPrice{font-size:18px!important}}
+</style></head>
 <body>\n<div id="lmStartup" role="status" aria-live="polite"><div id="lmStartupCard"><div id="lmStartupMark">LOCAL <b>MARS</b></div><div id="lmStartupText">INITIALIZING PLANETARY SYSTEMS…</div><div id="lmStartupTrack"></div></div></div>
 <script>
 (()=> {
@@ -441,8 +449,18 @@ body.authenticated #scene{background:radial-gradient(ellipse at 50% 48%,#25364b 
 <h3>LAND EXPLORER</h3>
 <div id="plotInfo" class="small">Select a parcel marker to view its details. Drag to rotate and pinch to zoom.</div>
 <div id="plotActions" style="display:none">
-<div class="plot"><strong id="plotName">M-001</strong><small id="plotMeta">MARS LAND PARCEL</small><div style="margin-top:10px"><span class="small">USD LIST PRICE</span><div><b id="plotUsdPrice" style="font-size:22px;color:#f0d18e">$— USD</b></div><div class="small" id="plotUsdNote">A USD price will appear when this parcel is listed for sale.</div></div></div>
-<button class="primary full" id="claim" disabled>Purchase with USD · Secure Checkout</button>
+<div class="plot"><strong id="plotName">M-001</strong><small id="plotMeta">MARS LAND PARCEL</small>
+ <div style="margin-top:10px"><span class="small">MLC LAND PRICE</span><div><b id="plotMlcPrice" style="font-size:22px;color:#f0d18e">— MLC</b></div><div class="small" id="plotMlcStatus">Checking market availability…</div><div class="small" id="plotMlcBalance">Wallet balance: — MLC</div></div>
+ <div style="margin-top:10px;padding-top:9px;border-top:1px solid #ffffff18"><span class="small">USD REFERENCE PRICE</span><div><b id="plotUsdPrice" style="font-size:18px;color:#aebed0">$— USD</b></div><div class="small" id="plotUsdNote">USD checkout is separate from MLC simulation purchases.</div></div>
+</div>
+<button class="primary full" id="buyMlc" disabled>Reserve & Purchase with MLC</button>
+<div id="parcelOwnerTools" class="plot" style="display:none;margin-top:9px">
+ <strong>OWNER MARKET CONTROLS</strong><div class="small" style="margin:5px 0">Set a price to list this parcel for other members.</div>
+ <input id="parcelListingPrice" type="number" min="1" max="1000000" step="1" placeholder="Price in MLC" style="width:100%;padding:9px;background:#081421;color:#fff;border:1px solid #526a82;border-radius:8px;font:inherit">
+ <button class="full" id="saveParcelListing">Publish MLC Listing</button>
+ <button class="full" id="removeParcelListing" style="display:none">Remove Listing</button>
+</div>
+<button class="full" id="claim" disabled>USD Checkout · Currently unavailable</button>
 </div>
 <select id="building" class="full" style="padding:9px;background:#101d30;color:white;border:1px solid #38506d;border-radius:9px">
 <option value="Habitat">Habitat Dome</option><option value="Lab">Science Lab</option><option value="Solar">Solar Farm</option><option value="Greenhouse">Greenhouse</option><option value="NuclearPlant">☢️ M-003 Mega Nuclear Energy Complex</option>
@@ -846,13 +864,25 @@ function selectPlot(p){
  const listing=(world.mlcMarket||[]).find(x=>x.parcel_id===p.id);
  const claim=(world.claims||[]).find(x=>x.parcel_id===p.id);
  const isOwner=!!(world.user&&claim?.owner_id===world.user.id);
+ const isListed=!!(listing&&listing.is_listed);
+ const price=isListed?Number(listing.price_mlc)||0:0;
  document.body.classList.toggle("plot-selected",document.body.classList.contains("authenticated"));
  document.querySelector("#selected").textContent=p.id;
  document.querySelector("#coords").textContent=p.lat.toFixed(1)+"°, "+p.lon.toFixed(1)+"°";
  document.querySelector("#plotInfo").style.display="none";document.querySelector("#plotActions").style.display="block";
  document.querySelector("#plotName").textContent=p.id;
  document.querySelector("#building").querySelector('option[value="NuclearPlant"]').disabled=p.id!=="M-003";
- document.querySelector("#plotMeta").textContent="Coordinates "+p.lat+"°N / "+p.lon+"°E • "+(claim?"CLAIMED":"AVAILABLE");
+ document.querySelector("#plotMeta").textContent="Coordinates "+p.lat+"°N / "+p.lon+"°E • "+(isOwner?"OWNED BY YOU":claim?"OWNED · "+(isListed?"FOR SALE":"NOT LISTED"):"UNCLAIMED");
+ document.querySelector("#plotMlcPrice").textContent=isListed?price.toLocaleString("en-US")+" MLC":"NOT FOR SALE";
+ document.querySelector("#plotMlcStatus").textContent=isOwner?"You control this parcel's MLC listing.":isListed?"Available for purchase · 15-minute reservation required.":claim?"The owner has not listed this parcel.":"This parcel is not currently listed.";
+ document.querySelector("#plotMlcBalance").textContent="Wallet balance: "+(document.querySelector("#mlcBalance")?.textContent||"Sign in to view");
+ const buy=document.querySelector("#buyMlc");buy.disabled=!isListed||isOwner;buy.textContent=isOwner?"Owned by you":isListed?"Reserve & Purchase · "+price.toLocaleString("en-US")+" MLC":"Not available for purchase";
+ const ownerTools=document.querySelector("#parcelOwnerTools");ownerTools.style.display=isOwner?"block":"none";
+ const listingPrice=document.querySelector("#parcelListingPrice");if(listingPrice)listingPrice.value=listing?.price_mlc||p.price||120;
+ document.querySelector("#saveParcelListing").textContent=isListed?"Update MLC Listing":"Publish MLC Listing";
+ document.querySelector("#removeParcelListing").style.display=isListed?"block":"none";
+ document.querySelector("#plotUsdPrice").textContent=p.salePriceUsd?"$"+Number(p.salePriceUsd).toLocaleString("en-US")+" USD":"— USD";
+ document.querySelector("#plotUsdNote").textContent=p.salePriceUsd?"Reference listing only.":"No USD reference listing.";
  updateStats();
 }
 const state=JSON.parse(localStorage.getItem('localmars-demo')||localStorage.getItem('marsland-demo')||'{}');state.owned=state.owned||[];state.buildings=state.buildings||{};state.profile=state.profile||null;
@@ -892,7 +922,51 @@ document.querySelector('#navSatellite').onclick=launchSmallSatellite;
  relaySatellite.quaternion.copy(relayOrbitQuaternion);
 })();
 function toast(s){const t=document.querySelector('#toast');t.textContent=s;t.style.display='block';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.style.display='none',2600)}
-document.querySelector('#claim').onclick=async()=>{if(!selected)return;const world=window.MarsWorldServer?.getState?.();if(!world?.user){toast('Sign in to purchase land with USD');openLogin();return;}const result=await window.MarsWorldServer?.claimUsd(selected.id);if(result?.error){toast(result.error.message);if(!window.MarsWorldServer?.getState?.().user)openLogin();return;}};
+document.querySelector('#buyMlc').onclick=async()=>{
+ if(!selected)return;
+ const world=window.MarsWorldServer?.getState?.();
+ if(!world?.user){toast('Sign in to purchase land with MLC');openLogin();return;}
+ const listing=(world.mlcMarket||[]).find(x=>x.parcel_id===selected.id&&x.is_listed);
+ if(!listing){toast('This parcel is not currently listed for sale');return;}
+ const price=Number(listing.price_mlc);
+ const button=document.querySelector('#buyMlc');button.disabled=true;button.textContent='Verifying wallet…';
+ try{
+  const wallet=await window.MarsWorldServer.walletBalances();
+  if(wallet?.error)throw wallet.error;
+  if(Number(wallet?.data?.mlc||0)<price)throw new Error('Insufficient MLC. Required: '+price.toLocaleString('en-US')+' MLC.');
+  if(!window.confirm('Confirm purchase of '+selected.id+' for '+price.toLocaleString('en-US')+' MLC? The amount will be deducted from your in-app wallet.'))return;
+  button.textContent='Reserving parcel…';
+  const reservation=await window.MarsWorldServer.reserveParcel(selected.id);
+  if(reservation?.error)throw reservation.error;
+  button.textContent='Processing MLC payment…';
+  const result=await window.MarsWorldServer.purchaseParcel(selected.id);
+  if(result?.error)throw result.error;
+  if(!result?.data?.ok)throw new Error('The database did not confirm this purchase.');
+  toast('LAND ACQUIRED · '+selected.id+' · '+price.toLocaleString('en-US')+' MLC');
+  await window.MarsWorldServer.refresh();
+ }catch(error){toast('Purchase failed: '+(error?.message||'Please try again'));}
+ finally{button.disabled=false;if(selected)selectPlot(selected);}
+};
+document.querySelector('#saveParcelListing').onclick=async()=>{
+ if(!selected)return;
+ const world=window.MarsWorldServer?.getState?.();
+ const claim=(world?.claims||[]).find(x=>x.parcel_id===selected.id);
+ if(!world?.user||claim?.owner_id!==world.user.id){toast('Only the verified parcel owner can publish a listing');return;}
+ const price=Number(document.querySelector('#parcelListingPrice').value);
+ if(!Number.isSafeInteger(price)||price<1||price>1000000){toast('Enter a whole-number price from 1 to 1,000,000 MLC');return;}
+ const button=document.querySelector('#saveParcelListing');button.disabled=true;
+ try{const result=await window.MarsWorldServer.setParcelListing(selected.id,true,price);if(result?.error)throw result.error;toast('MLC listing published · '+price.toLocaleString('en-US')+' MLC');await window.MarsWorldServer.refresh();}
+ catch(error){toast('Listing update failed: '+(error?.message||'Please try again'));}
+ finally{button.disabled=false;if(selected)selectPlot(selected);}
+};
+document.querySelector('#removeParcelListing').onclick=async()=>{
+ if(!selected)return;
+ const button=document.querySelector('#removeParcelListing');button.disabled=true;
+ try{const result=await window.MarsWorldServer.setParcelListing(selected.id,false,null);if(result?.error)throw result.error;toast('Parcel removed from MLC market');await window.MarsWorldServer.refresh();}
+ catch(error){toast('Could not remove listing: '+(error?.message||'Please try again'));}
+ finally{button.disabled=false;if(selected)selectPlot(selected);}
+};
+document.querySelector('#claim').onclick=()=>toast('USD checkout is currently unavailable. Use MLC for in-app land purchases.');
 const runParcelAction=async(buttonId,action,successText)=>{
  if(!selected)return;const world=window.MarsWorldServer?.getState?.();
  if(!world?.user){toast('Sign in to continue');openLogin();return;}
