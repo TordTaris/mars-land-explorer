@@ -471,6 +471,29 @@ const orbit=new THREE.Mesh(new THREE.TorusGeometry(1.34,.003,8,180),new THREE.Me
 orbit.rotation.set(1.12,.18,.32);group.add(orbit);
 const orbit2=new THREE.Mesh(new THREE.TorusGeometry(1.48,.0018,6,180),new THREE.MeshBasicMaterial({color:0x6bcce8,transparent:true,opacity:.12}));
 orbit2.rotation.set(.72,-.4,.9);group.add(orbit2);
+
+// M-003 orbital relay satellite — visible landmark in the main 3D Mars explorer.
+const relaySatellite=new THREE.Group();
+const relayBody=new THREE.Mesh(new THREE.BoxGeometry(.105,.065,.085),new THREE.MeshStandardMaterial({color:0xd8c79e,metalness:.72,roughness:.3}));
+relaySatellite.add(relayBody);
+const relayPanelMat=new THREE.MeshStandardMaterial({color:0x17608a,metalness:.55,roughness:.28,emissive:0x092b48,emissiveIntensity:.35});
+for(const side of [-1,1]){
+ const panel=new THREE.Mesh(new THREE.BoxGeometry(.19,.012,.105),relayPanelMat);
+ panel.position.x=side*.16;relaySatellite.add(panel);
+ for(let j=0;j<4;j++){const stripe=new THREE.Mesh(new THREE.BoxGeometry(.003,.014,.105),new THREE.MeshBasicMaterial({color:0x80d9f0}));stripe.position.set(side*.16+(j-1.5)*.043,0,.001);relaySatellite.add(stripe);}
+}
+const relayDish=new THREE.Mesh(new THREE.SphereGeometry(.045,16,10,0,Math.PI*2,0,Math.PI/2),new THREE.MeshStandardMaterial({color:0xe7dfc7,metalness:.45,roughness:.38,side:THREE.DoubleSide}));
+relayDish.position.set(0,-.045,.065);relayDish.rotation.x=Math.PI;relaySatellite.add(relayDish);
+const relayAntenna=new THREE.Mesh(new THREE.CylinderGeometry(.003,.003,.095,8),new THREE.MeshStandardMaterial({color:0xe5c77e,metalness:.6}));
+relayAntenna.position.set(0,.075,0);relaySatellite.add(relayAntenna);
+const relayBeacon=new THREE.Mesh(new THREE.SphereGeometry(.014,12,8),new THREE.MeshBasicMaterial({color:0x66efff}));
+relayBeacon.position.set(0,.125,0);relaySatellite.add(relayBeacon);
+const relayBeam=new THREE.Mesh(new THREE.CylinderGeometry(.008,.035,.58,12,1,true),new THREE.MeshBasicMaterial({color:0x56e6f4,transparent:true,opacity:.2,side:THREE.DoubleSide,depthWrite:false}));
+relayBeam.position.set(0,-.34,0);relaySatellite.add(relayBeam);
+const relayOrbitPath=new THREE.Mesh(new THREE.TorusGeometry(1.23,.004,6,160),new THREE.MeshBasicMaterial({color:0x62e4f2,transparent:true,opacity:.32}));
+relayOrbitPath.rotation.set(1.05,.25,.2);group.add(relayOrbitPath);
+group.add(relaySatellite);
+
 const starGeo=new THREE.BufferGeometry(),starPts=[];
 for(let i=0;i<900;i++){const rr=8+Math.random()*28,th=Math.random()*Math.PI*2,ph=Math.acos(2*Math.random()-1);starPts.push(rr*Math.sin(ph)*Math.cos(th),rr*Math.sin(ph)*Math.sin(th),rr*Math.cos(ph))}
 starGeo.setAttribute('position',new THREE.Float32BufferAttribute(starPts,3));
@@ -724,7 +747,7 @@ const restoredStructures=Object.entries(state.buildings).map(([parcel_id,buildin
 renderSharedBuildings(restoredStructures);
 updateStats();if(state.profile)document.querySelector('#account').textContent='👤 '+state.profile.name;
 let firstPlanetFrame=false;
-function animate(){requestAnimationFrame(animate);controls.update();const t=Date.now()*.001;turbine.rotation.y=t*1.8;beacon.material.opacity=.55+Math.sin(t*3)*.4;beaconLight.intensity=.45+Math.sin(t*3)*.3;renderer.render(scene,camera);if(!firstPlanetFrame){firstPlanetFrame=true;const startup=document.getElementById('lmStartup');if(startup){const label=document.getElementById('lmStartupText');if(label)label.textContent='PLANET ONLINE · LOADING TERRAIN DETAILS';setTimeout(()=>startup.classList.add('is-ready'),180);}setTimeout(()=>{try{const texture=makeMarsTexture();marsMat.map=texture;marsMat.bumpMap=texture;marsMat.bumpScale=.075;marsMat.needsUpdate=true;}catch(error){console.warn('LOCAL MARS terrain detail skipped:',error);}},80);}}animate();
+function animate(){requestAnimationFrame(animate);controls.update();const t=Date.now()*.001;relaySatellite.position.set(1.23*Math.cos(t*.22),.18*Math.sin(t*.31),1.23*Math.sin(t*.22));relaySatellite.rotation.y=-t*.22+Math.PI/2;relayBeacon.material.color.setHex(Math.sin(t*4)>0?0x66efff:0x2ca9ff);turbine.rotation.y=t*1.8;beacon.material.opacity=.55+Math.sin(t*3)*.4;beaconLight.intensity=.45+Math.sin(t*3)*.3;renderer.render(scene,camera);if(!firstPlanetFrame){firstPlanetFrame=true;const startup=document.getElementById('lmStartup');if(startup){const label=document.getElementById('lmStartupText');if(label)label.textContent='PLANET ONLINE · LOADING TERRAIN DETAILS';setTimeout(()=>startup.classList.add('is-ready'),180);}setTimeout(()=>{try{const texture=makeMarsTexture();marsMat.map=texture;marsMat.bumpMap=texture;marsMat.bumpScale=.075;marsMat.needsUpdate=true;}catch(error){console.warn('LOCAL MARS terrain detail skipped:',error);}},80);}}animate();
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
 </script>
 <script>
