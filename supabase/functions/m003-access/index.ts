@@ -89,12 +89,15 @@ Deno.serve(async (req) => {
     const candidate = fromBase64(await derive(body.password, fromBase64(credential.password_salt)));
     const stored = fromBase64(credential.password_hash);
     if (!safeEqual(candidate, stored)) {
-      const attempts = Number(credential.failed_attempts || 0) + 1;
-      const lockedUntil = attempts >= 5 ? new Date(Date.now() + 15 * 60 * 1000).toISOString() : null;
-      await admin.from("m003_access_credentials").update({
-        failed_attempts: Math.min(attempts, 5), locked_until: lockedUntil, updated_at: new Date().toISOString(),
-      }).eq("user_id", userId);
-      return json({ error: attempts >= 5 ? "Too many attempts. Access is locked for 15 minutes." : "Incorrect security password." }, attempts >= 5 ? 423 : 401);
+      const { data: lockRows, error: lockError } = await admin.rpc("m003_record_failed_attempt", {
+        p_user_id: userId,
+      });
+      if (lockError) return json({ error: "Unable to update M-003 security lockout. Please retry." }, 503);
+      const lockState = Array.isArray(lockRows) ? lockRows[0] : lockRows;
+      const isLocked = Boolean(lockState?.is_locked);
+      return json({
+        error: isLocked ? "Too many attempts. Access is locked for 15 minutes." : "Incorrect security password.",
+      }, isLocked ? 423 : 401);
     }
     await admin.from("m003_access_credentials").update({
       failed_attempts: 0, locked_until: null, updated_at: new Date().toISOString(),
