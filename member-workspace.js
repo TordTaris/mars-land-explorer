@@ -24,5 +24,5 @@ document.addEventListener('mars-auth-state',e=>{user=e.detail?.user||null;if(ove
 document.addEventListener('mars-world-updated',()=>{if(overlay.classList.contains('open'))load();});
 window.addEventListener('local-mars-language-change',()=>{localize();if(overlay.classList.contains('open'))load();});
 document.addEventListener('DOMContentLoaded',()=>{syncState().then(()=>{if(db)subscribe();});});
-const ready=setInterval(()=>{const s=state();if(s?.db){clearInterval(ready);db=s.db;user=s.user||null;subscribe();}},300);
+let attempts=0;const ready=setInterval(()=>{const s=state();if(s?.db){clearInterval(ready);db=s.db;user=s.user||null;subscribe();}else if(++attempts>=60){clearInterval(ready);if(overlay.classList.contains('open'))setStatus(lang()==='th'?'ยังเชื่อมต่อฐานข้อมูลไม่ได้':'Database connection is not ready.');}},300);
 })();
