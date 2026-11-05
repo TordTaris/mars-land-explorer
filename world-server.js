@@ -4,10 +4,10 @@
 const CONFIG={url:'https://tppgfxsdeuujidcjnfdl.supabase.co',key:'sb_publishable_xQ0_NkSu2TMeIyJnAE94kw_WWQT2T3E'};
 const $=id=>document.getElementById(id);
 const S={db:null,user:null,channel:null,reconnectTimer:null,refreshTimer:null,reconnectAttempt:0,lifecycleBound:false,presenceKey:null,onlineCount:0,parcels:[],claims:[],structures:[],events:[],mlcMarket:[]};
-function status(message,ok=false){const el=$('worldServerStatus');if(el){el.textContent=(ok?'● ONLINE · ':'○ SERVER · ')+message;el.style.color=ok?'#a8e4bd':'#e9bd8d';}}
+function status(message,ok=false){const el=$('worldServerStatus');if(el){el.textContent=(ok?'● ONLINE · ':'○ SERVER · ')+message.replace('เชื่อมต่อ networkMarsทั่วโลก','Global Mars network connected').replace('กำลังเชื่อมต่อ Marslocal…','Connecting to Mars network…');el.style.color=ok?'#a8e4bd':'#e9bd8d';}}
 function emitAuth(){document.dispatchEvent(new CustomEvent('mars-auth-state',{detail:{user:S.user}}));}
-function authView(){const el=$('worldServerUser');if(el)el.textContent=S.user?'สมาชิกออนไลน์: '+(S.user.email||S.user.id):'ยังไม่ได้เข้าสู่ระบบ';const out=$('worldServerLogout');if(out)out.style.display=S.user?'block':'none';}
-function counts(){const el=$('worldServerCounts');if(el)el.textContent='🌐 ผู้เชื่อมต่อทั่วโลก '+S.onlineCount+' เซสชัน · พื้นที่จอง '+S.claims.length+' · อาคาร '+S.structures.length;}
+function authView(){const el=$('worldServerUser');if(el)el.textContent=S.user?'Signed in: '+(S.user.email||S.user.id):'Not signed in';const out=$('worldServerLogout');if(out)out.style.display=S.user?'block':'none';}
+function counts(){const el=$('worldServerCounts');if(el)el.textContent='🌐 Global connections: '+S.onlineCount+' · Claimed parcels: '+S.claims.length+' · Structures: '+S.structures.length;}
 function presenceKey(){if(S.presenceKey)return S.presenceKey;try{S.presenceKey=sessionStorage.getItem('mars-presence-key');if(!S.presenceKey){S.presenceKey=globalThis.crypto?.randomUUID?.()||('guest-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2));sessionStorage.setItem('mars-presence-key',S.presenceKey);}}catch(_){S.presenceKey='guest-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);}return S.presenceKey;}
 async function trackPresence(channel){try{await channel.track({client_type:S.user?'member':'guest',last_seen_at:new Date().toISOString()});}catch(error){console.warn('LOCAL MARS presence tracking:',error);}}
 async function refresh(){
