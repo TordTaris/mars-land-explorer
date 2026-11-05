@@ -14,7 +14,7 @@ const pages=[
 const isTh=()=>((window.LOCAL_MARS_I18N?.language)||document.documentElement.lang||'th').toLowerCase().startsWith('th');
 const t=(th,en)=>isTh()?th:en;
 const css=document.createElement('style');css.id='lmEasyPlayStyle';css.textContent=`
-#lmEasyPlay{position:fixed;z-index:150;right:14px;top:66px}
+#lmEasyPlay{display:none!important;position:fixed;z-index:150;right:14px;top:66px}
 #lmEasyPlay button,#lmEasyPlay a{font:inherit}
 #lmEasyPlayTrigger{display:flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid #d8b979;border-radius:11px;background:linear-gradient(135deg,#1b344b,#091827);color:#f7e8c6;font-weight:800;font-size:11px;box-shadow:0 8px 24px #0008;cursor:pointer}
 #lmEasyPlayPanel{display:none;position:fixed;z-index:3000;inset:0;background:#020711eF;backdrop-filter:blur(13px);padding:12px;overflow:auto;place-items:center}
