@@ -776,6 +776,28 @@ header .status{max-width:min(34vw,220px)!important;font-size:9px!important;lette
  body:not(.lm-star-view-mode) #lm-satellite-link{bottom:calc(env(safe-area-inset-bottom,0px) + 82px)!important;max-height:30dvh!important}
 }
 </style>
+
+<style id="local-mars-mobile-header-and-aegis-scale-v462">
+/* Mobile polish: keep network status inside the luxury header and make AEGIS less dominant. */
+header{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;min-width:0!important;}
+header .brand{flex:1 1 56%!important;min-width:0!important;}
+header .brand .brand-lockup{min-width:0!important;}
+header .status{flex:0 1 40%!important;width:auto!important;min-width:0!important;max-width:40%!important;
+ white-space:normal!important;overflow:hidden!important;text-overflow:clip!important;
+ overflow-wrap:anywhere!important;word-break:normal!important;text-align:center!important;
+ line-height:1.3!important;display:-webkit-box!important;-webkit-box-orient:vertical!important;
+ -webkit-line-clamp:2!important;max-height:2.6em!important;padding:6px 8px!important;}
+@media(max-width:650px){
+ header{height:auto!important;min-height:58px!important;padding:8px 10px!important;gap:7px!important;}
+ header .brand{flex:1 1 57%!important;gap:6px!important;}
+ header .brand .brand-insignia{width:34px!important;height:34px!important;flex-basis:34px!important;}
+ header .brand .brand-lockup strong{font-size:clamp(11px,3.1vw,14px)!important;letter-spacing:1.1px!important;}
+ header .brand .brand-lockup small{display:block!important;font-size:clamp(5px,1.45vw,7px)!important;letter-spacing:.65px!important;white-space:normal!important;}
+ header .status{flex:0 1 39%!important;max-width:39%!important;min-height:32px!important;
+  font-size:clamp(7px,1.9vw,9px)!important;padding:5px 6px!important;letter-spacing:.15px!important;}
+}
+@media(max-width:360px){header .brand .brand-lockup small{display:none!important}}
+</style>
 </head>
 <body>\n<div id="lmStartup" role="status" aria-live="polite"><div id="lmStartupCard"><div id="lmStartupMark">LOCAL <b>MARS</b></div><div id="lmStartupText">INITIALIZING PLANETARY SYSTEMS…</div><div id="lmStartupTrack"></div></div></div>
 <script>
@@ -1234,7 +1256,7 @@ function pos(lon,lat,r=1.014){const a=THREE.MathUtils.degToRad(90-lat),b=THREE.M
 
 /* MARS LAND 3.0 — living settlement landmark */
 const colonyRoot=new THREE.Group();group.add(colonyRoot);
-colonyRoot.scale.setScalar(.68); // Reduce the surface settlement footprint on the M-003 region.
+colonyRoot.scale.setScalar(.42); // Compact AEGIS footprint while preserving its planetary placement.
 const colonyNormal=pos(0,16,1.006);colonyRoot.position.copy(colonyNormal);
 colonyRoot.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),colonyNormal.clone().normalize());
 const metal=new THREE.MeshStandardMaterial({color:0x9baab5,metalness:.7,roughness:.32});
