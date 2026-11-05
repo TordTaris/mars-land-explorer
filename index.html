@@ -514,6 +514,22 @@ header .status{min-width:0;max-width:min(48vw,360px);overflow:hidden;text-overfl
 #lmSystemHubFloat{display:none!important}
 body.lm-star-view-mode #lmSystemHubFloat{display:flex!important}
 </style>
+
+<style id="local-mars-simple-navigation">
+/* Simplified primary navigation: six clear destinations; secondary tools stay in More. */
+.lm-command-dock{width:min(760px,calc(100vw - 32px))!important;justify-content:stretch!important;overflow:hidden!important;gap:6px!important;padding:7px!important}
+.lm-command-dock>.lm-dock-item{flex:1 1 0!important;min-width:0!important;max-width:none!important;min-height:58px!important;padding:7px 4px!important;gap:4px!important}
+.lm-command-dock .lm-dock-icon{font-size:19px!important}
+.lm-command-dock .lm-dock-label{font-size:9px!important;letter-spacing:0!important}
+#lmSystemHubFloat{display:none!important}
+@media(max-width:760px){
+ .lm-command-dock{width:calc(100vw - 16px)!important;left:8px!important;right:8px!important;transform:none!important;justify-content:stretch!important;overflow:hidden!important;gap:4px!important;padding:6px!important}
+ .lm-command-dock>.lm-dock-item{flex:1 1 0!important;min-width:0!important;max-width:none!important;min-height:54px!important;padding:6px 2px!important;gap:3px!important}
+ .lm-command-dock .lm-dock-icon{font-size:17px!important}
+ .lm-command-dock .lm-dock-label{font-size:8px!important;letter-spacing:-.1px!important}
+}
+@media(max-width:360px){.lm-command-dock{gap:2px!important;padding:4px!important}.lm-command-dock>.lm-dock-item{min-height:50px!important;padding:5px 1px!important}.lm-command-dock .lm-dock-icon{font-size:16px!important}.lm-command-dock .lm-dock-label{font-size:7px!important}}
+</style>
 </head>
 <body>\n<div id="lmStartup" role="status" aria-live="polite"><div id="lmStartupCard"><div id="lmStartupMark">LOCAL <b>MARS</b></div><div id="lmStartupText">INITIALIZING PLANETARY SYSTEMS…</div><div id="lmStartupTrack"></div></div></div>
 <script>
@@ -593,21 +609,13 @@ body.lm-star-view-mode #lmSystemHubFloat{display:flex!important}
 <button class="full" id="worldServerLogout" style="display:none">Sign Out</button>
 <div class="small">Land and resources are simulated in-app assets, not legal property or real-world transactions.</div>
 </section>
-<nav class="bottom lm-command-dock" aria-label="LOCAL MARS primary navigation">
+<nav class="bottom lm-command-dock" aria-label="LOCAL MARS main navigation">
 <button type="button" id="lmMenuToggle" class="lm-dock-item lm-dock-guide" aria-expanded="false" aria-controls="lmMenuDropdown"><span class="lm-dock-icon">📘</span><span class="lm-dock-label">Guide</span></button>
 <button class="active lm-dock-item" data-tab="explore"><span class="lm-dock-icon">🌎</span><span class="lm-dock-label">Explore</span></button>
 <button type="button" id="navSatellite" class="lm-dock-item" data-tab="satellite"><span class="lm-dock-icon">🛰️</span><span class="lm-dock-label">Orbit</span></button>
 <button class="lm-dock-item" data-tab="market"><span class="lm-dock-icon">🪙</span><span class="lm-dock-label">Market</span></button>
 <button class="lm-dock-item" data-tab="colony"><span class="lm-dock-icon">🏙️</span><span class="lm-dock-label">Colony</span></button>
-<button type="button" id="lmSystemsToggle" class="lm-dock-item lm-dock-systems" aria-expanded="false" aria-controls="lmSystemsOverlay"><span class="lm-dock-icon">▦</span><span class="lm-dock-label">Systems</span></button>
-<button class="lm-dock-item" data-tab="city"><span class="lm-dock-icon">🏗️</span><span class="lm-dock-label">Build</span></button>
-<button class="lm-dock-item" data-tab="underground"><span class="lm-dock-icon">🏚️</span><span class="lm-dock-label">Underground</span></button>
-<a class="lm-dock-item" href="./civilization.html"><span class="lm-dock-icon">🌐</span><span class="lm-dock-label">Civilization</span></a>
-<a class="lm-dock-item" href="./mission-trainer.html"><span class="lm-dock-icon">🚀</span><span class="lm-dock-label">Missions</span></a>
-<button type="button" id="lmWorkspaceOpen" class="lm-dock-item"><span class="lm-dock-icon">📁</span><span class="lm-dock-label">Workspace</span></button>
-<button class="lm-dock-item" data-tab="account"><span class="lm-dock-icon">👤</span><span class="lm-dock-label">Account</span></button>
-<button class="lm-dock-item" data-tab="wallet" aria-controls="mlcWalletPanel"><span class="lm-dock-icon">💠</span><span class="lm-dock-label">MLC Wallet</span></button>
-<a class="lm-dock-item" href="./install.html"><span class="lm-dock-icon">⬇️</span><span class="lm-dock-label">Install</span></a>
+<button type="button" id="lmSystemsToggle" class="lm-dock-item lm-dock-systems" aria-expanded="false" aria-controls="lmSystemsOverlay"><span class="lm-dock-icon">☰</span><span class="lm-dock-label">More</span></button>
 </nav>
 <div id="lmMenuDropdown" hidden>
 <div class="lm-menu-heading">LOCAL MARS GUIDE</div>
@@ -632,7 +640,7 @@ body.lm-star-view-mode #lmSystemHubFloat{display:flex!important}
 <section id="lmSystemsOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="lmSystemsTitle">
  <div id="lmSystemsCard">
   <div class="lm-systems-head">
-   <div><div class="lm-systems-eyebrow">LOCAL MARS · SYSTEM DIRECTORY</div><h2 id="lmSystemsTitle">Explore all systems</h2><p>Find a destination, tool or member service.</p></div>
+   <div><div class="lm-systems-eyebrow">LOCAL MARS · MORE</div><h2 id="lmSystemsTitle">More features</h2><p>Extra tools and member services in one place.</p></div>
    <button type="button" id="lmSystemsClose" aria-label="Close system directory">✕</button>
   </div>
   <div class="lm-systems-overview" aria-label="Systems overview">
