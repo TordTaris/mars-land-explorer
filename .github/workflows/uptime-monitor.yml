@@ -1,0 +1,45 @@
+name: LOCAL MARS uptime monitor
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: local-mars-uptime
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check public app and critical assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://tordtaris.github.io/mars-land-explorer"
+          for path in "/" "/world-server.js" "/member-workspace.js" "/sw.js" "/manifest.webmanifest"; do
+            echo "Checking ${base}${path}"
+            code="$(curl --location --silent --show-error --output /dev/null --write-out '%{http_code}' --retry 3 --retry-all-errors --retry-delay 5 --max-time 25 "${base}${path}")"
+            if [[ "${code}" != "200" ]]; then
+              echo "::error::LOCAL MARS endpoint ${path} returned HTTP ${code}"
+              exit 1
+            fi
+            echo "HTTP ${code} OK: ${path}"
+          done
+
+      - name: Check Supabase Auth health endpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://tppgfxsdeuujidcjnfdl.supabase.co/auth/v1/health"
+          code="$(curl --location --silent --show-error --output /dev/null --write-out '%{http_code}' --retry 3 --retry-all-errors --retry-delay 5 --max-time 25 "${url}")"
+          if [[ "${code}" != "200" ]]; then
+            echo "::error::Supabase Auth health returned HTTP ${code}"
+            exit 1
+          fi
+          echo "Supabase Auth health HTTP ${code} OK"
