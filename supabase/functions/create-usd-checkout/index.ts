@@ -38,6 +38,10 @@ Deno.serve(async (req) => {
     const orderText = await orderRes.text();
     if (!orderRes.ok) return json({ error: orderText || "ไม่สามารถสร้างคำสั่งซื้อ USD ได้" }, 409);
     const order = JSON.parse(orderText);
+    if (String(order.currency).toLowerCase() !== "usd" || !Number.isSafeInteger(Number(order.amount_cents)) || Number(order.amount_cents) <= 0) {
+      console.error("USD order RPC returned invalid amount/currency", order.order_id);
+      return json({ error: "คำสั่งซื้อ USD มีจำนวนเงินหรือสกุลเงินไม่ถูกต้อง" }, 502);
+    }
     const form = new URLSearchParams();
     form.set("mode", "payment");
     form.set("payment_method_types[0]", "card");
