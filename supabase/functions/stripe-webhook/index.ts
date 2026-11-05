@@ -40,23 +40,34 @@ Deno.serve(async (req) => {
     }
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const result = await fetch(`${supabaseUrl}/rest/v1/rpc/mars_fulfill_paid_order`, {
+    const currency = String(session.currency || "").toLowerCase();
+    const rpcName = currency === "usd"
+      ? "mars_fulfill_paid_order_usd"
+      : currency === "thb" ? "mars_fulfill_paid_order" : null;
+    if (!rpcName) {
+      console.error("Unsupported Checkout currency", event.id, currency);
+      return new Response("Unsupported Checkout currency", { status: 400 });
+    }
+    const fulfillmentPayload = {
+      p_event_id: event.id,
+      p_event_type: event.type,
+      p_order_id: orderId,
+      p_session_id: session.id,
+      p_payment_intent_id: typeof session.payment_intent === "string" ? session.payment_intent : null,
+      p_currency: currency,
+      p_owner_id: ownerId,
+      ...(currency === "usd"
+        ? { p_amount_cents: session.amount_total }
+        : { p_amount_satang: session.amount_total }),
+    };
+    const result = await fetch(`${supabaseUrl}/rest/v1/rpc/${rpcName}`, {
       method: "POST",
       headers: {
         apikey: serviceKey,
         Authorization: `Bearer ${serviceKey}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        p_event_id: event.id,
-        p_event_type: event.type,
-        p_order_id: orderId,
-        p_session_id: session.id,
-        p_payment_intent_id: typeof session.payment_intent === "string" ? session.payment_intent : null,
-        p_amount_satang: session.amount_total,
-        p_currency: session.currency,
-        p_owner_id: ownerId,
-      }),
+      body: JSON.stringify(fulfillmentPayload),
     });
     const responseText = await result.text();
     if (!result.ok) {
