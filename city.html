@@ -425,12 +425,13 @@ const requestedWorldParcelId=new URLSearchParams(location.search).get('parcel');
 const activeWorldParcelId=WORLD_PARCEL_IDS.has(requestedWorldParcelId)?requestedWorldParcelId:null;
 const worldParcelBuildingTypes={hab:'ฐานที่อยู่อาศัย',green:'โรงเรือนปลูกพืช',lab:'ห้องปฏิบัติการ',solar:'แผงพลังงานแสงอาทิตย์'};
 const parcelLinkCacheKey='mars-city-world-parcel-links-v1';
+const worldParcelPublishing=new Set();
 function readParcelLinkCache(){try{return JSON.parse(localStorage.getItem(parcelLinkCacheKey)||'{}')||{}}catch(e){return {}}}
 function writeParcelLinkCache(id,value){try{const all=readParcelLinkCache();all[String(id)]=value;localStorage.setItem(parcelLinkCacheKey,JSON.stringify(all));return true}catch(e){console.warn('Parcel link cache unavailable:',e);return false}}
 function setWorldParcelStatus(message,state='info',retryData=null){
  const el=document.querySelector('#worldParcelStatus');if(!el)return;
  el.textContent=message;el.dataset.state=state;
- if(retryData){const button=document.createElement('button');button.type='button';button.className='wide';button.style.marginTop='7px';button.textContent='ลองเชื่อมแปลงอีกครั้ง';button.addEventListener('click',()=>publishWorldParcelStructure(retryData,true));el.appendChild(button);}
+ if(retryData){const button=document.createElement('button');button.type='button';button.className='wide';button.style.marginTop='7px';button.textContent='ลองเชื่อมแปลงอีกครั้ง';button.addEventListener('click',async()=>{button.disabled=true;await publishWorldParcelStructure(retryData,true);if(button.isConnected)button.disabled=false;});el.appendChild(button);}
 }
 function updateWorldParcelContext(){
  const label=document.querySelector('#worldParcelLabel'),hint=document.querySelector('#worldParcelHint');
@@ -609,6 +610,7 @@ async function publishWorldParcelStructure(data,force=false){
  if(!data?.worldParcelId||!data?.worldType||!data?.recordId||!onlineUser||data.ownerId!==onlineUser.id)return;
  if(data.worldLinkStatus==='synced'||data.worldLinkStatus==='failed'&&!force||data.worldLinkStatus==='local-only')return;
  if(data.worldLinkStatus==='syncing'&&!force&&Date.now()-(Number(data.worldLinkUpdatedAt)||0)<30000)return;
+ const publishKey=String(data.recordId);if(worldParcelPublishing.has(publishKey))return;worldParcelPublishing.add(publishKey);
  try{
   await persistWorldParcelLinkState(data,'syncing');
   const existing=await marsDB.from('world_structures').select('id,owner_id,structure_type').eq('parcel_id',data.worldParcelId).limit(1).maybeSingle();
@@ -631,7 +633,7 @@ async function publishWorldParcelStructure(data,force=false){
   await persistWorldParcelLinkState(data,'failed',{error:message});
   setWorldParcelStatus('สร้างในเมืองเสร็จแล้ว แต่เชื่อมแปลง '+data.worldParcelId+' ไม่สำเร็จ: '+message,'error',data);
   toast('อาคารในเมืองเสร็จแล้ว แต่ยังเผยแพร่บนดาวไม่สำเร็จ');
- }
+ }finally{worldParcelPublishing.delete(publishKey);}
 }
 let flagSubmitting=false;
 async function placeNationalFlag(){
