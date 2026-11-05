@@ -11,7 +11,7 @@ function counts(){const el=$('worldServerCounts');if(el)el.textContent='พื�
 async function refresh(){
  if(!S.db)return;
  const [p,a,b,c]=await Promise.all([
-  S.db.from('world_parcels').select('id,latitude,longitude,area_sqm,terrain,resource,base_price'),
+  S.db.from('world_parcels').select('id,latitude,longitude,area_sqm,terrain,resource,base_price,sale_price_usd,is_for_sale'),
   S.db.from('world_claims').select('parcel_id,owner_id,claimed_at'),
   S.db.from('world_structures').select('id,parcel_id,owner_id,structure_type,level,created_at'),
   S.db.from('world_events').select('id,event_type,parcel_id,payload,created_at').order('created_at',{ascending:false}).limit(30)
@@ -91,12 +91,15 @@ async function auth(mode){
 async function logout(){if(S.db)await S.db.auth.signOut();S.user=null;authView();emitAuth();status('ออกจากระบบแล้ว');}
 async function claim(parcel){
  if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบออนไลน์ก่อนซื้อพื้นที่'}};
+ return {error:{message:'ปิดการชำระ PromptPay ชั่วคราวแล้ว ระบบกำลังเปลี่ยนเป็น USD Checkout กรุณาใช้ตลาด MLC ระหว่างรอ'}};
+ /* THB-only PromptPay checkout is intentionally disabled during USD migration.
  const {data,error}=await S.db.functions.invoke('create-promptpay-checkout',{body:{parcel_id:parcel}});
  if(error){const message=error.message||'ยังไม่สามารถเริ่มชำระเงินได้';status(message);return {error:{message}};}
  if(!data?.checkout_url){const message=data?.error||'ยังไม่ได้รับลิงก์ชำระเงิน';status(message);return {error:{message}};}
  status('กำลังเปิดหน้าชำระ PromptPay…',true);
  window.location.assign(data.checkout_url);
  return {data};
+ */
 }
 async function build(parcel,type){
  if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบออนไลน์ก่อนก่อสร้าง'}};
