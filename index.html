@@ -226,7 +226,7 @@ header #lmLanguage{display:inline-flex!important;visibility:visible!important;op
 <div id="plotInfo" class="small">ดาวอังคารจำลอง • ลากเพื่อหมุน / บีบนิ้วเพื่อซูม • แตะหมุดเพื่อสำรวจแปลง</div>
 <div id="plotActions" style="display:none">
 <div class="plot"><strong id="plotName">M-001</strong><small id="plotMeta">พื้นที่จำลอง</small><div style="margin-top:10px">ราคาซื้อขายหลัก <b id="plotUsdPrice" style="font-size:18px;color:#f0d18e">$— USD</b><div class="small" id="plotUsdNote">ราคาขาย USD จะแสดงเมื่อแปลงได้รับการกำหนดราคาและเปิดขาย</div></div><div style="margin-top:9px;padding-top:8px;border-top:1px solid #ffffff20">มูลค่าเศรษฐกิจจำลอง <b id="plotPrice">— MLC</b><div class="small">MLC ใช้แยกต่างหากภายในระบบจำลอง ไม่ใช่ USD หรือเงินสด</div></div></div>
-<button class="primary full" id="claim" disabled>ซื้อพื้นที่ด้วย USD ผ่าน Stripe</button>
+<button class="primary full" id="claim" disabled>ซื้อพื้นที่ด้วย USD ผ่าน Stripe Checkout</button>
 <div class="plot" style="margin-top:9px;border:1px solid #c5a56b66">
  <div class="small">ราคาตลาดภายใน LOCAL MARS</div>
  <div style="font-size:18px;font-weight:850;color:#f0d18e;margin:4px 0"><span id="plotMlcPrice">— MLC</span></div>
@@ -517,7 +517,7 @@ function selectPlot(p){
  document.querySelector("#plotUsdPrice").textContent=usdPrice?"$"+usdPrice.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})+" USD":"ยังไม่กำหนด USD";
  document.querySelector("#plotUsdNote").textContent=usdPrice?"ราคา USD จากฐานข้อมูล · ชำระผ่าน Stripe Checkout":"แปลงนี้ยังไม่มีราคาขาย USD หรือยังไม่เปิดขาย";
  document.querySelector("#claim").disabled=!!claim||!usdPrice;
- document.querySelector("#claim").textContent=claim?"มีเจ้าของแล้ว":usdPrice?"ซื้อพื้นที่ด้วย USD ผ่าน Stripe":"ยังไม่เปิดขายด้วย USD";
+ document.querySelector("#claim").textContent=claim?"มีเจ้าของแล้ว":usdPrice?"ซื้อพื้นที่ด้วย USD ผ่าน Stripe Checkout":"ยังไม่เปิดขายด้วย USD";
  document.querySelector("#plotMlcPrice").textContent=listing?Number(listing.price_mlc).toLocaleString("en-US")+" MLC":"ไม่เปิดขาย";
  document.querySelector("#plotMlcStatus").textContent=claim?(isOwner?(listing?.is_listed?"แปลงของคุณ · เปิดประกาศขาย":"แปลงของคุณ · ยังไม่ประกาศขาย"):(listing?.is_listed?"เจ้าของประกาศขาย":"มีเจ้าของ · ไม่เปิดขาย")):(listing?.is_listed?"ว่าง · จองหรือซื้อได้ด้วย MLC":"ยังไม่เปิดขายด้วย MLC");
  document.querySelector("#reserveMlc").disabled=!listing?.is_listed||isOwner;
