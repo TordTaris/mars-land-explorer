@@ -245,6 +245,7 @@ header #lmLanguage{display:inline-flex!important;visibility:visible!important;op
 <option value="Habitat">Habitat Dome</option><option value="Lab">Science Lab</option><option value="Solar">Solar Farm</option><option value="Greenhouse">Greenhouse</option><option value="NuclearPlant">☢️ M-003 Mega Nuclear Energy Complex</option>
 </select>
 <button class="full" id="build">🏗️ วางอาคารบนแปลง</button>
+<button class="full" id="openConstruction3D">🏗️ เปิด Construction Simulation 3D</button>
 <button class="full" id="closePlotPanel">ปิดรายละเอียดพื้นที่</button>
 </div>
 
@@ -585,7 +586,8 @@ document.querySelector('#build').onclick=async()=>{
  }catch(error){toast('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ: '+(error?.message||'ลองใหม่อีกครั้ง'));}
  finally{button.disabled=false;button.textContent='🏗️ วางอาคารบนแปลง';}
 };
-document.querySelector('#closePlotPanel').onclick=()=>{document.body.classList.remove('plot-selected');selected=null;document.querySelector('#plotActions').style.display='none';document.querySelector('#plotInfo').style.display='block';};
+document.querySelector('#openConstruction3D').onclick=()=>{if(!selected){toast('กรุณาเลือกแปลงดาวอังคารก่อน');return;}location.href='./city.html?parcel='+encodeURIComponent(selected.id);};
+ document.querySelector('#closePlotPanel').onclick=()=>{document.body.classList.remove('plot-selected');selected=null;document.querySelector('#plotActions').style.display='none';document.querySelector('#plotInfo').style.display='block';};
 function openLogin(){document.querySelector('#login').style.display='grid'}
 document.querySelector('#account').onclick=openLogin;document.querySelector('#closeLogin').onclick=()=>document.querySelector('#login').style.display='none';
 document.querySelector('#loginBtn').onclick=async()=>{const r=await window.MarsWorldServer?.auth('signup');if(r?.error){toast(r.error.message);return;}if(r?.data?.needsEmailConfirmation){toast('สมัครแล้ว กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ');return;}document.querySelector('#login').style.display='none';toast('สมัครสมาชิกออนไลน์สำเร็จ')};
