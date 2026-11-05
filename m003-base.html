@@ -17,6 +17,75 @@ button.action{border:1px solid #a88d5b;background:#1b2c40;color:#f5e8cd;border-r
 
 .story-section{margin-top:16px}.story-heading{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:10px}.story-heading h2{margin:0}.story-heading p{font-size:11px;margin:0}.story-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.story-card{overflow:hidden;border:1px solid #49627a;border-radius:15px;background:linear-gradient(145deg,#14283d,#071321)}.story-art{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#071321}.story-copy{padding:12px 14px}.story-copy b{display:block;color:var(--gold);font-size:12px;letter-spacing:.5px}.story-copy p{font-size:11px;margin:5px 0 0}.story-tag{display:inline-block;margin-top:7px;color:#8de4bd;font-size:9px;letter-spacing:1px}.detail-art{width:100%;display:block;border-radius:10px;margin:0 0 12px;border:1px solid #334e66}.detail-art svg{display:block;width:100%;height:auto}@media(max-width:560px){.story-grid{grid-template-columns:1fr}.story-heading{display:block}.story-heading p{margin-top:5px}}
 </style><link rel="stylesheet" href="./premium-ui.css?v=20261106">
+
+<style id="m003-compact-modern-v1">
+/* M-003 compact command-centre architecture */
+:root{--gold:#e7c783;--cyan:#72e7f3;--muted:#a8bbce;--line:#35536d}
+body{background:radial-gradient(ellipse at 50% -12%,#284b63 0,#172a40 38%,#060d18 82%);font-size:13px}
+header{padding:9px clamp(12px,3vw,24px);min-height:48px}
+.brand{font-size:14px;letter-spacing:1.3px}
+.status{font-size:9px;padding:5px 8px}
+main{max-width:940px;padding:12px clamp(10px,2vw,18px) 30px}
+.hero{padding:14px;border-radius:14px;box-shadow:0 12px 32px #0005}
+.eyebrow{font-size:9px;letter-spacing:1.6px}
+h1{font-size:clamp(22px,4vw,32px);margin:4px 0}
+.hero>p{font-size:11px;margin:5px 0}
+.stats{gap:7px;margin-top:11px}
+.stat{padding:9px;border-radius:9px}
+.stat small{font-size:9px}.stat b{font-size:17px;margin-top:2px}
+.card{padding:12px;border-radius:13px}
+.card h2{font-size:11px;margin-bottom:9px}
+#orbitalRelay{margin-top:9px!important}
+#orbitalRelay>div[style*="display:grid"]{grid-template-columns:minmax(0,1.05fr) minmax(180px,.75fr)!important;gap:9px!important}
+#orbitalRelay svg{max-height:176px;object-fit:contain}
+#orbitalRelay .stat{padding:8px}
+#orbitalRelay .stat b{font-size:15px!important}
+#relayToggle{padding:8px 10px!important;font-size:11px}
+.story-section{margin-top:9px}
+.story-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.story-card{border-radius:10px}
+.story-art{height:92px;aspect-ratio:16/9;object-fit:cover}
+.story-copy{padding:8px}
+.story-copy b{font-size:9px}.story-copy p{font-size:9px;line-height:1.4}
+.story-tag{font-size:8px;margin-top:4px}
+.layout{grid-template-columns:minmax(0,1.2fr) minmax(220px,.8fr);gap:9px;margin-top:9px}
+.floors{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.floor{padding:8px;border-radius:8px}
+.floor span{font-size:10px}.floor small{font-size:8px}
+.detail{min-height:120px;padding:10px}
+.detail h3{font-size:14px}
+.detail p{font-size:11px}
+#gate{max-width:440px;margin:7vh auto;padding:18px;border-radius:14px}
+#gate h2{font-size:13px}
+#securityForm{margin-top:12px!important}
+@media(max-width:680px){
+ main{padding:9px 9px 22px}
+ .hero{padding:12px}
+ .stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+ .stat{padding:7px}
+ .stat b{font-size:15px}
+ #orbitalRelay>div[style*="display:grid"]{grid-template-columns:1fr!important}
+ #orbitalRelay svg{max-height:132px}
+ #orbitalRelay>div>div{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+ #orbitalRelay .stat{margin:0!important;min-width:0}
+ #orbitalRelay .stat b{font-size:12px!important}
+ #relayToggle{grid-column:1/-1;margin-top:2px!important}
+ #relayMessage{grid-column:1/-1}
+ .story-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ .story-art{height:82px}
+ .layout{grid-template-columns:1fr;gap:8px}
+ .floors{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .floor{grid-template-columns:45px 1fr;gap:5px;padding:7px}
+ .floor small{grid-column:2}
+ .detail{min-height:90px}
+}
+@media(max-width:380px){
+ .brand{font-size:12px}
+ .status{font-size:8px}
+ .story-art{height:70px}
+ .floors{grid-template-columns:1fr 1fr}
+}
+</style>
 </head><body>
 <header><div class="brand">LOCAL <b>MARS</b> <span style="color:#9eb1c5;font-size:10px">/ M-003 PRIVATE</span></div><div class="status" id="connection">VERIFYING ACCESS…</div></header>
 <main id="content" hidden>
