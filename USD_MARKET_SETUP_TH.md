@@ -1,6 +1,6 @@
 # LOCAL MARS — USD market rollout (Thai)
 
-สถานะ: เพิ่ม migration 016 แล้ว แต่ยังไม่เปิดรับชำระ USD จริง
+สถานะ: เตรียมโค้ด USD แล้ว; ก่อนเปิดเงินจริงต้องติดตั้ง migration 016 → 017 → 018 → 019, deploy Edge Functions, ตั้ง secrets และผ่านการทดสอบ Stripe ใน Test Mode
 
 ## 1) อัตราอ้างอิงที่ใช้แปลงค่า
 Migration 016 ใช้อัตราอ้างอิงธนาคารแห่งประเทศไทยวันที่ 5 พฤศจิกายน 2026:
@@ -63,14 +63,14 @@ Migration นี้บันทึกอัตราอ้างอิงตา�
 ## 8) เปิดใช้งาน USD Checkout (ต้องทำครบก่อนเปิดขาย)
 โค้ด USD Checkout และ webhook แยกจาก PromptPay เดิมแล้ว โดยใช้ Stripe card ในสกุล USD
 
-1. สำรองฐานข้อมูล แล้วรัน SQL ตามลำดับ: migration 016 → 017 → 018
+1. สำรองฐานข้อมูล แล้วรัน SQL ตามลำดับ: migration 016 → 017 → 018 → 019 (migration 019 เพิ่มการกู้คืน Checkout Session, จัดการหมดอายุ/ชำระไม่สำเร็จ และป้องกันการโอนสิทธิ์ซ้ำ)
 2. Deploy Edge Functions:
 ```bash
 supabase functions deploy create-usd-checkout --project-ref YOUR_PROJECT_REF
 supabase functions deploy stripe-webhook --no-verify-jwt --project-ref YOUR_PROJECT_REF
 supabase functions deploy refresh-fx-rates --no-verify-jwt --project-ref YOUR_PROJECT_REF
 ```
-3. ตั้ง Supabase secrets เดิมให้ครบ: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `MARS_OWNER_USER_ID`, `SITE_URL`, `SITE_ORIGIN`
+3. ตั้ง Supabase secrets เดิมให้ครบ: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_LIVEMODE` (`false` สำหรับ `sk_test_`, `true` สำหรับ `sk_live_`), `MARS_OWNER_USER_ID`, `SITE_URL`, `SITE_ORIGIN`
 4. ใช้ Stripe TEST secret key ก่อน และตั้ง webhook endpoint เดิมให้รับ `checkout.session.completed` กับ `checkout.session.async_payment_succeeded`
 5. กำหนดราคา USD และเปิดขายเฉพาะแปลงที่ผ่านการตรวจแล้ว ตัวอย่างทดสอบ (ห้ามใช้เป็นราคาขายจริงโดยอัตโนมัติ):
 ```sql
@@ -88,3 +88,22 @@ where id = 'M-001';
 - ปุ่มซื้อจะแสดงได้เมื่อแปลงมี `sale_price_usd` และ `is_for_sale=true`; การชำระจะสำเร็จได้ก็ต่อเมื่อ migrations/functions/secrets/webhook ถูก deploy ครบ
 - รายได้สุทธิและการถอนยังไม่ถือว่าพร้อม เพราะต้อง reconcile ค่าธรรมเนียมและ payout จาก Stripe
 - ราคาแปลงดาวอังคารเป็นราคาสินทรัพย์จำลอง/ราคาเสนอขายของแพลตฟอร์ม ไม่ใช่ราคาตลาดอสังหาริมทรัพย์จริงหรือกรรมสิทธิ์บนดาวอังคาร
+
+
+## 9) Hardening เพิ่มเติม — migration 019
+
+Migration 019 เป็น migration เพิ่มเติมหลัง 018 ไม่แก้ไขข้อมูล THB/MLC เดิม โดย:
+- กำหนดเวลาถือแปลง 36 นาที และ Stripe Checkout หมดอายุ 35 นาที เพื่อเผื่อเวลาระหว่างสร้าง Session
+- ทำให้ webhook กู้คืนการชำระที่สำเร็จได้ หาก Stripe Session ถูกสร้างแล้วแต่การบันทึก Session ID ในฐานข้อมูลสะดุด
+- บันทึกสถานะคำสั่งซื้อเมื่อ Checkout หมดอายุหรือชำระไม่สำเร็จ
+- ตรวจสอบการชำระซ้ำและการซื้อแปลงที่มีผู้ถือสิทธิ์แล้ว หากมีการชำระชนกันจะตั้ง `refund_required=true` เพื่อให้เจ้าของตรวจสอบและคืนเงินผ่าน Stripe Dashboard; ระบบยังไม่ทำ refund อัตโนมัติ
+- ตรวจสอบ Stripe Test/Live mode ให้ตรงกันทั้ง Checkout และ Webhook
+
+## 10) เงื่อนไขก่อนเปิดเงินจริง
+
+- เริ่มด้วย `STRIPE_LIVEMODE=false` และ Stripe test keys เท่านั้น
+- ต้องสร้าง Stripe account, ผ่านการยืนยันธุรกิจ/KYC และยืนยันบัญชีรับ payout ก่อนเปิด Live mode
+- ตั้ง webhook endpoint เป็น `https://YOUR_PROJECT_REF.supabase.co/functions/v1/stripe-webhook` และเลือกอย่างน้อย `checkout.session.completed`, `checkout.session.expired`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`
+- ห้ามเปิด Live mode จนกว่าจะทดสอบ success, cancel, expiry, duplicate event, amount/currency mismatch, concurrent purchase และ payout reconciliation ผ่าน
+- `mars_owner_wallet_entries_usd.net_amount_cents` ยังไม่ใช่ยอดสุทธิหลังหักค่าธรรมเนียม Stripe; รายการขายเริ่มเป็น pending และต้องกระทบยอดกับ Stripe balance transactions ก่อนบันทึกยอดถอน
+- การชำระเงินที่ถูกตั้ง `refund_required=true` ต้องตรวจสอบและคืนเงินใน Stripe Dashboard ด้วยตนเองก่อนปิดเคส
