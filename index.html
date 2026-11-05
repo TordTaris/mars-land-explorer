@@ -576,7 +576,7 @@ document.querySelector('#build').onclick=async()=>{
  }catch(error){toast('Server connection failed: '+(error?.message||'Please try again'));}
  finally{button.disabled=false;button.textContent='🏗️ Place Structure';}
 };
-document.querySelector('#openConstruction3D').onclick=()=>{if(!selected){toast('Select a Mars parcel first');return;}location.href='./city.html?parcel='+encodeURIComponent(selected.id);};
+document.querySelector('#openConstruction3D').onclick=()=>{if(!selected){toast('Select a Mars parcel first');return;}location.href='./parcels/'+encodeURIComponent(selected.id)+'/';};
  document.querySelector('#openM003Base').onclick=()=>{if(!selected||selected.id!=='M-003'){toast('Select M-003 first');return;}openM003Base();};
  document.querySelector('#closePlotPanel').onclick=()=>{document.body.classList.remove('plot-selected');selected=null;document.querySelector('#plotActions').style.display='none';document.querySelector('#plotInfo').style.display='block';};
 function openLogin(){document.querySelector('#login').style.display='grid'}
