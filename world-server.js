@@ -3,11 +3,13 @@
 'use strict';
 const CONFIG={url:'https://tppgfxsdeuujidcjnfdl.supabase.co',key:'sb_publishable_xQ0_NkSu2TMeIyJnAE94kw_WWQT2T3E'};
 const $=id=>document.getElementById(id);
-const S={db:null,user:null,channel:null,reconnectTimer:null,refreshTimer:null,reconnectAttempt:0,lifecycleBound:false,parcels:[],claims:[],structures:[],events:[],mlcMarket:[]};
+const S={db:null,user:null,channel:null,reconnectTimer:null,refreshTimer:null,reconnectAttempt:0,lifecycleBound:false,presenceKey:null,onlineCount:0,parcels:[],claims:[],structures:[],events:[],mlcMarket:[]};
 function status(message,ok=false){const el=$('worldServerStatus');if(el){el.textContent=(ok?'● ONLINE · ':'○ SERVER · ')+message;el.style.color=ok?'#a8e4bd':'#e9bd8d';}}
 function emitAuth(){document.dispatchEvent(new CustomEvent('mars-auth-state',{detail:{user:S.user}}));}
 function authView(){const el=$('worldServerUser');if(el)el.textContent=S.user?'สมาชิกออนไลน์: '+(S.user.email||S.user.id):'ยังไม่ได้เข้าสู่ระบบ';const out=$('worldServerLogout');if(out)out.style.display=S.user?'block':'none';}
-function counts(){const el=$('worldServerCounts');if(el)el.textContent='พื้นที่จอง '+S.claims.length+' · อาคาร '+S.structures.length;}
+function counts(){const el=$('worldServerCounts');if(el)el.textContent='🌐 ผู้เชื่อมต่อทั่วโลก '+S.onlineCount+' เซสชัน · พื้นที่จอง '+S.claims.length+' · อาคาร '+S.structures.length;}
+function presenceKey(){if(S.presenceKey)return S.presenceKey;try{S.presenceKey=sessionStorage.getItem('mars-presence-key');if(!S.presenceKey){S.presenceKey=globalThis.crypto?.randomUUID?.()||('guest-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2));sessionStorage.setItem('mars-presence-key',S.presenceKey);}}catch(_){S.presenceKey='guest-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);}return S.presenceKey;}
+async function trackPresence(channel){try{await channel.track({client_type:S.user?'member':'guest',last_seen_at:new Date().toISOString()});}catch(error){console.warn('LOCAL MARS presence tracking:',error);}}
 async function refresh(){
  if(!S.db)return;
  let [p,a,b,c]=await Promise.all([
@@ -52,17 +54,22 @@ function subscribe(){
  if(S.reconnectTimer){clearTimeout(S.reconnectTimer);S.reconnectTimer=null;}
  const previous=S.channel;S.channel=null;
  if(previous)S.db.removeChannel(previous).catch(err=>console.warn('LOCAL MARS channel cleanup:',err));
- const channel=S.db.channel('mars-land-global')
+ const channel=S.db.channel('mars-land-global',{config:{presence:{key:presenceKey()}}})
+ .on('presence',{event:'sync'},()=>{if(S.channel!==channel)return;S.onlineCount=Object.keys(channel.presenceState()).length;counts();})
  .on('postgres_changes',{event:'*',schema:'public',table:'world_parcels'},scheduleRefresh)
  .on('postgres_changes',{event:'*',schema:'public',table:'world_claims'},scheduleRefresh)
  .on('postgres_changes',{event:'*',schema:'public',table:'world_structures'},scheduleRefresh)
  .on('postgres_changes',{event:'*',schema:'public',table:'world_events'},scheduleRefresh)
- .on('postgres_changes',{event:'*',schema:'public',table:'mars_mlc_parcel_market'},scheduleRefresh);
+ .on('postgres_changes',{event:'*',schema:'public',table:'mars_mlc_parcel_market'},scheduleRefresh)
+ .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_national_flags'},scheduleRefresh)
+ .on('postgres_changes',{event:'*',schema:'public',table:'mars_cities'},scheduleRefresh)
+ .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_buildings'},scheduleRefresh)
+ .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_resources'},scheduleRefresh);
  S.channel=channel;
  channel.subscribe(st=>{
   if(S.channel!==channel)return;
   if(st==='SUBSCRIBED'){
-   S.reconnectAttempt=0;status('เชื่อมต่อโลกออนไลน์แล้ว',true);scheduleRefresh();
+   S.reconnectAttempt=0;status('เชื่อมต่อเครือข่ายดาวอังคารทั่วโลกแล้ว',true);trackPresence(channel);scheduleRefresh();
   }else if(st==='CHANNEL_ERROR'||st==='TIMED_OUT'||st==='CLOSED'){
    scheduleReconnect();
   }
@@ -73,7 +80,7 @@ async function connect(){
  S.db=window.supabase.createClient(CONFIG.url,CONFIG.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});bindLifecycle();
  const {data,error}=await S.db.auth.getSession();if(error){status(error.message);return {error};}
  S.user=data.session?.user||null;authView();emitAuth();subscribe();if(S.user)walletBalances();
- S.db.auth.onAuthStateChange((_event,session)=>{S.user=session?.user||null;authView();emitAuth();refresh();if(S.user)walletBalances();});
+ S.db.auth.onAuthStateChange((_event,session)=>{S.user=session?.user||null;authView();emitAuth();if(S.channel)trackPresence(S.channel);refresh();if(S.user)walletBalances();});
  return {data:{user:S.user}};
 }
 async function auth(mode){
