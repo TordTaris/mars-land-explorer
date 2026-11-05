@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#081321">
+<meta name="description" content="LOCAL MARS Mission Trainer — an educational Mars outpost resource-management simulation.">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<title>LOCAL MARS | Mission Trainer</title>
+<style>
+:root{color-scheme:dark;--bg:#081321;--panel:#102238;--line:#29445e;--text:#edf5ff;--muted:#a5b7ca;--gold:#e6bd79;--cyan:#69d9e8;--green:#75e2a9;--red:#ff927d}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 0,#263b52 0,#0a1727 52%,#060d17 100%);color:var(--text);font:14px system-ui,sans-serif;min-height:100vh}
+a{color:var(--cyan)}button{font:inherit;color:var(--text);background:#1a3048;border:1px solid #42617d;border-radius:10px;padding:10px 13px;cursor:pointer}button:hover{border-color:var(--cyan)}button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:3px}button:disabled{opacity:.45;cursor:not-allowed}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px max(16px,calc((100vw - 1120px)/2));border-bottom:1px solid #ffffff18;background:#07111ddd;position:sticky;top:0;z-index:2;backdrop-filter:blur(12px)}
+.brand{font-weight:900;letter-spacing:2px}.brand span{color:#ff946b}.tag{font-size:10px;letter-spacing:1.5px;color:var(--gold);border:1px solid #9b784b;padding:6px 9px;border-radius:30px}
+main{max-width:1120px;margin:0 auto;padding:26px 16px 60px}.eyebrow{font-size:10px;letter-spacing:2px;color:var(--cyan);font-weight:800}h1{font-size:clamp(28px,5vw,48px);margin:8px 0}h2{font-size:15px;letter-spacing:1px;margin:0 0 14px}.intro{max-width:760px;color:var(--muted);line-height:1.65}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}.toolbar .primary{background:linear-gradient(120deg,#c77c4f,#e6bd79);color:#1b1209;border:0;font-weight:800}
+.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}.card{background:linear-gradient(145deg,#132940ed,#0b1b2ded);border:1px solid var(--line);border-radius:16px;padding:17px;box-shadow:0 15px 40px #0003}
+.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.metric{background:#091827;border:1px solid #263f57;border-radius:12px;padding:12px}.metric-top{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted)}.metric b{font-size:20px;color:var(--text)}.bar{height:7px;background:#24374b;border-radius:8px;overflow:hidden;margin-top:10px}.bar i{display:block;height:100%;background:linear-gradient(90deg,#4dbbc8,#83e0bc);border-radius:8px;transition:width .25s}.metric.low .bar i{background:linear-gradient(90deg,#e4a15b,#f07870)}
+.stats{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.stat{padding:7px 10px;border:1px solid #304a63;border-radius:9px;color:var(--muted);font-size:12px}.stat strong{color:var(--text)}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}.action{display:flex;flex-direction:column;align-items:flex-start;text-align:left;min-height:105px}.action strong{color:var(--gold);margin-bottom:6px}.action span{font-size:12px;line-height:1.45;color:var(--muted)}
+.log{display:grid;gap:8px;max-height:250px;overflow:auto}.log-item{padding:9px 10px;background:#091827;border-left:2px solid var(--cyan);border-radius:6px;color:var(--muted);font-size:12px;line-height:1.5}
+.note{font-size:11px;line-height:1.6;color:var(--muted);margin-top:14px}.notice{border:1px solid #8d7045;background:#2a2418;color:#f1d9ad;border-radius:12px;padding:12px 14px;font-size:12px;line-height:1.6;margin:16px 0}.footer{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:18px}
+@media(max-width:760px){header{padding:12px 14px}.grid{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.card{padding:14px}}
+@media(max-width:380px){.actions{grid-template-columns:1fr}.tag{font-size:9px}}
+</style>
+</head>
+<body>
+<header><div class="brand">LOCAL <span>MARS</span> <small style="color:#a9bacb;font-size:10px">/ MISSION TRAINER</small></div><span class="tag">EDUCATIONAL SIMULATION</span></header>
+<main>
+<div class="eyebrow">MISSION OPERATIONS · TRAINING MODULE 01</div>
+<h1>Build a Resilient Mars Outpost</h1>
+<p class="intro">Lead a small research outpost through a sequence of mission days. Balance limited supplies, protect essential systems, and learn how connected decisions shape a remote settlement.</p>
+<div class="toolbar"><button class="primary" id="nextDay">Advance to Next Day →</button><button id="reset">↺ Reset Mission</button><a href="./index.html" style="display:inline-flex;align-items:center;padding:9px 12px">← Planet Explorer</a></div>
+<div class="stats"><div class="stat">MISSION DAY <strong id="day">01 / 10</strong></div><div class="stat">CREW <strong>04 simulated explorers</strong></div><div class="stat">MISSION SCORE <strong id="score">100</strong></div><div class="stat">STATUS <strong id="status">NOMINAL</strong></div></div>
+<div class="grid">
+<section class="card"><h2>OUTPOST RESOURCE TELEMETRY</h2><div class="metrics" id="metrics">
+<div class="metric" data-resource="oxygen"><div class="metric-top"><span>Oxygen reserve</span><b>100%</b></div><div class="bar"><i style="width:100%"></i></div></div>
+<div class="metric" data-resource="water"><div class="metric-top"><span>Water reserve</span><b>100%</b></div><div class="bar"><i style="width:100%"></i></div></div>
+<div class="metric" data-resource="power"><div class="metric-top"><span>Power reserve</span><b>100%</b></div><div class="bar"><i style="width:100%"></i></div></div>
+<div class="metric" data-resource="food"><div class="metric-top"><span>Food reserve</span><b>100%</b></div><div class="bar"><i style="width:100%"></i></div></div>
+<div class="metric" data-resource="maintenance"><div class="metric-top"><span>System integrity</span><b>100%</b></div><div class="bar"><i style="width:100%"></i></div></div>
+</div><p class="note">All readings are abstract game units shown as percentages. They are not real engineering thresholds, crew-safety limits, or operational instructions.</p></section>
+<section class="card"><h2>MISSION CONTROL · CHOOSE AN ACTION</h2><div class="actions">
+<button class="action" data-action="recycle"><strong>♻ Water Recovery</strong><span>Improve the simulated water reserve; uses some power and maintenance capacity.</span></button>
+<button class="action" data-action="solar"><strong>☀ Power Array</strong><span>Restore power reserve; requires maintenance capacity.</span></button>
+<button class="action" data-action="greenhouse"><strong>🌱 Grow Food</strong><span>Increase food reserve with a simulated power cost.</span></button>
+<button class="action" data-action="repair"><strong>🛠 Systems Repair</strong><span>Restore system integrity; consumes a small amount of power.</span></button>
+</div><p class="note" id="actionFeedback" aria-live="polite">Select one operation per mission day. Your choice is recorded in the mission log.</p></section>
+<section class="card"><h2>MISSION EVENT LOG</h2><div class="log" id="log" aria-live="polite"><div class="log-item">Day 01 · Mission started. All simulated systems are nominal.</div></div></section>
+<section class="card"><h2>MISSION OBJECTIVES</h2><ul style="padding-left:19px;color:var(--muted);line-height:1.8;font-size:13px"><li>Complete 10 mission days.</li><li>Keep every resource above zero.</li><li>Use at least three different operations.</li><li>Finish with the strongest possible system integrity.</li></ul><p class="note">This prototype uses transparent, simplified rules for learning and demonstration. It does not model Martian environmental conditions or validate habitat designs.</p></section>
+</div>
+<div class="notice"><strong>Scientific boundary:</strong> LOCAL MARS Mission Trainer is an educational strategy game. It does not provide real life-support calculations, medical advice, engineering specifications, or NASA-certified procedures. NASA is not affiliated with or endorsing this project.</div>
+<div class="footer"><span class="note">LOCAL MARS · Living Civilization · Prototype module</span><span class="note">Progress is saved locally on this device only.</span></div>
+</main>
+<script>
+(()=>{
+'use strict';
+const KEY='localMarsMissionTrainerV1';
+const initial=()=>({day:1,score:100,resources:{oxygen:100,water:100,power:100,food:100,maintenance:100},actions:[],log:['Day 01 · Mission started. All simulated systems are nominal.'],usedToday:false,ended:false});
+let state=initial();
+try{const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved&&saved.resources&&saved.day>=1&&saved.day<=10)state={...initial(),...saved,resources:{...initial().resources,...saved.resources},log:Array.isArray(saved.log)?saved.log:[]};}catch(_){}
+const $=s=>document.querySelector(s);
+const clamp=n=>Math.max(0,Math.min(100,Math.round(n)));
+const names={oxygen:'Oxygen reserve',water:'Water reserve',power:'Power reserve',food:'Food reserve',maintenance:'System integrity'};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(_){}}
+function addLog(message){state.log.unshift('Day '+String(state.day).padStart(2,'0')+' · '+message);state.log=state.log.slice(0,30);}
+function render(){
+$('#day').textContent=String(state.day).padStart(2,'0')+' / 10';$('#score').textContent=state.score;
+const low=Object.values(state.resources).some(v=>v<25);
+$('#status').textContent=state.ended?'COMPLETE':low?'ATTENTION':'NOMINAL';
+Object.entries(state.resources).forEach(([key,value])=>{const el=document.querySelector('[data-resource="'+key+'"]');el.querySelector('.metric-top b').textContent=value+'%';el.querySelector('.bar i').style.width=value+'%';el.classList.toggle('low',value<25);});
+$('#log').innerHTML='';state.log.forEach(item=>{const el=document.createElement('div');el.className='log-item';el.textContent=item;$('#log').append(el);});
+document.querySelectorAll('[data-action]').forEach(b=>b.disabled=state.usedToday||state.ended);
+$('#nextDay').disabled=state.ended||state.day>=10;
+$('#actionFeedback').textContent=state.ended?'Mission complete. Reset to run a new training scenario.':state.usedToday?'Operation recorded. Advance the day to continue.':'Select one operation per mission day. Your choice is recorded in the mission log.';
+}
+const operations={
+recycle:()=>{state.resources.water=clamp(state.resources.water+18);state.resources.power=clamp(state.resources.power-7);state.resources.maintenance=clamp(state.resources.maintenance-2);return 'Water recovery operation completed (+18 water, −7 power, −2 integrity).';},
+solar:()=>{state.resources.power=clamp(state.resources.power+20);state.resources.maintenance=clamp(state.resources.maintenance-4);return 'Power array service completed (+20 power, −4 integrity).';},
+greenhouse:()=>{if(state.resources.power<12)return null;state.resources.food=clamp(state.resources.food+19);state.resources.power=clamp(state.resources.power-12);return 'Greenhouse cycle completed (+19 food, −12 power).';},
+repair:()=>{if(state.resources.power<6)return null;state.resources.maintenance=clamp(state.resources.maintenance+18);state.resources.power=clamp(state.resources.power-6);return 'Preventive maintenance completed (+18 integrity, −6 power).';}
+};
+document.querySelectorAll('[data-action]').forEach(button=>button.addEventListener('click',()=>{
+if(state.usedToday||state.ended)return;const message=operations[button.dataset.action]();if(!message){$('#actionFeedback').textContent='Not enough simulated power for this operation. Choose another action.';return;}
+state.usedToday=true;state.actions.push(button.dataset.action);addLog(message);state.score=clamp(state.score+2);save();render();
+}));
+$('#nextDay').addEventListener('click',()=>{
+if(state.ended||state.day>=10)return;
+state.day++;state.usedToday=false;
+const r=state.resources;r.oxygen=clamp(r.oxygen-5);r.water=clamp(r.water-6);r.power=clamp(r.power-5);r.food=clamp(r.food-7);
+if(r.maintenance<40){r.power=clamp(r.power-3);r.oxygen=clamp(r.oxygen-2);addLog('Low system integrity caused an additional simulated resource penalty.');}
+const min=Math.min(...Object.values(r));state.score=clamp(state.score+(min>=50?3:min>=25?0:-8));
+if(min===0){state.ended=true;addLog('Mission ended: a simulated resource reserve reached zero.');}
+else if(state.day===10){state.ended=true;addLog('Training scenario complete. Review your final score and resource balance.');}
+else addLog('Daily consumption applied. Review telemetry and select the next operation.');
+save();render();
+});
+$('#reset').addEventListener('click',()=>{state=initial();save();render();});
+render();
+})();
+</script>
+</body>
+</html>
