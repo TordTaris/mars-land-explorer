@@ -10,7 +10,7 @@
 ### 1. Executive summary
 LOCAL MARS is a browser-based simulation that lets users explore a Mars-settlement concept, select parcels, and experiment with constructing a settlement. Its purpose is to make the systems thinking behind off-world habitation more understandable through interactive, game-like learning.
 
-The proposed next development step is a **Mission Habitat Trainer**: a clearly labelled educational scenario in which learners compare trade-offs among power availability, food production, life-support reserves, radiation protection, and habitat capacity. The trainer will use cited public scientific datasets where available and will distinguish sourced measurements from simplified game assumptions.
+A first **Mars Mission Trainer** prototype has now been added as a standalone page. It provides a 10-day resource-management scenario for oxygen, water, power, food, and system integrity, with one player operation per day, a mission log, a score, and local browser save. This is a game prototype using simplified assumptions; it does not yet ingest NASA datasets or model validated habitat engineering. Further development can add source-linked datasets and scenario explanations after the data and units are verified.
 
 ### 2. Existing prototype — repository-described scope
 The project README and application source describe:
