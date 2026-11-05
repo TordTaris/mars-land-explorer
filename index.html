@@ -756,6 +756,26 @@ body.authenticated.plot-selected .right #removeParcelListing{
 </style>
 
 <style id="local-mars-hide-system-hub-display">/* Keep the System Hub overlay code available to the More menu, but hide its floating launcher/display. */#lmSystemHubFloat{display:none!important;visibility:hidden!important;pointer-events:none!important}</style>
+
+<style id="local-mars-clean-explore-layout-v459">
+/* Clean Explore view: remove duplicate launchers and keep live-link details out of the planet view. */
+#lmSystemHubFloat{display:none!important}
+body.lm-star-view-mode #lmSystemHubFloat{display:none!important}
+body.lm-star-view-mode #lm-satellite-link{display:none!important}
+body:not(.lm-star-view-mode) #lm-satellite-link{
+ position:fixed!important;top:auto!important;right:12px!important;bottom:calc(env(safe-area-inset-bottom,0px) + 88px)!important;
+ left:auto!important;width:min(270px,calc(100vw - 24px))!important;max-height:34dvh!important;overflow:auto!important;
+ padding:10px 12px!important;border-radius:14px!important;box-shadow:0 8px 24px #0007!important
+}
+header .status{max-width:min(34vw,220px)!important;font-size:9px!important;letter-spacing:.15px!important}
+@media(max-width:600px){
+ header{gap:8px!important;padding-left:10px!important;padding-right:10px!important}
+ header .brand-lockup small{font-size:7px!important;letter-spacing:.65px!important}
+ header .brand-lockup strong{font-size:clamp(16px,5vw,21px)!important;letter-spacing:1.5px!important}
+ header .status{max-width:35vw!important;min-height:28px!important;padding:5px 7px!important;font-size:8px!important}
+ body:not(.lm-star-view-mode) #lm-satellite-link{bottom:calc(env(safe-area-inset-bottom,0px) + 82px)!important;max-height:30dvh!important}
+}
+</style>
 </head>
 <body>\n<div id="lmStartup" role="status" aria-live="polite"><div id="lmStartupCard"><div id="lmStartupMark">LOCAL <b>MARS</b></div><div id="lmStartupText">INITIALIZING PLANETARY SYSTEMS…</div><div id="lmStartupTrack"></div></div></div>
 <script>
