@@ -203,43 +203,62 @@ header{pointer-events:auto!important}
 header .lm-language-slot{display:flex!important;align-items:center!important;justify-content:center!important;flex:0 0 auto!important;position:relative!important;z-index:100!important;pointer-events:auto!important;visibility:visible!important;opacity:1!important}
 header #lmLanguage{display:inline-flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;position:static!important;z-index:101!important;flex:0 0 34px!important;width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important;max-width:34px!important;margin:0!important;padding:0!important;font-size:18px!important;line-height:1!important}
 @media(max-width:650px){header #lmLanguage{width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important;max-width:30px!important;font-size:16px!important}}
-</style></head>
+</style>
+<style id="local-mars-premium-parcel-ui">
+body.authenticated.plot-selected .right{border-radius:20px!important;padding:15px!important;background:linear-gradient(155deg,rgba(12,31,51,.98),rgba(5,15,27,.98))!important;border:1px solid rgba(221,190,130,.72)!important;box-shadow:0 22px 60px #000b,inset 0 1px #ffffff16!important}
+body.authenticated.plot-selected .right h3{font-size:11px!important;letter-spacing:2px!important;color:#e7c783!important;text-transform:uppercase!important}
+body.authenticated.plot-selected .right #plotActions .plot{border-radius:14px!important;padding:13px!important;background:linear-gradient(145deg,#132b43,#0a192a)!important;border:1px solid #c5a56b55!important}
+body.authenticated.plot-selected .right #plotName{font-size:20px!important;letter-spacing:1.4px!important;color:#fff!important}
+body.authenticated.plot-selected .right #plotMeta{display:block!important;margin-top:5px!important;font-size:10px!important;letter-spacing:.6px!important;text-transform:uppercase!important}
+body.authenticated.plot-selected .right #plotUsdPrice{display:inline-block!important;font-size:25px!important;font-weight:900!important;letter-spacing:.2px!important;color:#f1ce86!important}
+body.authenticated.plot-selected .right #plotUsdNote{margin-top:5px!important;font-size:10px!important;line-height:1.5!important}
+body.authenticated.plot-selected .right #claim{min-height:48px!important;border-radius:13px!important;font-size:12px!important;letter-spacing:.2px!important;box-shadow:0 8px 22px #0005!important}
+body.authenticated.plot-selected .right #claim:disabled{opacity:.58!important;filter:saturate(.55)!important}
+body.authenticated.plot-selected .right #plotMlcPrice{font-size:23px!important;font-weight:900!important;color:#f1ce86!important}
+body.authenticated.plot-selected .right #plotMlcStatus{font-size:10px!important;line-height:1.5!important}
+body.authenticated.plot-selected .right #reserveMlc,body.authenticated.plot-selected .right #buyMlc{min-height:44px!important;border-radius:12px!important;font-size:11px!important;font-weight:800!important}
+body.authenticated.plot-selected .right #reserveMlc{border-color:#7893a9!important;background:linear-gradient(145deg,#1b344d,#102238)!important}
+body.authenticated.plot-selected .right #buyMlc{background:linear-gradient(120deg,#dfb86e,#a87a39)!important;color:#17120b!important;border:1px solid #f0d49a!important}
+body.authenticated.plot-selected .right button:disabled{opacity:.45!important;cursor:not-allowed!important}
+@media(max-width:650px){body.authenticated.plot-selected .right{left:10px!important;right:10px!important;bottom:65px!important;width:auto!important;max-height:42dvh!important;padding:11px!important}body.authenticated.plot-selected .right #plotActions .plot{padding:11px!important}body.authenticated.plot-selected .right #plotUsdPrice{font-size:23px!important}body.authenticated.plot-selected .right #claim{min-height:46px!important}}
+</style>
+</head>
 <body>
 <div id="scene"></div>
-<header><div class="brand"><span class="brand-insignia" aria-hidden="true"><img src="./icon.svg" alt=""></span><span class="brand-lockup"><strong>LOCAL <b>MARS</b></strong><small>PLANETARY CIVILIZATION NETWORK</small></span></div><div class="status" id="worldServerStatus">กำลังเชื่อมต่อ Marslocal…</div></header>
+<header><div class="brand"><span class="brand-insignia" aria-hidden="true"><img src="./icon.svg" alt=""></span><span class="brand-lockup"><strong>LOCAL <b>MARS</b></strong><small>PLANETARY CIVILIZATION NETWORK</small></span></div><div class="status" id="worldServerStatus">CONNECTING TO MARS NETWORK…</div></header>
 <section class="panel left">
 <h3>MISSION CONTROL</h3>
 <div class="metric"><span>Planet</span><b>Mars / Sol 001</b></div>
-<div class="metric"><span>Selected Plot</span><b id="selected">ยังไม่ได้เลือก</b></div>
+<div class="metric"><span>Selected Plot</span><b id="selected">No selection</b></div>
 <div class="metric"><span>Coordinates</span><b id="coords">—</b></div>
 <div class="metric"><span>Plots</span><b>12 parcels</b></div>
-<div class="small">เลือกภารกิจเพื่อเริ่มต้นการเดินทางบนดาวอังคาร</div>
-<button id="navExplore">🌐　สำรวจดาวอังคาร</button>
+<div class="small">Select a mission to begin your journey across Mars.</div>
+<button id="navExplore">🌐　Explore Mars</button>
 <button id="navNewExplorer" class="primary">🚀　NEW EXPLORER ZONE</button>
-<button id="navCity">🏙️　สร้างเมืองอาณานิคม</button>
-<button id="navUnderground">🛰️　ฐานใต้ดิน 24 ชั้น</button>
-<button id="navMarket">✦　ตลาดซื้อขายที่ดิน</button>
-<div class="actions"><button id="rotate" class="active">หมุนอัตโนมัติ: เปิด</button><button id="reset">รีเซ็ตมุมมอง</button></div>
+<button id="navCity">🏙️　Build Colony</button>
+<button id="navUnderground">🛰️　Underground Facility</button>
+<button id="navMarket">✦　Land Marketplace</button>
+<div class="actions"><button id="rotate" class="active">Auto-Rotate: ON</button><button id="reset">Reset View</button></div>
 </section>
 <section class="panel right">
 <h3>LAND EXPLORER</h3>
-<div id="plotInfo" class="small">ดาวอังคารจำลอง • ลากเพื่อหมุน / บีบนิ้วเพื่อซูม • แตะหมุดเพื่อสำรวจแปลง</div>
+<div id="plotInfo" class="small">Select a parcel marker to view its details. Drag to rotate and pinch to zoom.</div>
 <div id="plotActions" style="display:none">
-<div class="plot"><strong id="plotName">M-001</strong><small id="plotMeta">พื้นที่จำลอง</small><div style="margin-top:10px">ราคาซื้อขายหลัก <b id="plotUsdPrice" style="font-size:18px;color:#f0d18e">$— USD</b><div class="small" id="plotUsdNote">ราคาขาย USD จะแสดงเมื่อแปลงได้รับการกำหนดราคาและเปิดขาย</div></div><div style="margin-top:9px;padding-top:8px;border-top:1px solid #ffffff20">มูลค่าเศรษฐกิจจำลอง <b id="plotPrice">— MLC</b><div class="small">MLC ใช้แยกต่างหากภายในระบบจำลอง ไม่ใช่ USD หรือเงินสด</div></div></div>
-<button class="primary full" id="claim" disabled>ซื้อพื้นที่ผ่าน USD Checkout (Stripe)</button>
+<div class="plot"><strong id="plotName">M-001</strong><small id="plotMeta">MARS LAND PARCEL</small><div style="margin-top:10px">PRIMARY SALE PRICE <b id="plotUsdPrice" style="font-size:18px;color:#f0d18e">$— USD</b><div class="small" id="plotUsdNote">USD pricing appears when this parcel is listed for sale.</div></div><div style="margin-top:9px;padding-top:8px;border-top:1px solid #ffffff20">SIMULATION VALUE <b id="plotPrice">— MLC</b><div class="small">MLC is a separate in-app simulation currency. It is not USD or cash.</div></div></div>
+<button class="primary full" id="claim" disabled>Purchase with USD · Secure Checkout</button>
 <div class="plot" style="margin-top:9px;border:1px solid #c5a56b66">
- <div class="small">ราคาตลาดภายใน LOCAL MARS</div>
+ <div class="small">LOCAL MARS SIMULATION MARKET</div>
  <div style="font-size:18px;font-weight:850;color:#f0d18e;margin:4px 0"><span id="plotMlcPrice">— MLC</span></div>
- <div class="small" id="plotMlcStatus">กำลังตรวจสอบสถานะแปลง…</div>
- <button class="full" id="reserveMlc" style="margin-top:8px">⏱️ จองแปลง 15 นาที</button>
- <button class="primary full" id="buyMlc">🪙 ซื้อแปลงด้วย MLC</button>
+ <div class="small" id="plotMlcStatus">Checking parcel availability…</div>
+ <button class="full" id="reserveMlc" style="margin-top:8px">Reserve for 15 Minutes</button>
+ <button class="primary full" id="buyMlc">Purchase with MLC</button>
  <div id="mlcSellerControls" style="display:none;border-top:1px solid #ffffff20;margin-top:8px;padding-top:8px">
-  <div class="small">จัดการประกาศขายแปลงของคุณ</div>
-  <input id="listMlcPrice" type="number" min="1" max="1000000" step="1" placeholder="ตั้งราคาขาย MLC" style="width:100%;padding:9px;margin:6px 0;background:#081421;color:#fff;border:1px solid #526a82;border-radius:8px;font:inherit">
-  <button class="full" id="listMlc">📣 ประกาศขายด้วย MLC</button>
-  <button class="full" id="unlistMlc">ปิดประกาศขาย</button>
+  <div class="small">Manage Your Listing</div>
+  <input id="listMlcPrice" type="number" min="1" max="1000000" step="1" placeholder="Set MLC listing price" style="width:100%;padding:9px;margin:6px 0;background:#081421;color:#fff;border:1px solid #526a82;border-radius:8px;font:inherit">
+  <button class="full" id="listMlc">List Parcel for MLC</button>
+  <button class="full" id="unlistMlc">Remove Listing</button>
  </div>
- <div class="small" style="font-size:9px;margin-top:7px">การจองล็อกแปลง 15 นาทีโดยไม่หักยอด การซื้อจะหัก MLC เมื่อฐานข้อมูลยืนยันเท่านั้น</div>
+ <div class="small" style="font-size:9px;margin-top:7px">Reservations hold a parcel for 15 minutes at no charge. MLC is deducted only after database confirmation.</div>
 </div>
 <select id="building" class="full" style="padding:9px;background:#101d30;color:white;border:1px solid #38506d;border-radius:9px">
 <option value="Habitat">Habitat Dome</option><option value="Lab">Science Lab</option><option value="Solar">Solar Farm</option><option value="Greenhouse">Greenhouse</option><option value="NuclearPlant">☢️ M-003 Mega Nuclear Energy Complex</option>
@@ -251,42 +270,42 @@ header #lmLanguage{display:inline-flex!important;visibility:visible!important;op
 </div>
 
 <h3 style="margin-top:16px">MY COLONY</h3>
-<div class="metric"><span>แปลงที่จอง</span><b id="owned">0</b></div>
-<div class="metric"><span>อาคารที่สร้าง</span><b id="buildings">0</b></div>
-<button class="full" id="account">เข้าสู่ระบบ / สมัครสมาชิก</button>
-<div class="small" id="worldServerUser">กำลังตรวจสอบบัญชีออนไลน์…</div>
-<div class="small" id="worldServerCounts">กำลังโหลดข้อมูลโลก…</div>
-<button class="full" id="worldServerLogout" style="display:none">ออกจากระบบ</button>
-<div class="small">พื้นที่และทรัพยากรเป็นข้อมูลจำลองภายในระบบ ไม่ใช่กรรมสิทธิ์หรือการซื้อขายเงินจริง</div>
+<div class="metric"><span>Claimed Parcels</span><b id="owned">0</b></div>
+<div class="metric"><span>Structures Built</span><b id="buildings">0</b></div>
+<button class="full" id="account">Sign In / Create Account</button>
+<div class="small" id="worldServerUser">Checking account status…</div>
+<div class="small" id="worldServerCounts">Loading world data…</div>
+<button class="full" id="worldServerLogout" style="display:none">Sign Out</button>
+<div class="small">Land and resources are simulated in-app assets, not legal property or real-world transactions.</div>
 </section>
-<nav class="bottom"><button class="active" data-tab="explore">🌎 สำรวจ</button><button data-tab="market">🪙 ตลาดจำลอง</button><button data-tab="colony">🏙️ เมืองของฉัน</button><button data-tab="city">🏗️ จำลองก่อสร้าง</button><button data-tab="underground">🏚️ ฐาน 24 ชั้น</button><a href="./civilization.html" style="display:inline-flex;align-items:center;white-space:nowrap;text-decoration:none;color:#f4e8d1;border:1px solid #b99a636e;background:linear-gradient(145deg,#172b40,#0b1727);border-radius:10px;padding:10px 13px;font-size:11px;font-weight:700">🌐 อารยธรรม</a><button data-tab="account">👤 สมาชิก</button><button data-tab="wallet" aria-controls="mlcWalletPanel">🪙 MLC</button></nav>
+<nav class="bottom"><button class="active" data-tab="explore">🌎 Explore</button><button data-tab="market">🪙 MLC Market</button><button data-tab="colony">🏙️ My Colony</button><button data-tab="city">🏗️ City Builder</button><button data-tab="underground">🏚️ Underground</button><a href="./civilization.html" style="display:inline-flex;align-items:center;white-space:nowrap;text-decoration:none;color:#f4e8d1;border:1px solid #b99a636e;background:linear-gradient(145deg,#172b40,#0b1727);border-radius:10px;padding:10px 13px;font-size:11px;font-weight:700">🌐 Civilization</a><button data-tab="account">👤 Account</button><button data-tab="wallet" aria-controls="mlcWalletPanel">🪙 MLC</button></nav>
 <section class="plot mlc-wallet-overlay" id="mlcWalletPanel" aria-label="MLC Wallet">
  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-  <strong style="color:#e7c17d;letter-spacing:1px">MLC WALLET</strong><button type="button" id="mlcWalletClose" aria-label="ปิดกระเป๋า MLC" style="padding:5px 9px">✕</button>
+  <strong style="color:#e7c17d;letter-spacing:1px">MLC WALLET</strong><button type="button" id="mlcWalletClose" aria-label="Close MLC wallet" style="padding:5px 9px">✕</button>
   <span style="font-size:9px;color:#9eb3c8">IN-GAME CURRENCY</span>
  </div>
  <div style="display:flex;justify-content:space-between;align-items:center;margin:8px 0">
-  <span class="small">ยอดคงเหลือ MLC</span>
+  <span class="small">MLC Balance</span>
   <b id="mlcBalance" style="font-size:20px;color:#f0d18e">— MLC</b>
  </div>
- <button class="full" id="mlcStarter">🎁 รับ MLC เริ่มต้น 1,000</button>
+ <button class="full" id="mlcStarter">🎁 Claim 1,000 Starter MLC</button>
  <div style="border-top:1px solid #ffffff20;margin-top:10px;padding-top:9px">
-  <div class="small" style="margin-bottom:6px">โอน / ซื้อขาย MLC ระหว่างสมาชิก</div>
-  <input id="mlcRecipient" autocomplete="off" placeholder="รหัสบัญชีสมาชิกผู้รับ (User ID)" style="width:100%;padding:9px;margin:3px 0;background:#081421;color:#fff;border:1px solid #526a82;border-radius:8px;font:inherit;font-size:11px">
-  <input id="mlcAmount" type="number" min="1" max="1000000" step="1" placeholder="จำนวน MLC" style="width:100%;padding:9px;margin:3px 0;background:#081421;color:#fff;border:1px solid #526a82;border-radius:8px;font:inherit;font-size:11px">
-  <button class="full" id="mlcTransfer">↔ โอน MLC</button>
+  <div class="small" style="margin-bottom:6px">Transfer MLC to Another Member</div>
+  <input id="mlcRecipient" autocomplete="off" placeholder="Recipient Member ID (User ID)" style="width:100%;padding:9px;margin:3px 0;background:#081421;color:#fff;border:1px solid #526a82;border-radius:8px;font:inherit;font-size:11px">
+  <input id="mlcAmount" type="number" min="1" max="1000000" step="1" placeholder="Amount (MLC)" style="width:100%;padding:9px;margin:3px 0;background:#081421;color:#fff;border:1px solid #526a82;border-radius:8px;font:inherit;font-size:11px">
+  <button class="full" id="mlcTransfer">↔ Transfer MLC</button>
  </div>
- <div class="small" style="font-size:9px;margin-top:8px">MLC เป็นแต้ม/สกุลเงินจำลองภายใน LOCAL MARS เท่านั้น ไม่ใช่เงินบาท คริปโต หรือเงินที่แลกคืนได้ และไม่เกี่ยวข้องกับ PromptPay</div>
+ <div class="small" style="font-size:9px;margin-top:8px">MLC is an in-app simulation currency for LOCAL MARS only. It is not legal tender, cryptocurrency, or redeemable cash.</div>
 </section>
 <div id="toast"></div>
-<div id="login"><div class="panel modal"><h3>สมาชิก LOCAL MARS ONLINE</h3>
-<input id="username" placeholder="ชื่อสมาชิก (ใช้ตอนสมัคร)">
-<input id="email" type="email" autocomplete="email" placeholder="อีเมล">
-<input id="password" type="password" autocomplete="current-password" placeholder="รหัสผ่านอย่างน้อย 8 ตัว">
-<button class="primary full" id="loginBtn">สมัครสมาชิกออนไลน์</button>
-<button class="full" id="signInBtn">เข้าสู่ระบบ</button>
-<button class="full" id="closeLogin">ปิด</button>
-<p class="small">บัญชีสมาชิกจัดเก็บผ่าน Supabase Auth ของ Marslocal หากเปิดยืนยันอีเมล กรุณากดยืนยันจากอีเมลก่อนเข้าสู่ระบบ</p>
+<div id="login"><div class="panel modal"><h3>LOCAL MARS MEMBER ACCESS</h3>
+<input id="username" placeholder="Display name (for registration)">
+<input id="email" type="email" autocomplete="email" placeholder="Email address">
+<input id="password" type="password" autocomplete="current-password" placeholder="Password (minimum 8 characters)">
+<button class="primary full" id="loginBtn">Create Account</button>
+<button class="full" id="signInBtn" >Sign In</button>
+<button class="full" id="closeLogin" >Close</button>
+<p class="small">Member accounts are secured by Supabase Auth. If email confirmation is enabled, verify your email before signing in.</p>
 </div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="./world-server.js"></script>
@@ -513,15 +532,15 @@ function selectPlot(p){
  document.querySelector("#plotInfo").style.display="none";document.querySelector("#plotActions").style.display="block";
  document.querySelector("#plotName").textContent=p.id;
  document.querySelector("#building").querySelector('option[value="NuclearPlant"]').disabled=p.id!=="M-003";
- document.querySelector("#plotMeta").textContent="พิกัด "+p.lat+"°N / "+p.lon+"°E • "+(claim?"มีเจ้าของแล้ว":"ยังไม่มีเจ้าของ");
+ document.querySelector("#plotMeta").textContent="Coordinates "+p.lat+"°N / "+p.lon+"°E • "+(claim?"CLAIMED":"AVAILABLE");
  document.querySelector("#plotPrice").textContent=Number(p.price).toLocaleString("en-US")+" MLC";
  const usdPrice=Number.isFinite(Number(p.salePriceUsd))&&Number(p.salePriceUsd)>0?Number(p.salePriceUsd):null;
- document.querySelector("#plotUsdPrice").textContent=usdPrice?"$"+usdPrice.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})+" USD":"ยังไม่กำหนด USD";
- document.querySelector("#plotUsdNote").textContent=usdPrice?"ราคา USD จากฐานข้อมูล · ชำระผ่าน Stripe Checkout":"แปลงนี้ยังไม่มีราคาขาย USD หรือยังไม่เปิดขาย";
+ document.querySelector("#plotUsdPrice").textContent=usdPrice?"$"+usdPrice.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})+" USD":"NOT LISTED IN USD";
+ document.querySelector("#plotUsdNote").textContent=usdPrice?"USD sale price verified · Secure Stripe Checkout":"No USD listing is available for this parcel";
  document.querySelector("#claim").disabled=!!claim||!usdPrice;
- document.querySelector("#claim").textContent=claim?"มีเจ้าของแล้ว":usdPrice?"ซื้อพื้นที่ผ่าน USD Checkout (Stripe)":"ยังไม่เปิดขายด้วย USD";
- document.querySelector("#plotMlcPrice").textContent=listing?Number(listing.price_mlc).toLocaleString("en-US")+" MLC":"ไม่เปิดขาย";
- document.querySelector("#plotMlcStatus").textContent=claim?(isOwner?(listing?.is_listed?"แปลงของคุณ · เปิดประกาศขาย":"แปลงของคุณ · ยังไม่ประกาศขาย"):(listing?.is_listed?"เจ้าของประกาศขาย":"มีเจ้าของ · ไม่เปิดขาย")):(listing?.is_listed?"ว่าง · จองหรือซื้อได้ด้วย MLC":"ยังไม่เปิดขายด้วย MLC");
+ document.querySelector("#claim").textContent=claim?"มีเจ้าของแล้ว":usdPrice?"Purchase with USD · Secure Checkout":"ยังไม่เปิดขายด้วย USD";
+ document.querySelector("#plotMlcPrice").textContent=listing?Number(listing.price_mlc).toLocaleString("en-US")+" MLC":"Not listed";
+ document.querySelector("#plotMlcStatus").textContent=claim?(isOwner?(listing?.is_listed?"แปลงของคุณ · เRemove Listing":"แปลงของคุณ · ยังไม่ประกาศขาย"):(listing?.is_listed?"เจ้าของประกาศขาย":"มีเจ้าของ · ไม่เปิดขาย")):(listing?.is_listed?"ว่าง · จองหรือซื้อได้ด้วย MLC":"ยังไม่เปิดขายด้วย MLC");
  document.querySelector("#reserveMlc").disabled=!listing?.is_listed||isOwner;
  document.querySelector("#buyMlc").disabled=!listing?.is_listed||isOwner;
  document.querySelector("#mlcSellerControls").style.display=isOwner?"block":"none";
@@ -535,80 +554,80 @@ parcels.forEach(p=>{if(state.owned.includes(p.id))p.owner=state.profile?.name||'
 function save(){localStorage.setItem('localmars-demo',JSON.stringify(state));updateStats()}
 function updateStats(){const world=window.MarsWorldServer?.getState?.();const user=world?.user;document.querySelector('#owned').textContent=user?(world.claims||[]).filter(x=>x.owner_id===user.id).length:0;document.querySelector('#buildings').textContent=user?(world.structures||[]).filter(x=>x.owner_id===user.id).length:0;markers.forEach(m=>m.material.color.set(m.userData.plot.owner?0xffa45f:0x55dce8))}
 function toast(s){const t=document.querySelector('#toast');t.textContent=s;t.style.display='block';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.style.display='none',2600)}
-document.querySelector('#claim').onclick=async()=>{if(!selected)return;const world=window.MarsWorldServer?.getState?.();if(!world?.user){toast('กรุณาเข้าสู่ระบบก่อนซื้อพื้นที่ด้วย USD');openLogin();return;}const result=await window.MarsWorldServer?.claimUsd(selected.id);if(result?.error){toast(result.error.message);if(!window.MarsWorldServer?.getState?.().user)openLogin();return;}};
+document.querySelector('#claim').onclick=async()=>{if(!selected)return;const world=window.MarsWorldServer?.getState?.();if(!world?.user){toast('Sign in to purchase land with USD');openLogin();return;}const result=await window.MarsWorldServer?.claimUsd(selected.id);if(result?.error){toast(result.error.message);if(!window.MarsWorldServer?.getState?.().user)openLogin();return;}};
 const runParcelAction=async(buttonId,action,successText)=>{
  if(!selected)return;const world=window.MarsWorldServer?.getState?.();
- if(!world?.user){toast('กรุณาเข้าสู่ระบบก่อนทำรายการ');openLogin();return;}
+ if(!world?.user){toast('Sign in to continue');openLogin();return;}
  const button=document.querySelector(buttonId);button.disabled=true;
  try{const result=await action(selected.id);if(result?.error)throw result.error;
   toast(successText+(result?.syncWarning?' · กำลังซิงก์ข้อมูล':''));await window.MarsWorldServer.refresh();
- }catch(error){toast('ทำรายการไม่สำเร็จ: '+(error.message||'กรุณาลองใหม่'));}
+ }catch(error){toast('Transaction failed: '+(error.message||'Please try again'));}
  finally{button.disabled=false;if(selected)selectPlot(selected);}
 };
-document.querySelector('#reserveMlc').onclick=()=>runParcelAction('#reserveMlc',id=>window.MarsWorldServer.reserveParcel(id),'จองแปลงสำเร็จ · ล็อกไว้ 15 นาที');
-document.querySelector('#buyMlc').onclick=()=>runParcelAction('#buyMlc',id=>window.MarsWorldServer.purchaseParcel(id),'ซื้อแปลงด้วย MLC สำเร็จ');
+document.querySelector('#reserveMlc').onclick=()=>runParcelAction('#reserveMlc',id=>window.MarsWorldServer.reserveParcel(id),'Reservation confirmed · Held for 15 minutes');
+document.querySelector('#buyMlc').onclick=()=>runParcelAction('#buyMlc',id=>window.MarsWorldServer.purchaseParcel(id),'Parcel purchased with MLC');
 document.querySelector('#listMlc').onclick=async()=>{
  if(!selected)return;const price=Number(document.querySelector('#listMlcPrice').value);
- if(!Number.isSafeInteger(price)||price<1||price>1000000){toast('กรุณาตั้งราคา 1–1,000,000 MLC');return;}
- await runParcelAction('#listMlc',id=>window.MarsWorldServer.setParcelListing(id,true,price),'ประกาศขายแปลงสำเร็จ');
+ if(!Number.isSafeInteger(price)||price<1||price>1000000){toast('Enter a listing price between 1 and 1,000,000 MLC');return;}
+ await runParcelAction('#listMlc',id=>window.MarsWorldServer.setParcelListing(id,true,price),'Parcel listed successfully');
 };
-document.querySelector('#unlistMlc').onclick=()=>runParcelAction('#unlistMlc',id=>window.MarsWorldServer.setParcelListing(id,false,null),'ปิดประกาศขายแล้ว');
+document.querySelector('#unlistMlc').onclick=()=>runParcelAction('#unlistMlc',id=>window.MarsWorldServer.setParcelListing(id,false,null),'Remove Listingแล้ว');
 const renderMlcBalance=balances=>{const el=document.querySelector('#mlcBalance');if(el)el.textContent=(Number(balances?.mlc)||0).toLocaleString('en-US')+' MLC';};
 document.addEventListener('mars-wallet-updated',e=>renderMlcBalance(e.detail));
 document.addEventListener('mars-auth-state',async()=>{const world=window.MarsWorldServer?.getState?.();if(world?.user){const result=await window.MarsWorldServer.walletBalances();if(result?.data)renderMlcBalance(result.data);}else renderMlcBalance({mlc:0});});
 document.querySelector('#mlcWalletClose').onclick=()=>document.querySelector('#mlcWalletPanel')?.classList.remove('is-open');
 document.querySelector('#mlcStarter').onclick=async()=>{
  const world=window.MarsWorldServer?.getState?.();
- if(!world?.user){toast('กรุณาเข้าสู่ระบบเพื่อรับ MLC');openLogin();return;}
- const button=document.querySelector('#mlcStarter');button.disabled=true;button.textContent='กำลังตรวจสอบสิทธิ์…';
- try{const result=await window.MarsWorldServer.grantMlcStarter();if(result?.error)throw result.error;if(result?.data)renderMlcBalance(result.data);toast('เพิ่ม MLC เริ่มต้นแล้ว (รับได้ครั้งเดียวต่อบัญชี)');}
- catch(error){toast('รับ MLC ไม่สำเร็จ: '+(error.message||'กรุณาลองใหม่'));}
- finally{button.disabled=false;button.textContent='🎁 รับ MLC เริ่มต้น 1,000';}
+ if(!world?.user){toast('Sign in to claim starter MLC');openLogin();return;}
+ const button=document.querySelector('#mlcStarter');button.disabled=true;button.textContent='Checking eligibility…';
+ try{const result=await window.MarsWorldServer.grantMlcStarter();if(result?.error)throw result.error;if(result?.data)renderMlcBalance(result.data);toast('Starter MLC credited · One claim per account');}
+ catch(error){toast('Unable to claim MLC: '+(error.message||'Please try again'));}
+ finally{button.disabled=false;button.textContent='🎁 Claim 1,000 Starter MLC';}
 };
 document.querySelector('#mlcTransfer').onclick=async()=>{
  const world=window.MarsWorldServer?.getState?.();
- if(!world?.user){toast('กรุณาเข้าสู่ระบบก่อนโอน MLC');openLogin();return;}
+ if(!world?.user){toast('Sign in before transferring MLC');openLogin();return;}
  const recipient=document.querySelector('#mlcRecipient').value.trim();
  const amount=Number(document.querySelector('#mlcAmount').value);
- if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(recipient)){toast('กรุณากรอกรหัส User ID ของสมาชิกให้ถูกต้อง');return;}
- if(!Number.isSafeInteger(amount)||amount<1||amount>1000000){toast('จำนวน MLC ต้องเป็นเลข 1 ถึง 1,000,000');return;}
- const button=document.querySelector('#mlcTransfer');button.disabled=true;button.textContent='กำลังโอน MLC…';
+ if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(recipient)){toast('Enter a valid recipient User ID');return;}
+ if(!Number.isSafeInteger(amount)||amount<1||amount>1000000){toast('Amount (MLC) ต้องเป็นเลข 1 ถึง 1,000,000');return;}
+ const button=document.querySelector('#mlcTransfer');button.disabled=true;button.textContent='Transferring MLC…';
  try{const result=await window.MarsWorldServer.transferMlc(recipient,amount);if(result?.error)throw result.error;if(result?.data){if(result.data.mlc!==undefined)renderMlcBalance(result.data);toast('โอน '+amount.toLocaleString('en-US')+' MLC สำเร็จ');document.querySelector('#mlcAmount').value='';}}
- catch(error){toast('โอน MLC ไม่สำเร็จ: '+(error.message||'กรุณาตรวจสอบข้อมูล'));}
- finally{button.disabled=false;button.textContent='↔ โอน MLC';}
+ catch(error){toast('MLC transfer failed: '+(error.message||'Check the details and try again'));}
+ finally{button.disabled=false;button.textContent='↔ Transfer MLC';}
 };
-const typeMap={Habitat:'ฐานที่อยู่อาศัย',Lab:'ห้องปฏิบัติการ',Greenhouse:'โรงเรือนปลูกพืช',Solar:'แผงพลังงานแสงอาทิตย์',NuclearPlant:'โรงไฟฟ้านิวเคลียร์ขนาดใหญ่'};
+const typeMap={Habitat:'Habitat Dome',Lab:'Research Laboratory',Greenhouse:'Agricultural Greenhouse',Solar:'Solar Power Array',NuclearPlant:'Nuclear Energy Complex'};
 document.querySelector('#build').onclick=async()=>{
- if(!selected){toast('กรุณาเลือกแปลงที่ดินก่อน');return;}
+ if(!selected){toast('Select a parcel first');return;}
  const choice=document.querySelector('#building').value;
- if(choice==='NuclearPlant'&&selected.id!=='M-003'){toast('โรงไฟฟ้านิวเคลียร์ขนาดใหญ่ติดตั้งได้เฉพาะพื้นที่ M-003');return;}
+ if(choice==='NuclearPlant'&&selected.id!=='M-003'){toast('The Nuclear Energy Complex can only be built on parcel M-003');return;}
  const world=window.MarsWorldServer?.getState?.();
- if(!world?.user){toast('กรุณาเข้าสู่ระบบออนไลน์ก่อนก่อสร้าง');openLogin();return;}
- if(!world.db){toast('เซิร์ฟเวอร์ยังไม่พร้อม กรุณาลองใหม่');return;}
+ if(!world?.user){toast('Sign in to build structures');openLogin();return;}
+ if(!world.db){toast('Server unavailable. Please try again.');return;}
  const type=typeMap[choice];
- const button=document.querySelector('#build');button.disabled=true;button.textContent='กำลังก่อสร้าง…';
+ const button=document.querySelector('#build');button.disabled=true;button.textContent='Constructing…';
  try{
   const result=await window.MarsWorldServer.build(selected.id,type);
-  if(result?.error){toast('ก่อสร้างไม่สำเร็จ: '+(result.error.message||'เซิร์ฟเวอร์ปฏิเสธ'));return;}
-  if(!result?.data?.ok){toast('เซิร์ฟเวอร์ยังไม่ยืนยันการก่อสร้าง กรุณาลองใหม่');return;}
+  if(result?.error){toast('Construction failed: '+(result.error.message||'Request rejected'));return;}
+  if(!result?.data?.ok){toast('Construction not confirmed by server. Please try again.');return;}
   selected.building=choice;
-  toast(result.syncWarning?'บันทึกอาคารออนไลน์แล้ว แต่กำลังรอซิงก์ภาพแสดงผล · '+selected.id:'บันทึกอาคารลงโลกออนไลน์แล้ว · '+selected.id);
- }catch(error){toast('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ: '+(error?.message||'ลองใหม่อีกครั้ง'));}
- finally{button.disabled=false;button.textContent='🏗️ วางอาคารบนแปลง';}
+  toast(result.syncWarning?'Structure saved · Visual sync pending · '+selected.id:'Structure saved to the online world · '+selected.id);
+ }catch(error){toast('Server connection failed: '+(error?.message||'Please try again'));}
+ finally{button.disabled=false;button.textContent='🏗️ Place Structure';}
 };
-document.querySelector('#openConstruction3D').onclick=()=>{if(!selected){toast('กรุณาเลือกแปลงดาวอังคารก่อน');return;}location.href='./city.html?parcel='+encodeURIComponent(selected.id);};
+document.querySelector('#openConstruction3D').onclick=()=>{if(!selected){toast('Select a Mars parcel first');return;}location.href='./city.html?parcel='+encodeURIComponent(selected.id);};
  document.querySelector('#openM003Base').onclick=()=>{if(!selected||selected.id!=='M-003'){toast('Select M-003 first');return;}openM003Base();};
  document.querySelector('#closePlotPanel').onclick=()=>{document.body.classList.remove('plot-selected');selected=null;document.querySelector('#plotActions').style.display='none';document.querySelector('#plotInfo').style.display='block';};
 function openLogin(){document.querySelector('#login').style.display='grid'}
 document.querySelector('#account').onclick=openLogin;document.querySelector('#closeLogin').onclick=()=>document.querySelector('#login').style.display='none';
-document.querySelector('#loginBtn').onclick=async()=>{const r=await window.MarsWorldServer?.auth('signup');if(r?.error){toast(r.error.message);return;}if(r?.data?.needsEmailConfirmation){toast('สมัครแล้ว กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ');return;}document.querySelector('#login').style.display='none';toast('สมัครสมาชิกออนไลน์สำเร็จ')};
-document.querySelector('#signInBtn').onclick=async()=>{const r=await window.MarsWorldServer?.auth('signin');if(r?.error){toast(r.error.message);return;}document.querySelector('#login').style.display='none';toast('เข้าสู่ระบบออนไลน์สำเร็จ')};
-document.querySelector('#worldServerLogout').onclick=async()=>{await window.MarsWorldServer?.logout();toast('ออกจากระบบแล้ว')};
-document.addEventListener('mars-auth-state',e=>{document.body.classList.toggle('authenticated',!!e.detail?.user);document.body.classList.toggle('plot-selected',!!e.detail?.user&&!!selected);if(e.detail?.user){document.querySelector('#login').style.display='none';toast('ยินดีต้อนรับสู่ดาวอังคาร · Planet Explorer');}else{document.body.classList.remove('authenticated');}});
+document.querySelector('#loginBtn').onclick=async()=>{const r=await window.MarsWorldServer?.auth('signup');if(r?.error){toast(r.error.message);return;}if(r?.data?.needsEmailConfirmation){toast('Registration complete. Verify your email before signing in.');return;}document.querySelector('#login').style.display='none';toast('Create Accountสำเร็จ')};
+document.querySelector('#signInBtn').onclick=async()=>{const r=await window.MarsWorldServer?.auth('signin');if(r?.error){toast(r.error.message);return;}document.querySelector('#login').style.display='none';toast('Signed in successfully')};
+document.querySelector('#worldServerLogout').onclick=async()=>{await window.MarsWorldServer?.logout();toast('Sign Outแล้ว')};
+document.addEventListener('mars-auth-state',e=>{document.body.classList.toggle('authenticated',!!e.detail?.user);document.body.classList.toggle('plot-selected',!!e.detail?.user&&!!selected);if(e.detail?.user){document.querySelector('#login').style.display='none';toast('Welcome to Mars · Planet Explorer');}else{document.body.classList.remove('authenticated');}});
 document.addEventListener('mars-world-updated',e=>{const d=e.detail||{};document.body.classList.toggle('authenticated',!!d.user);document.body.classList.toggle('plot-selected',!!d.user&&!!selected);parcels.forEach(p=>{const canonical=d.parcels?.find(x=>x.id===p.id);if(canonical&&Number.isFinite(Number(canonical.base_price)))p.price=Number(canonical.base_price);p.salePriceUsd=canonical?.is_for_sale&&Number.isFinite(Number(canonical.sale_price_usd))?Number(canonical.sale_price_usd):null;const claim=d.claims?.find(x=>x.parcel_id===p.id);p.owner=claim?claim.owner_id:null;const structure=d.structures?.find(x=>x.parcel_id===p.id);p.building=structure?.structure_type||null;});renderSharedBuildings(d.structures||[]);const mine=d.claims?.filter(x=>x.owner_id===d.user?.id)||[];document.querySelector('#owned').textContent=mine.length;document.querySelector('#buildings').textContent=(d.structures||[]).filter(x=>x.owner_id===d.user?.id).length;markers.forEach(m=>m.material.color.set(m.userData.plot.owner?0xffa45f:0x55dce8));if(selected)selectPlot(selected);});
-document.querySelector('#navExplore').onclick=()=>{toast('แตะจุดสีฟ้าบนดาวเพื่อเลือกแปลงสำรวจ')};
+document.querySelector('#navExplore').onclick=()=>{toast('Select a blue marker on Mars to inspect a parcel')};
  document.querySelector('#navNewExplorer').onclick=()=>{
-   controls.autoRotate=false;auto=false;document.querySelector('#rotate').textContent='หมุนอัตโนมัติ: ปิด';document.querySelector('#rotate').classList.remove('active');
+   controls.autoRotate=false;auto=false;document.querySelector('#rotate').textContent='Auto-Rotate: OFF';document.querySelector('#rotate').classList.remove('active');
    const target=pos(-45,-12,1.0);controls.target.copy(target);
    const direction=target.clone().normalize();camera.position.copy(target.clone().add(direction.multiplyScalar(2.55)));controls.update();
    document.querySelector('#plotActions').style.display='none';
@@ -617,10 +636,10 @@ document.querySelector('#navExplore').onclick=()=>{toast('แตะจุดส�
  };
 document.querySelector('#navCity').onclick=()=>location.href='./city.html';
 document.querySelector('#navUnderground').onclick=()=>location.href='./underground.html';
-document.querySelector('#navMarket').onclick=()=>toast('ตลาดจำลอง: เลือกแปลงบนดาวเพื่อดูราคาและสถานะ');
-document.querySelector('#rotate').onclick=()=>{auto=!auto;controls.autoRotate=auto;document.querySelector('#rotate').textContent='หมุนอัตโนมัติ: '+(auto?'เปิด':'ปิด');document.querySelector('#rotate').classList.toggle('active',auto)};
+document.querySelector('#navMarket').onclick=()=>toast('Select a parcel to view market pricing and availability');
+document.querySelector('#rotate').onclick=()=>{auto=!auto;controls.autoRotate=auto;document.querySelector('#rotate').textContent='Auto-Rotate: '+(auto?'ON':'OFF');document.querySelector('#rotate').classList.toggle('active',auto)};
 document.querySelector('#reset').onclick=()=>{camera.position.set(0,0,3.55);controls.target.set(0,0,0);controls.update()};
-document.querySelectorAll('.bottom button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.bottom button').forEach(x=>x.classList.remove('active'));b.classList.add('active');const tab=b.dataset.tab;if(tab==='city'){location.href='./city.html';return}if(tab==='underground'){location.href='./underground.html';return}if(tab==='wallet'){document.querySelector('#mlcWalletPanel')?.classList.toggle('is-open');return}if(tab==='market'){toast('ตลาด MLC: เลือกแปลงบนดาวเพื่อดูรายการจอง ซื้อ และประกาศขาย')}if(tab==='colony'){toast(`เมืองของคุณมี ${state.owned.length} แปลง และ ${Object.keys(state.buildings).length} อาคาร`)}if(tab==='account')openLogin()});
+document.querySelectorAll('.bottom button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.bottom button').forEach(x=>x.classList.remove('active'));b.classList.add('active');const tab=b.dataset.tab;if(tab==='city'){location.href='./city.html';return}if(tab==='underground'){location.href='./underground.html';return}if(tab==='wallet'){document.querySelector('#mlcWalletPanel')?.classList.toggle('is-open');return}if(tab==='market'){toast('MLC Market: Select a parcel to reserve, purchase, or list it for sale')}if(tab==='colony'){toast(`Your colony has ${state.owned.length} parcels and ${Object.keys(state.buildings).length} structures`)}if(tab==='account')openLogin()});
 // Restore locally saved constructions on every app launch, then merge online structures when connected.
 const restoredStructures=Object.entries(state.buildings).map(([parcel_id,building])=>({id:'local-'+parcel_id,parcel_id,structure_type:typeMap[building]||building,owner_id:'local'}));
 renderSharedBuildings(restoredStructures);
