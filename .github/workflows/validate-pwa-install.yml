@@ -60,7 +60,7 @@ jobs:
               path = icon.get("src", "").removeprefix("./")
               assert path and Path(path).is_file(), f"manifest icon not found: {path}"
 
-          assert 'const CACHE = "local-mars-v4-51"' in sw, "service worker cache version was not bumped"
+          assert 'const CACHE = "local-mars-v4-52"' in sw, "service worker cache version was not bumped"
           assert '"./member-workspace.js"' in sw, "member workspace missing from offline cache"
           assert '<script src="./member-workspace.js" defer></script>' in html, "member workspace script missing"
           assert "postgres_changes" in workspace, "member workspace Realtime subscription missing"
