@@ -228,3 +228,7 @@ a:hover{color:#f0d8a8}
   .brand{letter-spacing:.1em!important}
   .panel,.card,.hero,.directory,.detail{box-shadow:0 14px 34px rgba(0,0,0,.38),inset 0 1px rgba(255,255,255,.045)!important}
 }
+
+
+/* Hide the orbital telemetry overlay while retaining relay simulation logic. */
+#lm-satellite-link{display:none!important;visibility:hidden!important;pointer-events:none!important}
