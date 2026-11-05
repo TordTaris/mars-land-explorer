@@ -58,6 +58,7 @@ jobs:
           test -s supabase/migrations/016_usd_market_standard.sql
           test -s supabase/migrations/017_fx_provider_freshness.sql
           test -s supabase/migrations/018_usd_parcel_checkout.sql
+          test -s supabase/migrations/019_usd_checkout_recovery.sql
           test -s supabase/functions/create-usd-checkout/index.ts
           test -s supabase/functions/refresh-fx-rates/index.ts
           grep -q "sale_price_usd" world-server.js
