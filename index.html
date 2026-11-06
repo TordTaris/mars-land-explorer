@@ -894,6 +894,16 @@ header .status{flex:0 1 40%!important;width:auto!important;min-width:0!important
   <p style="margin:10px 0 0;color:#8195a9;font-size:9px">Simulation only. The 400 km altitude and two-hour period are nominal scenario values; the 3D model is visually enlarged and is not to physical scale. Deployment state is saved on this device.</p>
  </section>
 </div>
+<script id="lm-orbit-navigation-fallback">
+// Keep Orbit navigation responsive even if the 3D module initializes late or fails.
+document.addEventListener('DOMContentLoaded',()=>{
+ const panel=document.getElementById('lmStationPanel');
+ const openPanel=()=>{if(panel){panel.classList.add('open');panel.setAttribute('aria-hidden','false');}};
+ document.getElementById('navSatellite')?.addEventListener('click',openPanel,{capture:true});
+ document.getElementById('lmStationOpen')?.addEventListener('click',openPanel,{capture:true});
+ document.getElementById('lmStationClose')?.addEventListener('click',()=>{panel?.classList.remove('open');panel?.setAttribute('aria-hidden','true');},{capture:true});
+});
+</script>
 
 <header><div class="brand"><span class="brand-insignia" aria-hidden="true"><img src="./icon.svg" alt=""></span><span class="brand-lockup"><strong>LOCAL <b>MARS</b></strong><small>PLANETARY CIVILIZATION NETWORK</small></span></div><div class="status" id="worldServerStatus">CONNECTING TO MARS NETWORK…</div></header>
 <section class="panel left">
