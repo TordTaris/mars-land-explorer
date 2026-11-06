@@ -216,16 +216,19 @@ jobs:
         with:
           script: |
             const { owner, repo } = context.repo;
-            const blockedSha = '76338d1dcd31e9b1017562f03ec371e64bd772e4';
-            try {
-              await github.request('POST /repos/{owner}/{repo}/pages/deployments/{pages_deployment_id}/cancel', {
-                owner, repo, pages_deployment_id: blockedSha
-              });
-              core.notice(`Cancelled stale GitHub Pages deployment ${blockedSha}.`);
-            } catch (error) {
-              // The previous deployment SHA is the identifier required by the Pages cancel API.
-              // Keep this explicit until the stale deployment lock has been cleared.
-              core.warning(`Pages cancel endpoint returned ${error.status || 'an error'}: ${error.message}. Continuing to the normal deployment step.`);
+            const blockedShas = [
+              '76338d1dcd31e9b1017562f03ec371e64bd772e4',
+              '53a13e185229dda3963031b069190d2ea55ae8c4'
+            ];
+            for (const blockedSha of blockedShas) {
+              try {
+                await github.request('POST /repos/{owner}/{repo}/pages/deployments/{pages_deployment_id}/cancel', {
+                  owner, repo, pages_deployment_id: blockedSha
+                });
+                core.notice(`Cancelled stale GitHub Pages deployment ${blockedSha}.`);
+              } catch (error) {
+                core.warning(`Pages cancel for ${blockedSha} returned ${error.status || 'an error'}: ${error.message}. Continuing.`);
+              }
             }
 
       - name: Deploy to GitHub Pages
