@@ -1017,6 +1017,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  <div style="margin-top:10px;padding-top:9px;border-top:1px solid #ffffff18"><span class="small">USD REFERENCE PRICE</span><div><b id="plotUsdPrice" style="font-size:18px;color:#aebed0">$— USD</b></div><div class="small" id="plotUsdNote">USD checkout is separate from MLC simulation purchases.</div></div>
 </div>
 <button class="primary full" id="buyMlc" disabled>Reserve & Purchase with MLC</button>
+<div id="landPurchaseReceipt" class="plot" style="display:none;margin-top:9px;border:1px solid #58b99a;background:linear-gradient(145deg,#102e2a,#0b1c26)"><strong style="color:#9af0c5">PURCHASE CONFIRMED</strong><div class="small" id="landReceiptDetails" style="margin-top:6px;line-height:1.6"></div></div>
 <div id="parcelOwnerTools" class="plot" style="display:none;margin-top:9px">
  <strong>OWNER MARKET CONTROLS</strong><div class="small" style="margin:5px 0">Set a price to list this parcel for other members.</div>
  <input id="parcelListingPrice" type="number" min="1" max="1000000" step="1" placeholder="Price in MLC" style="width:100%;padding:9px;background:#081421;color:#fff;border:1px solid #526a82;border-radius:8px;font:inherit">
@@ -1830,6 +1831,12 @@ document.querySelector('#buyMlc').onclick=async()=>{
   const result=await window.MarsWorldServer.purchaseParcel(selected.id);
   if(result?.error)throw result.error;
   if(!result?.data?.ok)throw new Error('The database did not confirm this purchase.');
+  const receipt=document.querySelector('#landPurchaseReceipt');
+  const receiptDetails=document.querySelector('#landReceiptDetails');
+  if(receipt&&receiptDetails){
+   receiptDetails.textContent='Parcel: '+result.data.parcel_id+' · Amount: '+Number(result.data.price_mlc).toLocaleString('en-US')+' MLC · Payment: MLC wallet · Ownership: transferred to your member account · Confirmed: '+new Date().toLocaleString('en-US');
+   receipt.style.display='block';
+  }
   toast('LAND ACQUIRED · '+selected.id+' · '+price.toLocaleString('en-US')+' MLC');
   await window.MarsWorldServer.refresh();
  }catch(error){toast('Purchase failed: '+(error?.message||'Please try again'));}
