@@ -33,6 +33,31 @@ button,select{border:1px solid #8c7954;background:#152b41;color:#f6ebd5;border-r
  <section class="panel"><div id="chat" aria-live="polite"><div class="msg assistant">สวัสดีครับ ผมคือ LOCAL MARS AI เลือก Local หรือ Cloud แล้วเริ่มสนทนาได้</div></div></section>
  <section class="panel"><textarea id="prompt" maxlength="5000" placeholder="พิมพ์คำถามถึง LOCAL MARS AI ได้ที่นี่…"></textarea><div class="row" style="margin-top:9px"><button id="send" type="button" class="primary">ส่งคำถามให้ AI</button><button id="downloadTxt" disabled>ดาวน์โหลด TXT</button><button id="downloadJson" disabled>ดาวน์โหลด JSON</button><button id="clear">ล้างบทสนทนา</button><a id="login" href="./" style="display:none">ไปเข้าสู่ระบบ</a></div></section>
 </main>
+<script>
+/* Early chat-button bootstrap: remains active even if the AI module is delayed. */
+(function(){
+ const btn=document.getElementById("send"),status=document.getElementById("status");
+ if(!btn||btn.dataset.bootstrapBound)return;
+ btn.dataset.bootstrapBound="1";
+ btn.addEventListener("click",function(){
+  if(typeof window.localMarsSend==="function"){
+   Promise.resolve(window.localMarsSend()).catch(function(e){
+    if(status)status.textContent="ส่งคำถามไม่สำเร็จ: "+(e&&e.message?e.message:String(e));
+    btn.disabled=false;btn.textContent="ส่งคำถามให้ AI";
+   });
+  }else{
+   window.__localMarsPendingSend=true;
+   if(status)status.textContent="กำลังเริ่มระบบ AI… หากข้อความนี้ค้าง แสดงว่าสคริปต์ AI ยังโหลดไม่สำเร็จ";
+  }
+ });
+ window.addEventListener("error",function(e){
+  if(status)status.textContent="เริ่มระบบ AI ไม่สำเร็จ: "+(e.message||"JavaScript error");
+ });
+ window.addEventListener("unhandledrejection",function(e){
+  if(status)status.textContent="ระบบ AI พบข้อผิดพลาด: "+(e.reason&&e.reason.message?e.reason.message:String(e.reason));
+ });
+})();
+</script>
 <script type="module">
 const $=id=>document.getElementById(id);
 const SUPABASE_URL="https://tppgfxsdeuujidcjnfdl.supabase.co";
@@ -94,7 +119,8 @@ $("loadModel").addEventListener("click",loadModel);
 $("unload").addEventListener("click",async()=>{if(!engine)return;try{await engine.unload();engine=null;$("unload").disabled=true;$("loadModel").disabled=false;modelStatus("ปลดโมเดลออกจากหน่วยความจำแล้ว · ไฟล์ที่แคชไว้อาจยังคงอยู่ในเบราว์เซอร์")}catch(e){modelStatus("ปลดโมเดลไม่สำเร็จ: "+e.message)}});
 $("localMode").addEventListener("click",()=>{mode="local";updateMode();setStatus(engine?"Local AI พร้อมใช้งาน":"ต้องดาวน์โหลดและโหลดโมเดลก่อน")});
 $("cloudMode").addEventListener("click",()=>{mode="cloud";updateMode();setStatus(session?"Cloud AI เลือกแล้ว · พร้อมส่งคำถาม":"Cloud AI ต้องเข้าสู่ระบบ LOCAL MARS");if(!session)$("login").style.display="inline"});
-$("send").addEventListener("click",()=>{send().catch(e=>{setStatus("เกิดข้อผิดพลาด: "+(e?.message||String(e)));$("send").disabled=false;$("send").textContent="ส่งคำถามให้ AI"})});
+window.localMarsSend=send;
+if(window.__localMarsPendingSend){window.__localMarsPendingSend=false;send().catch(e=>{setStatus("เกิดข้อผิดพลาด: "+(e?.message||String(e)));$("send").disabled=false;$("send").textContent="ส่งคำถามให้ AI"})}
 $("prompt").addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.ctrlKey||e.metaKey)){e.preventDefault();send().catch(err=>setStatus("เกิดข้อผิดพลาด: "+(err?.message||String(err))))}});
 window.addEventListener("error",e=>setStatus("ระบบพบข้อผิดพลาด JavaScript: "+(e.message||"ไม่ทราบสาเหตุ")));
 window.addEventListener("unhandledrejection",e=>setStatus("ระบบพบข้อผิดพลาด: "+(e.reason?.message||String(e.reason))));
