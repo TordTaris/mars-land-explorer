@@ -12,7 +12,7 @@
 <section class="panel"><textarea id="prompt" maxlength="4000" placeholder="Ask a question…"></textarea><div class="row" style="margin-top:9px"><button id="send" type="button" class="primary" disabled>Send message</button><button id="downloadTxt" disabled>Download TXT</button><button id="downloadJson" disabled>Download JSON</button><button id="clear">Clear Chat</button></div></section></main>
 <script type="module">
 const $=id=>document.getElementById(id);
-let engine=null,busy=false,loading=false,history=[],transcript=[];
+// This page intentionally runs local inference; no functions.invoke or paid API call is made.\nlet engine=null,busy=false,loading=false,history=[],transcript=[];
 function status(s){$("status").textContent=s}
 function add(role,content){const el=document.createElement("div");el.className="msg "+role;el.textContent=content;$("chat").appendChild(el);$("chat").scrollTop=$("chat").scrollHeight;transcript.push({role,content,time:new Date().toISOString()});$("downloadTxt").disabled=$("downloadJson").disabled=!transcript.length;return el}
 function download(name,body,type){const url=URL.createObjectURL(new Blob([body],{type}));const a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1200)}
