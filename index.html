@@ -1671,8 +1671,21 @@ function renderSharedBuildings(structures){
     const panel=box(x,.04,-.105,.045,.004,.035,new THREE.MeshStandardMaterial({color:0x245c88,metalness:.62,roughness:.28}));
     panel.rotation.x=-.2;
    }
+   // Google wordmark sign on the front fascia of the M-001 data center.
+   const signBacking=new THREE.Mesh(new THREE.BoxGeometry(.11,.027,.006),new THREE.MeshStandardMaterial({color:0xffffff,roughness:.42}));
+   signBacking.position.set(-.012,.081,.059);site.add(signBacking);
+   const logoCanvas=document.createElement('canvas');logoCanvas.width=512;logoCanvas.height=128;
+   const logoCtx=logoCanvas.getContext('2d');
+   logoCtx.fillStyle='#ffffff';logoCtx.fillRect(0,0,512,128);
+   logoCtx.font='bold 82px Arial, sans-serif';logoCtx.textBaseline='middle';
+   const logoLetters=[['G','#4285F4'],['o','#EA4335'],['o','#FBBC05'],['g','#4285F4'],['l','#34A853'],['e','#EA4335']];
+   let logoX=38;
+   for(const [letter,color] of logoLetters){logoCtx.fillStyle=color;logoCtx.fillText(letter,logoX,66);logoX+=logoCtx.measureText(letter).width-2;}
+   const logoTexture=new THREE.CanvasTexture(logoCanvas);logoTexture.colorSpace=THREE.SRGBColorSpace;
+   const logoFace=new THREE.Mesh(new THREE.PlaneGeometry(.101,.025),new THREE.MeshBasicMaterial({map:logoTexture,side:THREE.DoubleSide}));
+   logoFace.position.set(-.012,.081,.0625);site.add(logoFace);
   }
-  site.scale.setScalar(.58);
+  site.scale.setScalar(parcel.id==='M-001'?.68:.58);
   site.position.copy(pos(parcel.lon,parcel.lat,1.002));
   site.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),normal.clone().normalize());
   site.userData={structureId:item.id,parcelId:parcel.id,ownerId:item.owner_id,structureType:structureName};
