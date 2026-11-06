@@ -836,13 +836,10 @@ header .status{flex:0 1 40%!important;width:auto!important;min-width:0!important
 #lmStationCard .eyebrow{font-size:9px;letter-spacing:2px;color:#8ddbea;font-weight:800}
 #lmAresPreviewWrap{margin:13px 0 10px;padding:9px;border:1px solid #d5b66f55;border-radius:12px;background:radial-gradient(ellipse at 50% 45%,#183c55,#07111d 72%);overflow:hidden}
 #lmAresPreviewWrap .ares-preview-label{display:flex;justify-content:space-between;gap:8px;color:#e6c98f;font:800 9px/1.4 system-ui;letter-spacing:1px}
-#lmAresPreview{display:none!important}
-#lmAresReferenceImage{display:block;width:100%;height:190px;object-fit:contain;object-position:center;border-radius:8px;background:#030a12}
-#lmStationCard .ares-image-credit{margin-top:5px;text-align:center;color:#8caabd;font:700 8px/1.5 system-ui;letter-spacing:.7px}
-#lmStationCard .ares-image-credit a{color:#8ddbea;text-decoration:underline}
-#lmAresPreview canvas{display:none!important}
+#lmAresPreview{display:block!important;width:100%;height:220px;overflow:hidden;border-radius:8px;background:radial-gradient(ellipse at 50% 45%,#193e59,#030a12 72%)}
+#lmAresPreview canvas{display:block!important;width:100%!important;height:100%!important}
 #lmAresPreviewWrap .ares-preview-caption{margin-top:5px;text-align:center;color:#8caabd;font:700 8px system-ui;letter-spacing:1.1px}
-@media(max-width:420px){#lmAresReferenceImage{height:165px}}
+@media(max-width:420px){#lmAresPreview{height:185px}}
 #lmStationCard .station-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}
 #lmStationCard .station-metrics div{padding:10px;border:1px solid #ffffff20;border-radius:10px;background:#ffffff08}
 #lmStationCard small{display:block;color:#9fb3c7;font-size:9px;letter-spacing:.8px}
@@ -892,8 +889,7 @@ header .status{flex:0 1 40%!important;width:auto!important;min-width:0!important
   <p style="margin:0;color:#b5c4d1">Modular research, communications and crew-transfer platform · Mars low orbit.</p>
   <div id="lmAresPreviewWrap" aria-label="ARES station 3D close-up preview">
    <div class="ares-preview-label"><span>ARES · 3D CLOSE-UP</span><span>ROTATING MODEL</span></div>
-   <img id="lmAresReferenceImage" src="https://cdn.mos.cms.futurecdn.net/7CsvvUV43ra4BAg2Z73BAJ-1200-80.jpg" alt="Mars Base Camp orbital station concept with modular habitat and solar arrays" loading="lazy" referrerpolicy="no-referrer">
-   <div class="ares-image-credit">REFERENCE IMAGE · MARS ORBITAL STATION CONCEPT · <a href="https://www.space.com/36312-mars-base-camp-astronauts-2028.html" target="_blank" rel="noopener noreferrer">SOURCE</a></div>
+   <div id="lmAresPreview" role="img" aria-label="Live rotating 3D model of ARES orbital station"></div>
    <div class="ares-preview-caption">DETAILED VIEW · MODEL ENLARGED FOR DISPLAY</div>
   </div>
   <div class="station-metrics">
@@ -1278,7 +1274,41 @@ aresStation.scale.setScalar(.00005);
 aresStation.visible=false;
 group.add(aresStation);
 
-// ARES reference image is displayed in the control panel; orbital 3D model remains on the Mars globe.
+// Dedicated live 3D close-up renderer: preserve true physical scale on the globe,
+ // while showing the same station geometry at readable scale in the control panel.
+ let aresPreviewRenderer=null,aresPreviewScene=null,aresPreviewCamera=null,aresPreviewModel=null;
+ try{
+  const previewHost=document.getElementById('lmAresPreview');
+  if(previewHost){
+   aresPreviewScene=new THREE.Scene();
+   aresPreviewScene.background=new THREE.Color(0x061321);
+   const w=Math.max(280,previewHost.clientWidth||320),h=220;
+   aresPreviewCamera=new THREE.PerspectiveCamera(34,w/h,.01,20);
+   aresPreviewCamera.position.set(.92,.58,1.35);
+   aresPreviewCamera.lookAt(0,0,0);
+   aresPreviewModel=aresStation.clone(true);
+   aresPreviewModel.scale.setScalar(1);
+   aresPreviewModel.position.set(0,0,0);
+   aresPreviewScene.add(aresPreviewModel);
+   aresPreviewScene.add(new THREE.HemisphereLight(0xd9efff,0x263449,2.1));
+   const keyLight=new THREE.DirectionalLight(0xffe2b0,2.5);
+   keyLight.position.set(2,3,4);aresPreviewScene.add(keyLight);
+   const fillLight=new THREE.DirectionalLight(0x65cfff,1.3);
+   fillLight.position.set(-3,-1,-2);aresPreviewScene.add(fillLight);
+   aresPreviewRenderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'low-power'});
+   aresPreviewRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
+   aresPreviewRenderer.setSize(w,h,false);
+   previewHost.appendChild(aresPreviewRenderer.domElement);
+   const resizeAresPreview=()=>{
+    if(!aresPreviewRenderer||!aresPreviewCamera)return;
+    const width=Math.max(240,previewHost.clientWidth||320),height=Math.max(160,previewHost.clientHeight||220);
+    aresPreviewCamera.aspect=width/height;aresPreviewCamera.updateProjectionMatrix();
+    aresPreviewRenderer.setSize(width,height,false);
+   };
+   if(typeof ResizeObserver!=='undefined'){new ResizeObserver(resizeAresPreview).observe(previewHost);}
+   window.addEventListener('resize',resizeAresPreview,{passive:true});
+  }
+ }catch(error){console.warn('ARES 3D close-up renderer unavailable:',error);}
 
 const ARES_ORBIT_RADIUS=1+400000/MARS_PHYSICAL.meanRadiusMeters;
 const ARES_ORBIT_PERIOD_SECONDS=7200;
@@ -1781,7 +1811,7 @@ const arrivalReport=document.createElement('div');arrivalReport.id='lm-arrival-r
 const landingTargets=[pos(-4,14,1.0),pos(4,14,1.0)];const landingNormals=landingTargets.map(v=>v.clone().normalize());const landingOrientations=landingNormals.map(n=>new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),n));const landingCraft=[passengerShuttle,cargoLifter];
 // Two independent landing pads are placed beside AEGIS SETTLEMENT (0°E, 16°N).
 const landingPads=landingTargets.map((target,i)=>{const pad=new THREE.Group();pad.position.copy(target);pad.quaternion.copy(landingOrientations[i]);group.add(pad);const deck=new THREE.Mesh(new THREE.CircleGeometry(.065,40),new THREE.MeshStandardMaterial({color:0x263746,metalness:.55,roughness:.62,transparent:true,opacity:.92,side:THREE.DoubleSide}));deck.rotation.x=-Math.PI/2;deck.position.y=.004;pad.add(deck);const rim=new THREE.Mesh(new THREE.TorusGeometry(.068,.003,8,48),new THREE.MeshBasicMaterial({color:i===0?0x65eaff:0xe6bd78,transparent:true,opacity:.95}));rim.rotation.x=-Math.PI/2;rim.position.y=.008;pad.add(rim);const inner=new THREE.Mesh(new THREE.TorusGeometry(.043,.0015,6,40),new THREE.MeshBasicMaterial({color:0xc7d9e5,transparent:true,opacity:.6}));inner.rotation.x=-Math.PI/2;inner.position.y=.009;pad.add(inner);for(let k=0;k<4;k++){const q=k*Math.PI/2;const light=new THREE.Mesh(new THREE.SphereGeometry(.004,8,6),new THREE.MeshBasicMaterial({color:0x6ee7ff}));light.position.set(Math.cos(q)*.056,.012,Math.sin(q)*.056);pad.add(light);}const shadow=new THREE.Mesh(new THREE.CircleGeometry(.058,32),new THREE.MeshBasicMaterial({color:0x05090f,transparent:true,opacity:.38,depthWrite:false,side:THREE.DoubleSide}));shadow.rotation.x=-Math.PI/2;shadow.position.y=.013;pad.add(shadow);return pad;});
-function animate(){requestAnimationFrame(animate);controls.update();const t=Date.now()*.001;const elapsed=(Date.now()-landingStart)/1000;landingCraft.forEach((craft,i)=>{const progress=THREE.MathUtils.clamp((elapsed-i*3)/22,0,1);const eased=progress*progress*(3-2*progress);const radius=1.12-(1.12-1.03)*eased;craft.position.copy(landingNormals[i]).multiplyScalar(radius);craft.quaternion.copy(landingOrientations[i]);craft.rotateY(i===0?0:Math.PI*.35);});if(arrivalStatus)arrivalStatus.textContent=elapsed<25?'DESCENT TO AEGIS LANDING PADS': 'BOTH SPACECRAFT LANDED · AEGIS SITE SECURE';if(aresDeployEpoch){const phase=((Date.now()-aresDeployEpoch)/1000/ARES_ORBIT_PERIOD_SECONDS)*Math.PI*2;const inclination=.42;aresStation.position.set(Math.cos(phase)*ARES_ORBIT_RADIUS,Math.sin(phase)*ARES_ORBIT_RADIUS*Math.sin(inclination),Math.sin(phase)*ARES_ORBIT_RADIUS*Math.cos(inclination));aresStation.lookAt(0,0,0);aresStation.rotateY(t*.025);stationBeacon3d.material.color.setHex(Math.sin(t*3)>0?0x6feaff:0xd8b66d);}if(satelliteLaunchAt){const m003Normal=satelliteGroundStation.position.clone().normalize();relaySatellite.position.copy(m003Normal).multiplyScalar(1.12);relaySatellite.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),m003Normal);relaySatellite.rotateY(t*.08);relayBeacon.material.color.setHex(Math.sin(t*4)>0?0x66efff:0x2ca9ff);}if(satelliteLinkConnected){const sameHemisphere=relaySatellite.position.dot(satelliteGroundStation.position)>.18;satelliteLinkLine.visible=sameHemisphere;satelliteLinkGeometry.setFromPoints([relaySatellite.position.clone(),satelliteGroundStation.position.clone()]);satelliteLinkLine.material.opacity=.52+Math.sin(t*3)*.24;stationBeacon.scale.setScalar(1+Math.sin(t*4)*.18);}turbine.rotation.y=t*1.8;beacon.material.opacity=.55+Math.sin(t*3)*.4;beaconLight.intensity=.45+Math.sin(t*3)*.3;renderer.render(scene,camera);if(!firstPlanetFrame){firstPlanetFrame=true;const startup=document.getElementById('lmStartup');if(startup){const label=document.getElementById('lmStartupText');if(label)label.textContent='PLANET ONLINE · LOADING TERRAIN DETAILS';setTimeout(()=>startup.classList.add('is-ready'),180);}setTimeout(()=>{try{const texture=makeMarsTexture();marsMat.map=texture;marsMat.bumpMap=texture;marsMat.bumpScale=.075;marsMat.needsUpdate=true;}catch(error){console.warn('LOCAL MARS terrain detail skipped:',error);}},80);}}animate();
+function animate(){requestAnimationFrame(animate);controls.update();const t=Date.now()*.001;const elapsed=(Date.now()-landingStart)/1000;landingCraft.forEach((craft,i)=>{const progress=THREE.MathUtils.clamp((elapsed-i*3)/22,0,1);const eased=progress*progress*(3-2*progress);const radius=1.12-(1.12-1.03)*eased;craft.position.copy(landingNormals[i]).multiplyScalar(radius);craft.quaternion.copy(landingOrientations[i]);craft.rotateY(i===0?0:Math.PI*.35);});if(arrivalStatus)arrivalStatus.textContent=elapsed<25?'DESCENT TO AEGIS LANDING PADS': 'BOTH SPACECRAFT LANDED · AEGIS SITE SECURE';if(aresDeployEpoch){const phase=((Date.now()-aresDeployEpoch)/1000/ARES_ORBIT_PERIOD_SECONDS)*Math.PI*2;const inclination=.42;aresStation.position.set(Math.cos(phase)*ARES_ORBIT_RADIUS,Math.sin(phase)*ARES_ORBIT_RADIUS*Math.sin(inclination),Math.sin(phase)*ARES_ORBIT_RADIUS*Math.cos(inclination));aresStation.lookAt(0,0,0);aresStation.rotateY(t*.025);stationBeacon3d.material.color.setHex(Math.sin(t*3)>0?0x6feaff:0xd8b66d);}if(satelliteLaunchAt){const m003Normal=satelliteGroundStation.position.clone().normalize();relaySatellite.position.copy(m003Normal).multiplyScalar(1.12);relaySatellite.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),m003Normal);relaySatellite.rotateY(t*.08);relayBeacon.material.color.setHex(Math.sin(t*4)>0?0x66efff:0x2ca9ff);}if(satelliteLinkConnected){const sameHemisphere=relaySatellite.position.dot(satelliteGroundStation.position)>.18;satelliteLinkLine.visible=sameHemisphere;satelliteLinkGeometry.setFromPoints([relaySatellite.position.clone(),satelliteGroundStation.position.clone()]);satelliteLinkLine.material.opacity=.52+Math.sin(t*3)*.24;stationBeacon.scale.setScalar(1+Math.sin(t*4)*.18);}turbine.rotation.y=t*1.8;beacon.material.opacity=.55+Math.sin(t*3)*.4;beaconLight.intensity=.45+Math.sin(t*3)*.3;if(aresPreviewRenderer&&aresPreviewScene&&aresPreviewCamera){if(aresPreviewModel)aresPreviewModel.rotation.y=t*.22;aresPreviewRenderer.render(aresPreviewScene,aresPreviewCamera);}renderer.render(scene,camera);if(!firstPlanetFrame{firstPlanetFrame=true;const startup=document.getElementById('lmStartup');if(startup){const label=document.getElementById('lmStartupText');if(label)label.textContent='PLANET ONLINE · LOADING TERRAIN DETAILS';setTimeout(()=>startup.classList.add('is-ready'),180);}setTimeout(()=>{try{const texture=makeMarsTexture();marsMat.map=texture;marsMat.bumpMap=texture;marsMat.bumpScale=.075;marsMat.needsUpdate=true;}catch(error){console.warn('LOCAL MARS terrain detail skipped:',error);}},80);}}animate();
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
 </script>
 <script>
