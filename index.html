@@ -1022,14 +1022,22 @@ header .status{flex:0 1 40%!important;width:auto!important;min-width:0!important
   <span class="small">MLC Balance</span>
   <b id="mlcBalance" style="font-size:20px;color:#f0d18e">— MLC</b>
  </div>
- <button class="full" id="mlcStarter">🎁 Claim 1,000 Starter MLC</button>
+ <button class="full" id="mlcStarter">🎁 Claim 1,000 Welcome MLC</button>
+ <div style="border:1px solid #ffffff20;border-radius:9px;padding:8px;margin-top:9px">
+  <div class="small" style="margin-bottom:5px">YOUR MEMBER ID · SHARE TO RECEIVE MLC</div>
+  <div style="display:flex;align-items:center;gap:6px"><code id="mlcMemberId" style="font-size:9px;overflow-wrap:anywhere;flex:1">Sign in to view</code><button type="button" id="mlcCopyMemberId" style="white-space:nowrap;padding:6px 8px">Copy ID</button></div>
+ </div>
  <div style="border-top:1px solid #ffffff20;margin-top:10px;padding-top:9px">
   <div class="small" style="margin-bottom:6px">Transfer MLC to Another Member</div>
   <input id="mlcRecipient" autocomplete="off" placeholder="Recipient Member ID (User ID)" style="width:100%;padding:9px;margin:3px 0;background:#081421;color:#fff;border:1px solid #526a82;border-radius:8px;font:inherit;font-size:11px">
   <input id="mlcAmount" type="number" min="1" max="1000000" step="1" placeholder="Amount (MLC)" style="width:100%;padding:9px;margin:3px 0;background:#081421;color:#fff;border:1px solid #526a82;border-radius:8px;font:inherit;font-size:11px">
   <button class="full" id="mlcTransfer">↔ Transfer MLC</button>
  </div>
- <div class="small" style="font-size:9px;margin-top:8px">MLC is an in-app simulation currency for LOCAL MARS only. It is not legal tender, cryptocurrency, or redeemable cash.</div>
+ <div style="border-top:1px solid #ffffff20;margin-top:10px;padding-top:9px">
+  <div class="small" style="margin-bottom:6px">RECENT MLC TRANSACTIONS</div>
+  <div id="mlcWalletHistory" class="small" aria-live="polite">Sign in to view transactions.</div>
+ </div>
+ <div class="small" style="font-size:9px;margin-top:8px">MLC is an in-app credit for LOCAL MARS only. It is not legal tender, cryptocurrency, a deposit, or redeemable cash.</div>
 </section>
 <div id="toast"></div>
 <div id="login" role="dialog" aria-modal="true" aria-labelledby="loginTitle"><div class="panel modal">
@@ -1509,14 +1517,40 @@ const runParcelAction=async(buttonId,action,successText)=>{
  finally{button.disabled=false;if(selected)selectPlot(selected);}
 };
 const renderMlcBalance=balances=>{const el=document.querySelector('#mlcBalance');if(el)el.textContent=(Number(balances?.mlc)||0).toLocaleString('en-US')+' MLC';};
-document.addEventListener('mars-wallet-updated',e=>{renderMlcBalance(e.detail);if(selected)selectPlot(selected);});
-document.addEventListener('mars-auth-state',async()=>{const world=window.MarsWorldServer?.getState?.();if(world?.user){const result=await window.MarsWorldServer.walletBalances();if(result?.data)renderMlcBalance(result.data);}else renderMlcBalance({mlc:0});});
+const renderMlcMemberId=user=>{const el=document.querySelector('#mlcMemberId');if(el)el.textContent=user?.id||'Sign in to view';};
+const refreshMlcHistory=async()=>{
+ const host=document.querySelector('#mlcWalletHistory');if(!host)return;
+ const world=window.MarsWorldServer?.getState?.();if(!world?.user){host.textContent='Sign in to view transactions.';return;}
+ host.textContent='Loading transactions…';
+ const result=await window.MarsWorldServer.walletTransactions(8);
+ if(result?.error){host.textContent='Could not load transaction history.';return;}
+ host.replaceChildren();
+ if(!result.data?.length){host.textContent='No MLC transactions yet.';return;}
+ for(const row of result.data){
+  const line=document.createElement('div');line.style.cssText='display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid #ffffff12';
+  const detail=document.createElement('span');detail.style.cssText='min-width:0;overflow-wrap:anywhere';detail.textContent=(row.reason||'MLC transaction')+' · '+(row.created_at?new Date(row.created_at).toLocaleString():'');
+  const amount=document.createElement('strong');amount.style.cssText='white-space:nowrap;color:'+(Number(row.amount)>=0?'#9ce5bd':'#ffb19b');amount.textContent=(Number(row.amount)>0?'+':'')+Number(row.amount).toLocaleString('en-US')+' MLC';
+  line.append(detail,amount);host.append(line);
+ }
+};
+document.addEventListener('mars-wallet-updated',e=>{renderMlcBalance(e.detail);if(selected)selectPlot(selected);refreshMlcHistory();});
+document.addEventListener('mars-auth-state',async()=>{
+ const world=window.MarsWorldServer?.getState?.();
+ if(world?.user){renderMlcMemberId(world.user);const result=await window.MarsWorldServer.walletBalances();if(result?.data)renderMlcBalance(result.data);refreshMlcHistory();}
+ else{renderMlcBalance({mlc:0});renderMlcMemberId(null);const host=document.querySelector('#mlcWalletHistory');if(host)host.textContent='Sign in to view transactions.';}
+});
+document.querySelector('#mlcCopyMemberId').onclick=async()=>{
+ const id=window.MarsWorldServer?.getState?.()?.user?.id;
+ if(!id){toast('Sign in to view your Member ID');return;}
+ try{await navigator.clipboard.writeText(id);toast('Member ID copied');}
+ catch(error){toast('Copy is unavailable in this browser. Select and copy your Member ID.');}
+};
 document.querySelector('#mlcWalletClose').onclick=()=>document.querySelector('#mlcWalletPanel')?.classList.remove('is-open');
 document.querySelector('#mlcStarter').onclick=async()=>{
  const world=window.MarsWorldServer?.getState?.();
  if(!world?.user){toast('Sign in to claim starter MLC');openLogin();return;}
  const button=document.querySelector('#mlcStarter');button.disabled=true;button.textContent='Checking eligibility…';
- try{const result=await window.MarsWorldServer.grantMlcStarter();if(result?.error)throw result.error;if(result?.data)renderMlcBalance(result.data);toast('Starter MLC credited · One claim per account');}
+ try{const result=await window.MarsWorldServer.grantMlcStarter();if(result?.error)throw result.error;if(result?.data)renderMlcBalance(result.data);refreshMlcHistory();toast(result?.grant?.granted?'1,000 Welcome MLC credited to your wallet':'Welcome MLC was already claimed on this account');}
  catch(error){toast('Unable to claim MLC: '+(error.message||'Please try again'));}
  finally{button.disabled=false;button.textContent='🎁 Claim 1,000 Starter MLC';}
 };
