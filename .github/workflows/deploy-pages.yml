@@ -56,12 +56,11 @@ jobs:
           workspace = Path("member-workspace.js").read_text(encoding="utf-8")
           chat = Path("chat.js").read_text(encoding="utf-8")
           dual_ai = Path("dual-ai.html").read_text(encoding="utf-8")
-          dual_ai_scripts = re.findall(r"<script(?:\\s+type=\"module\")?>(.*?)</script>", dual_ai, re.S)
-          dual_ai_code = "\\n".join(dual_ai_scripts)
+          dual_ai_scripts = re.findall(r"<script(?:\s+type=\"module\")?>(.*?)</script>", dual_ai, re.S)
+          dual_ai_code = "\n".join(dual_ai_scripts)
           assert dual_ai_scripts and "functions.invoke" in dual_ai_code, "Dual AI client integration missing"
           assert "XAI_API_KEY" not in dual_ai and "OPENAI_API_KEY" not in dual_ai, "Provider API keys must never appear in browser code"
           Path("/tmp/local-mars-dual-ai.js").write_text(dual_ai_code, encoding="utf-8")
-          Path("/tmp/local-mars-dual-ai.js").write_text(dual_ai_script.group(1), encoding="utf-8")
           dimension_gate = Path("m003-dimension-gate.html").read_text(encoding="utf-8")
           manifest = json.loads(Path("manifest.webmanifest").read_text(encoding="utf-8"))
           sw = Path("sw.js").read_text(encoding="utf-8")
