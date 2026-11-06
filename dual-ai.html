@@ -27,12 +27,12 @@ button,select{border:1px solid #8c7954;background:#152b41;color:#f6ebd5;border-r
   <p class="note">The first download may use several hundred MB of data and browser storage. In Local mode, the model runs on this device and messages are not sent to a server. Open this page over HTTPS in a WebGPU-compatible browser such as a recent version of Chrome or Edge, on supported hardware.</p>
  </section>
  <section class="panel">
-  <h3>2 · Choose Processing Mode</h3><div class="row"><button id="localMode" class="primary">ใช้ Local AI</button><button id="cloudMode">Use Online AI</button><select id="cloudProvider" aria-label="Online AI provider"><option value="both">GPT + Grok</option><option value="gpt">GPT only</option><option value="grok">Grok only</option></select><span class="badge" id="modeBadge">LOCAL</span></div>
+  <h3>2 · Choose Processing Mode</h3><div class="row"><button id="localMode" class="primary">Use Local AI</button><button id="cloudMode">Use Online AI</button><select id="cloudProvider" aria-label="Online AI provider"><option value="both">GPT + Grok</option><option value="gpt">GPT only</option><option value="grok">Grok only</option></select><span class="badge" id="modeBadge">LOCAL</span></div>
   <div id="status" aria-live="polite">Checking system…</div>
   <p class="note">Online AI uses the secured Supabase Edge Function dual-ai with GPT and Grok API keys stored as server-side secrets. Sign in to LOCAL MARS before using Online AI. Provider API usage may incur charges on the connected API accounts.</p>
  </section>
  <section class="panel"><div id="chat" aria-live="polite"><div class="msg assistant">Hello! I am LOCAL MARS AI. Choose Local or Cloud mode to start chatting.</div></div></section>
- <section class="panel"><textarea id="prompt" maxlength="5000" placeholder="Type your message to LOCAL MARS AI here…"></textarea><div class="row" style="margin-top:9px"><button id="send" type="button" class="primary" onclick="window.__localMarsButtonTap()">Send to AI</button><button id="downloadTxt" disabled>ดาวน์โหลด TXT</button><button id="downloadJson" disabled>ดาวน์โหลด JSON</button><button id="clear">Clear Chat</button><a id="login" href="./" style="display:none">Sign In</a></div></section>
+ <section class="panel"><textarea id="prompt" maxlength="5000" placeholder="Type your message to LOCAL MARS AI here…"></textarea><div class="row" style="margin-top:9px"><button id="send" type="button" class="primary" onclick="window.__localMarsButtonTap()">Send to AI</button><button id="downloadTxt" disabled>Download TXT</button><button id="downloadJson" disabled>Download JSON</button><button id="clear">Clear Chat</button><a id="login" href="./" style="display:none">Sign In</a></div></section>
 </main>
 <script>
 /* Direct inline tap handler, independent of module event registration. */
@@ -40,19 +40,19 @@ window.__localMarsButtonTap=function(){
  const btn=document.getElementById("send"),status=document.getElementById("status");
  if(typeof window.localMarsSend==="function"){
   Promise.resolve(window.localMarsSend()).catch(function(e){
-   if(status)status.textContent="ส่งคำถามไม่สำเร็จ: "+(e&&e.message?e.message:String(e));
+   if(status)status.textContent="Message failed: "+(e&&e.message?e.message:String(e));
    if(btn){btn.disabled=false;btn.textContent="Send to AI";}
   });
  }else{
   window.__localMarsPendingSend=true;
-  if(status)status.textContent="ระบบรับการกดปุ่มแล้ว · กำลังเริ่ม AI";
+  if(status)status.textContent="Button click received · Starting AI";
  }
 };
 window.addEventListener("error",function(e){
- const s=document.getElementById("status");if(s)s.textContent="เริ่มระบบ AI ไม่สำเร็จ: "+(e.message||"JavaScript error");
+ const s=document.getElementById("status");if(s)s.textContent="AI startup failed: "+(e.message||"JavaScript error");
 });
 window.addEventListener("unhandledrejection",function(e){
- const s=document.getElementById("status");if(s)s.textContent="ระบบ AI พบข้อผิดพลาด: "+(e.reason&&e.reason.message?e.reason.message:String(e.reason));
+ const s=document.getElementById("status");if(s)s.textContent="AI error: "+(e.reason&&e.reason.message?e.reason.message:String(e.reason));
 });
 </script>
 <script type="module">
@@ -67,7 +67,7 @@ function add(role,text){const el=document.createElement("div");el.className="msg
 function download(name,body,type){const u=URL.createObjectURL(new Blob([body],{type}));const a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1200)}
 function updateMode(){ $("modeBadge").textContent=mode.toUpperCase();$("localMode").classList.toggle("primary",mode==="local");$("cloudMode").classList.toggle("primary",mode==="cloud");}
 async function loadModel(){
- if(loading||engine)return;if(!navigator.gpu){modelStatus("This device or browser does not support WebGPU · Use Cloud AI instead");$("gpuBadge").textContent="ไม่รองรับ WebGPU";return}
+ if(loading||engine)return;if(!navigator.gpu){modelStatus("This device or browser does not support WebGPU · Use Cloud AI instead");$("gpuBadge").textContent="WebGPU Unsupported";return}
  loading=true;$("loadModel").disabled=true;$("bar").style.width="0%";modelStatus("Preparing to download the model… Do not close this page");
  try{
   modelStatus("Connecting to WebLLM and preparing model files…");
@@ -82,7 +82,7 @@ async function send(){
  const prompt=$("prompt").value.trim();
  if(busy)return;
  if(!prompt){setStatus("Enter a message before sending");$("prompt").focus();return}
- if(mode==="local"&&!engine){setStatus("The model is not loaded yet, so LOCAL AI cannot answer.");add("assistant","กรุณากดปุ่ม “Download / Load Model” ด้านบน รอจนขึ้นว่าโหลดโมเดลสำเร็จ แล้วกลับมาส่งคำถามอีกครั้ง");$("prompt").focus();return}
+ if(mode==="local"&&!engine){setStatus("The model is not loaded yet, so LOCAL AI cannot answer.");add("assistant","Click “Download / Load Model” above. Wait for the success message, then send your message again.");$("prompt").focus();return}
  if(mode==="cloud"&&!session){setStatus("Sign in to LOCAL MARS before using Cloud AI.");add("assistant","Cloud mode is unavailable. Please sign in first, or switch back to Local AI.");$("login").style.display="inline";return}
  busy=true;$("send").disabled=true;$("send").textContent="Thinking…";$("prompt").value="";
  add("user",prompt);
@@ -112,7 +112,7 @@ async function send(){
   pending.textContent=answer;
   transcript[transcript.length-1].content=answer;
   history.push({role:"user",content:prompt},{role:"assistant",content:answer});history=history.slice(-10);
-  setStatus(mode==="local"?"LOCAL MARS AI replied · Processed on this device":"Cloud AI ตอบกลับแล้ว");
+  setStatus(mode==="local"?"LOCAL MARS AI replied · Processed on this device":"Cloud AI Replied");
  }catch(e){
   const msg=e?.context?.json?.error||e?.message||String(e);
   pending.textContent="Sorry, processing failed: "+msg+"\\nConfirm the model loaded successfully and that your device supports WebGPU, then try again.";
@@ -122,16 +122,16 @@ async function send(){
 }
 $("loadModel").addEventListener("click",loadModel);
 $("unload").addEventListener("click",async()=>{if(!engine)return;try{await engine.unload();engine=null;$("unload").disabled=true;$("loadModel").disabled=false;modelStatus("Model unloaded from memory · Cached files may remain in the browser.")}catch(e){modelStatus("Failed to unload model: "+e.message)}});
-$("localMode").addEventListener("click",()=>{mode="local";updateMode();setStatus(engine?"Local AI พร้อมใช้งาน":"Download and load the model first")});
+$("localMode").addEventListener("click",()=>{mode="local";updateMode();setStatus(engine?"Local AI Ready":"Download and load the model first")});
 $("cloudMode").addEventListener("click",()=>{mode="cloud";updateMode();setStatus(session?"Online AI selected · GPT/Grok ready":"Sign in to LOCAL MARS to use Online AI");if(!session)$("login").style.display="inline"});
 window.localMarsSend=send;
 if(window.__localMarsPendingSend){window.__localMarsPendingSend=false;send().catch(e=>{setStatus("Error: "+(e?.message||String(e)));$("send").disabled=false;$("send").textContent="Send to AI"})}
 $("prompt").addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.ctrlKey||e.metaKey)){e.preventDefault();send().catch(err=>setStatus("Error: "+(err?.message||String(err))))}});
-window.addEventListener("error",e=>setStatus("ระบบพบข้อผิดพลาด JavaScript: "+(e.message||"ไม่ทราบสาเหตุ")));
-window.addEventListener("unhandledrejection",e=>setStatus("ระบบพบข้อผิดพลาด: "+(e.reason?.message||String(e.reason))));
-$("clear").addEventListener("click",()=>{history=[];transcript=[];$("chat").replaceChildren();add("assistant","Clear Chatแล้ว พร้อมเริ่มใหม่")});
+window.addEventListener("error",e=>setStatus("JavaScript error: "+(e.message||"Unknown cause")));
+window.addEventListener("unhandledrejection",e=>setStatus("System error: "+(e.reason?.message||String(e.reason))));
+$("clear").addEventListener("click",()=>{history=[];transcript=[];$("chat").replaceChildren();add("assistant","Clear Chat. Ready to start again")});
 $("downloadTxt").addEventListener("click",()=>download("local-mars-ai-chat.txt",transcript.map(m=>"["+m.role+"] "+m.time+"\n"+m.content).join("\n\n"),"text/plain;charset=utf-8"));
 $("downloadJson").addEventListener("click",()=>download("local-mars-ai-chat.json",JSON.stringify({app:"LOCAL MARS AI",exportedAt:new Date().toISOString(),messages:transcript},null,2),"application/json;charset=utf-8"));
-if(navigator.gpu){$("gpuBadge").textContent="พบ WebGPU";}else{$("gpuBadge").textContent="ไม่พบ WebGPU";modelStatus("This browser cannot load the model · Open this page in a recent version of Chrome and confirm your device supports WebGPU.");}
-if(supabase){try{const {data,error}=await supabase.auth.getSession();if(error)throw error;session=data.session;if(session){mode="cloud";updateMode();setStatus("Signed in · Online GPT/Grok chat is ready");}else setStatus("Local AI is available without sign-in · Sign in to use Online GPT/Grok");supabase.auth.onAuthStateChange((_e,s)=>{session=s})}catch(e){setStatus("ตรวจสอบ Cloud session ไม่สำเร็จ แต่ Local AI ยังใช้ได้")}}else setStatus("Cloud library ไม่พร้อม · Local AI ใช้งานได้หาก WebGPU รองรับ");
+if(navigator.gpu){$("gpuBadge").textContent="WebGPU Detected";}else{$("gpuBadge").textContent="ไม่WebGPU Detected";modelStatus("This browser cannot load the model · Open this page in a recent version of Chrome and confirm your device supports WebGPU.");}
+if(supabase){try{const {data,error}=await supabase.auth.getSession();if(error)throw error;session=data.session;if(session){mode="cloud";updateMode();setStatus("Signed in · Online GPT/Grok chat is ready");}else setStatus("Local AI is available without sign-in · Sign in to use Online GPT/Grok");supabase.auth.onAuthStateChange((_e,s)=>{session=s})}catch(e){setStatus("Could not verify Cloud session, but Local AI is still available")}}else setStatus("Cloud library Unavailable · Local AI can run if WebGPU is supported");
 </script></body></html>
