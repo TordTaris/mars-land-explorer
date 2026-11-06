@@ -1511,13 +1511,22 @@ controls.enablePan=false;
 controls.rotateSpeed=.8;
 controls.touches={ONE:THREE.TOUCH.ROTATE,TWO:THREE.TOUCH.DOLLY_PAN};
 controls.mouseButtons={LEFT:THREE.MOUSE.ROTATE,MIDDLE:THREE.MOUSE.DOLLY,RIGHT:THREE.MOUSE.ROTATE};
-controls.autoRotate=true;
+controls.autoRotate=false;
 controls.autoRotateSpeed=.35;
 renderer.domElement.style.touchAction='none';
-renderer.domElement.setAttribute('aria-label','หมุนดาวอังคารได้ 360 องศาโดยลากเมาส์หรือใช้นิ้ว');
+renderer.domElement.setAttribute('aria-label','ลากขึ้นลงหรือซ้ายขวาเพื่อหมุนดาวอังคารรอบแกนกลางได้ 360 องศา');
 let marsDragPointer=null,lastMarsX=0,lastMarsY=0;
+const marsWorldUp=new THREE.Vector3(0,1,0);
+const marsScreenRight=new THREE.Vector3(1,0,0);
 renderer.domElement.addEventListener('pointerdown',event=>{if(event.pointerType==='mouse'&&event.button!==0)return;marsDragPointer=event.pointerId;lastMarsX=event.clientX;lastMarsY=event.clientY;renderer.domElement.setPointerCapture(event.pointerId);});
-renderer.domElement.addEventListener('pointermove',event=>{if(marsDragPointer!==event.pointerId)return;const dx=event.clientX-lastMarsX,dy=event.clientY-lastMarsY;lastMarsX=event.clientX;lastMarsY=event.clientY;group.rotation.y+=dx*.008;group.rotation.x+=dy*.008;});
+renderer.domElement.addEventListener('pointermove',event=>{
+ if(marsDragPointer!==event.pointerId)return;
+ const dx=event.clientX-lastMarsX,dy=event.clientY-lastMarsY;
+ lastMarsX=event.clientX;lastMarsY=event.clientY;
+ // Incremental world-axis quaternion rotation keeps the pivot at the planet's exact center.
+ if(dx)group.rotateOnWorldAxis(marsWorldUp,-dx*.008);
+ if(dy){const verticalAxis=marsScreenRight.clone().applyQuaternion(camera.quaternion).normalize();group.rotateOnWorldAxis(verticalAxis,dy*.008);}
+});
 const endMarsDrag=event=>{if(marsDragPointer===event.pointerId)marsDragPointer=null;};
 renderer.domElement.addEventListener('pointerup',endMarsDrag);
 renderer.domElement.addEventListener('pointercancel',endMarsDrag);
