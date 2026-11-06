@@ -30,7 +30,7 @@ button{border:1px solid #8c7954;background:#152b41;color:#f6ebd5;border-radius:1
  <section class="panel"><div id="chat" aria-live="polite"><div class="msg assistant">สวัสดีครับ นี่คือ LOCAL MARS Online AI เมื่อเชื่อมต่อสำเร็จแล้วสามารถเริ่มถามได้เลย</div></div></section>
  <section class="panel">
   <textarea id="prompt" maxlength="5000" placeholder="พิมพ์คำถามหรือคำสั่งของคุณ…"></textarea>
-  <div class="row" style="margin-top:10px"><button id="send" class="primary" disabled>ส่งข้อความ</button><button id="clear">ล้างบทสนทนา</button><a id="login" href="./" style="display:none">ไปเข้าสู่ระบบ</a></div>
+  <div class="row" style="margin-top:10px"><button id="send" class="primary" disabled>ส่งข้อความ</button><button id="downloadTxt" disabled>ดาวน์โหลด TXT</button><button id="downloadJson" disabled>ดาวน์โหลด JSON</button><button id="clear">ล้างบทสนทนา</button><a id="login" href="./" style="display:none">ไปเข้าสู่ระบบ</a></div>
  </section>
  <p class="note">หมายเหตุ: ระบบนี้ต้องเข้าสู่ระบบ LOCAL MARS และต้องตั้งค่า GEMINI_API_KEY ใน Supabase Secrets ก่อน จึงจะตอบคำถามได้</p>
 </main>
@@ -39,9 +39,9 @@ const SUPABASE_URL="https://tppgfxsdeuujidcjnfdl.supabase.co";
 const SUPABASE_KEY="sb_publishable_xQ0_NkSu2TMeIyJnAE94kw_WWQT2T3E";
 const $=id=>document.getElementById(id);
 const supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-let session=null,busy=false,history=[];
+let session=null,busy=false,history=[],transcript=[];
 function status(s){$("status").textContent=s;}
-function add(role,text){const el=document.createElement("div");el.className="msg "+role;el.textContent=text;$("chat").appendChild(el);$("chat").scrollTop=$("chat").scrollHeight;}
+function add(role,text){const el=document.createElement("div");el.className="msg "+role;el.textContent=text;$("chat").appendChild(el);$("chat").scrollTop=$("chat").scrollHeight;if(role==="user"||role==="assistant")transcript.push({role,content:text,time:new Date().toISOString()});updateDownloads();}\nfunction updateDownloads(){const enabled=transcript.length>0;$("downloadTxt").disabled=!enabled;$("downloadJson").disabled=!enabled;}\nfunction downloadFile(filename,content,type){const blob=new Blob([content],{type});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}\n$("downloadTxt").addEventListener("click",()=>{const body=transcript.map(m=>`[${m.role==="user"?"ผู้ใช้":"LOCAL MARS AI"}] ${m.time}\\n${m.content}`).join("\\n\\n");downloadFile("local-mars-chat-"+new Date().toISOString().slice(0,10)+".txt",body,"text/plain;charset=utf-8");});\n$("downloadJson").addEventListener("click",()=>downloadFile("local-mars-chat-"+new Date().toISOString().slice(0,10)+".json",JSON.stringify({app:"LOCAL MARS Online AI",exportedAt:new Date().toISOString(),messages:transcript},null,2),"application/json;charset=utf-8"));
 async function checkSession(){
  try{
   const {data,error}=await supabase.auth.getSession();
@@ -70,7 +70,7 @@ async function send(){
 }
 $("send").addEventListener("click",send);
 $("prompt").addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key==="Enter")send();});
-$("clear").addEventListener("click",()=>{history=[];$("chat").replaceChildren();add("assistant","ล้างบทสนทนาแล้ว พร้อมเริ่มใหม่");});
+$("clear").addEventListener("click",()=>{history=[];transcript=[];$("chat").replaceChildren();add("assistant","ล้างบทสนทนาแล้ว พร้อมเริ่มใหม่");updateDownloads();});
 supabase.auth.onAuthStateChange((_event,s)=>{session=s;$("send").disabled=!session;if(session)status("เข้าสู่ระบบแล้ว · Online AI พร้อมใช้งาน");});
 checkSession();
 </script></body></html>
