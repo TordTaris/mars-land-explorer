@@ -425,6 +425,17 @@ const WORLD_PARCEL_IDS=new Set(['M-001','M-002','M-003','M-004','M-005','M-006',
 const requestedWorldParcelId=new URLSearchParams(location.search).get('parcel');
 const activeWorldParcelId=WORLD_PARCEL_IDS.has(requestedWorldParcelId)?requestedWorldParcelId:null;
 const citySaveKey=activeWorldParcelId?'mars-city-thirdperson:'+activeWorldParcelId:'mars-city-thirdperson';
+// Parcel workspace dimensions are physical metres derived from the canonical parcel registry.
+let activeParcelAreaSqm=10000;
+if(activeWorldParcelId){
+ const parcelInfo=await marsDB.from('world_parcels').select('area_sqm,latitude,longitude').eq('id',activeWorldParcelId).maybeSingle();
+ if(parcelInfo.error)console.warn('Could not load parcel dimensions; using 10,000 m² workspace fallback:',parcelInfo.error.message);
+ else if(Number(parcelInfo.data?.area_sqm)>0)activeParcelAreaSqm=Number(parcelInfo.data.area_sqm);
+}
+const parcelSideMeters=Math.sqrt(activeParcelAreaSqm);
+const buildCellSize=parcelSideMeters/21;
+const workspaceHalfSide=parcelSideMeters/2;
+window.LOCAL_MARS_PARCEL_METRICS={parcelId:activeWorldParcelId,areaSquareMeters:activeParcelAreaSqm,sideMeters:parcelSideMeters,cellSizeMeters:buildCellSize,planetMeanRadiusMeters:3389500};
 const worldParcelBuildingTypes={hab:'ฐานที่อยู่อาศัย',green:'โรงเรือนปลูกพืช',lab:'ห้องปฏิบัติการ',solar:'แผงพลังงานแสงอาทิตย์'};
 const parcelLinkCacheKey='mars-city-world-parcel-links-v1';
 const worldParcelPublishing=new Set();
@@ -438,8 +449,8 @@ function setWorldParcelStatus(message,state='info',retryData=null){
 function updateWorldParcelContext(){
  const label=document.querySelector('#worldParcelLabel'),hint=document.querySelector('#worldParcelHint');
  if(label)label.textContent=activeWorldParcelId||'No parcel selected';
- if(hint)hint.textContent=activeWorldParcelId?'Dedicated construction workspace · '+activeWorldParcelId:'Open a parcel from Planet Explorer to start building';
- if(activeWorldParcelId){document.title='LOCAL MARS | '+activeWorldParcelId+' Construction';setWorldParcelStatus('WORKSPACE: '+activeWorldParcelId+' · Build data is stored separately for this parcel');}
+ if(hint)hint.textContent=activeWorldParcelId?'REAL PARCEL SCALE · '+activeWorldParcelId+' · '+activeParcelAreaSqm.toLocaleString('en-US')+' m² · '+parcelSideMeters.toFixed(2)+' m × '+parcelSideMeters.toFixed(2)+' m':'Open a parcel from Planet Explorer to start building';
+ if(activeWorldParcelId){document.title='LOCAL MARS | '+activeWorldParcelId+' Construction';setWorldParcelStatus('SURVEYED PARCEL: '+activeWorldParcelId+' · '+activeParcelAreaSqm.toLocaleString('en-US')+' m² · square-equivalent side '+parcelSideMeters.toFixed(2)+' m · 21 × 21 build cells at '+buildCellSize.toFixed(2)+' m each');}
 }
 function cityOffset(owner){if(owner===onlineUser?.id)return {x:0,z:0};let n=0;for(const ch of String(owner||''))n=(n+ch.charCodeAt(0))%997;return {x:((n%3)-1)*23,z:((Math.floor(n/3)%3)-1)*23};}
 function clearCityVisuals(){buildings.forEach(o=>scene.remove(o));roads.forEach(o=>scene.remove(o));nationalFlags.forEach(o=>scene.remove(o));constructionSites.forEach(o=>scene.remove(o.group));buildings.length=0;roads.length=0;nationalFlags.length=0;constructionSites.length=0;}
@@ -726,10 +737,11 @@ for(let i=0;i<18;i++){
 const regolithTexture=new THREE.CanvasTexture(regolithCanvas);
 regolithTexture.colorSpace=THREE.SRGBColorSpace;regolithTexture.wrapS=regolithTexture.wrapT=THREE.RepeatWrapping;regolithTexture.repeat.set(9,9);
 const regolithMaterial=new THREE.MeshStandardMaterial({color:0xffffff,map:regolithTexture,bumpMap:regolithTexture,bumpScale:.025,roughness:1});
-const terrain=new THREE.Mesh(new THREE.PlaneGeometry(100,100,1,1),regolithMaterial);terrain.rotation.x=-Math.PI/2;terrain.receiveShadow=true;scene.add(terrain);
-const grid=new THREE.GridHelper(50,50,0x79cbd0,0x5c7180);grid.position.y=.025;grid.material.transparent=true;grid.material.opacity=.28;scene.add(grid);
+const terrain=new THREE.Mesh(new THREE.PlaneGeometry(parcelSideMeters,parcelSideMeters,1,1),regolithMaterial);terrain.rotation.x=-Math.PI/2;terrain.receiveShadow=true;scene.add(terrain);
+const grid=new THREE.GridHelper(parcelSideMeters,21,0x79cbd0,0x5c7180);grid.position.y=.025;grid.material.transparent=true;grid.material.opacity=.28;scene.add(grid);
+// Explicit surveyed parcel boundary: the terrain footprint equals the parcel's real square-equivalent area.
 let seed=1984;const rand=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
-for(let i=0;i<160;i++){const rock=new THREE.Mesh(new THREE.DodecahedronGeometry(.15+rand()*.65,0),new THREE.MeshStandardMaterial({color:new THREE.Color().setHSL(.04+rand()*.04,.35,.22+rand()*.2),roughness:1}));rock.position.set((rand()-.5)*85,.05,(rand()-.5)*85);rock.scale.y=.3+rand()*.5;rock.castShadow=true;scene.add(rock)}
+for(let i=0;i<160;i++){const rock=new THREE.Mesh(new THREE.DodecahedronGeometry(.15+rand()*.65,0),new THREE.MeshStandardMaterial({color:new THREE.Color().setHSL(.04+rand()*.04,.35,.22+rand()*.2),roughness:1}));rock.position.set((rand()-.5)*parcelSideMeters,.05,(rand()-.5)*parcelSideMeters);rock.scale.y=.3+rand()*.5;rock.castShadow=true;scene.add(rock)}
 // Avatar: third-person astronaut with visible body, backpack and helmet
 const avatar=new THREE.Group();scene.add(avatar);
 const suit=new THREE.MeshStandardMaterial({color:0xe8edf0,roughness:.7}),dark=new THREE.MeshStandardMaterial({color:0x25384c,roughness:.6}),gold=new THREE.MeshStandardMaterial({color:0xffa45e,metalness:.25,roughness:.45});
@@ -741,7 +753,7 @@ part(new THREE.BoxGeometry(.34,.43,.2),gold,0,.98,-.25);
 for(const x of [-.13,.13]){part(new THREE.CapsuleGeometry(.085,.36,4,8),suit,x,.32,0);part(new THREE.BoxGeometry(.15,.12,.25),dark,x,.08,.04)}
 for(const x of [-.34,.34])part(new THREE.CapsuleGeometry(.075,.35,4,8),suit,x,1.02,0);
 const marker=new THREE.Mesh(new THREE.RingGeometry(.42,.52,32),new THREE.MeshBasicMaterial({color:0x62e2e8,side:THREE.DoubleSide}));marker.rotation.x=-Math.PI/2;marker.position.y=.04;scene.add(marker);
-const cells=[],buildings=[],roads=[],nationalFlags=[];for(let x=-10;x<=10;x++)for(let z=-10;z<=10;z++){const mesh=new THREE.Mesh(new THREE.PlaneGeometry(.94,.94),new THREE.MeshBasicMaterial({color:0x4fc6d0,transparent:true,opacity:.0,side:THREE.DoubleSide}));mesh.rotation.x=-Math.PI/2;mesh.position.set(x+.5,.035,z+.5);mesh.userData={x:x+.5,z:z+.5};scene.add(mesh);cells.push(mesh)}
+const cells=[],buildings=[],roads=[],nationalFlags=[];for(let ix=0;ix<21;ix++)for(let iz=0;iz<21;iz++){const x=-workspaceHalfSide+(ix+.5)*buildCellSize,z=-workspaceHalfSide+(iz+.5)*buildCellSize;const mesh=new THREE.Mesh(new THREE.PlaneGeometry(buildCellSize*.94,buildCellSize*.94),new THREE.MeshBasicMaterial({color:0x4fc6d0,transparent:true,opacity:0,side:THREE.DoubleSide}));mesh.rotation.x=-Math.PI/2;mesh.position.set(x,.035,z);mesh.userData={x,z,cellX:ix,cellZ:iz,cellSizeMeters:buildCellSize};scene.add(mesh);cells.push(mesh)}
 let selected=null,buildMode=false,roadMode=false,currentLevel=0,yaw=0,camYaw=0,camPitch=.24,distance=6,credits=9000,energy=850;
 const resources={metal:120,polymer:90,electronics:45};
 const recipes={hab:{credit:1440,metal:24,polymer:18,electronics:4},green:{credit:1170,metal:16,polymer:24,electronics:5},lab:{credit:1710,metal:28,polymer:12,electronics:12},solar:{credit:900,metal:18,polymer:6,electronics:8},hub:{credit:2160,metal:36,polymer:20,electronics:16},tower:{credit:720,metal:14,polymer:4,electronics:10}};
