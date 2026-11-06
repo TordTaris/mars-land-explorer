@@ -49,10 +49,10 @@ button{border:1px solid #8c7954;background:#152b41;color:#f6ebd5;border-radius:1
  <p class="note">ข้อจำกัด: โมเดลขนาดเล็กอาจตอบภาษาไทยหรือวิเคราะห์งานซับซ้อนได้ไม่เท่า Grok/GPT บนคลาวด์ คำตอบเป็นข้อมูลจากโมเดล ไม่ใช่การเชื่อมต่อข้อมูลสดหรือการควบคุมระบบจริง</p>
 </main>
 <script type="module">
-import { CreateMLCEngine } from "https://esm.run/@mlc-ai/web-llm";
 const $ = id => document.getElementById(id);
-let engine = null, busy = false, history = [];
+let engine = null, busy = false, history = [], webllm = null;
 const status = (s) => $("status").textContent = s;
+const setProgress = p => $("progress").style.width = Math.max(0,Math.min(100,p)) + "%";
 const addMessage = (role, text) => {
  const el = document.createElement("div");
  el.className = "msg " + role;
@@ -62,41 +62,51 @@ const addMessage = (role, text) => {
 };
 async function checkGPU(){
  if (!("gpu" in navigator)) {
-  status("อุปกรณ์หรือเบราว์เซอร์นี้ยังไม่รองรับ WebGPU จึงยังเปิด AI ภายในเครื่องไม่ได้ ลองใช้ Chrome รุ่นล่าสุดบนอุปกรณ์ที่รองรับ");
+  status("เบราว์เซอร์นี้ไม่รองรับ WebGPU — กรุณาเปิดลิงก์ด้วย Google Chrome รุ่นล่าสุด โดยเปิดจากแอป Chrome โดยตรง");
   $("load").disabled = true;
   return false;
  }
  try {
   const adapter = await navigator.gpu.requestAdapter();
   if (!adapter) throw new Error("ไม่พบ GPU adapter");
-  status("พบ WebGPU แล้ว · พร้อมโหลดโมเดล AI ภายในเครื่อง");
+  status("พบ WebGPU แล้ว · กดโหลดโมเดลเพื่อเริ่มต้น");
   return true;
  } catch(e) {
-  status("WebGPU ใช้งานไม่ได้บนอุปกรณ์นี้: " + e.message);
+  status("WebGPU ใช้งานไม่ได้: " + (e?.message || String(e)) + " · ลอง Chrome รุ่นล่าสุดและตรวจการรองรับ GPU");
   $("load").disabled = true;
   return false;
  }
 }
 $("load").addEventListener("click", async () => {
  if (busy || engine) return;
- busy = true; $("load").disabled = true;
- const model = $("model").value;
+ busy = true; $("load").disabled = true; $("load").textContent = "กำลังเริ่ม…";
+ status("กำลังเชื่อมต่อไลบรารี AI ภายในเครื่อง…"); setProgress(1);
  try {
-  engine = await CreateMLCEngine(model, {
+  if (!("gpu" in navigator)) throw new Error("เบราว์เซอร์ไม่มี WebGPU กรุณาเปิดด้วย Chrome รุ่นล่าสุด");
+  const adapter = await navigator.gpu.requestAdapter();
+  if (!adapter) throw new Error("อุปกรณ์ไม่พบ GPU ที่รองรับ WebGPU");
+  if (!webllm) {
+   status("กำลังดาวน์โหลดตัวโหลด AI (WebLLM)…");
+   webllm = await import("https://esm.run/@mlc-ai/web-llm");
+  }
+  const model = $("model").value;
+  status("กำลังดาวน์โหลดและเตรียมโมเดล " + model + " — ครั้งแรกอาจใช้เวลาหลายนาที");
+  engine = await webllm.CreateMLCEngine(model, {
    initProgressCallback: report => {
-    const p = Math.max(0, Math.min(100, Math.round((report.progress || 0) * 100)));
-    $("progress").style.width = p + "%";
+    const p = Math.round((report.progress || 0) * 100);
+    setProgress(p);
     status(report.text || ("กำลังเตรียมโมเดล " + p + "%"));
    }
   });
+  setProgress(100);
   status("โหลดโมเดลสำเร็จ · LOCAL AI พร้อมใช้งานโดยไม่ใช้ API เครดิต");
   $("send").disabled = false;
   $("model").disabled = true;
   $("load").textContent = "พร้อมใช้งาน";
  } catch(e) {
-  engine = null;
-  status("โหลดโมเดลไม่สำเร็จ: " + (e?.message || String(e)) + " · ตรวจอินเทอร์เน็ต พื้นที่ว่าง และ WebGPU แล้วลองใหม่");
-  $("load").disabled = false;
+  engine = null; setProgress(0);
+  status("เริ่มโหลดไม่สำเร็จ: " + (e?.message || String(e)) + " · หากเปิดในเบราว์เซอร์ในแอป ให้ลองเปิดด้วย Chrome โดยตรง");
+  $("load").disabled = false; $("load").textContent = "ลองโหลดอีกครั้ง";
  } finally { busy = false; }
 });
 $("send").addEventListener("click", send);
@@ -104,32 +114,24 @@ $("prompt").addEventListener("keydown", e => { if ((e.ctrlKey || e.metaKey) && e
 async function send(){
  const prompt = $("prompt").value.trim();
  if (!prompt || !engine || busy) return;
- busy = true; $("send").disabled = true;
- $("prompt").value = "";
- addMessage("user", prompt);
- status("LOCAL AI กำลังประมวลผลบนอุปกรณ์ของคุณ…");
+ busy = true; $("send").disabled = true; $("prompt").value = "";
+ addMessage("user", prompt); status("LOCAL AI กำลังประมวลผลบนอุปกรณ์ของคุณ…");
  try {
-  history.push({role:"user", content:prompt});
+  history.push({role:"user",content:prompt});
   const response = await engine.chat.completions.create({
-   messages: [{role:"system",content:"You are LOCAL MARS Free AI. Answer helpfully and clearly in Thai unless the user asks for another language. Be honest about uncertainty and never claim to operate external systems."}, ...history.slice(-8)],
-   temperature: 0.7,
-   max_tokens: 700
+   messages:[{role:"system",content:"You are LOCAL MARS Free AI. Answer helpfully and clearly in Thai unless the user asks for another language. Be honest about uncertainty and never claim to operate external systems."},...history.slice(-8)],
+   temperature:0.7,max_tokens:700
   });
   const answer = response.choices?.[0]?.message?.content || "โมเดลไม่ได้ส่งข้อความตอบกลับ";
-  history.push({role:"assistant",content:answer});
-  history = history.slice(-8);
-  addMessage("assistant", answer);
+  history.push({role:"assistant",content:answer}); history=history.slice(-8);
+  addMessage("assistant",answer);
   status("เสร็จแล้ว · ประมวลผลภายในอุปกรณ์ ไม่มีการเรียก API แบบคิดค่าบริการ");
  } catch(e) {
-  addMessage("assistant", "เกิดข้อผิดพลาด: " + (e?.message || String(e)));
+  addMessage("assistant","เกิดข้อผิดพลาด: "+(e?.message||String(e)));
   status("การประมวลผลขัดข้อง ลองส่งข้อความใหม่");
- } finally { busy = false; $("send").disabled = !engine; }
+ } finally { busy=false; $("send").disabled=!engine; }
 }
-$("clear").addEventListener("click", () => {
- history = [];
- $("chat").replaceChildren();
- addMessage("assistant","ล้างบทสนทนาแล้ว พร้อมเริ่มใหม่");
-});
+$("clear").addEventListener("click",()=>{history=[];$("chat").replaceChildren();addMessage("assistant","ล้างบทสนทนาแล้ว พร้อมเริ่มใหม่");});
 checkGPU();
 </script>
 </body>
