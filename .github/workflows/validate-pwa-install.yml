@@ -38,6 +38,7 @@ jobs:
           manifest = json.loads(Path("manifest.webmanifest").read_text(encoding="utf-8"))
           sw = Path("sw.js").read_text(encoding="utf-8")
           workspace = Path("member-workspace.js").read_text(encoding="utf-8")
+          chat = Path("chat.js").read_text(encoding="utf-8")
 
           required_html = [
               'id="lmInstallDock"',
@@ -67,7 +68,7 @@ jobs:
           assert "แดชบอร์ดสมาชิก" in html, "Dashboard title missing"
           assert 'id="lmChatOverlay"' in html and 'data-system-target="chat"' in html, "Live chat UI and menu entry missing"
           assert 'id="lmChatOpen"' in html and '"./chat.js"' in sw, "Chat launcher and offline asset missing"
-          assert 'mars_chat_messages' in html and 'chat.js' in html, "Live chat client integration missing"
+          assert 'src="./chat.js"' in html and "mars_chat_messages" in chat and "postgres_changes" in chat and "presence" in chat, "Live chat client integration missing"
           assert 'data-search-terms="ตลาด ซื้อขายที่ดิน ราคา mlc marketplace land listing"' in html, "Thai and English marketplace search terms missing"
           assert ".lm-system-grid{grid-template-columns:minmax(0,1fr)" in html, "mobile More menu must use readable single-column cards"
           assert '"./member-workspace.js"' in sw, "member workspace missing from offline cache"
@@ -90,6 +91,8 @@ jobs:
           script_start = html.index(marker) + len(marker)
           script_end = html.index("</script>", script_start)
           Path("/tmp/local-mars-install.js").write_text(html[script_start:script_end], encoding="utf-8")
+          Path("/tmp/local-mars-chat.js").write_text(chat, encoding="utf-8")
           print("LOCAL MARS PWA install UI, browser events, manifest and offline cache validated.")
           PY
           node --check /tmp/local-mars-install.js
+          node --check /tmp/local-mars-chat.js
