@@ -970,6 +970,7 @@ header .status{flex:0 1 40%!important;width:auto!important;min-width:0!important
    <h3>04 · บริการสมาชิก / MEMBER SERVICES</h3>
    <div class="lm-system-grid">
     <button class="lm-system-card" data-system-target="workspace" data-search-terms="แดชบอร์ด dashboard ภาพรวมสมาชิก ผลงาน กิจกรรม พื้นที่ทำงาน โปรเจกต์ workspace projects"><span class="lm-system-art">📁</span><b>Dashboard · แดชบอร์ด</b><small>ภาพรวมสมาชิก ผลงาน และกิจกรรมของคุณ / Member overview & activity</small><em class="lm-system-state">MEMBER ACCESS</em></button>
+    <button class="lm-system-card" data-system-target="chat" data-search-terms="แชต แชท chat สนทนา ข้อความ online realtime ห้องสนทนา"><span class="lm-system-art">💬</span><b>LIVE CHAT · แชตออนไลน์</b><small>คุยกับสมาชิก LOCAL MARS แบบเรียลไทม์</small><em class="lm-system-state">MEMBER ACCESS</em></button>
     <button class="lm-system-card" data-system-target="account" data-search-terms="สมาชิก เข้าสู่ระบบ บัญชี account sign in"><span class="lm-system-art">👤</span><b>Member Account</b><small>Sign in and manage your session</small><em class="lm-system-state">MEMBER ACCESS</em></button>
     <button class="lm-system-card" data-system-target="wallet" data-search-terms="กระเป๋าเงิน ยอดเงิน mlc wallet balance"><span class="lm-system-art">💠</span><b>MLC Wallet</b><small>View your in-app MLC balance</small><em class="lm-system-state">MEMBER ACCESS</em></button>
     <a class="lm-system-card" href="./install.html" data-search-terms="ติดตั้งแอป install app download"><span class="lm-system-art">⬇️</span><b>Install App</b><small>Install LOCAL MARS on this device</small><em class="lm-system-state">APP MODULE</em></a>
@@ -1629,7 +1630,48 @@ if ('serviceWorker' in navigator) {
 </script> <script src="./i18n.js"></script>
 <script src="./easy-play.js" defer></script>
 <script src="./member-workspace.js" defer></script>
+<script src="./chat.js" defer></script>
 
+<section id="lmChatOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="lmChatTitle">
+ <div id="lmChatCard">
+  <header id="lmChatHeader"><div><div class="lm-chat-eyebrow">LOCAL MARS · COMMUNITY</div><h2 id="lmChatTitle">LIVE CHAT · แชตออนไลน์</h2><p>ห้องสนทนาสมาชิกกลางของ LOCAL MARS</p></div><button id="lmChatClose" type="button" aria-label="Close chat">✕</button></header>
+  <div id="lmChatBar"><span id="lmChatConnection">○ กำลังเชื่อมต่อ...</span><span id="lmChatOnline">0 ออนไลน์</span></div>
+  <div id="lmChatMessages" role="log" aria-live="polite" aria-relevant="additions text"><div class="lm-chat-empty">ยินดีต้อนรับสู่ห้องสนทนา LOCAL MARS</div></div>
+  <div id="lmChatNotice" role="status" aria-live="polite">เข้าสู่ระบบสมาชิกเพื่อเริ่มสนทนา</div>
+  <button id="lmChatSignIn" type="button">เข้าสู่ระบบสมาชิก</button>
+  <form id="lmChatForm">
+   <label class="lm-chat-compose"><textarea id="lmChatInput" maxlength="1000" rows="2" placeholder="พิมพ์ข้อความของคุณ..." aria-label="พิมพ์ข้อความ"></textarea><button id="lmChatSend" type="submit">ส่ง ↗</button></label>
+   <small>ส่งได้ไม่เกิน 1,000 ตัวอักษร · โปรดสนทนาอย่างสุภาพ</small>
+  </form>
+ </div>
+</section>
+<style id="local-mars-live-chat-style">
+#lmChatOverlay{display:none;position:fixed;inset:0;z-index:10060;align-items:center;justify-content:center;padding:12px;background:#020711e8;backdrop-filter:blur(10px)}
+#lmChatOverlay.open{display:flex}
+#lmChatCard{display:flex;flex-direction:column;width:min(760px,100%);height:min(82dvh,760px);min-height:420px;overflow:hidden;border:1px solid #c5a56b99;border-radius:20px;background:radial-gradient(ellipse at 95% 0%,#24405a 0,transparent 38%),linear-gradient(145deg,#10253b,#071321 76%);box-shadow:0 28px 90px #000c;color:#f5f0e6}
+#lmChatHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:17px 18px 13px;border-bottom:1px solid #7892a933}
+.lm-chat-eyebrow{font-size:9px;font-weight:900;letter-spacing:2px;color:#72dce9}
+#lmChatTitle{margin:5px 0;color:#f0d18e;font-size:clamp(19px,4vw,25px)}
+#lmChatHeader p{margin:0;color:#a9bdcf;font-size:12px}
+#lmChatClose{width:42px;height:42px;flex:0 0 42px;border:1px solid #71869c;border-radius:12px;background:#0b1d30;color:#fff;font-size:20px}
+#lmChatBar{display:flex;justify-content:space-between;gap:12px;padding:10px 16px;color:#a9d8cb;font-size:11px;border-bottom:1px solid #7892a922}
+#lmChatMessages{flex:1;min-height:0;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px;overscroll-behavior:contain}
+.lm-chat-empty{margin:auto;text-align:center;color:#91a9bd;font-size:13px;padding:24px}
+.lm-chat-message{max-width:88%;align-self:flex-start;padding:9px 12px;border:1px solid #65819a66;border-radius:13px 13px 13px 4px;background:#102b41;overflow-wrap:anywhere}
+.lm-chat-message.mine{align-self:flex-end;border-color:#b99a6377;background:#26354a;border-radius:13px 13px 4px 13px}
+.lm-chat-meta{display:flex;gap:9px;align-items:center;margin-bottom:4px;color:#80d9df;font-size:10px}
+.lm-chat-message.mine .lm-chat-meta{color:#f0d18e}
+.lm-chat-body{white-space:pre-wrap;word-break:break-word;color:#f3f6fb;font-size:13px;line-height:1.5}
+#lmChatNotice{padding:9px 14px;color:#e9c987;font-size:11px}
+#lmChatSignIn{display:none;margin:0 14px 10px;padding:11px;border:1px solid #70cdb2;border-radius:11px;background:#075b4c;color:#e8fff6}
+#lmChatForm{padding:11px 14px max(13px,env(safe-area-inset-bottom));border-top:1px solid #7892a933;background:#071625}
+.lm-chat-compose{display:flex;align-items:stretch;gap:8px}
+#lmChatInput{flex:1;min-width:0;resize:none;border:1px solid #59748d;border-radius:11px;background:#0d2236;color:#f5f0e6;padding:11px;font:inherit;font-size:13px}
+#lmChatSend{min-width:66px;border:1px solid #55c6a8;border-radius:11px;background:linear-gradient(145deg,#08775f,#075445);color:white;font-weight:800}
+#lmChatSend:disabled,#lmChatInput:disabled{opacity:.45}
+#lmChatForm small{display:block;margin-top:6px;color:#8199ae;font-size:9px}
+@media(max-width:760px){#lmChatOverlay{padding:7px;align-items:stretch}#lmChatCard{height:100%;min-height:0;width:100%;border-radius:16px}#lmChatHeader{padding:14px 13px 11px}#lmChatMessages{padding:11px}#lmChatForm{padding:10px 10px max(12px,env(safe-area-inset-bottom))}}
+</style>
 <div id="lmInstallDock" hidden role="region" aria-label="Install LOCAL MARS">
   <div><strong>LOCAL MARS APP</strong><small>Install on your device · Offline-ready</small></div>
   <button id="lmInstallAppBtn" type="button">⬇ INSTALL</button>
@@ -1752,6 +1794,7 @@ if ('serviceWorker' in navigator) {
   underground:()=>document.getElementById('navUnderground')?.click(),
   satellite:()=>document.querySelector('.lm-command-dock [data-tab="satellite"]')?.click(),
   workspace:()=>document.getElementById('lmWorkspaceOpen')?.click(),
+  chat:()=>document.getElementById('lmChatOpen')?.click(),
   account:()=>document.querySelector('.lm-command-dock [data-tab="account"]')?.click(),
   wallet:()=>document.querySelector('.lm-command-dock [data-tab="wallet"]')?.click()
  };

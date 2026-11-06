@@ -62,9 +62,11 @@ jobs:
               path = icon.get("src", "").removeprefix("./")
               assert path and Path(path).is_file(), f"manifest icon not found: {path}"
 
-          assert 'const CACHE = "local-mars-v4-75"' in sw, "service worker cache version was not bumped"
+          assert 'const CACHE = "local-mars-v4-76"' in sw, "service worker cache version was not bumped"
           assert "Dashboard · แดชบอร์ด" in html and 'data-lm-en="Dashboard"' in html, "Member Dashboard entry missing"
           assert "แดชบอร์ดสมาชิก" in html, "Dashboard title missing"
+          assert 'id="lmChatOverlay"' in html and 'data-system-target="chat"' in html, "Live chat UI and menu entry missing"
+          assert 'mars_chat_messages' in html and 'chat.js' in html, "Live chat client integration missing"
           assert 'data-search-terms="ตลาด ซื้อขายที่ดิน ราคา mlc marketplace land listing"' in html, "Thai and English marketplace search terms missing"
           assert ".lm-system-grid{grid-template-columns:minmax(0,1fr)" in html, "mobile More menu must use readable single-column cards"
           assert '"./member-workspace.js"' in sw, "member workspace missing from offline cache"
