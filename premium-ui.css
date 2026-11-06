@@ -232,3 +232,6 @@ a:hover{color:#f0d8a8}
 
 /* Hide the orbital telemetry overlay while retaining relay simulation logic. */
 #lm-satellite-link{display:none!important;visibility:hidden!important;pointer-events:none!important}
+
+/* MLC purchase guard: visibly distinguish unavailable or underfunded purchases. */
+#buyMlc:disabled{opacity:.48!important;filter:saturate(.35)!important;cursor:not-allowed!important;box-shadow:none!important;}

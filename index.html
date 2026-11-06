@@ -1349,7 +1349,14 @@ function selectPlot(p){
  document.querySelector("#plotMlcPrice").textContent=isListed?price.toLocaleString("en-US")+" MLC":"NOT FOR SALE";
  document.querySelector("#plotMlcStatus").textContent=isOwner?"You control this parcel's MLC listing.":isListed?"Available for purchase · 15-minute reservation required.":claim?"The owner has not listed this parcel.":"This parcel is not currently listed.";
  document.querySelector("#plotMlcBalance").textContent="Wallet balance: "+(document.querySelector("#mlcBalance")?.textContent||"Sign in to view");
- const buy=document.querySelector("#buyMlc");buy.disabled=!isListed||isOwner;buy.textContent=isOwner?"Owned by you":isListed?"Reserve & Purchase · "+price.toLocaleString("en-US")+" MLC":"Not available for purchase";
+ const buy=document.querySelector("#buyMlc");
+ const balanceLabel=document.querySelector("#mlcBalance")?.textContent||"";
+ const balanceValue=Number(String(balanceLabel).replace(/,/g,"").replace(/[^0-9.-]/g,""));
+ const walletReady=!!world.user&&Number.isFinite(balanceValue);
+ const canAfford=walletReady&&balanceValue>=price;
+ buy.disabled=!isListed||isOwner||!canAfford;
+ buy.textContent=isOwner?"Owned by you":!isListed?"Not available for purchase":!walletReady?"Sign in to view wallet":!canAfford?"Insufficient MLC · "+price.toLocaleString("en-US")+" required":"Reserve & Purchase · "+price.toLocaleString("en-US")+" MLC";
+ if(isListed&&!isOwner&&!canAfford)document.querySelector("#plotMlcStatus").textContent=walletReady?"Insufficient balance · Add MLC to your wallet to purchase.":"Sign in and load your MLC wallet before purchasing.";
  const ownerTools=document.querySelector("#parcelOwnerTools");ownerTools.style.display=isOwner?"block":"none";
  const listingPrice=document.querySelector("#parcelListingPrice");if(listingPrice)listingPrice.value=listing?.price_mlc||p.price||120;
  document.querySelector("#saveParcelListing").textContent=isListed?"Update MLC Listing":"Publish MLC Listing";
@@ -1450,7 +1457,7 @@ const runParcelAction=async(buttonId,action,successText)=>{
  finally{button.disabled=false;if(selected)selectPlot(selected);}
 };
 const renderMlcBalance=balances=>{const el=document.querySelector('#mlcBalance');if(el)el.textContent=(Number(balances?.mlc)||0).toLocaleString('en-US')+' MLC';};
-document.addEventListener('mars-wallet-updated',e=>renderMlcBalance(e.detail));
+document.addEventListener('mars-wallet-updated',e=>{renderMlcBalance(e.detail);if(selected)selectPlot(selected);});
 document.addEventListener('mars-auth-state',async()=>{const world=window.MarsWorldServer?.getState?.();if(world?.user){const result=await window.MarsWorldServer.walletBalances();if(result?.data)renderMlcBalance(result.data);}else renderMlcBalance({mlc:0});});
 document.querySelector('#mlcWalletClose').onclick=()=>document.querySelector('#mlcWalletPanel')?.classList.remove('is-open');
 document.querySelector('#mlcStarter').onclick=async()=>{
