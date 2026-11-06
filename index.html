@@ -1330,7 +1330,31 @@ parcels.forEach(p=>{
  const zoneLabel=document.createElement('div');zoneLabel.textContent='NEW EXPLORER ZONE';Object.assign(zoneLabel.style,{position:'absolute',color:'#a9f4ff',font:'800 9px system-ui',letterSpacing:'1.5px',textShadow:'0 0 10px #38cdeeff',whiteSpace:'nowrap',pointerEvents:'none'});
 const ray=new THREE.Raycaster(),pointer=new THREE.Vector2();let selected=null,auto=true;
 function openM003Base(){const world=window.MarsWorldServer?.getState?.();if(!world?.user){toast('Sign in to verify M-003 ownership');openLogin();return;}const owns=(world.claims||[]).some(c=>c.parcel_id==='M-003'&&c.owner_id===world.user.id);if(!owns){toast('This secure function is restricted to the M-003 owner');return;}location.href='./m003-base.html';}
-renderer.domElement.addEventListener('pointerup',e=>{pointer.x=e.clientX/innerWidth*2-1;pointer.y=-(e.clientY/innerHeight)*2+1;ray.setFromCamera(pointer,camera);const hits=ray.intersectObjects(markers,false);if(hits.length){selectPlot(hits[0].object.userData.plot);return;}});
+let parcelTapStart=null;
+renderer.domElement.addEventListener('pointerdown',e=>{parcelTapStart={x:e.clientX,y:e.clientY};});
+renderer.domElement.addEventListener('pointerup',e=>{
+ if(!parcelTapStart)return;
+ const moved=Math.hypot(e.clientX-parcelTapStart.x,e.clientY-parcelTapStart.y)>10;
+ parcelTapStart=null;
+ if(moved)return; // Rotating or panning the planet must not change the selected parcel.
+ pointer.x=e.clientX/innerWidth*2-1;pointer.y=-(e.clientY/innerHeight)*2+1;
+ ray.setFromCamera(pointer,camera);
+ const hits=ray.intersectObjects(markers,false);
+ if(hits.length){selectPlot(hits[0].object.userData.plot);return;}
+ // A tap on an unmarked part of Mars dismisses the previous parcel details.
+ clearParcelSelection();
+});
+function clearParcelSelection(){
+ selected=null;
+ document.body.classList.remove("plot-selected");
+ const info=document.querySelector("#plotInfo"),actions=document.querySelector("#plotActions");
+ if(info){info.style.display="block";info.textContent="Select a parcel marker to view its details. Drag to rotate and pinch to zoom.";}
+ if(actions)actions.style.display="none";
+ const selectedLabel=document.querySelector("#selected");if(selectedLabel)selectedLabel.textContent="No selection";
+ const coords=document.querySelector("#coords");if(coords)coords.textContent="—";
+ const m003Entry=document.querySelector("#openM003Base");if(m003Entry)m003Entry.style.display="none";
+ const ownerTools=document.querySelector("#parcelOwnerTools");if(ownerTools)ownerTools.style.display="none";
+}
 function selectPlot(p){
  selected=p;const world=window.MarsWorldServer?.getState?.()||{};
   const m003Entry=document.querySelector("#openM003Base");if(m003Entry)m003Entry.style.display=p.id==="M-003"?"block":"none";
