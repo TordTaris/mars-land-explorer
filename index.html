@@ -1245,7 +1245,9 @@ const stationMast=new THREE.Mesh(new THREE.CylinderGeometry(.003,.003,.12,8),sta
 stationMast.position.set(-.09,.12,.035);aresStation.add(stationMast);
 const stationBeacon3d=new THREE.Mesh(new THREE.SphereGeometry(.012,10,8),stationGlow);
 stationBeacon3d.position.set(-.09,.185,.035);aresStation.add(stationBeacon3d);
-aresStation.scale.setScalar(.58);
+// Physical scale: ~150 m solar-array span against Mars' 3,389.5 km radius.
+// Keep the orbital model true-sized; the control panel is the readable close-up view.
+aresStation.scale.setScalar(.00005);
 aresStation.visible=false;
 group.add(aresStation);
 const ARES_ORBIT_RADIUS=1+400000/MARS_PHYSICAL.meanRadiusMeters;
@@ -1411,8 +1413,8 @@ function renderSharedBuildings(structures){
    // Beacon and high-contrast perimeter warning lights.
    const beacon=add(new THREE.SphereGeometry(.012,12,8),glass,.0,.22,-.015);
    const beaconLight=new THREE.PointLight(0x5ce8ff,.65,.22);beaconLight.position.copy(beacon.position);site.add(beaconLight);
-   // Reduce the overall footprint and height together so the complex reads as a believable outpost at planetary scale.
-   site.scale.setScalar(.35);
+   // Physical-scale landmark: approximately 2 km across, not a continent-sized structure.
+   site.scale.setScalar(.001);
    site.position.copy(pos(parcel.lon,parcel.lat,1.001));site.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),normal.clone().normalize());site.userData.localMarsAction='open-m003-base';
    group.add(site);buildingMeshes.set(item.id||String(index),site);return;
   }
