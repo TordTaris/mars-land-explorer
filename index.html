@@ -1518,6 +1518,8 @@ function renderSharedBuildings(structures){
  const source=Array.isArray(structures)?structures.slice():[];
  const hasM003Nuclear=source.some(item=>item.parcel_id==='M-003' && ['โรงไฟฟ้านิวเคลียร์ขนาดใหญ่','NuclearPlant','Mega Nuclear Energy Complex','โรงงานนิวเคลียร์'].includes(String(item.structure_type||item.building_type||'')));
  if(!hasM003Nuclear)source.push({id:'local-m003-nuclear-landmark',parcel_id:'M-003',structure_type:'โรงไฟฟ้านิวเคลียร์ขนาดใหญ่'});
+ const hasM001DataCenter=source.some(item=>item.parcel_id==='M-001' && String(item.structure_type||item.building_type||'')==='ศูนย์จัดเก็บข้อมูล');
+ if(!hasM001DataCenter)source.push({id:'local-m001-data-center-preview',parcel_id:'M-001',structure_type:'ศูนย์จัดเก็บข้อมูล',owner_id:'preview'});
  source.forEach((item,index)=>{
   const parcel=parcels.find(p=>p.id===item.parcel_id);if(!parcel)return;
   const normal=pos(parcel.lon,parcel.lat,1.035);
