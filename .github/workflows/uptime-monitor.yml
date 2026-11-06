@@ -36,8 +36,16 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          base="https://tordtaris.github.io/mars-land-explorer"
+          # Supabase API gateway requires the project's public publishable key.
+          # Read it from the deployed client config so key rotation stays in sync.
+          publishable_key="$(curl --location --silent --show-error --retry 3 --retry-all-errors --retry-delay 5 --max-time 25 "${base}/world-server.js" | sed -n "s/.*key:'\\([^']*\\)'.*/\\1/p")"
+          if [[ -z "${publishable_key}" ]]; then
+            echo "::error::Could not read Supabase publishable key from deployed client config"
+            exit 1
+          fi
           url="https://tppgfxsdeuujidcjnfdl.supabase.co/auth/v1/health"
-          code="$(curl --location --silent --show-error --output /dev/null --write-out '%{http_code}' --retry 3 --retry-all-errors --retry-delay 5 --max-time 25 "${url}")"
+          code="$(curl --location --silent --show-error --output /dev/null --write-out '%{http_code}' --retry 3 --retry-all-errors --retry-delay 5 --max-time 25 --header "apikey: ${publishable_key}" "${url}")"
           if [[ "${code}" != "200" ]]; then
             echo "::error::Supabase Auth health returned HTTP ${code}"
             exit 1

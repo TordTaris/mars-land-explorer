@@ -8,6 +8,8 @@ on:
       - "sw.js"
       - "parcels/**"
       - "member-workspace.js"
+      - "chat.js"
+      - ".github/workflows/uptime-monitor.yml"
       - "parcels/**"
       - ".github/workflows/validate-pwa-install.yml"
   push:
@@ -63,7 +65,7 @@ jobs:
               path = icon.get("src", "").removeprefix("./")
               assert path and Path(path).is_file(), f"manifest icon not found: {path}"
 
-          assert 'const CACHE = "local-mars-v4-79"' in sw, "service worker cache version was not bumped"
+          assert 'const CACHE = "local-mars-v4-80"' in sw, "service worker cache version was not bumped"
           assert "Dashboard · แดชบอร์ด" in html and 'data-lm-en="Dashboard"' in html, "Member Dashboard entry missing"
           assert "แดชบอร์ดสมาชิก" in html, "Dashboard title missing"
           assert 'id="lmChatOverlay"' in html and 'data-system-target="chat"' in html, "Live chat UI and menu entry missing"

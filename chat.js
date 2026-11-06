@@ -96,5 +96,17 @@ form.addEventListener('submit',sendMessage);
 input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit();}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('open'))hide();});
 document.addEventListener('mars-auth-state',async e=>{user=e.detail?.user||null;await disconnect();reconnectAttempt=0;controls();if(overlay.classList.contains('open'))connect();else if(!user)empty('เข้าสู่ระบบเพื่อดูและส่งข้อความในห้องสนทนา');});
+function resumeChat(){
+ if(!overlay.classList.contains('open'))return;
+ const s=state();if(s?.db)db=s.db;if(s?.user!==undefined)user=s.user;
+ if(!navigator.onLine){status('ออฟไลน์ · รอเครือข่ายกลับมา');return;}
+ if(reconnectTimer){clearTimeout(reconnectTimer);reconnectTimer=null;}
+ if(channel&&channel.state==='joined'){controls();return;}
+ disconnect().finally(()=>{reconnectAttempt=0;connect();});
+}
+window.addEventListener('online',resumeChat);
+window.addEventListener('pageshow',resumeChat);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')resumeChat();});
+window.addEventListener('offline',()=>{if(overlay.classList.contains('open'))status('ออฟไลน์ · จะเชื่อมต่อใหม่เมื่อมีอินเทอร์เน็ต');});
 let attempts=0;const wait=setInterval(()=>{const s=state();if(s?.db){clearInterval(wait);db=s.db;user=s.user||null;controls();}else if(++attempts>100)clearInterval(wait);},250);
 })();
