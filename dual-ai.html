@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#081321"><title>LOCAL MARS · Dual AI</title>
+<style>
+:root{color-scheme:dark;--bg:#07111f;--panel:#10243a;--line:#b99b6670;--gold:#e3c17c;--muted:#a9bacb;--cyan:#75e5ef}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -10%,#24435b 0,#091728 48%,#050b14 100%);color:#f4eddf;font:14px system-ui,sans-serif;min-height:100vh}
+header{padding:18px max(16px,calc((100vw - 1000px)/2));border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;background:#071321cc}
+.brand{font-weight:900;letter-spacing:2px}.brand b{color:var(--gold)}a{color:var(--cyan);text-decoration:none}.wrap{width:min(1000px,calc(100% - 28px));margin:26px auto}
+.eyebrow{font-size:10px;letter-spacing:2px;color:var(--gold);font-weight:800}h1{font-size:clamp(26px,5vw,42px);margin:8px 0}.sub{color:var(--muted);line-height:1.6}
+.auth,.composer,.result{border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#112943ed,#091625f5);box-shadow:0 18px 45px #0007}
+.auth{padding:13px 16px;margin:18px 0;color:var(--muted)}.composer{padding:16px;margin:18px 0}
+textarea{width:100%;min-height:125px;resize:vertical;padding:14px;border:1px solid #5d7790;border-radius:12px;background:#071321;color:#fff;font:14px/1.6 system-ui;outline:none}textarea:focus{border-color:var(--gold)}
+.modes{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}button{border:1px solid #8c7954;background:#152b41;color:#f6ebd5;border-radius:10px;padding:11px 15px;font-weight:750;cursor:pointer}button.selected,button.primary{background:linear-gradient(120deg,#e1bd73,#aa7b3d);color:#1b150d;border-color:#f0d79d}button:disabled{opacity:.55;cursor:wait}
+#send{width:100%;margin-top:4px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.result{padding:16px;min-width:0}.result h2{font-size:17px;margin:0 0 10px}.result .model{font-size:10px;color:var(--gold);letter-spacing:1px;margin-bottom:12px}.answer{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;color:#e7edf5}.error{color:#ffb2a9}.empty{color:#8094a9;font-style:italic}
+footer{color:#8094a9;font-size:11px;line-height:1.6;margin:18px 0 35px}
+@media(max-width:700px){header{padding:14px}.wrap{margin:18px auto}.grid{grid-template-columns:1fr}.result{padding:14px}button{padding:10px 12px}}
+</style>
+</head>
+<body>
+<header><div class="brand">LOCAL <b>MARS</b> · DUAL AI</div><a href="./">← Back to Explorer</a></header>
+<main class="wrap">
+ <div class="eyebrow">INTELLIGENCE COORDINATION · GROK × GPT</div>
+ <h1>Two AI minds. One workspace.</h1>
+ <p class="sub">Ask Grok and GPT independently, or send one prompt to both and compare their answers. Dual AI requires a signed-in LOCAL MARS member account.</p>
+ <div class="auth" id="auth">Checking LOCAL MARS member session…</div>
+ <section class="composer">
+  <label for="prompt" class="eyebrow">YOUR PROMPT</label>
+  <textarea id="prompt" maxlength="5000" placeholder="Ask a question, request an analysis, or describe a LOCAL MARS task…"></textarea>
+  <div class="modes" role="group" aria-label="AI mode">
+   <button type="button" data-mode="both" class="selected">Grok + GPT</button>
+   <button type="button" data-mode="grok">Grok only</button>
+   <button type="button" data-mode="gpt">GPT only</button>
+  </div>
+  <button type="button" id="send" class="primary">Run Dual AI</button>
+  <p id="status" class="sub" aria-live="polite">Ready when you are.</p>
+ </section>
+ <section class="grid" aria-live="polite">
+  <article class="result"><h2>◈ Grok · xAI</h2><div class="model" id="grok-model">NOT RUN</div><div class="answer empty" id="grok-answer">Grok's response will appear here.</div></article>
+  <article class="result"><h2>✧ GPT · OpenAI</h2><div class="model" id="gpt-model">NOT RUN</div><div class="answer empty" id="gpt-answer">GPT's response will appear here.</div></article>
+ </section>
+ <footer>Provider API usage may incur separate charges. API keys remain on the Supabase server and are never sent to this page. AI output can be incorrect; verify important decisions. LOCAL MARS MLC and mining simulations are not real cryptocurrency or monetary assets.</footer>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(()=> {
+ const SUPABASE_URL="https://tppgfxsdeuujidcjnfdl.supabase.co";
+ const SUPABASE_KEY="sb_publishable_xQ0_NkSu2TMeIyJnAE94kw_WWQT2T3E";
+ const db=window.supabase?.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+ const $=id=>document.getElementById(id);
+ let mode="both",history=[],session=null,busy=false;
+ const authText=()=>{ $("auth").textContent=session?.user?"● Signed in · "+(session.user.email||"LOCAL MARS member"):"Not signed in · Please sign in from the LOCAL MARS Explorer first."; };
+ async function init(){if(!db){$("auth").textContent="Supabase client failed to load.";return;}const {data,error}=await db.auth.getSession();if(error){$("auth").textContent=error.message;return;}session=data.session;authText();db.auth.onAuthStateChange((_event,s)=>{session=s;authText();});}
+ document.querySelectorAll("[data-mode]").forEach(button=>button.addEventListener("click",()=>{mode=button.dataset.mode;document.querySelectorAll("[data-mode]").forEach(b=>b.classList.toggle("selected",b===button));$("send").textContent=mode==="both"?"Run Dual AI":mode==="grok"?"Ask Grok":"Ask GPT";}));
+ function render(name,result){const model=$(name+"-model"),answer=$(name+"-answer");if(!result){model.textContent="NOT REQUESTED";answer.textContent="Not requested in this run.";answer.className="answer empty";return;}model.textContent=result.model||"PROVIDER";answer.textContent=result.ok?result.text:(result.error||"Provider unavailable.");answer.className=result.ok?"answer":"answer error";}
+ async function run(){if(busy)return;const prompt=$("prompt").value.trim();if(!prompt){$("status").textContent="Enter a prompt first.";return;}if(!session?.access_token){$("status").textContent="Sign in to LOCAL MARS first, then return here.";return;}busy=true;$("send").disabled=true;$("status").textContent="Contacting AI providers securely…";render("grok",null);render("gpt",null);
+ try{const {data,error}=await db.functions.invoke("dual-ai",{body:{mode,prompt,history}});if(error)throw new Error(error.message||"Dual AI request failed.");if(!data?.results)throw new Error(data?.error||"Unexpected server response.");render("grok",data.results.grok);render("gpt",data.results.gpt);$("status").textContent=data.partial?"One provider responded; the other returned an error.":data.success?"Completed · Independent answers from selected provider(s).":"No provider returned a response.";history.push({role:"user",content:prompt});const combined=[data.results.grok?.text,data.results.gpt?.text].filter(Boolean).join("\n\n");if(combined)history.push({role:"assistant",content:combined.slice(0,5000)});history=history.slice(-8);
+ }catch(e){$("status").textContent=e.message||"Connection failed."; }finally{busy=false;$("send").disabled=false;}}
+ $("send").addEventListener("click",run);$("prompt").addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key==="Enter")run();});init();
+})();
+</script>
+</body></html>
