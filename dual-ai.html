@@ -34,7 +34,6 @@ button,select{border:1px solid #8c7954;background:#152b41;color:#f6ebd5;border-r
  <section class="panel"><textarea id="prompt" maxlength="5000" placeholder="พิมพ์คำถามหรือคำสั่ง…"></textarea><div class="row" style="margin-top:9px"><button id="send" class="primary">ส่งข้อความ</button><button id="downloadTxt" disabled>ดาวน์โหลด TXT</button><button id="downloadJson" disabled>ดาวน์โหลด JSON</button><button id="clear">ล้างบทสนทนา</button><a id="login" href="./" style="display:none">ไปเข้าสู่ระบบ</a></div></section>
 </main>
 <script type="module">
-import {CreateMLCEngine} from "https://esm.run/@mlc-ai/web-llm@0.2.87";
 const $=id=>document.getElementById(id);
 const SUPABASE_URL="https://tppgfxsdeuujidcjnfdl.supabase.co";
 const SUPABASE_KEY="sb_publishable_xQ0_NkSu2TMeIyJnAE94kw_WWQT2T3E";
@@ -49,6 +48,8 @@ async function loadModel(){
  if(loading||engine)return;if(!navigator.gpu){modelStatus("อุปกรณ์หรือเบราว์เซอร์นี้ไม่รองรับ WebGPU · ใช้ Cloud AI แทนได้");$("gpuBadge").textContent="ไม่รองรับ WebGPU";return}
  loading=true;$("loadModel").disabled=true;$("bar").style.width="0%";modelStatus("กำลังเตรียมตัวดาวน์โหลดโมเดล… อย่าปิดหน้านี้");
  try{
+  modelStatus("กำลังเชื่อมต่อระบบ WebLLM และเตรียมไฟล์โมเดล…");
+  const {CreateMLCEngine}=await import("https://esm.run/@mlc-ai/web-llm@0.2.87");
   engine=await CreateMLCEngine($("model").value,{initProgressCallback:p=>{const pct=Math.max(0,Math.min(100,Math.round((p.progress||0)*100)));$("bar").style.width=pct+"%";modelStatus((p.text||"กำลังดาวน์โหลดและเตรียมโมเดล")+" · "+pct+"%")}});
   $("bar").style.width="100%";$("unload").disabled=false;modelStatus("โหลดโมเดลสำเร็จ · พร้อมประมวลผลบนอุปกรณ์นี้ และเบราว์เซอร์จะเก็บไฟล์ไว้ในแคช");
   setStatus("Local AI พร้อมใช้งาน · ข้อความจะประมวลผลบนอุปกรณ์");mode="local";updateMode();
@@ -84,6 +85,6 @@ $("send").addEventListener("click",send);$("prompt").addEventListener("keydown",
 $("clear").addEventListener("click",()=>{history=[];transcript=[];$("chat").replaceChildren();add("assistant","ล้างบทสนทนาแล้ว พร้อมเริ่มใหม่")});
 $("downloadTxt").addEventListener("click",()=>download("local-mars-ai-chat.txt",transcript.map(m=>"["+m.role+"] "+m.time+"\n"+m.content).join("\n\n"),"text/plain;charset=utf-8"));
 $("downloadJson").addEventListener("click",()=>download("local-mars-ai-chat.json",JSON.stringify({app:"LOCAL MARS AI",exportedAt:new Date().toISOString(),messages:transcript},null,2),"application/json;charset=utf-8"));
-if(navigator.gpu){$("gpuBadge").textContent="WebGPU พร้อมตรวจสอบ";}else{$("gpuBadge").textContent="ไม่พบ WebGPU";}
+if(navigator.gpu){$("gpuBadge").textContent="พบ WebGPU";}else{$("gpuBadge").textContent="ไม่พบ WebGPU";modelStatus("ยังไม่สามารถโหลดโมเดลในเบราว์เซอร์นี้ได้ · เปิดลิงก์นี้ด้วย Chrome รุ่นใหม่และตรวจสอบว่าอุปกรณ์รองรับ WebGPU");}
 if(supabase){try{const {data,error}=await supabase.auth.getSession();if(error)throw error;session=data.session;if(session)setStatus("เข้าสู่ระบบ LOCAL MARS แล้ว · เลือก Local หรือ Cloud ได้");else setStatus("Local AI ใช้งานได้โดยไม่ต้องล็อกอิน · Cloud AI ต้องเข้าสู่ระบบ");supabase.auth.onAuthStateChange((_e,s)=>{session=s})}catch(e){setStatus("ตรวจสอบ Cloud session ไม่สำเร็จ แต่ Local AI ยังใช้ได้")}}else setStatus("Cloud library ไม่พร้อม · Local AI ใช้งานได้หาก WebGPU รองรับ");
 </script></body></html>
