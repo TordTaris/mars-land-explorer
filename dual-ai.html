@@ -58,9 +58,10 @@ async function loadModel(){
 }
 async function send(){
  const prompt=$("prompt").value.trim();
- if(!prompt||busy)return;
- if(mode==="local"&&!engine){setStatus("ยังไม่ได้โหลดโมเดล · กด “ดาวน์โหลด / โหลดโมเดล” ก่อน แล้วจึงส่งคำถามได้");modelStatus("รอโหลดโมเดลเพื่อเริ่มสนทนา");return}
- if(mode==="cloud"&&!session){setStatus("Cloud AI ต้องเข้าสู่ระบบ LOCAL MARS ก่อน");$("login").style.display="inline";return}
+ if(busy)return;
+ if(!prompt){setStatus("พิมพ์คำถามก่อนกดส่ง");$("prompt").focus();return}
+ if(mode==="local"&&!engine){setStatus("ยังไม่ได้โหลดโมเดล จึงยังตอบคำถามไม่ได้");add("assistant","กรุณากดปุ่ม “ดาวน์โหลด / โหลดโมเดล” ด้านบน รอจนขึ้นว่าโหลดโมเดลสำเร็จ แล้วกลับมาส่งคำถามอีกครั้ง");$("prompt").focus();return}
+ if(mode==="cloud"&&!session){setStatus("Cloud AI ต้องเข้าสู่ระบบ LOCAL MARS ก่อน");add("assistant","โหมด Cloud ยังไม่พร้อม กรุณาเข้าสู่ระบบก่อน หรือเปลี่ยนกลับไปใช้ Local AI");$("login").style.display="inline";return}
  busy=true;$("send").disabled=true;$("send").textContent="กำลังคิด…";$("prompt").value="";
  add("user",prompt);
  const pending=add("assistant",mode==="local"?"LOCAL MARS AI กำลังประมวลผลคำถามบนอุปกรณ์…":"กำลังส่งคำถามไปยัง Cloud AI…");
@@ -93,7 +94,10 @@ $("loadModel").addEventListener("click",loadModel);
 $("unload").addEventListener("click",async()=>{if(!engine)return;try{await engine.unload();engine=null;$("unload").disabled=true;$("loadModel").disabled=false;modelStatus("ปลดโมเดลออกจากหน่วยความจำแล้ว · ไฟล์ที่แคชไว้อาจยังคงอยู่ในเบราว์เซอร์")}catch(e){modelStatus("ปลดโมเดลไม่สำเร็จ: "+e.message)}});
 $("localMode").addEventListener("click",()=>{mode="local";updateMode();setStatus(engine?"Local AI พร้อมใช้งาน":"ต้องดาวน์โหลดและโหลดโมเดลก่อน")});
 $("cloudMode").addEventListener("click",()=>{mode="cloud";updateMode();setStatus(session?"Cloud AI เลือกแล้ว · พร้อมส่งคำถาม":"Cloud AI ต้องเข้าสู่ระบบ LOCAL MARS");if(!session)$("login").style.display="inline"});
-$("send").addEventListener("click",send);$("prompt").addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key==="Enter")send()});
+$("send").addEventListener("click",()=>{send().catch(e=>{setStatus("เกิดข้อผิดพลาด: "+(e?.message||String(e)));$("send").disabled=false;$("send").textContent="ส่งคำถามให้ AI"})});
+$("prompt").addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.ctrlKey||e.metaKey)){e.preventDefault();send().catch(err=>setStatus("เกิดข้อผิดพลาด: "+(err?.message||String(err))))}});
+window.addEventListener("error",e=>setStatus("ระบบพบข้อผิดพลาด JavaScript: "+(e.message||"ไม่ทราบสาเหตุ")));
+window.addEventListener("unhandledrejection",e=>setStatus("ระบบพบข้อผิดพลาด: "+(e.reason?.message||String(e.reason))));
 $("clear").addEventListener("click",()=>{history=[];transcript=[];$("chat").replaceChildren();add("assistant","ล้างบทสนทนาแล้ว พร้อมเริ่มใหม่")});
 $("downloadTxt").addEventListener("click",()=>download("local-mars-ai-chat.txt",transcript.map(m=>"["+m.role+"] "+m.time+"\n"+m.content).join("\n\n"),"text/plain;charset=utf-8"));
 $("downloadJson").addEventListener("click",()=>download("local-mars-ai-chat.json",JSON.stringify({app:"LOCAL MARS AI",exportedAt:new Date().toISOString(),messages:transcript},null,2),"application/json;charset=utf-8"));
