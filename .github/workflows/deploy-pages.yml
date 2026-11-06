@@ -32,7 +32,7 @@ jobs:
           from pathlib import Path
 
           required = [
-              "index.html", "install.html", "member-workspace.js", "city.html", "underground.html", "mission-trainer.html",
+              "index.html", "install.html", "member-workspace.js", "city.html", "underground.html", "mission-trainer.html", "news.html",
               "m003-base.html", "m003-dimension-gate.html", "top-secret-demo.html",
               "civilization.html", "i18n.js", "premium-ui.css",
               "world-server.js", "nasa-data.js", "multiverse.js", "easy-play.js", "chat.js",
@@ -52,6 +52,7 @@ jobs:
           city = Path("city.html").read_text(encoding="utf-8")
           underground = Path("underground.html").read_text(encoding="utf-8")
           mission = Path("mission-trainer.html").read_text(encoding="utf-8")
+          news = Path("news.html").read_text(encoding="utf-8")
           workspace = Path("member-workspace.js").read_text(encoding="utf-8")
           chat = Path("chat.js").read_text(encoding="utf-8")
           dimension_gate = Path("m003-dimension-gate.html").read_text(encoding="utf-8")
@@ -80,7 +81,7 @@ jobs:
           assert manifest.get("display") == "standalone", "PWA standalone display missing"
           assert any(icon.get("sizes") == "192x192" for icon in manifest.get("icons", [])), "192px PWA icon declaration missing"
           assert any(icon.get("sizes") == "512x512" for icon in manifest.get("icons", [])), "512px PWA icon declaration missing"
-          assert 'const CACHE = "local-mars-v4-81"' in sw, "service worker cache version not bumped"
+          assert 'const CACHE = "local-mars-v4-83"' in sw, "service worker cache version not bumped"
           assert 'id="local-mars-mobile-header-and-aegis-scale-v462"' in html, "mobile header and AEGIS layout fix missing"
           assert "colonyRoot.scale.setScalar(.30)" in html, "planetary AEGIS scale missing"
           assert "relaySatellite.scale.setScalar(.18)" in html, "planetary satellite scale missing"
@@ -114,9 +115,14 @@ jobs:
           assert "Build a Resilient Mars Outpost" in mission, "Mission Trainer content missing"
           assert "EDUCATIONAL SIMULATION" in mission and "NASA is not affiliated" in mission, "Mission Trainer scientific boundary missing"
           assert 'href="./mission-trainer.html"' in html, "Mission Trainer navigation link missing"
+          assert 'href="./news.html"' in html and "LOCAL MARS NEWS" in html, "LOCAL MARS NEWS navigation missing"
+          assert "api.gdeltproject.org" in news and "world_events" in news, "Live news and member event sources missing"
+          news_script = re.search(r"<script>(.*?)</script>", news, re.S)
+          assert news_script, "LOCAL MARS NEWS script missing"
+          Path("/tmp/mars-news.js").write_text(news_script.group(1), encoding="utf-8")
 
           for asset in (
-              '"./"', '"./index.html"', '"./city.html"', '"./underground.html"', '"./mission-trainer.html"',
+              '"./"', '"./index.html"', '"./city.html"', '"./underground.html"', '"./mission-trainer.html"', '"./news.html"',
               '"./m003-base.html"', '"./m003-dimension-gate.html"', '"./top-secret-demo.html"',
               '"./civilization.html"', '"./i18n.js"', '"./premium-ui.css"',
               '"./world-server.js"', '"./member-workspace.js"', '"./multiverse.js"', '"./easy-play.js"',
@@ -154,6 +160,7 @@ jobs:
           node --check /tmp/mars-city.mjs
           node --check /tmp/mars-underground.js
           node --check /tmp/mars-mission.js
+          node --check /tmp/mars-news.js
           node --check sw.js
           node --check update-manager.js
           node --check world-server.js
