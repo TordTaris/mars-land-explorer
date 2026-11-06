@@ -466,6 +466,31 @@ body.authenticated #scene{background:radial-gradient(ellipse at 50% 48%,#25364b 
 .lm-system-state{position:absolute;left:55px;bottom:7px;color:#8fdcc9;font-size:7px;font-style:normal;font-weight:800;letter-spacing:1px}
 .lm-system-card[data-system-target="satellite"] .lm-system-state{color:#e4c27c}
 @media(max-width:760px){.lm-systems-overview{gap:5px}.lm-systems-overview>div{padding:8px 6px}.lm-systems-overview small{font-size:7px}.lm-systems-overview b{font-size:15px}.lm-systems-overview span{font-size:8px}.lm-system-card .lm-system-art{width:29px;height:36px}.lm-system-state{left:45px;font-size:6px}}
+/* More directory: readable, thumb-friendly mobile navigation. */
+#lmSystemsCard{display:flex;flex-direction:column;min-height:0}
+#lmSystemsCard .lm-systems-head{position:sticky;top:-1px;z-index:3;padding:4px 0 12px;background:linear-gradient(180deg,#10253b 78%,#10253b00);margin-bottom:10px}
+#lmSystemsCard .lm-systems-search{position:sticky;top:72px;z-index:2;box-shadow:0 5px 16px #0004}
+.lm-system-card{cursor:pointer;min-height:82px;width:100%;font:inherit}
+.lm-system-card:focus-visible{outline:2px solid #f0d18e;outline-offset:3px}
+#lmSystemsEmpty{padding:24px 12px;border:1px dashed #64819a66;border-radius:12px;margin-top:12px}
+@media(max-width:760px){
+ #lmSystemsOverlay{align-items:stretch;padding:calc(env(safe-area-inset-top,0px) + 7px) 8px calc(env(safe-area-inset-bottom,0px) + 7px)}
+ #lmSystemsCard{width:100%;max-height:100%;height:100%;padding:13px 12px 22px;border-radius:17px;gap:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+ #lmSystemsCard .lm-systems-head{top:-13px;padding:12px 0 13px;margin-bottom:8px;align-items:center}
+ #lmSystemsCard .lm-systems-head h2{font-size:24px}
+ #lmSystemsCard .lm-systems-head p{font-size:13px;line-height:1.45}
+ #lmSystemsClose{width:44px;height:44px;flex-basis:44px;font-size:21px}
+ #lmSystemsCard .lm-systems-search{top:0;height:50px;margin-bottom:4px;background:#061321f5}
+ .lm-system-group{margin-top:17px}
+ .lm-system-group h3{font-size:11px;letter-spacing:1px;margin-bottom:9px}
+ .lm-system-grid{grid-template-columns:minmax(0,1fr);gap:8px}
+ .lm-system-card{grid-template-columns:46px minmax(0,1fr);grid-template-rows:auto auto;min-height:78px;padding:12px 13px;column-gap:12px;border-radius:14px}
+ .lm-system-card>span{width:42px;height:42px;display:grid;place-items:center;border:1px solid #7892a955;border-radius:12px;background:#081a2c;font-size:25px}
+ .lm-system-card b{font-size:14px;line-height:1.3}
+ .lm-system-card small{font-size:11px;line-height:1.45;margin-top:3px}
+ .lm-system-card .lm-system-state{position:static;grid-column:2;margin-top:6px;font-size:8px;letter-spacing:1px}
+ .lm-systems-foot{flex-direction:column;font-size:8px;gap:5px;margin-top:18px;padding-bottom:8px}
+}
 </style><style id="local-mars-visible-system-hub">
 #lmSystemHubFloat{position:fixed;z-index:10020;top:calc(env(safe-area-inset-top,0px) + 66px);right:14px;display:flex;align-items:center;gap:9px;min-height:44px;padding:8px 13px;border:1px solid #e1bd79;border-radius:13px;background:linear-gradient(135deg,#273b50f5,#0a1a2bf5);color:#fff0cf;box-shadow:0 8px 26px #0009,0 0 18px #e2bd7933;font:800 10px/1.2 system-ui,sans-serif;letter-spacing:1px;cursor:pointer;backdrop-filter:blur(12px)}
 #lmSystemHubFloat .hub-icon{font-size:17px;color:#80e5ee}
@@ -922,32 +947,32 @@ header .status{flex:0 1 40%!important;width:auto!important;min-width:0!important
   <div class="lm-system-group" data-system-group="explore">
    <h3>01 · EXPLORE & LAND</h3>
    <div class="lm-system-grid">
-    <button class="lm-system-card" data-system-target="explore"><span class="lm-system-art">🌎</span><b>Planet Explorer</b><small>Rotate Mars and inspect parcels</small><em class="lm-system-state">APP MODULE</em></button>
-    <button class="lm-system-card" data-system-target="market"><span class="lm-system-art">🪙</span><b>Land Marketplace</b><small>Browse land listings and MLC prices</small><em class="lm-system-state">APP MODULE</em></button>
+    <button class="lm-system-card" data-system-target="explore" data-search-terms="mars ดาวอังคาร สำรวจ planet explorer แปลงที่ดิน land"><span class="lm-system-art">🌎</span><b>Planet Explorer</b><small>Rotate Mars and inspect parcels</small><em class="lm-system-state">APP MODULE</em></button>
+    <button class="lm-system-card" data-system-target="market" data-search-terms="ตลาด ซื้อขายที่ดิน ราคา mlc marketplace land listing"><span class="lm-system-art">🪙</span><b>Land Marketplace</b><small>Browse land listings and MLC prices</small><em class="lm-system-state">APP MODULE</em></button>
    </div>
   </div>
   <div class="lm-system-group" data-system-group="development">
    <h3>02 · COLONY & ENGINEERING</h3>
    <div class="lm-system-grid">
-    <button class="lm-system-card" data-system-target="city"><span class="lm-system-art">🏗️</span><b>3D City Builder</b><small>Build and manage settlements</small><em class="lm-system-state">APP MODULE</em></button>
-    <button class="lm-system-card" data-system-target="underground"><span class="lm-system-art">🛰️</span><b>Underground Facility</b><small>Explore protected base systems</small><em class="lm-system-state">APP MODULE</em></button>
-    <a class="lm-system-card" href="./civilization.html"><span class="lm-system-art">🌐</span><b>Civilization Network</b><small>View the wider planetary network</small><em class="lm-system-state">APP MODULE</em></a>
+    <button class="lm-system-card" data-system-target="city" data-search-terms="เมือง สร้างเมือง 3d city builder colony อาณานิคม"><span class="lm-system-art">🏗️</span><b>3D City Builder</b><small>Build and manage settlements</small><em class="lm-system-state">APP MODULE</em></button>
+    <button class="lm-system-card" data-system-target="underground" data-search-terms="ใต้ดิน ฐานใต้ดิน underground facility base"><span class="lm-system-art">🛰️</span><b>Underground Facility</b><small>Explore protected base systems</small><em class="lm-system-state">APP MODULE</em></button>
+    <a class="lm-system-card" href="./civilization.html" data-search-terms="อารยธรรม เครือข่าย civilization network planet"><span class="lm-system-art">🌐</span><b>Civilization Network</b><small>View the wider planetary network</small><em class="lm-system-state">APP MODULE</em></a>
    </div>
   </div>
   <div class="lm-system-group" data-system-group="operations">
    <h3>03 · MISSIONS & NETWORK</h3>
    <div class="lm-system-grid">
-    <button class="lm-system-card" data-system-target="satellite"><span class="lm-system-art">🛰️</span><b>Orbital Operations</b><small>Open the simulated satellite link</small><em class="lm-system-state">SIMULATION</em></button>
-    <a class="lm-system-card" href="./mission-trainer.html"><span class="lm-system-art">🚀</span><b>Mission Trainer</b><small>Learn mission procedures</small><em class="lm-system-state">APP MODULE</em></a>
+    <button class="lm-system-card" data-system-target="satellite" data-search-terms="ดาวเทียม วงโคจร orbital operations satellite"><span class="lm-system-art">🛰️</span><b>Orbital Operations</b><small>Open the simulated satellite link</small><em class="lm-system-state">SIMULATION</em></button>
+    <a class="lm-system-card" href="./mission-trainer.html" data-search-terms="ภารกิจ ฝึกอบรม mission trainer rocket"><span class="lm-system-art">🚀</span><b>Mission Trainer</b><small>Learn mission procedures</small><em class="lm-system-state">APP MODULE</em></a>
    </div>
   </div>
   <div class="lm-system-group" data-system-group="member">
    <h3>04 · MEMBER SERVICES</h3>
    <div class="lm-system-grid">
-    <button class="lm-system-card" data-system-target="workspace"><span class="lm-system-art">📁</span><b>My Workspace</b><small>View your projects and activity</small><em class="lm-system-state">MEMBER ACCESS</em></button>
-    <button class="lm-system-card" data-system-target="account"><span class="lm-system-art">👤</span><b>Member Account</b><small>Sign in and manage your session</small><em class="lm-system-state">MEMBER ACCESS</em></button>
-    <button class="lm-system-card" data-system-target="wallet"><span class="lm-system-art">💠</span><b>MLC Wallet</b><small>View your in-app MLC balance</small><em class="lm-system-state">MEMBER ACCESS</em></button>
-    <a class="lm-system-card" href="./install.html"><span class="lm-system-art">⬇️</span><b>Install App</b><small>Install LOCAL MARS on this device</small><em class="lm-system-state">APP MODULE</em></a>
+    <button class="lm-system-card" data-system-target="workspace" data-search-terms="พื้นที่ทำงาน โปรเจกต์ workspace projects"><span class="lm-system-art">📁</span><b>My Workspace</b><small>View your projects and activity</small><em class="lm-system-state">MEMBER ACCESS</em></button>
+    <button class="lm-system-card" data-system-target="account" data-search-terms="สมาชิก เข้าสู่ระบบ บัญชี account sign in"><span class="lm-system-art">👤</span><b>Member Account</b><small>Sign in and manage your session</small><em class="lm-system-state">MEMBER ACCESS</em></button>
+    <button class="lm-system-card" data-system-target="wallet" data-search-terms="กระเป๋าเงิน ยอดเงิน mlc wallet balance"><span class="lm-system-art">💠</span><b>MLC Wallet</b><small>View your in-app MLC balance</small><em class="lm-system-state">MEMBER ACCESS</em></button>
+    <a class="lm-system-card" href="./install.html" data-search-terms="ติดตั้งแอป install app download"><span class="lm-system-art">⬇️</span><b>Install App</b><small>Install LOCAL MARS on this device</small><em class="lm-system-state">APP MODULE</em></a>
    </div>
   </div>
   <div class="lm-systems-foot"><span>LOCAL MARS · PLANETARY CIVILIZATION NETWORK</span><span>Choose a system to continue</span></div>
@@ -1679,6 +1704,7 @@ if ('serviceWorker' in navigator) {
  const guide=document.getElementById('lmMenuDropdown');
  const guideToggle=document.getElementById('lmMenuToggle');
  const open=()=>{
+  search.value='';applySearch();
   guide?.setAttribute('hidden','');
   guideToggle?.setAttribute('aria-expanded','false');
   overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');
@@ -1703,19 +1729,21 @@ if ('serviceWorker' in navigator) {
   if(event.key==='Escape'&&overlay.classList.contains('open'))shut();
   if(event.key==='Escape'&&guide&&!guide.hasAttribute('hidden')){guide.setAttribute('hidden','');guideToggle?.setAttribute('aria-expanded','false');}
  });
- search.addEventListener('input',()=>{
-  const q=search.value.trim().toLowerCase();let visible=0;
+ const applySearch=()=>{
+  const q=search.value.trim().toLocaleLowerCase();let visible=0;
   overlay.querySelectorAll('.lm-system-group').forEach(group=>{
    let groupVisible=0;
    group.querySelectorAll('.lm-system-card').forEach(card=>{
-    const show=!q||card.textContent.toLowerCase().includes(q);
+    const haystack=(card.textContent+' '+(card.dataset.searchTerms||'')).toLocaleLowerCase();
+    const show=!q||haystack.includes(q);
     card.hidden=!show;if(show)groupVisible++;
    });
    group.hidden=groupVisible===0;if(groupVisible)visible+=groupVisible;
   });
   empty.hidden=visible!==0;
   const count=document.getElementById('lmSystemsCount');if(count)count.textContent=String(visible);
- });
+ };
+ search.addEventListener('input',applySearch);
  const count=document.getElementById('lmSystemsCount');if(count)count.textContent=String(overlay.querySelectorAll('.lm-system-card').length);
  const actions={
   explore:()=>document.querySelector('.lm-command-dock [data-tab="explore"]')?.click(),

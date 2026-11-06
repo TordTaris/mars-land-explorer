@@ -62,7 +62,9 @@ jobs:
               path = icon.get("src", "").removeprefix("./")
               assert path and Path(path).is_file(), f"manifest icon not found: {path}"
 
-          assert 'const CACHE = "local-mars-v4-73"' in sw, "service worker cache version was not bumped"
+          assert 'const CACHE = "local-mars-v4-74"' in sw, "service worker cache version was not bumped"
+          assert 'data-search-terms="ตลาด ซื้อขายที่ดิน ราคา mlc marketplace land listing"' in html, "Thai and English marketplace search terms missing"
+          assert ".lm-system-grid{grid-template-columns:minmax(0,1fr)" in html, "mobile More menu must use readable single-column cards"
           assert '"./member-workspace.js"' in sw, "member workspace missing from offline cache"
           assert '<script src="./member-workspace.js" defer></script>' in html, "member workspace script missing"
           assert "postgres_changes" in workspace, "member workspace Realtime subscription missing"
