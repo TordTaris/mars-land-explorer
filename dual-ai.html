@@ -115,7 +115,7 @@ async function send(){
 $("loadModel").addEventListener("click",loadModel);
 $("unload").addEventListener("click",async()=>{if(!engine)return;try{await engine.unload();engine=null;$("unload").disabled=true;$("loadModel").disabled=false;modelStatus("ปลดโมเดลออกจากหน่วยความจำแล้ว · ไฟล์ที่แคชไว้อาจยังคงอยู่ในเบราว์เซอร์")}catch(e){modelStatus("ปลดโมเดลไม่สำเร็จ: "+e.message)}});
 $("localMode").addEventListener("click",()=>{mode="local";updateMode();setStatus(engine?"Local AI พร้อมใช้งาน":"ต้องดาวน์โหลดและโหลดโมเดลก่อน")});
-$("cloudMode").addEventListener("click",()=>{mode="cloud";updateMode();setStatus(session?"Cloud AI เลือกแล้ว · พร้อมส่งคำถาม":"Cloud AI ต้องเข้าสู่ระบบ LOCAL MARS");if(!session)$("login").style.display="inline"});
+$("cloudMode").addEventListener("click",()=>{mode="cloud";updateMode();setStatus(session?"Online AI selected · GPT/Grok ready":"Sign in to LOCAL MARS to use Online AI");if(!session)$("login").style.display="inline"});
 window.localMarsSend=send;
 if(window.__localMarsPendingSend){window.__localMarsPendingSend=false;send().catch(e=>{setStatus("เกิดข้อผิดพลาด: "+(e?.message||String(e)));$("send").disabled=false;$("send").textContent="ส่งคำถามให้ AI"})}
 $("prompt").addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.ctrlKey||e.metaKey)){e.preventDefault();send().catch(err=>setStatus("เกิดข้อผิดพลาด: "+(err?.message||String(err))))}});
@@ -125,5 +125,5 @@ $("clear").addEventListener("click",()=>{history=[];transcript=[];$("chat").repl
 $("downloadTxt").addEventListener("click",()=>download("local-mars-ai-chat.txt",transcript.map(m=>"["+m.role+"] "+m.time+"\n"+m.content).join("\n\n"),"text/plain;charset=utf-8"));
 $("downloadJson").addEventListener("click",()=>download("local-mars-ai-chat.json",JSON.stringify({app:"LOCAL MARS AI",exportedAt:new Date().toISOString(),messages:transcript},null,2),"application/json;charset=utf-8"));
 if(navigator.gpu){$("gpuBadge").textContent="พบ WebGPU";}else{$("gpuBadge").textContent="ไม่พบ WebGPU";modelStatus("ยังไม่สามารถโหลดโมเดลในเบราว์เซอร์นี้ได้ · เปิดลิงก์นี้ด้วย Chrome รุ่นใหม่และตรวจสอบว่าอุปกรณ์รองรับ WebGPU");}
-if(supabase){try{const {data,error}=await supabase.auth.getSession();if(error)throw error;session=data.session;if(session)setStatus("เข้าสู่ระบบ LOCAL MARS แล้ว · เลือก Local หรือ Cloud ได้");else setStatus("Local AI ใช้งานได้โดยไม่ต้องล็อกอิน · Cloud AI ต้องเข้าสู่ระบบ");supabase.auth.onAuthStateChange((_e,s)=>{session=s})}catch(e){setStatus("ตรวจสอบ Cloud session ไม่สำเร็จ แต่ Local AI ยังใช้ได้")}}else setStatus("Cloud library ไม่พร้อม · Local AI ใช้งานได้หาก WebGPU รองรับ");
+if(supabase){try{const {data,error}=await supabase.auth.getSession();if(error)throw error;session=data.session;if(session){mode="cloud";updateMode();setStatus("Signed in · Online GPT/Grok chat is ready");}else setStatus("Local AI is available without sign-in · Sign in to use Online GPT/Grok");supabase.auth.onAuthStateChange((_e,s)=>{session=s})}catch(e){setStatus("ตรวจสอบ Cloud session ไม่สำเร็จ แต่ Local AI ยังใช้ได้")}}else setStatus("Cloud library ไม่พร้อม · Local AI ใช้งานได้หาก WebGPU รองรับ");
 </script></body></html>
