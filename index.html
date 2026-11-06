@@ -1029,7 +1029,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  <strong>MEMBER CONSTRUCTION</strong>
  <div class="small" style="margin:5px 0 9px">Create a 3D asset on this parcel. Other online members will see it automatically.</div>
  <select id="building" class="full" style="padding:9px;background:#101d30;color:white;border:1px solid #38506d;border-radius:9px">
-  <option value="Habitat">Habitat Dome</option><option value="Lab">Science Lab</option><option value="Solar">Solar Farm</option><option value="Greenhouse">Greenhouse</option><option value="NuclearPlant">☢️ M-003 Mega Nuclear Energy Complex</option>
+  <option value="Habitat">Habitat Dome</option><option value="Lab">Science Lab</option><option value="Solar">Solar Farm</option><option value="Greenhouse">Greenhouse</option><option value="NuclearPlant">☢️ M-003 Mega Nuclear Energy Complex</option><option value="DataCenter">🗄️ M-001 Data Storage Center</option>
  </select>
  <button class="primary full" id="build">🏗️ Place Structure</button>
  <button class="full" id="openConstruction3D">🏗️ Open 3D Construction</button>
@@ -1627,13 +1627,47 @@ function renderSharedBuildings(structures){
     crop.rotation.x=.12;
    }
    for(let x of [-.08,.08])box(x,.064,0,.004,.075,.115,steel);
-  }else if(structureName==='แผงพลังงานแสงอาทิตย์'){
-   for(let row=0;row<2;row++)for(let col=0;col<3;col++){
-    const x=-.075+col*.075,z=-.045+row*.09;
-    const leg=add(new THREE.CylinderGeometry(.002,.003,.035,6),steel,x,.027,z);leg.rotation.z=-.22;
-    const panel=box(x,.046,z,.062,.005,.052,new THREE.MeshStandardMaterial({color:0x245c88,metalness:.62,roughness:.28,emissive:0x0b2842,emissiveIntensity:.22}));
-    panel.rotation.x=-.24;panel.rotation.z=-.22;
-    for(let edge=-1;edge<=1;edge++)box(x+edge*.018,.049,z,.0015,.002,.05,gold);
+  }else if(structureName==='ศูนย์จัดเก็บข้อมูล'){
+   // M-001 data storage center: reinforced server hall, cooling plant, antenna and solar backup.
+   const foundation=add(new THREE.CylinderGeometry(.128,.135,.014,32),dark,0,.008,0);
+   const hall=box(-.012,.052,0,.145,.078,.105,steel);
+   box(-.012,.094,0,.151,.008,.111,dark);
+   // Server-hall front glass and segmented server rack bays.
+   for(let x=-.065;x<=.04;x+=.035){
+    box(x,.05,.054,.024,.052,.004,glass);
+    box(x,.05,.057,.012,.038,.002,dark);
+    for(let y=0;y<3;y++)add(new THREE.SphereGeometry(.0025,8,6),gold,x,.035+y*.012,.059);
+   }
+   // Twin cooling units and visible exhaust fans.
+   for(let x=-.07;x<=.045;x+=.115){
+    box(x,.112,-.025,.046,.026,.045,steel);
+    for(let fan=0;fan<3;fan++){
+     const vent=add(new THREE.CylinderGeometry(.009,.009,.003,12),dark,x-.012+fan*.012,.127,-.025);
+     vent.rotation.x=Math.PI/2;
+    }
+   }
+   // Cooling pipes along the side of the server hall.
+   for(let z=-.055;z<=.055;z+=.11){
+    const pipe=add(new THREE.CylinderGeometry(.004,.004,.13,8),gold,.075,.045,z);
+    pipe.rotation.z=Math.PI/2;
+   }
+   // Secure access vestibule and perimeter fence.
+   box(.08,.031,.015,.035,.04,.045,dark);
+   box(.08,.054,.039,.02,.022,.003,glass);
+   const fence=add(new THREE.TorusGeometry(.119,.002,6,48),gold,0,.02,0);
+   fence.rotation.x=Math.PI/2;
+   // Communications mast and satellite dish.
+   const mast=add(new THREE.CylinderGeometry(.002,.003,.11,8),gold,.095,.08,-.07);
+   add(new THREE.SphereGeometry(.014,12,8),glass,.095,.14,-.07);
+   const dish=add(new THREE.SphereGeometry(.024,16,10,0,Math.PI*2,0,Math.PI/2),steel,.095,.105,-.105);
+   dish.rotation.x=-.65;
+   // Compact solar backup array.
+   for(let col=0;col<2;col++){
+    const x=-.07+col*.055;
+    const leg=add(new THREE.CylinderGeometry(.002,.002,.025,6),steel,x,.026,-.105);
+    leg.rotation.z=-.18;
+    const panel=box(x,.04,-.105,.045,.004,.035,new THREE.MeshStandardMaterial({color:0x245c88,metalness:.62,roughness:.28}));
+    panel.rotation.x=-.2;
    }
   }
   site.scale.setScalar(.58);
@@ -1921,11 +1955,12 @@ document.querySelector('#mlcTransfer').onclick=async()=>{
  catch(error){toast('MLC transfer failed: '+(error.message||'Check the details and try again'));}
  finally{button.disabled=false;button.textContent='↔ Transfer MLC';}
 };
-const typeMap={Habitat:'ฐานที่อยู่อาศัย',Lab:'ห้องปฏิบัติการ',Greenhouse:'โรงเรือนปลูกพืช',Solar:'แผงพลังงานแสงอาทิตย์',NuclearPlant:'โรงไฟฟ้านิวเคลียร์ขนาดใหญ่'};
+const typeMap={Habitat:'ฐานที่อยู่อาศัย',Lab:'ห้องปฏิบัติการ',Greenhouse:'โรงเรือนปลูกพืช',Solar:'แผงพลังงานแสงอาทิตย์',NuclearPlant:'โรงไฟฟ้านิวเคลียร์ขนาดใหญ่',DataCenter:'ศูนย์จัดเก็บข้อมูล'};
 document.querySelector('#build').onclick=async()=>{
  if(!selected){toast('Select a parcel first');return;}
  const choice=document.querySelector('#building').value;
  if(choice==='NuclearPlant'&&selected.id!=='M-003'){toast('The Nuclear Energy Complex can only be built on parcel M-003');return;}
+ if(choice==='DataCenter'&&selected.id!=='M-001'){toast('The Data Storage Center can only be built on parcel M-001');return;}
  const world=window.MarsWorldServer?.getState?.();
  if(!world?.user){toast('Sign in to build structures');openLogin();return;}
  const ownership=(world.claims||[]).find(x=>x.parcel_id===selected.id);
