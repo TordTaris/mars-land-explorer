@@ -1862,7 +1862,7 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
   satellite:()=>document.querySelector('.lm-command-dock [data-tab="satellite"]')?.click(),
   workspace:()=>document.getElementById('lmWorkspaceOpen')?.click(),
   chat:()=>document.getElementById('lmChatOpen')?.click(),
-  account:()=>document.querySelector('.lm-command-dock [data-tab="account"]')?.click(),
+  account:()=>{const signIn=document.getElementById('account');if(signIn){signIn.click();return;}const accountTab=document.querySelector('.lm-command-dock [data-tab="account"]');if(accountTab)accountTab.click();else window.dispatchEvent(new CustomEvent('local-mars-open-account'));},
   wallet:()=>document.querySelector('.lm-command-dock [data-tab="wallet"]')?.click(),
   install:()=>document.getElementById('lmInstallDialog')?.classList.add('open')
  };
