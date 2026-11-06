@@ -95,6 +95,51 @@ body.authenticated .brand small{display:none}
 body.authenticated .status{background:#10251fdc}
 @media(max-width:650px){body.authenticated header{padding:12px 13px}body.authenticated .bottom{max-width:calc(100vw - 16px);gap:4px;padding:6px}body.authenticated .bottom button{font-size:9px;padding:8px 7px}}
 
+ 
+/* CLEAN PLANET VIEW — reduce interface obstruction while keeping every tool reachable. */
+@media(max-width:760px){
+ #scene{z-index:0}
+ #mars-air-traffic,#lm-satellite-link,#lmAresHud{display:none!important}
+ body .panel.left,body .panel.right{
+  display:none!important;position:fixed!important;z-index:10020!important;
+  top:calc(env(safe-area-inset-top,0px) + 72px)!important;bottom:auto!important;
+  left:4vw!important;right:4vw!important;width:92vw!important;max-width:92vw!important;
+  max-height:calc(100dvh - 155px)!important;overflow:auto!important;
+  padding:13px!important;border-radius:16px!important;
+  background:rgba(7,18,31,.96)!important;border:1px solid #c6a66b99!important;
+  box-shadow:0 18px 55px #000b!important;backdrop-filter:blur(16px)!important
+ }
+ body.lm-mobile-mission-open .panel.left{display:block!important}
+ body.lm-mobile-land-open .panel.right{display:block!important}
+ body .panel.left h3,body .panel.right h3{font-size:11px!important}
+ #lmAresHud{display:none!important}
+ .lm-mobile-view-tools{
+  position:fixed;z-index:10015;top:calc(env(safe-area-inset-top,0px) + 60px);
+  left:50%;transform:translateX(-50%);display:flex;gap:7px;
+  padding:5px;border:1px solid #c6a66b66;border-radius:13px;
+  background:rgba(5,15,27,.72);backdrop-filter:blur(12px);
+  box-shadow:0 6px 20px #0005
+ }
+ .lm-mobile-view-tools button{
+  min-height:34px;padding:7px 12px;border:1px solid #8fa8bc55;
+  border-radius:9px;background:#132a40;color:#e9dfc9;
+  font:800 9px system-ui;letter-spacing:.8px
+ }
+ .lm-mobile-view-tools button:active{background:#b58b4e;color:#111}
+ body .lm-command-dock{bottom:calc(env(safe-area-inset-bottom,0px) + 7px)!important;
+  min-height:48px!important;padding:5px!important;gap:3px!important;
+  background:rgba(5,14,25,.86)!important;box-shadow:0 7px 25px #0007!important}
+ body .lm-command-dock>.lm-dock-item{min-height:44px!important;padding:4px 2px!important}
+ body .lm-command-dock .lm-dock-icon{font-size:16px!important}
+ body .lm-command-dock .lm-dock-label{font-size:8px!important}
+ body header{background:linear-gradient(180deg,rgba(4,10,18,.78),transparent)!important}
+ body header .status{max-width:36vw!important;font-size:7px!important}
+}
+@media(min-width:761px){
+ body .panel.left,body .panel.right{background:rgba(7,18,31,.78)!important;backdrop-filter:blur(12px)!important}
+ #lm-satellite-link{opacity:.72}
+}
+
 </style>
 <style id="mars-land-luxury-refresh">
 :root{--gold:#dfbd7d;--cyan:#72dce9;--panel:#09182beF;--line:#c5a56b77}
@@ -931,6 +976,24 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 </script>
 <header><div class="brand"><span class="brand-insignia" aria-hidden="true"><img src="./icon.svg" alt=""></span><span class="brand-lockup"><strong>LOCAL <b>MARS</b></strong><small>PLANETARY CIVILIZATION NETWORK</small></span></div><div class="status" id="worldServerStatus">CONNECTING TO MARS NETWORK…</div></header>
+<div class="lm-mobile-view-tools" aria-label="Planet view controls">
+ <button type="button" id="lmShowMission">MISSION</button>
+ <button type="button" id="lmShowLand">LAND DETAILS</button>
+ <button type="button" id="lmClosePanels" aria-label="Close panels">✕</button>
+</div>
+<script id="lm-mobile-view-controls">
+(()=>{
+ const body=document.body;
+ const mission=document.getElementById('lmShowMission');
+ const land=document.getElementById('lmShowLand');
+ const close=document.getElementById('lmClosePanels');
+ const clear=()=>body.classList.remove('lm-mobile-mission-open','lm-mobile-land-open');
+ mission?.addEventListener('click',()=>{const was=body.classList.contains('lm-mobile-mission-open');clear();if(!was)body.classList.add('lm-mobile-mission-open');});
+ land?.addEventListener('click',()=>{const was=body.classList.contains('lm-mobile-land-open');clear();if(!was)body.classList.add('lm-mobile-land-open');});
+ close?.addEventListener('click',clear);
+ document.addEventListener('click',e=>{if(e.target.closest('#lmShowMission,#lmShowLand,#lmClosePanels,.panel'))return;if(innerWidth<=760)clear();});
+})();
+</script>
 <section class="panel left">
 <h3>MISSION CONTROL</h3>
 <div class="metric"><span>Planet</span><b>Mars / Sol 001</b></div>
