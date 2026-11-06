@@ -108,5 +108,5 @@ window.addEventListener('online',resumeChat);
 window.addEventListener('pageshow',resumeChat);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')resumeChat();});
 window.addEventListener('offline',()=>{if(overlay.classList.contains('open'))status('ออฟไลน์ · จะเชื่อมต่อใหม่เมื่อมีอินเทอร์เน็ต');});
-let attempts=0;const wait=setInterval(()=>{const s=state();if(s?.db){clearInterval(wait);db=s.db;user=s.user||null;controls();}else if(++attempts>100)clearInterval(wait);},250);
+let attempts=0;const wait=setInterval(()=>{const s=state();if(s?.db){clearInterval(wait);db=s.db;user=s.user||null;controls();if(overlay.classList.contains('open'))connect();}else if(++attempts>100)clearInterval(wait);},250);
 })();
