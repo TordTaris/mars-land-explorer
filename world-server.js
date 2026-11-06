@@ -160,6 +160,14 @@ async function walletBalances(){
  document.dispatchEvent(new CustomEvent('mars-wallet-updated',{detail:balances}));
  return {data:balances};
 }
+async function claimM001MlcAllocation(){
+ if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบออนไลน์ก่อน'}};
+ const grant=await S.db.rpc('mars_wallet_mlc_claim_m001_allocation');
+ if(grant.error)return grant;
+ const refreshed=await walletBalances();
+ if(refreshed.error)return {error:refreshed.error,grant:grant.data};
+ return {data:refreshed.data,grant:grant.data};
+}
 async function grantMlcStarter(){
  if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบออนไลน์ก่อน'}};
  const grant=await S.db.rpc('mars_wallet_mlc_grant_starter');
@@ -221,6 +229,6 @@ async function getPublicSatelliteCatalog(){
  const result=await S.db.from('ares_satellite_catalog_snapshots').select('group_id,payload,record_count,fetched_at,source_status').order('group_id');
  return result.error?{error:result.error}:{data:result.data||[]};
 }
-window.MarsWorldServer={connect,auth,resetPassword,updatePassword,logout,refresh,claim,claimUsd,build,m003Access,walletBalances,walletTransactions,grantMlcStarter,transferMlc,reserveParcel,purchaseParcel,setParcelListing,recordActivity,getPublicSatelliteCatalog,getState:()=>({user:S.user,parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,mlcMarket:S.mlcMarket,db:S.db})};
+window.MarsWorldServer={connect,auth,resetPassword,updatePassword,logout,refresh,claim,claimUsd,build,m003Access,walletBalances,walletTransactions,grantMlcStarter,claimM001MlcAllocation,transferMlc,reserveParcel,purchaseParcel,setParcelListing,recordActivity,getPublicSatelliteCatalog,getState:()=>({user:S.user,parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,mlcMarket:S.mlcMarket,db:S.db})};
 document.addEventListener('DOMContentLoaded',connect);
 })();
