@@ -1904,7 +1904,7 @@ const turbine=new THREE.Group();turbine.position.set(-.115,.105,.055);colonyRoot
 const pole=new THREE.Mesh(new THREE.CylinderGeometry(.002,.003,.09,8),metal);pole.position.set(-.115,.055,.055);colonyRoot.add(pole);
 for(let i=0;i<3;i++){const blade=new THREE.Mesh(new THREE.BoxGeometry(.004,.042,.003),gold);blade.position.y=.022;blade.rotation.z=i*Math.PI*2/3;turbine.add(blade);}
 const colonyTag=document.createElement('div');colonyTag.id='mars-colony-tag';colonyTag.textContent='AEGIS SETTLEMENT  •  HABITAT / POWER / SCIENCE';
-Object.assign(colonyTag.style,{position:'fixed',left:'50%',top:'calc(50% + 108px)',transform:'translateX(-50%)',zIndex:'2',padding:'5px 8px',border:'1px solid #d9b87988',borderRadius:'9px',background:'#081522c9',color:'#f4dfb5',font:'8px system-ui',letterSpacing:'.8px',textAlign:'center',pointerEvents:'none',maxWidth:'90vw'});document.body.appendChild(colonyTag);
+Object.assign(colonyTag.style,{position:'fixed',left:'50%',top:'calc(50% + 150px)',transform:'translateX(-50%)',zIndex:'2',padding:'5px 8px',border:'1px solid #d9b87988',borderRadius:'9px',background:'#081522c9',color:'#f4dfb5',font:'8px system-ui',letterSpacing:'.8px',textAlign:'center',pointerEvents:'none',maxWidth:'90vw'});document.body.appendChild(colonyTag);
 
 parcels.forEach(p=>{
  const isNewParcel=Number(p.id.slice(2))>=13;
