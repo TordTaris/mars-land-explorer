@@ -974,7 +974,7 @@ header .status{flex:0 1 40%!important;width:auto!important;min-width:0!important
     <button class="lm-system-card" data-system-target="chat" data-search-terms="แชต แชท chat สนทนา ข้อความ online realtime ห้องสนทนา"><span class="lm-system-art">💬</span><b>LIVE CHAT · แชตออนไลน์</b><small>คุยกับสมาชิก LOCAL MARS แบบเรียลไทม์</small><em class="lm-system-state">MEMBER ACCESS</em></button>
     <button class="lm-system-card" data-system-target="account" data-search-terms="สมาชิก เข้าสู่ระบบ บัญชี account sign in"><span class="lm-system-art">👤</span><b>Member Account</b><small>Sign in and manage your session</small><em class="lm-system-state">MEMBER ACCESS</em></button>
     <button class="lm-system-card" data-system-target="wallet" data-search-terms="กระเป๋าเงิน ยอดเงิน mlc wallet balance"><span class="lm-system-art">💠</span><b>MLC Wallet</b><small>View your in-app MLC balance</small><em class="lm-system-state">MEMBER ACCESS</em></button>
-    <a class="lm-system-card" href="./install.html" data-search-terms="ติดตั้งแอป install app download"><span class="lm-system-art">⬇️</span><b>Install App</b><small>Install LOCAL MARS on this device</small><em class="lm-system-state">APP MODULE</em></a>
+    <button class="lm-system-card" id="lmMoreInstallBtn" type="button" data-search-terms="ติดตั้งแอป install app download updates update"><span class="lm-system-art">⬇️</span><b>Install App</b><small>Install LOCAL MARS on this device</small><em class="lm-system-state">APP MODULE</em></button>
    </div>
   </div>
   <div class="lm-systems-foot"><span>LOCAL MARS · PLANETARY CIVILIZATION NETWORK</span><span>Choose a system to continue</span></div>
@@ -1710,10 +1710,6 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
 #lmChatForm small{display:block;margin-top:6px;color:#8199ae;font-size:9px}
 @media(max-width:760px){#lmChatOverlay{padding:7px;align-items:stretch}#lmChatCard{height:100%;min-height:0;width:100%;border-radius:16px}#lmChatHeader{padding:14px 13px 11px}#lmChatMessages{padding:11px}#lmChatForm{padding:10px 10px max(12px,env(safe-area-inset-bottom))}}
 </style>
-<div id="lmInstallDock" hidden role="region" aria-label="Install LOCAL MARS">
-  <div><strong>LOCAL MARS APP</strong><small>Install on your device · Offline-ready</small></div>
-  <button id="lmInstallAppBtn" type="button">⬇ INSTALL</button>
-</div>
 <div id="lmInstallDialog" role="dialog" aria-modal="true" aria-labelledby="lmInstallTitle">
   <div id="lmInstallCard">
     <div style="display:flex;align-items:center;gap:10px"><h2 id="lmInstallTitle">Install LOCAL MARS</h2><button id="lmInstallClose" type="button" aria-label="Close install guide">✕</button></div>
@@ -1729,23 +1725,22 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
 </div>
 <script id="local-mars-install-controller">
 (()=>{
- const dock=document.getElementById('lmInstallDock'), installBtn=document.getElementById('lmInstallAppBtn');
+ const installBtn=document.getElementById('lmMoreInstallBtn');
  const dialog=document.getElementById('lmInstallDialog'), closeBtn=document.getElementById('lmInstallClose');
  const confirmBtn=document.getElementById('lmInstallConfirm'), updateBtn=document.getElementById('lmCheckUpdate');
  const dynamic=document.getElementById('lmInstallDynamic'), status=document.getElementById('lmInstallStatus');
- if(!dock||!installBtn||!dialog)return;
+ if(!installBtn||!dialog)return;
  let installPrompt=null, registration=null;
  const isInstalled=()=>window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
  const openGuide=()=>{dialog.classList.add('open');closeBtn?.focus()};
  const closeGuide=()=>dialog.classList.remove('open');
- const showDock=()=>{if(!isInstalled())dock.hidden=false};
  window.addEventListener('beforeinstallprompt',event=>{
-   event.preventDefault();installPrompt=event;showDock();
+   event.preventDefault();installPrompt=event;
    dynamic.innerHTML='<p>Your device supports direct installation. Select <b>Install now</b> to add LOCAL MARS to your home screen.</p>';
    confirmBtn.textContent='Install now';
  });
  window.addEventListener('appinstalled',()=>{
-   installPrompt=null;dock.hidden=true;status.textContent='LOCAL MARS installed successfully.';
+   installPrompt=null;status.textContent='LOCAL MARS installed successfully.';
  });
  installBtn.addEventListener('click',openGuide);
  closeBtn?.addEventListener('click',closeGuide);
@@ -1768,7 +1763,6 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
      status.textContent=registration.waiting?'A new version is ready. Close and reopen LOCAL MARS to apply it.':'Update check complete. You are using the latest available version.';
    }catch(error){status.textContent='Could not check for updates. Please try again later.';console.warn('LOCAL MARS update check:',error)}
  });
- if(!isInstalled())showDock();
  if('serviceWorker' in navigator)navigator.serviceWorker.ready.then(reg=>{registration=reg}).catch(()=>{});
 })();
 </script>
