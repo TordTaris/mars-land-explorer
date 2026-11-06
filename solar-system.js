@@ -22,14 +22,14 @@ if (!openButton || !overlay || !canvasHost) {
   const pointer = new THREE.Vector2();
   const clock = new THREE.Clock();
   const planetData = [
-    {name:'Mercury',thai:'ดาวพุธ',type:'Terrestrial planet',color:0xaaa49c,radius:.23,orbit:4.1,period:88,desc:'ดาวเคราะห์ที่อยู่ใกล้ดวงอาทิตย์ที่สุด พื้นผิวเต็มไปด้วยหลุมอุกกาบาตและมีอุณหภูมิเปลี่ยนแปลงรุนแรง',facts:['Mean diameter · 4,879 km','Mean distance · 57.9 million km','Orbital period · 88 Earth days']},
-    {name:'Venus',thai:'ดาวศุกร์',type:'Terrestrial planet',color:0xe5bd82,radius:.34,orbit:5.7,period:224.7,desc:'ดาวเคราะห์ที่ร้อนที่สุดในระบบสุริยะ มีชั้นบรรยากาศหนาแน่นซึ่งประกอบด้วยคาร์บอนไดออกไซด์',facts:['Mean diameter · 12,104 km','Mean distance · 108.2 million km','Orbital period · 224.7 Earth days']},
-    {name:'Earth',thai:'โลก',type:'Terrestrial planet',color:0x3288cf,radius:.36,orbit:7.4,period:365.25,desc:'บ้านของเรา โลกมีมหาสมุทร น้ำในสถานะของเหลว และเป็นดาวเคราะห์เดียวที่ยืนยันว่ามีสิ่งมีชีวิต',facts:['Mean diameter · 12,742 km','Mean distance · 149.6 million km','Orbital period · 365.25 days']},
-    {name:'Mars',thai:'ดาวอังคาร',type:'Terrestrial planet · LOCAL MARS',color:0xc65d3e,radius:.29,orbit:9.2,period:687,desc:'ดาวเคราะห์สีแดงและศูนย์กลางของ LOCAL MARS สำรวจต่อไปยังโลกจำลองและแปลงพื้นที่ M-001 ถึง M-019 ได้',facts:['Mean diameter · 6,779 km','Mean distance · 227.9 million km','Orbital period · 687 Earth days']},
-    {name:'Jupiter',thai:'ดาวพฤหัสบดี',type:'Gas giant',color:0xd4a77d,radius:1.02,orbit:13.1,period:4332.6,desc:'ดาวเคราะห์ที่ใหญ่ที่สุด มีแถบเมฆหลายชั้นและพายุขนาดมหึมา รวมถึงจุดแดงใหญ่',facts:['Mean diameter · 139,820 km','Mean distance · 778.6 million km','Orbital period · 11.86 Earth years']},
-    {name:'Saturn',thai:'ดาวเสาร์',type:'Gas giant',color:0xd8c08c,radius:.83,orbit:17.3,period:10759,desc:'โดดเด่นด้วยระบบวงแหวนที่ประกอบด้วยอนุภาคน้ำแข็ง เศษหิน และฝุ่นจำนวนมาก',facts:['Mean diameter · 116,460 km','Mean distance · 1.43 billion km','Orbital period · 29.45 Earth years']},
-    {name:'Uranus',thai:'ดาวยูเรนัส',type:'Ice giant',color:0x85d5d8,radius:.59,orbit:21.3,period:30687,desc:'ดาวเคราะห์น้ำแข็งยักษ์ที่มีแกนหมุนเอียงมากจนดูคล้ายกลิ้งไปตามวงโคจร',facts:['Mean diameter · 50,724 km','Mean distance · 2.87 billion km','Orbital period · 84 Earth years']},
-    {name:'Neptune',thai:'ดาวเนปจูน',type:'Ice giant',color:0x416fe0,radius:.57,orbit:25.4,period:60190,desc:'ดาวเคราะห์ที่อยู่ไกลดวงอาทิตย์ที่สุดในบรรดาดาวเคราะห์ทั้งแปด มีลมแรงมากในชั้นบรรยากาศ',facts:['Mean diameter · 49,244 km','Mean distance · 4.50 billion km','Orbital period · 164.8 Earth years']}
+    {name:'Mercury',thai:'ดาวพุธ',type:'Terrestrial planet',color:0xaaa49c,radius:.23,orbit:3.8,period:88,desc:'ดาวเคราะห์ที่อยู่ใกล้ดวงอาทิตย์ที่สุด พื้นผิวเต็มไปด้วยหลุมอุกกาบาตและมีอุณหภูมิเปลี่ยนแปลงรุนแรง',facts:['Mean diameter · 4,879 km','Mean distance · 57.9 million km','Orbital period · 88 Earth days']},
+    {name:'Venus',thai:'ดาวศุกร์',type:'Terrestrial planet',color:0xe5bd82,radius:.34,orbit:5.2,period:224.7,desc:'ดาวเคราะห์ที่ร้อนที่สุดในระบบสุริยะ มีชั้นบรรยากาศหนาแน่นซึ่งประกอบด้วยคาร์บอนไดออกไซด์',facts:['Mean diameter · 12,104 km','Mean distance · 108.2 million km','Orbital period · 224.7 Earth days']},
+    {name:'Earth',thai:'โลก',type:'Terrestrial planet',color:0x3288cf,radius:.36,orbit:6.6,period:365.25,desc:'บ้านของเรา โลกมีมหาสมุทร น้ำในสถานะของเหลว และเป็นดาวเคราะห์เดียวที่ยืนยันว่ามีสิ่งมีชีวิต',facts:['Mean diameter · 12,742 km','Mean distance · 149.6 million km','Orbital period · 365.25 days']},
+    {name:'Mars',thai:'ดาวอังคาร',type:'Terrestrial planet · LOCAL MARS',color:0xc65d3e,radius:.29,orbit:8.2,period:687,desc:'ดาวเคราะห์สีแดงและศูนย์กลางของ LOCAL MARS สำรวจต่อไปยังโลกจำลองและแปลงพื้นที่ M-001 ถึง M-019 ได้',facts:['Mean diameter · 6,779 km','Mean distance · 227.9 million km','Orbital period · 687 Earth days']},
+    {name:'Jupiter',thai:'ดาวพฤหัสบดี',type:'Gas giant',color:0xd4a77d,radius:1.02,orbit:11.5,period:4332.6,desc:'ดาวเคราะห์ที่ใหญ่ที่สุด มีแถบเมฆหลายชั้นและพายุขนาดมหึมา รวมถึงจุดแดงใหญ่',facts:['Mean diameter · 139,820 km','Mean distance · 778.6 million km','Orbital period · 11.86 Earth years']},
+    {name:'Saturn',thai:'ดาวเสาร์',type:'Gas giant',color:0xd8c08c,radius:.83,orbit:15.0,period:10759,desc:'โดดเด่นด้วยระบบวงแหวนที่ประกอบด้วยอนุภาคน้ำแข็ง เศษหิน และฝุ่นจำนวนมาก',facts:['Mean diameter · 116,460 km','Mean distance · 1.43 billion km','Orbital period · 29.45 Earth years']},
+    {name:'Uranus',thai:'ดาวยูเรนัส',type:'Ice giant',color:0x85d5d8,radius:.59,orbit:18.5,period:30687,desc:'ดาวเคราะห์น้ำแข็งยักษ์ที่มีแกนหมุนเอียงมากจนดูคล้ายกลิ้งไปตามวงโคจร',facts:['Mean diameter · 50,724 km','Mean distance · 2.87 billion km','Orbital period · 84 Earth years']},
+    {name:'Neptune',thai:'ดาวเนปจูน',type:'Ice giant',color:0x416fe0,radius:.57,orbit:22.0,period:60190,desc:'ดาวเคราะห์ที่อยู่ไกลดวงอาทิตย์ที่สุดในบรรดาดาวเคราะห์ทั้งแปด มีลมแรงมากในชั้นบรรยากาศ',facts:['Mean diameter · 49,244 km','Mean distance · 4.50 billion km','Orbital period · 164.8 Earth years']}
   ];
   function makeStripeTexture(base, stripe) {
     const c=document.createElement('canvas'); c.width=512;c.height=256;
@@ -61,7 +61,7 @@ if (!openButton || !overlay || !canvasHost) {
     if(initialized)return;
     try {
       scene=new THREE.Scene();scene.background=new THREE.Color(0x030711);
-      camera=new THREE.PerspectiveCamera(45,1,.1,300);camera.position.set(0,22,39);
+      const portrait=canvasHost.clientWidth/Math.max(1,canvasHost.clientHeight)<.72;\n      camera=new THREE.PerspectiveCamera(portrait?58:45,1,.1,300);camera.position.set(0,portrait?26:22,portrait?75:39);
       renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});
       renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.7));
       renderer.outputColorSpace=THREE.SRGBColorSpace;
@@ -121,7 +121,7 @@ if (!openButton || !overlay || !canvasHost) {
         speed=speed===1?3:speed===3?10:1;$('lmSolarSpeed').textContent='SPEED · '+speed+'×';
       });
       $('lmSolarReset').addEventListener('click',()=>{
-        controls.target.set(0,0,0);camera.position.set(0,22,39);controls.update();selectPlanet(3);
+        controls.target.set(0,0,0);const portrait=canvasHost.clientWidth/Math.max(1,canvasHost.clientHeight)<.72;camera.position.set(0,portrait?26:22,portrait?75:39);camera.fov=portrait?58:45;camera.updateProjectionMatrix();controls.update();selectPlanet(3);
       });
       $('lmSolarBackMars').addEventListener('click',()=>{closeView();document.getElementById('navExplore')?.click();});
       document.querySelectorAll('[data-solar-planet]').forEach(b=>b.addEventListener('click',()=>selectPlanet(Number(b.dataset.solarPlanet))));
