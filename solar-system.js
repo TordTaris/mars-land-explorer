@@ -18,6 +18,7 @@ if (!openButton || !overlay || !canvasHost) {
   let initialized = false, paused = false, speed = 1, selected = null;
   const planetObjects = [];
   const orbitPivots = [];
+  let simulationTimeMs = Date.now();
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
   const clock = new THREE.Clock();
@@ -52,9 +53,36 @@ if (!openButton || !overlay || !canvasHost) {
     const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(positions,3));
     scene.add(new THREE.Points(g,new THREE.PointsMaterial({color:0xcbdcf5,size:.12,transparent:true,opacity:.85,sizeAttenuation:true})));
   }
-  function makeOrbit(radius) {
-    const points=[];for(let i=0;i<=256;i++){const a=i/256*Math.PI*2;points.push(new THREE.Vector3(Math.cos(a)*radius,0,Math.sin(a)*radius));}
-    const line=new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(points),new THREE.LineBasicMaterial({color:0x526984,transparent:true,opacity:.43}));
+  // Approximate J2000 orbital elements (degrees, AU); updated continuously from the live clock.
+  const orbitalElements = [
+    {a:.3871,e:.2056,i:7.005,node:48.331,peri:77.457,L:252.251},
+    {a:.7233,e:.0068,i:3.3947,node:76.680,peri:131.602,L:181.979},
+    {a:1,e:.0167,i:0,node:0,peri:102.937,L:100.464},
+    {a:1.5237,e:.0934,i:1.850,node:49.558,peri:336.040,L:355.453},
+    {a:5.2026,e:.0485,i:1.303,node:100.464,peri:14.753,L:34.404},
+    {a:9.5549,e:.0555,i:2.489,node:113.665,peri:92.432,L:49.944},
+    {a:19.2184,e:.0463,i:.773,node:74.006,peri:170.964,L:313.232},
+    {a:30.11,e:.009,i:1.770,node:131.784,peri:44.971,L:304.880}
+  ];
+  const AU_SCALE=6.6;
+  const DEG=Math.PI/180;
+  function orbitalPosition(elements, daysSinceJ2000) {
+    const {a,e,i,node,peri,L}=elements;
+    const meanAnomaly=((L-peri)+(360/planetData[orbitalElements.indexOf(elements)].period)*daysSinceJ2000)%360*DEG;
+    let E=meanAnomaly;
+    for(let k=0;k<8;k++)E-=(E-e*Math.sin(E)-meanAnomaly)/(1-e*Math.cos(E));
+    const xv=a*(Math.cos(E)-e), yv=a*Math.sqrt(1-e*e)*Math.sin(E);
+    const w=(peri-node)*DEG, O=node*DEG, inc=i*DEG;
+    const x=(Math.cos(O)*Math.cos(w)-Math.sin(O)*Math.sin(w)*Math.cos(inc))*xv+(-Math.cos(O)*Math.sin(w)-Math.sin(O)*Math.cos(w)*Math.cos(inc))*yv;
+    const y=(Math.sin(O)*Math.cos(w)+Math.cos(O)*Math.sin(w)*Math.cos(inc))*xv+(-Math.sin(O)*Math.sin(w)+Math.cos(O)*Math.cos(w)*Math.cos(inc))*yv;
+    const z=(Math.sin(w)*Math.sin(inc))*xv+(Math.cos(w)*Math.sin(inc))*yv;
+    return new THREE.Vector3(x*AU_SCALE,z*AU_SCALE,y*AU_SCALE);
+  }
+  function makeOrbit(elements,index) {
+    const points=[];
+    for(let day=0;day<planetData[index].period;day+=planetData[index].period/256)
+      points.push(orbitalPosition(elements,day));
+    const line=new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(points),new THREE.LineBasicMaterial({color:0x526984,transparent:true,opacity:.48}));
     scene.add(line);
   }
   function build() {
@@ -83,13 +111,13 @@ if (!openButton || !overlay || !canvasHost) {
       scene.add(corona);
       addStars();
       planetData.forEach((p,i)=>{
-        makeOrbit(p.orbit);
-        const pivot=new THREE.Group();scene.add(pivot);orbitPivots.push({pivot,period:p.period,index:i});
+        const elements=orbitalElements[i];
+        makeOrbit(elements,i);
         const material=new THREE.MeshStandardMaterial({color:p.color,roughness:.88,metalness:.02});
         if(p.name==='Jupiter')material.map=makeStripeTexture('#bd8b62','#f3d2a5');
         if(p.name==='Saturn')material.map=makeStripeTexture('#c6aa78','#f0ddb0');
         const mesh=new THREE.Mesh(new THREE.SphereGeometry(p.radius,48,36),material);
-        mesh.position.set(p.orbit,0,0);mesh.userData.planetIndex=i;pivot.add(mesh);
+        mesh.position.copy(orbitalPosition(elements,0));mesh.userData.planetIndex=i;mesh.userData.orbitalElements=elements;scene.add(mesh);
         if(p.name==='Saturn'){
           const ring=new THREE.Mesh(new THREE.RingGeometry(1.12,1.85,96),new THREE.MeshStandardMaterial({color:0xcdbb91,side:THREE.DoubleSide,transparent:true,opacity:.82,roughness:1}));
           ring.rotation.x=-Math.PI/2;ring.rotation.y=.12;mesh.add(ring);
@@ -104,6 +132,7 @@ if (!openButton || !overlay || !canvasHost) {
           moon.position.set(.68,0,0);moonPivot.add(moon);mesh.userData.moonPivot=moonPivot;
         }
         planetObjects.push(mesh);
+        orbitPivots.push({mesh,elements,period:p.period,index:i});
       });
       renderer.domElement.addEventListener('pointerup',event=>{
         if(event.button!==0)return;
@@ -128,7 +157,7 @@ if (!openButton || !overlay || !canvasHost) {
       document.querySelectorAll('[data-solar-planet]').forEach(b=>b.addEventListener('click',()=>selectPlanet(Number(b.dataset.solarPlanet))));
       initialized=true;resize();
       selectPlanet(3);
-      status.textContent='ORBIT SIMULATION RUNNING · VISUAL SCALE';
+      status.textContent='LIVE EPHEMERIS · '+new Date(simulationTimeMs).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'medium'});
     } catch(err) {
       console.error('LOCAL MARS Solar System initialization failed',err);
       status.textContent='3D ENGINE ERROR · '+(err?.message||'Unable to initialize');
@@ -152,10 +181,14 @@ if (!openButton || !overlay || !canvasHost) {
     animationId=requestAnimationFrame(tick);
     if(!overlay.classList.contains('open')||!renderer)return;
     const delta=Math.min(clock.getDelta(),.05);
-    if(!paused){
-      orbitPivots.forEach(({pivot,period,index})=>{pivot.rotation.y+=delta*speed*(.19/Math.sqrt(period/88));});
-      planetObjects.forEach((p,i)=>{p.rotation.y+=delta*speed*(i===0?.8:.34);if(p.userData.moonPivot)p.userData.moonPivot.rotation.y+=delta*speed*1.8;});
-    }
+    if(!paused)simulationTimeMs+=delta*1000*speed;
+    const daysSinceJ2000=simulationTimeMs/86400000+10957.5;
+    orbitPivots.forEach(({mesh,elements,index})=>{
+      mesh.position.copy(orbitalPosition(elements,daysSinceJ2000));
+      mesh.rotation.y+=delta*(index===0?.8:.34);
+      if(mesh.userData.moonPivot)mesh.userData.moonPivot.rotation.y+=delta*1.8;
+    });
+    status.textContent=(paused?'PAUSED · ':'LIVE EPHEMERIS · ')+new Date(simulationTimeMs).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'medium'});
     controls.update();renderer.render(scene,camera);
   }
   function openView() {
