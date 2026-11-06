@@ -216,15 +216,15 @@ jobs:
         with:
           script: |
             const { owner, repo } = context.repo;
-            const blockedSha = 'dde4b08ee8b7fb1c84ee7e695385ef580014c884';
+            const blockedSha = '8064ac6656ca8efbc9ee313952d282da3e50a5d1';
             try {
               await github.request('POST /repos/{owner}/{repo}/pages/deployments/{pages_deployment_id}/cancel', {
                 owner, repo, pages_deployment_id: blockedSha
               });
               core.notice(`Cancelled stale GitHub Pages deployment ${blockedSha}.`);
             } catch (error) {
-              // GitHub may report a stale backend lock as "finished" even while
-              // deploy-pages still rejects the next build. Never block a new deploy here.
+              // The previous deployment SHA is the identifier required by the Pages cancel API.
+              // Keep this explicit until the stale deployment lock has been cleared.
               core.warning(`Pages cancel endpoint returned ${error.status || 'an error'}: ${error.message}. Continuing to the normal deployment step.`);
             }
 
