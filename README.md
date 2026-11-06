@@ -13,6 +13,7 @@ This release corrects the GitHub Pages artifact so it includes the complete appl
 
 - Planet Explorer (`index.html`)
 - Mars Mission Trainer (`mission-trainer.html`) — 10-day educational resource-management scenario
+- LOCAL MARS News (`news.html`) — live GDELT publisher links and database-backed member event feed
 - City Builder (`city.html`)
 - Underground Base 24 (`underground.html`)
 - M-003 private facility page (`m003-base.html`)
@@ -21,7 +22,7 @@ This release corrects the GitHub Pages artifact so it includes the complete appl
 - Thai and English dictionaries (`locales/th.json`, `locales/en.json`) and language engine (`i18n.js`)
 - PWA manifest, icon and versioned service worker
 
-The workflow runs asset checks and JavaScript syntax checks before publishing. A failed validation stops deployment rather than publishing an incomplete artifact.
+The workflow runs asset checks and JavaScript syntax checks before publishing. LOCAL MARS News retrieves external article links from GDELT and reads member events from the configured Supabase project; if either source is unavailable, the page shows an unavailable state rather than fabricated entries. A failed validation stops deployment rather than publishing an incomplete artifact.
 
 ## Systems and currency boundaries
 
