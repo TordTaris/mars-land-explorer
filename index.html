@@ -1763,7 +1763,18 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
      status.textContent=registration.waiting?'A new version is ready. Close and reopen LOCAL MARS to apply it.':'Update check complete. You are using the latest available version.';
    }catch(error){status.textContent='Could not check for updates. Please try again later.';console.warn('LOCAL MARS update check:',error)}
  });
- if('serviceWorker' in navigator)navigator.serviceWorker.ready.then(reg=>{registration=reg}).catch(()=>{});
+ if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+   window.addEventListener('load',async()=>{
+     try{
+       registration=await navigator.serviceWorker.register('./sw.js',{scope:'./'});
+       await navigator.serviceWorker.ready;
+       if(!status.textContent)status.textContent='Offline support is ready. You can check for updates here.';
+     }catch(error){
+       status.textContent='Offline installation support could not start. Open LOCAL MARS in Chrome or another supported browser and try again.';
+       console.warn('LOCAL MARS service worker registration:',error);
+     }
+   },{once:true});
+ }
 })();
 </script>
 <script id="local-mars-system-directory">
