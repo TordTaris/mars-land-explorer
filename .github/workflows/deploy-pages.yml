@@ -216,7 +216,7 @@ jobs:
         with:
           script: |
             const { owner, repo } = context.repo;
-            const blockedSha = '2fe03836044b04f17e7dac15005188afdf5b3292';
+            const blockedSha = 'dde4b08ee8b7fb1c84ee7e695385ef580014c884';
             try {
               await github.request('POST /repos/{owner}/{repo}/pages/deployments/{pages_deployment_id}/cancel', {
                 owner, repo, pages_deployment_id: blockedSha
