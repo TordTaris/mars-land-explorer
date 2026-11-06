@@ -61,7 +61,8 @@ if (!openButton || !overlay || !canvasHost) {
     if(initialized)return;
     try {
       scene=new THREE.Scene();scene.background=new THREE.Color(0x030711);
-      const portrait=canvasHost.clientWidth/Math.max(1,canvasHost.clientHeight)<.72;\n      camera=new THREE.PerspectiveCamera(portrait?58:45,1,.1,300);camera.position.set(0,portrait?26:22,portrait?75:39);
+      const portrait=canvasHost.clientWidth/Math.max(1,canvasHost.clientHeight)<.72;
+      camera=new THREE.PerspectiveCamera(portrait?58:45,1,.1,300);camera.position.set(0,portrait?26:22,portrait?75:39);
       renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});
       renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.7));
       renderer.outputColorSpace=THREE.SRGBColorSpace;
