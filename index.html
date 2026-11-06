@@ -836,6 +836,7 @@ header .status{flex:0 1 40%!important;width:auto!important;min-width:0!important
 #lmStationCard small{display:block;color:#9fb3c7;font-size:9px;letter-spacing:.8px}
 #lmStationCard strong{color:#f6e5c2}
 #lmStationCard button{width:100%;min-height:43px;margin-top:8px}
+#lmAresHud{position:fixed;z-index:13;left:14px;bottom:92px;width:min(230px,calc(100vw - 28px));padding:11px 13px;border:1px solid #d5b66f99;border-radius:12px;background:linear-gradient(145deg,#111f31ed,#07111fed);box-shadow:0 10px 30px #0009;color:#f5e8cb;font:10px/1.5 system-ui;letter-spacing:.65px;backdrop-filter:blur(10px);pointer-events:auto}#lmAresHud .ares-hud-head{display:flex;justify-content:space-between;gap:8px;align-items:center;color:#e8c987;font-weight:900;letter-spacing:1px}#lmAresHud .ares-hud-state{color:#7fffd0;font-weight:900}#lmAresHud .ares-hud-data{display:grid;grid-template-columns:1fr 1fr;gap:4px 9px;margin-top:7px;color:#9fb4c6}#lmAresHud b{color:#f3e4c3}#lmAresHud button{width:100%;margin-top:8px;padding:7px;border:1px solid #d7b57588;border-radius:7px;background:#26364a;color:#f8e8c7;font:800 9px system-ui;letter-spacing:.7px;cursor:pointer}@media(max-width:650px){#lmAresHud{left:9px;bottom:84px;width:174px;padding:8px 9px;font-size:9px}#lmAresHud .ares-hud-data{gap:2px 5px}}
 #lmStationOpen{display:block;position:relative;z-index:14;pointer-events:auto;cursor:pointer;width:100%;min-height:36px;margin-top:8px;padding:7px;border:1px solid #65d9e9aa;border-radius:8px;background:#12384a;color:#dffaff;font:700 9px system-ui;letter-spacing:.8px}
 @media(max-width:650px){#lmStationCard{padding:15px}#lmStationCard h2{font-size:17px}}
 </style>
@@ -871,6 +872,7 @@ header .status{flex:0 1 40%!important;width:auto!important;min-width:0!important
  <button id="lm-satellite-reconnect" type="button" style="width:100%;margin-top:8px;padding:7px;border:1px solid #65d9e9aa;border-radius:8px;background:#12384a;color:#dffaff;font:700 9px system-ui;letter-spacing:.8px">RECONNECT LINK</button>
 </div>
 
+<aside id="lmAresHud" aria-live="polite" aria-label="ARES orbital station display"><div class="ares-hud-head"><span>ARES · ORBITAL MONITOR</span><span class="ares-hud-state">● IN ORBIT</span></div><div class="ares-hud-data"><span>ORBIT ALTITUDE</span><b>400 KM</b><span>ORBIT PERIOD</span><b>~120 MIN</b><span>MISSION STATUS</span><b>DEPLOYED</b><span>PLATFORM</span><b>MARS LEO</b></div><button type="button" id="lmAresHudOpen">OPEN STATION CONTROL</button></aside>
 <div id="lmStationPanel" role="dialog" aria-modal="true" aria-labelledby="lmStationTitle">
  <section id="lmStationCard">
   <div class="eyebrow">LOCAL MARS · ORBITAL ENGINEERING</div>
@@ -1243,17 +1245,22 @@ const stationMast=new THREE.Mesh(new THREE.CylinderGeometry(.003,.003,.12,8),sta
 stationMast.position.set(-.09,.12,.035);aresStation.add(stationMast);
 const stationBeacon3d=new THREE.Mesh(new THREE.SphereGeometry(.012,10,8),stationGlow);
 stationBeacon3d.position.set(-.09,.185,.035);aresStation.add(stationBeacon3d);
-aresStation.scale.setScalar(.24);
+aresStation.scale.setScalar(.58);
 aresStation.visible=false;
 group.add(aresStation);
 const ARES_ORBIT_RADIUS=1+400000/MARS_PHYSICAL.meanRadiusMeters;
 const ARES_ORBIT_PERIOD_SECONDS=7200;
 const ARES_DEPLOY_KEY='localmars-ares-orbital-station-v1';
-let aresDeployEpoch=Number(localStorage.getItem(ARES_DEPLOY_KEY)||0);
-if(Number.isFinite(aresDeployEpoch)&&aresDeployEpoch>0){aresStation.visible=true;document.getElementById('lmStationState').textContent='IN ORBIT';}
-else aresDeployEpoch=0;
+// Auto-deploy the demonstration station when no prior deployment exists.
+let aresDeployEpoch=0;
+try{aresDeployEpoch=Number(localStorage.getItem(ARES_DEPLOY_KEY)||0);}catch(error){console.warn('ARES local state unavailable:',error);}
+if(!Number.isFinite(aresDeployEpoch)||aresDeployEpoch<=0){aresDeployEpoch=Date.now();try{localStorage.setItem(ARES_DEPLOY_KEY,String(aresDeployEpoch));}catch(error){console.warn('ARES deployment state is session-only:',error);}}
+aresStation.visible=true;
+document.getElementById('lmStationState').textContent='IN ORBIT';
+const aresDeployButton=document.getElementById('lmStationDeploy');if(aresDeployButton)aresDeployButton.textContent='✓ STATION IN ORBIT';
 const aresPanel=document.getElementById('lmStationPanel');
 document.getElementById('lmStationOpen')?.addEventListener('click',()=>aresPanel?.classList.add('open'));
+document.getElementById('lmAresHudOpen')?.addEventListener('click',()=>aresPanel?.classList.add('open'));
 document.getElementById('lmStationClose')?.addEventListener('click',()=>aresPanel?.classList.remove('open'));
 aresPanel?.addEventListener('click',event=>{if(event.target===aresPanel)aresPanel.classList.remove('open');});
 document.getElementById('lmStationDeploy')?.addEventListener('click',()=>{
