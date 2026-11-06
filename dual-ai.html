@@ -20,16 +20,16 @@ button,select{border:1px solid #8c7954;background:#152b41;color:#f6ebd5;border-r
  <div class="eyebrow">LOCAL INFERENCE + CLOUD BACKUP</div><h1>LOCAL MARS AI</h1>
  <p class="sub">เลือกดาวน์โหลดโมเดลมาประมวลผลบนอุปกรณ์ หรือใช้ Cloud AI เมื่อออนไลน์ โมเดลจะถูกเก็บในแคชของเบราว์เซอร์หลังดาวน์โหลดครั้งแรก</p>
  <section class="panel">
-  <div class="row"><span class="badge">Local model · WebGPU</span><span class="badge">Cloud · Gemini</span><span class="badge" id="gpuBadge">กำลังตรวจสอบ WebGPU</span></div>
+  <div class="row"><span class="badge">Local model · WebGPU</span><span class="badge">Online · GPT + Grok</span><span class="badge" id="gpuBadge">กำลังตรวจสอบ WebGPU</span></div>
   <h3>1 · ดาวน์โหลดและโหลดโมเดล AI</h3>
   <div class="row"><select id="model"><option value="Qwen2-0.5B-Instruct-q4f16_1-MLC">Qwen2 0.5B · รุ่นเริ่มต้น ขนาดเล็ก</option></select><button id="loadModel" class="primary">ดาวน์โหลด / โหลดโมเดล</button><button id="unload" disabled>ปลดโหลดจากหน่วยความจำ</button></div>
   <div id="progress"><div id="bar"></div></div><div id="modelStatus" class="note" aria-live="polite">ยังไม่ได้โหลดโมเดล · ต้องใช้เบราว์เซอร์และอุปกรณ์ที่รองรับ WebGPU</div>
   <p class="note">การดาวน์โหลดครั้งแรกอาจใช้ข้อมูลหลายร้อย MB และใช้พื้นที่จัดเก็บของเบราว์เซอร์ โมเดลทำงานบนอุปกรณ์ ไม่ส่งข้อความไปยังเซิร์ฟเวอร์ในโหมด Local ต้องเปิดหน้านี้ผ่าน HTTPS และใช้เบราว์เซอร์ที่รองรับ WebGPU เช่น Chrome/Edge รุ่นใหม่บนอุปกรณ์ที่รองรับ</p>
  </section>
  <section class="panel">
-  <h3>2 · เลือกโหมดประมวลผล</h3><div class="row"><button id="localMode" class="primary">ใช้ Local AI</button><button id="cloudMode">ใช้ Cloud AI</button><span class="badge" id="modeBadge">LOCAL</span></div>
+  <h3>2 · เลือกโหมดประมวลผล</h3><div class="row"><button id="localMode" class="primary">ใช้ Local AI</button><button id="cloudMode">Use Online AI</button><select id="cloudProvider" aria-label="Online AI provider"><option value="both">GPT + Grok</option><option value="gpt">GPT only</option><option value="grok">Grok only</option></select><span class="badge" id="modeBadge">LOCAL</span></div>
   <div id="status" aria-live="polite">กำลังตรวจสอบระบบ…</div>
-  <p class="note">Cloud AI ใช้บัญชี LOCAL MARS และ Supabase Edge Function ชื่อ free-ai พร้อม GEMINI_API_KEY ฝั่งเซิร์ฟเวอร์ หากยังไม่ได้ตั้งค่า Cloud จะไม่พร้อมใช้งาน แต่ Local AI ใช้แยกกันได้</p>
+  <p class="note">Online AI uses the secured Supabase Edge Function dual-ai with GPT and Grok API keys stored as server-side secrets. Sign in to LOCAL MARS before using Online AI. Provider API usage may incur charges on the connected API accounts.</p>
  </section>
  <section class="panel"><div id="chat" aria-live="polite"><div class="msg assistant">สวัสดีครับ ผมคือ LOCAL MARS AI เลือก Local หรือ Cloud แล้วเริ่มสนทนาได้</div></div></section>
  <section class="panel"><textarea id="prompt" maxlength="5000" placeholder="พิมพ์คำถามถึง LOCAL MARS AI ได้ที่นี่…"></textarea><div class="row" style="margin-top:9px"><button id="send" type="button" class="primary" onclick="window.__localMarsButtonTap()">ส่งคำถามให้ AI</button><button id="downloadTxt" disabled>ดาวน์โหลด TXT</button><button id="downloadJson" disabled>ดาวน์โหลด JSON</button><button id="clear">ล้างบทสนทนา</button><a id="login" href="./" style="display:none">ไปเข้าสู่ระบบ</a></div></section>
@@ -95,10 +95,18 @@ async function send(){
    const result=await engine.chat.completions.create({messages,temperature:0.7,max_tokens:900});
    answer=result?.choices?.[0]?.message?.content;
   }else{
-   const {data,error}=await supabase.functions.invoke("free-ai",{body:{prompt,history}});
+   const {data,error}=await supabase.functions.invoke("dual-ai",{body:{prompt,history,mode:$("cloudProvider").value}});
    if(error)throw error;
-   if(!data?.success)throw new Error(data?.error||"Cloud AI ยังไม่พร้อม");
-   answer=data.answer;
+   if(!data?.success)throw new Error(data?.error||"Online AI is unavailable.");
+   const results=data.results||{};
+   const blocks=[];
+   for(const name of ["gpt","grok"]){
+    const item=results[name];
+    if(item?.ok)blocks.push((name==="gpt"?"GPT":"GROK")+" · "+(item.model||"")+"\n"+item.text);
+    else if(item?.error)blocks.push((name==="gpt"?"GPT":"GROK")+" · ERROR\n"+item.error);
+   }
+   answer=blocks.join("\n\n────────────\n\n");
+   if(!answer)throw new Error("No AI provider returned a response.");
   }
   if(typeof answer!=="string"||!answer.trim())throw new Error("AI ไม่ได้ส่งข้อความตอบกลับ");
   pending.textContent=answer;
