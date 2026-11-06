@@ -54,18 +54,28 @@ const db=window.supabase.createClient(URL,KEY,{auth:{persistSession:true,autoRef
 const loginPanel=$('loginPanel'),catalog=$('adminCatalog'),loginButton=$('adminLoginButton');
 function setAuthMessage(message,ok=false){$('authMessage').textContent=message;$('authMessage').style.color=ok?'var(--green)':'var(--muted)';}
 async function verifyAdmin(){
- const {data:{session}}=await db.auth.getSession();
- if(!session){catalog.hidden=true;loginPanel.hidden=false;$('adminSignOut').hidden=true;loginButton.disabled=false;return;}
- loginButton.disabled=true;setAuthMessage('Checking administrator authorization…');
- const {error}=await db.rpc('mars_admin_overview');
- if(error){catalog.hidden=true;loginPanel.hidden=false;$('adminSignOut').hidden=false;setAuthMessage('Access denied. This account is not registered as a LOCAL MARS administrator. Account ID: '+session.user.id+'. Send this ID to the project owner for administrator authorization.');loginButton.disabled=false;return;}
- loginPanel.hidden=true;catalog.hidden=false;$('adminSignOut').hidden=false;setAuthMessage('Administrator verified.',true);load();
+ try{
+  if(!window.supabase||!window.supabase.createClient)throw new Error('Supabase client library did not load. Please refresh the page.');
+  const {data,error:sessionError}=await db.auth.getSession();
+  if(sessionError)throw sessionError;
+  const session=data?.session;
+  if(!session){catalog.hidden=true;loginPanel.hidden=false;$('adminSignOut').hidden=true;loginButton.disabled=false;return;}
+  loginButton.disabled=true;setAuthMessage('Checking administrator authorization…');
+  const {error}=await db.rpc('mars_admin_overview');
+  if(error){catalog.hidden=true;loginPanel.hidden=false;$('adminSignOut').hidden=false;setAuthMessage('Admin verification failed: '+error.message+' | Account ID: '+session.user.id);loginButton.disabled=false;return;}
+  loginPanel.hidden=true;catalog.hidden=false;$('adminSignOut').hidden=false;setAuthMessage('Administrator verified.',true);await load();
+ }catch(err){catalog.hidden=true;loginPanel.hidden=false;loginButton.disabled=false;setAuthMessage('SYSTEM ERROR: '+String(err?.message||err));console.error('LOCAL MARS admin verification:',err);}
 }
 $('adminLogin').addEventListener('submit',async e=>{
- e.preventDefault();loginButton.disabled=true;setAuthMessage('Signing in and verifying administrator role…');
- const {error}=await db.auth.signInWithPassword({email:$('adminEmail').value.trim(),password:$('adminPassword').value});
- if(error){setAuthMessage('Sign in failed: '+error.message);loginButton.disabled=false;return;}
- await verifyAdmin();loginButton.disabled=false;
+ e.preventDefault();loginButton.disabled=true;setAuthMessage('Signing in…');
+ try{
+  if(!window.supabase||!window.supabase.createClient)throw new Error('Authentication library unavailable. Reload the page.');
+  const {error}=await db.auth.signInWithPassword({email:$('adminEmail').value.trim(),password:$('adminPassword').value});
+  if(error)throw error;
+  setAuthMessage('Signed in. Checking administrator permission…');
+  await verifyAdmin();
+ }catch(err){setAuthMessage('SIGN-IN ERROR: '+String(err?.message||err));console.error('LOCAL MARS sign-in:',err);}
+ finally{loginButton.disabled=false;}
 });
 $('adminSignOut').addEventListener('click',async()=>{await db.auth.signOut();catalog.hidden=true;loginPanel.hidden=false;$('adminSignOut').hidden=true;setAuthMessage('Signed out.');});
 db.auth.onAuthStateChange((_event)=>{setTimeout(verifyAdmin,0);});
