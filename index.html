@@ -1498,7 +1498,24 @@ for(const layer of cosmicStarLayers){
  const field=new THREE.Points(geometry,new THREE.PointsMaterial({color:layer.color,size:layer.size,transparent:true,opacity:layer.opacity,depthWrite:false}));
  field.frustumCulled=false;scene.add(field);
 }
-const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.minDistance=1.7;controls.maxDistance=8;controls.autoRotate=true;controls.autoRotateSpeed=.35;
+const controls=new OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;
+controls.dampingFactor=.065;
+controls.enableRotate=true;
+controls.minAzimuthAngle=-Infinity;
+controls.maxAzimuthAngle=Infinity;
+controls.minPolarAngle=.01;
+controls.maxPolarAngle=Math.PI-.01;
+controls.minDistance=1.35;
+controls.maxDistance=8;
+controls.enablePan=false;
+controls.rotateSpeed=.8;
+controls.touches={ONE:THREE.TOUCH.ROTATE,TWO:THREE.TOUCH.DOLLY_ROTATE};
+controls.mouseButtons={LEFT:THREE.MOUSE.ROTATE,MIDDLE:THREE.MOUSE.DOLLY,RIGHT:THREE.MOUSE.ROTATE};
+controls.autoRotate=true;
+controls.autoRotateSpeed=.35;
+renderer.domElement.style.touchAction='none';
+renderer.domElement.setAttribute('aria-label','หมุนดาวอังคารได้ 360 องศาโดยลากเมาส์หรือใช้นิ้ว');
 // Canonical parcel coordinates match the shared Supabase world_parcels table.
 const parcels=[
 ['M-001',-160,-55,120,1000],['M-002',-93,-26,157,1275],['M-003',-26,3,9999999,1550],['M-004',41,32,231,1825],
