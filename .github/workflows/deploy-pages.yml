@@ -80,7 +80,7 @@ jobs:
           assert manifest.get("display") == "standalone", "PWA standalone display missing"
           assert any(icon.get("sizes") == "192x192" for icon in manifest.get("icons", [])), "192px PWA icon declaration missing"
           assert any(icon.get("sizes") == "512x512" for icon in manifest.get("icons", [])), "512px PWA icon declaration missing"
-          assert 'const CACHE = "local-mars-v4-80"' in sw, "service worker cache version not bumped"
+          assert 'const CACHE = "local-mars-v4-81"' in sw, "service worker cache version not bumped"
           assert 'id="local-mars-mobile-header-and-aegis-scale-v462"' in html, "mobile header and AEGIS layout fix missing"
           assert "colonyRoot.scale.setScalar(.30)" in html, "planetary AEGIS scale missing"
           assert "relaySatellite.scale.setScalar(.18)" in html, "planetary satellite scale missing"
@@ -135,6 +135,8 @@ jobs:
           assert city_module, "city builder module missing"
           assert 'id="constructionList"' in city, "construction progress panel missing"
           assert "function updateConstructionJobs" in city, "construction simulation loop missing"
+          assert "function updateConstructionCrew" in city and "rover.userData.armPivot" in city, "active construction crew animation missing"
+          assert "site.foundation.scale.y" in city and "site.frame.scale.y" in city and "site.equipment.scale.y" in city, "progressive construction assembly animation missing"
           Path("/tmp/mars-city.mjs").write_text(city_module.group(1), encoding="utf-8")
 
           underground_script = re.search(r'<script>\s*(.*?)\s*</script>', underground, re.S)
