@@ -2294,29 +2294,26 @@ function render(data){
  $('aresDataEpoch').textContent=newest?new Date(newest).toISOString().replace('T',' ').slice(0,16):'—';
 }
 async function connect(){
- const button=$('aresConnectPublicData');button.disabled=true;
- $('aresDataStatus').textContent='● FETCHING PUBLIC DATA';$('aresDataStatus').style.color='#f0ce8a';
+ const button=$('aresConnectPublicData');if(!button)return;button.disabled=true;
+ $('aresDataStatus').textContent='● LOADING PERSISTENT CATALOG';$('aresDataStatus').style.color='#f0ce8a';
  try{
-  const cache=readCache(),now=Date.now(),data={};let fetched=0;
-  for(const group of groups){
-   const saved=cache[group.id];
-   if(saved&&Array.isArray(saved.rows)&&now-saved.at<TTL){data[group.id]=saved.rows;continue;}
-   const url='https://celestrak.org/NORAD/elements/gp.php?GROUP='+encodeURIComponent(group.id)+'&FORMAT=JSON';
-   const response=await fetch(url,{headers:{Accept:'application/json'},cache:'no-store',signal:AbortSignal.timeout(18000)});
-   if(!response.ok)throw new Error(group.id+' HTTP '+response.status);
-   const rows=await response.json();if(!Array.isArray(rows))throw new Error(group.id+' returned an unexpected data format');
-   data[group.id]=rows;cache[group.id]={at:now,rows};fetched++;
-  }
+  const result=await window.MarsWorldServer?.getPublicSatelliteCatalog?.();
+  if(result?.error)throw new Error(result.error.message||'Persistent catalog unavailable');
+  const rows=result?.data||[];if(!rows.length)throw new Error('No persistent catalog snapshots are available yet');
+  const data={},cache=readCache();
+  rows.forEach(item=>{if(Array.isArray(item.payload)){data[item.group_id]=item.payload;cache[item.group_id]={at:Date.parse(item.fetched_at)||Date.now(),rows:item.payload}}});
   writeCache(cache);render(data);
-  $('aresDataStatus').textContent='● PUBLIC DATA LINK ACTIVE';$('aresDataStatus').style.color='#86edbd';
-  $('aresDataStatus').title=fetched?'Updated '+fetched+' catalog groups':'Using 2-hour cached catalog data';
+  const newestSync=rows.map(x=>Date.parse(x.fetched_at)||0).sort((a,b)=>b-a)[0]||0;
+  $('aresDataStatus').textContent='● PERSISTENT DATA LINK ACTIVE';$('aresDataStatus').style.color='#86edbd';
+  $('aresDataStatus').title='Supabase stored catalog · last server sync '+(newestSync?new Date(newestSync).toISOString():'unknown')+' · automatic refresh every 2 hours';
+  $('aresDataStatus').dataset.syncAt=newestSync?new Date(newestSync).toISOString():'';
  }catch(error){
-  $('aresDataStatus').textContent='○ DATA LINK UNAVAILABLE';$('aresDataStatus').style.color='#ffbd8d';
+  $('aresDataStatus').textContent='○ PERSISTENT LINK OFFLINE';$('aresDataStatus').style.color='#ffbd8d';
   const cache=readCache(),cached={};let hasCache=false;
   groups.forEach(g=>{if(Array.isArray(cache[g.id]?.rows)){cached[g.id]=cache[g.id].rows;hasCache=true}});
   if(hasCache)render(cached);
-  const note=document.createElement('div');note.className='ares-satellite-empty';note.textContent='Could not refresh public catalog: '+error.message+(hasCache?' · Showing previously cached data.':'');$('aresSatelliteGroups').prepend(note);
-  console.warn('ARES public satellite catalog:',error);
+  const note=document.createElement('div');note.className='ares-satellite-empty';note.textContent='Persistent catalog unavailable: '+error.message+(hasCache?' · Showing device cache only.':'');$('aresSatelliteGroups').prepend(note);
+  console.warn('ARES persistent satellite catalog:',error);
  }finally{button.disabled=false}
 }
 $('aresConnectPublicData')?.addEventListener('click',connect);
