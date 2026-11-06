@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: "*/15 * * * *"
   workflow_dispatch:
+  workflow_run:
+    workflows: ["Deploy LOCAL MARS to GitHub Pages"]
+    types: [completed]
 
 permissions:
   contents: read
@@ -14,6 +17,7 @@ concurrency:
 
 jobs:
   probe:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -22,7 +26,7 @@ jobs:
         run: |
           set -euo pipefail
           base="https://tordtaris.github.io/mars-land-explorer"
-          for path in "/" "/world-server.js" "/member-workspace.js" "/sw.js" "/manifest.webmanifest"; do
+          for path in "/" "/world-server.js" "/member-workspace.js" "/chat.js" "/sw.js" "/manifest.webmanifest" "/icon.svg" "/city.html" "/underground.html" "/mission-trainer.html" "/locales/th.json" "/parcels/M-019/index.html"; do
             echo "Checking ${base}${path}"
             code="$(curl --location --silent --show-error --output /dev/null --write-out '%{http_code}' --retry 3 --retry-all-errors --retry-delay 5 --max-time 25 "${base}${path}")"
             if [[ "${code}" != "200" ]]; then
