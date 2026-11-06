@@ -111,7 +111,7 @@ async function resetPassword(){
  if(!S.db)return {error:{message:'เซิร์ฟเวอร์ยังไม่พร้อม'}};
  const email=($('email')?.value||'').trim();
  if(!email||!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))return {error:{message:'กรุณากรอกอีเมลให้ถูกต้องก่อนขอรีเซ็ตรหัสผ่าน'}};
- const redirectTo=new URL('./?auth=recovery',window.location.href).href;
+ const redirectTo=new URL('./',window.location.href).href;
  const result=await S.db.auth.resetPasswordForEmail(email,{redirectTo});
  if(result.error){status(result.error.message);return {error:result.error};}
  status('ส่งคำขอรีเซ็ตรหัสผ่านแล้ว หากอีเมลนี้ลงทะเบียนไว้จะได้รับลิงก์',true);
