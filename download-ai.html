@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#081321"><title>LOCAL MARS AI · Download Center</title>
+<style>
+:root{color-scheme:dark;--bg:#07111f;--panel:#10243a;--line:#b99b6670;--gold:#e3c17c;--muted:#a9bacb;--cyan:#75e5ef}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -10%,#24435b 0,#091728 48%,#050b14 100%);color:#f4eddf;font:15px system-ui,sans-serif}
+header{padding:18px max(16px,calc((100vw - 880px)/2));border-bottom:1px solid var(--line);background:#071321cc;display:flex;justify-content:space-between;gap:12px;align-items:center}.brand{font-weight:900;letter-spacing:2px}.brand b{color:var(--gold)}a{color:var(--cyan);text-decoration:none}
+main{width:min(880px,calc(100% - 28px));margin:34px auto}.eyebrow{font-size:11px;letter-spacing:2px;color:var(--gold);font-weight:800}h1{font-size:clamp(28px,5vw,44px);margin:8px 0}.sub{color:var(--muted);line-height:1.7}
+.card{border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#112943ed,#091625f5);padding:20px;margin:18px 0;box-shadow:0 18px 45px #0007}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.pill{border:1px solid #75e5ef66;border-radius:20px;padding:5px 10px;color:#9beef4;font-size:12px}
+button{border:1px solid #8c7954;background:linear-gradient(120deg,#e1bd73,#aa7b3d);color:#1b150d;border-radius:11px;padding:13px 18px;font-weight:800;cursor:pointer}button:disabled{opacity:.6;cursor:wait}
+.secondary{background:#152b41;color:#f6ebd5;border-color:#8c7954}.muted{font-size:13px;color:var(--muted);line-height:1.65}#status{min-height:24px;color:var(--cyan);margin-top:12px;line-height:1.6}
+ul{color:#d5dfeb;line-height:1.9;padding-left:22px}.file{font-weight:800;color:#fff}.version{color:var(--gold);font-size:13px}
+</style></head><body>
+<header><div class="brand">LOCAL <b>MARS</b> · DOWNLOAD CENTER</div><a href="./">← หน้าหลัก</a></header>
+<main><div class="eyebrow">OFFICIAL WEB APP PACKAGE</div><h1>LOCAL MARS AI</h1>
+<p class="sub">ดาวน์โหลดไฟล์เว็บแอป LOCAL MARS AI เป็นไฟล์ HTML ไฟล์เดียว แล้วเปิดใช้งานผ่านเบราว์เซอร์ได้ ไม่ต้องติดตั้งโมเดล AI หรือโปรแกรมเพิ่มเติม</p>
+<section class="card"><div class="row"><span class="pill">HTML ไฟล์เดียว</span><span class="pill">Cloud AI</span><span class="pill">ไม่ต้องโหลดโมเดล</span></div>
+<h2>LOCAL MARS Online AI</h2><p class="muted">ไฟล์แอป: <span class="file">local-mars-ai.html</span><br>รูปแบบ: HTML · ดาวน์โหลดจาก GitHub Repository</p>
+<div class="row"><button id="download">ดาวน์โหลด LOCAL MARS AI</button><a class="muted" href="https://raw.githubusercontent.com/TordTaris/mars-land-explorer/main/dual-ai.html" target="_blank" rel="noopener">เปิดไฟล์ต้นฉบับ</a></div><div id="status" role="status" aria-live="polite"></div></section>
+<section class="card"><h3>วิธีใช้งาน</h3><ul><li>กดปุ่มดาวน์โหลดไฟล์ HTML</li><li>เปิดไฟล์ด้วย Chrome หรือเบราว์เซอร์ที่รองรับ</li><li>เชื่อมต่ออินเทอร์เน็ตและเข้าสู่ระบบ LOCAL MARS</li><li>ใช้งาน AI ผ่าน Cloud โดยไม่ต้องดาวน์โหลดโมเดล</li></ul>
+<p class="muted">ข้อกำหนด: แอปที่ดาวน์โหลดเป็นเว็บไคลเอนต์ ต้องใช้อินเทอร์เน็ต บัญชี LOCAL MARS และบริการ Supabase/Gemini ที่ตั้งค่าไว้แล้ว การดาวน์โหลดไฟล์ไม่ได้ทำให้ AI ทำงานแบบออฟไลน์</p></section>
+<p class="muted">แหล่งไฟล์: TordTaris/mars-land-explorer · หากดาวน์โหลดไม่สำเร็จ ใช้ลิงก์เปิดไฟล์ต้นฉบับแล้วเลือกบันทึกหน้าเว็บ</p></main>
+<script>
+const button=document.getElementById("download"),status=document.getElementById("status");
+button.addEventListener("click",async()=>{button.disabled=true;status.textContent="กำลังเตรียมไฟล์ดาวน์โหลด…";try{const response=await fetch("https://raw.githubusercontent.com/TordTaris/mars-land-explorer/main/dual-ai.html",{cache:"no-store"});if(!response.ok)throw new Error("ดาวน์โหลดต้นฉบับไม่สำเร็จ ("+response.status+")");const blob=new Blob([await response.text()],{type:"text/html;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="local-mars-ai.html";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);status.textContent="เตรียมไฟล์แล้ว หากเบราว์เซอร์ถาม ให้เลือกบันทึกไฟล์";}catch(e){status.textContent="ไม่สามารถดาวน์โหลดอัตโนมัติได้: "+e.message+" — ใช้ลิงก์เปิดไฟล์ต้นฉบับแทน";}finally{button.disabled=false;}});
+</script></body></html>
