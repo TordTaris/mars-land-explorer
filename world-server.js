@@ -216,6 +216,11 @@ async function setParcelListing(parcel,isListed,price){
  return synced?.error?{data:result.data,syncWarning:synced.error.message}:result;
 }
 
-window.MarsWorldServer={connect,auth,resetPassword,updatePassword,logout,refresh,claim,claimUsd,build,m003Access,walletBalances,walletTransactions,grantMlcStarter,transferMlc,reserveParcel,purchaseParcel,setParcelListing,recordActivity,getState:()=>({user:S.user,parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,mlcMarket:S.mlcMarket,db:S.db})};
+async function getPublicSatelliteCatalog(){
+ if(!S.db)return {error:{message:'Mars database is not connected'}};
+ const result=await S.db.from('ares_satellite_catalog_snapshots').select('group_id,payload,record_count,fetched_at,source_status').order('group_id');
+ return result.error?{error:result.error}:{data:result.data||[]};
+}
+window.MarsWorldServer={connect,auth,resetPassword,updatePassword,logout,refresh,claim,claimUsd,build,m003Access,walletBalances,walletTransactions,grantMlcStarter,transferMlc,reserveParcel,purchaseParcel,setParcelListing,recordActivity,getPublicSatelliteCatalog,getState:()=>({user:S.user,parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,mlcMarket:S.mlcMarket,db:S.db})};
 document.addEventListener('DOMContentLoaded',connect);
 })();
