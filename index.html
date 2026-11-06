@@ -1174,7 +1174,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   <b id="mlcBalance" style="font-size:20px;color:#f0d18e">— MLC</b>
  </div>
  <button class="full" id="mlcStarter">🎁 Claim 1,000 Welcome MLC</button>
- <button class="full" id="mlcM001Allocation" style="margin-top:6px">🧪 Claim 10,000 MLC · M-001 Sandbox</button>
  <div style="border:1px solid #ffffff20;border-radius:9px;padding:8px;margin-top:9px">
   <div class="small" style="margin-bottom:5px">YOUR MEMBER ID · SHARE TO RECEIVE MLC</div>
   <div style="display:flex;align-items:center;gap:6px"><code id="mlcMemberId" style="font-size:9px;overflow-wrap:anywhere;flex:1">Sign in to view</code><button type="button" id="mlcCopyMemberId" style="white-space:nowrap;padding:6px 8px">Copy ID</button></div>
@@ -1909,19 +1908,6 @@ document.querySelector('#mlcStarter').onclick=async()=>{
  try{const result=await window.MarsWorldServer.grantMlcStarter();if(result?.error)throw result.error;if(result?.data)renderMlcBalance(result.data);refreshMlcHistory();toast(result?.grant?.granted?'1,000 Welcome MLC credited to your wallet':'Welcome MLC was already claimed on this account');}
  catch(error){toast('Unable to claim MLC: '+(error.message||'Please try again'));}
  finally{button.disabled=false;button.textContent='🎁 Claim 1,000 Starter MLC';}
-};
-document.querySelector('#mlcM001Allocation').onclick=async()=>{
- const world=window.MarsWorldServer?.getState?.();
- if(!world?.user){toast('Sign in to claim the M-001 allocation');openLogin();return;}
- const button=document.querySelector('#mlcM001Allocation');button.disabled=true;button.textContent='Allocating MLC…';
- try{
-  const result=await window.MarsWorldServer.claimM001MlcAllocation();
-  if(result?.error)throw result.error;
-  if(result?.data)renderMlcBalance(result.data);
-  refreshMlcHistory();
-  toast(result?.grant?.granted?'10,000 MLC allocated to your M-001 sandbox wallet':'M-001 allocation was already claimed on this account');
- }catch(error){toast('Unable to allocate MLC: '+(error.message||'Please try again'));}
- finally{button.disabled=false;button.textContent='🧪 Claim 10,000 MLC · M-001 Sandbox';}
 };
 document.querySelector('#mlcTransfer').onclick=async()=>{
  const world=window.MarsWorldServer?.getState?.();
