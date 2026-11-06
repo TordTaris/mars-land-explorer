@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090e18"><title>LOCAL MARS | Admin Control Center</title>
+<style>
+:root{color-scheme:dark;--bg:#080d16;--panel:#111c2b;--line:#263a50;--text:#edf4ff;--muted:#9aacc0;--gold:#e5c17d;--cyan:#67d9e7;--green:#83dfb0;--red:#ff9e91}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#263b52 0,transparent 55%),var(--bg);color:var(--text);font:14px system-ui,sans-serif;min-height:100vh}
+a{color:var(--cyan);text-decoration:none}.wrap{width:min(1160px,calc(100% - 28px));margin:0 auto;padding:24px 0 48px}
+header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:24px}.brand{font-weight:900;letter-spacing:2px}.brand b{color:var(--gold)}.eyebrow{font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px}
+.panel{background:#111c2be8;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 14px 40px #0004;margin-bottom:16px}
+h1{font-size:clamp(23px,4vw,34px);margin:0 0 6px}h2{font-size:16px;letter-spacing:.5px;margin:0 0 14px}.muted{color:var(--muted)}.small{font-size:12px;color:var(--muted)}
+input,button{font:inherit;border-radius:9px;padding:11px 12px;border:1px solid #40566d;background:#0b1421;color:var(--text)}input{width:100%;min-width:0}button{cursor:pointer;font-weight:700}button.primary{background:linear-gradient(120deg,#8d6c3c,#d7b779);color:#17130d;border:0}button:disabled{opacity:.5;cursor:not-allowed}
+.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.row input{flex:1 1 220px}.row button{flex:0 0 auto}
+#authPanel{max-width:520px;margin:8vh auto}.status{margin-top:12px;min-height:20px;color:var(--gold);font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere}
+#adminApp[hidden],#authPanel[hidden],#accessPanel[hidden]{display:none}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.metric{padding:16px;background:#0a1421;border:1px solid var(--line);border-radius:13px}.metric small{display:block;color:var(--muted);font-size:10px;letter-spacing:1px}.metric strong{display:block;font-size:27px;margin-top:8px;color:var(--gold);font-variant-numeric:tabular-nums}
+table{width:100%;border-collapse:collapse;min-width:640px}th,td{text-align:left;padding:11px 9px;border-bottom:1px solid #29394b;font-size:12px;vertical-align:top}th{color:var(--muted);font-size:10px;letter-spacing:1px;text-transform:uppercase}td strong{font-size:12px}td .sub{display:block;color:var(--muted);font-size:10px;margin-top:4px}.tablewrap{overflow:auto}
+.pill{display:inline-block;border:1px solid #39536b;border-radius:20px;padding:4px 8px;font-size:10px;color:var(--cyan)}.danger{color:var(--red)}.notice{border:1px solid #755e36;background:#2a2115;border-radius:12px;padding:14px;overflow-wrap:anywhere}.notice code{font-size:12px;user-select:all}.hidden{display:none!important}
+@media(max-width:720px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.wrap{width:calc(100% - 20px)}.panel{padding:14px}header{align-items:flex-start}.metric strong{font-size:22px}}
+@media(max-width:420px){.grid{grid-template-columns:1fr 1fr}.metric{padding:12px}.metric strong{font-size:20px}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body><main class="wrap">
+<header><div><div class="brand">LOCAL <b>MARS</b></div><div class="eyebrow">ADMIN CONTROL CENTER · SECURE CONSOLE</div></div><a href="./">← Planet Explorer</a></header>
+<section id="authPanel" class="panel">
+<div class="eyebrow">AUTHORIZED PERSONNEL ONLY</div><h1>Admin sign in</h1><p class="muted">Sign in with your existing LOCAL MARS member account. Admin access is checked by the database, not by this page.</p>
+<form id="loginForm"><label class="small" for="email">EMAIL</label><input id="email" type="email" autocomplete="username" required placeholder="you@example.com" style="margin:6px 0 12px"><label class="small" for="password">PASSWORD</label><input id="password" type="password" autocomplete="current-password" required minlength="8" placeholder="Your account password" style="margin:6px 0 12px"><button class="primary" id="loginButton" type="submit">Sign in securely</button></form><div id="authStatus" class="status" role="status"></div>
+</section>
+<section id="accessPanel" class="panel" hidden><div class="eyebrow">ACCOUNT VERIFIED · ADMIN ROLE REQUIRED</div><h1>Admin access not enabled</h1><p class="muted">Your account is signed in, but its user ID is not registered in the protected administrator list. No member or transaction data has been exposed.</p><div class="notice"><div class="small">YOUR AUTH USER ID</div><code id="userId"></code><div class="row" style="margin-top:12px"><button id="copyId" type="button">Copy user ID</button><button id="signOutDenied" type="button">Sign out</button></div></div><p class="small" style="margin-top:12px">Send this user ID to the project owner to authorize it as an administrator. Do not send your password or verification codes.</p><div id="accessStatus" class="status"></div></section>
+<section id="adminApp" hidden>
+<div class="panel"><div class="row" style="justify-content:space-between"><div><div class="eyebrow">SYSTEM OVERVIEW</div><h1>Mission administration</h1><div id="adminIdentity" class="small"></div></div><div class="row"><button id="refresh" type="button">↻ Refresh</button><button id="signOut" type="button">Sign out</button></div></div><div id="appStatus" class="status" role="status"></div></div>
+<div class="grid" style="margin-bottom:16px"><div class="metric"><small>REGISTERED MEMBERS</small><strong id="membersCount">—</strong></div><div class="metric"><small>NEW MEMBERS · 30 DAYS</small><strong id="newMembers">—</strong></div><div class="metric"><small>CLAIMED PARCELS</small><strong id="parcels">—</strong></div><div class="metric"><small>WALLET TRANSACTIONS</small><strong id="transactionsCount">—</strong></div><div class="metric"><small>NET MLC ISSUED</small><strong id="mlcTotal">—</strong></div><div class="metric"><small>CHAT MESSAGES</small><strong id="chatCount">—</strong></div></div>
+<section class="panel"><div class="row" style="justify-content:space-between"><h2>MEMBER DIRECTORY</h2><span class="pill">READ ONLY</span></div><div class="row" style="margin-bottom:12px"><input id="memberSearch" type="search" placeholder="Search email, display name or user ID"><button id="searchMembers" type="button">Search</button></div><div class="tablewrap"><table><thead><tr><th>Member</th><th>User ID</th><th>Joined</th><th>MLC balance</th></tr></thead><tbody id="membersBody"><tr><td colspan="4" class="muted">Loading…</td></tr></tbody></table></div></section>
+<section class="panel"><div class="row" style="justify-content:space-between"><h2>RECENT WALLET TRANSACTIONS</h2><span class="pill">AUDIT VIEW · READ ONLY</span></div><div class="tablewrap"><table><thead><tr><th>Member</th><th>Resource</th><th>Amount</th><th>Reason</th><th>Date</th></tr></thead><tbody id="ledgerBody"><tr><td colspan="5" class="muted">Loading…</td></tr></tbody></table></div></section>
+<p class="small">Admin actions are read-only in this release. No wallet credits, account changes, refunds, or moderation actions are exposed here.</p>
+</section>
+</main>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id);
+const client=window.supabase?.createClient('https://tppgfxsdeuujidcjnfdl.supabase.co','sb_publishable_xQ0_NkSu2TMeIyJnAE94kw_WWQT2T3E',{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+let currentUser=null,authorized=false,busy=false;
+const fmt=n=>Number(n||0).toLocaleString();
+const date=s=>s?new Intl.DateTimeFormat(undefined,{dateStyle:'medium',timeStyle:'short'}).format(new Date(s)):'—';
+function status(id,msg,ok=false){$(id).textContent=msg||'';$(id).style.color=ok?'#83dfb0':'#e5c17d';}
+function view(which){$('authPanel').hidden=which!=='auth';$('accessPanel').hidden=which!=='access';$('adminApp').hidden=which!=='admin';}
+function errorText(e){return e?.message||String(e||'Unknown error');}
+async function checkAccess(){
+ if(!client||!currentUser){view('auth');return;}
+ view('admin');$('adminIdentity').textContent=currentUser.email||currentUser.id;
+ const {data,error}=await client.rpc('mars_admin_overview');
+ if(error){
+  if(error.code==='42501'||/admin_access_required|permission denied/i.test(error.message||'')){
+   $('userId').textContent=currentUser.id;view('access');return;
+  }
+  view('auth');status('authStatus','Unable to verify administrator access: '+errorText(error));return;
+ }
+ authorized=true;view('admin');renderOverview(data);await Promise.all([loadMembers(),loadLedger()]);
+}
+function renderOverview(d){$('membersCount').textContent=fmt(d.members);$('newMembers').textContent=fmt(d.new_members_30d);$('parcels').textContent=fmt(d.claimed_parcels);$('transactionsCount').textContent=fmt(d.wallet_transactions);$('mlcTotal').textContent=fmt(d.mlc_net_issued);$('chatCount').textContent=fmt(d.chat_messages);status('appStatus','Secure admin session active · '+date(d.generated_at),true);}
+async function loadMembers(){
+ const body=$('membersBody');body.innerHTML='<tr><td colspan="4" class="muted">Loading members…</td></tr>';
+ const {data,error}=await client.rpc('mars_admin_members',{p_search:$('memberSearch').value.trim(),p_limit:100});
+ if(error){body.innerHTML='<tr><td colspan="4" class="danger">Could not load members: '+escapeHtml(error.message)+'</td></tr>';return;}
+ body.replaceChildren();if(!data?.length){body.innerHTML='<tr><td colspan="4" class="muted">No matching members.</td></tr>';return;}
+ data.forEach(row=>{const tr=document.createElement('tr');tr.innerHTML='<td><strong>'+escapeHtml(row.display_name||'Explorer')+'</strong><span class="sub">'+escapeHtml(row.email||'')+'</span></td><td><span class="sub">'+escapeHtml(row.user_id)+'</span></td><td>'+escapeHtml(date(row.joined_at))+'</td><td><strong>'+fmt(row.mlc_balance)+' MLC</strong></td>';body.append(tr);});
+}
+async function loadLedger(){
+ const body=$('ledgerBody');body.innerHTML='<tr><td colspan="5" class="muted">Loading transactions…</td></tr>';
+ const {data,error}=await client.rpc('mars_admin_recent_transactions',{p_limit:100});
+ if(error){body.innerHTML='<tr><td colspan="5" class="danger">Could not load transactions: '+escapeHtml(error.message)+'</td></tr>';return;}
+ body.replaceChildren();if(!data?.length){body.innerHTML='<tr><td colspan="5" class="muted">No wallet transactions recorded.</td></tr>';return;}
+ data.forEach(row=>{const tr=document.createElement('tr');const amount=(Number(row.amount)>0?'+':'')+fmt(row.amount);tr.innerHTML='<td><strong>'+escapeHtml(row.display_name||'Explorer')+'</strong><span class="sub">'+escapeHtml(row.email||row.user_id)+'</span></td><td>'+escapeHtml(String(row.resource||'').toUpperCase())+'</td><td><strong>'+escapeHtml(amount)+'</strong></td><td>'+escapeHtml(row.reason||'—')+'</td><td>'+escapeHtml(date(row.created_at))+'</td>';body.append(tr);});
+}
+function escapeHtml(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+async function refresh(){if(busy||!authorized)return;busy=true;status('appStatus','Refreshing protected data…');try{const {data,error}=await client.rpc('mars_admin_overview');if(error)throw error;renderOverview(data);await Promise.all([loadMembers(),loadLedger()]);}catch(e){status('appStatus','Refresh failed: '+errorText(e));}finally{busy=false;}}
+$('loginForm').addEventListener('submit',async e=>{e.preventDefault();if(!client)return status('authStatus','Supabase client failed to load.');const button=$('loginButton');button.disabled=true;status('authStatus','Signing in…');try{const {data,error}=await client.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)throw error;currentUser=data.user;await checkAccess();}catch(err){status('authStatus','Sign in failed: '+errorText(err));}finally{button.disabled=false;}});
+$('refresh').addEventListener('click',refresh);$('searchMembers').addEventListener('click',loadMembers);$('memberSearch').addEventListener('keydown',e=>{if(e.key==='Enter')loadMembers();});
+$('signOut').addEventListener('click',()=>client.auth.signOut());$('signOutDenied').addEventListener('click',()=>client.auth.signOut());
+$('copyId').addEventListener('click',async()=>{try{await navigator.clipboard.writeText($('userId').textContent);status('accessStatus','User ID copied.',true);}catch(_){status('accessStatus','Select and copy the user ID manually.');}});
+client?.auth.onAuthStateChange((_event,session)=>{currentUser=session?.user||null;authorized=false;if(!currentUser){view('auth');$('password').value='';}else checkAccess();});
+if(!client){view('auth');status('authStatus','Supabase client failed to load.');}else client.auth.getSession().then(({data})=>{currentUser=data.session?.user||null;if(currentUser)checkAccess();else view('auth');});
+})();
+</script></body></html>
