@@ -1024,13 +1024,17 @@ document.addEventListener('DOMContentLoaded',()=>{
  <button class="full" id="removeParcelListing" style="display:none">Remove Listing</button>
 </div>
 <button class="full" id="claim" disabled>USD Checkout · Currently unavailable</button>
-</div>
-<select id="building" class="full" style="padding:9px;background:#101d30;color:white;border:1px solid #38506d;border-radius:9px">
-<option value="Habitat">Habitat Dome</option><option value="Lab">Science Lab</option><option value="Solar">Solar Farm</option><option value="Greenhouse">Greenhouse</option><option value="NuclearPlant">☢️ M-003 Mega Nuclear Energy Complex</option>
-</select>
-<button class="full" id="build">🏗️ Place Structure</button>
-<button class="full" id="openConstruction3D">🏗️ Open 3D Construction</button>
+<div id="parcelConstructionTools" class="plot" style="display:none;margin-top:9px">
+ <strong>MEMBER CONSTRUCTION</strong>
+ <div class="small" style="margin:5px 0 9px">Create a 3D asset on this parcel. Other online members will see it automatically.</div>
+ <select id="building" class="full" style="padding:9px;background:#101d30;color:white;border:1px solid #38506d;border-radius:9px">
+  <option value="Habitat">Habitat Dome</option><option value="Lab">Science Lab</option><option value="Solar">Solar Farm</option><option value="Greenhouse">Greenhouse</option><option value="NuclearPlant">☢️ M-003 Mega Nuclear Energy Complex</option>
+ </select>
+ <button class="primary full" id="build">🏗️ Place Structure</button>
+ <button class="full" id="openConstruction3D">🏗️ Open 3D Construction</button>
  <button class="full" id="openM003Base" style="display:none">🔐 OPEN M-003 PRIVATE BASE</button>
+</div>
+<div id="constructionAccessNote" class="small" style="display:none;margin-top:9px;padding:10px;border:1px solid #52677a;border-radius:10px;background:#0a1928"></div>
 <button class="full" id="closePlotPanel">Close Parcel Details</button>
 </div>
 
@@ -1582,10 +1586,54 @@ function renderSharedBuildings(structures){
    site.position.copy(pos(parcel.lon,parcel.lat,1.001));site.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),normal.clone().normalize());site.userData.localMarsAction='open-m003-base';
    group.add(site);buildingMeshes.set(item.id||String(index),site);return;
   }
-  const color=item.structure_type==='โรงเรือนปลูกพืช'?0x75d99b:item.structure_type==='ห้องปฏิบัติการ'?0x75c9ed:item.structure_type==='แผงพลังงานแสงอาทิตย์'?0xd9bd70:0xe8e6dc;
-  const geo=item.structure_type==='แผงพลังงานแสงอาทิตย์'?new THREE.BoxGeometry(.075,.012,.05):new THREE.ConeGeometry(.038,.07,6);
-  const mesh=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color,metalness:.35,roughness:.48,emissive:color,emissiveIntensity:.12}));
-  mesh.position.copy(normal);mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),normal.clone().normalize());group.add(mesh);buildingMeshes.set(item.id||String(index),mesh);
+  const site=new THREE.Group();
+  const steel=new THREE.MeshStandardMaterial({color:0x9eabb6,metalness:.68,roughness:.34});
+  const dark=new THREE.MeshStandardMaterial({color:0x263b4e,metalness:.55,roughness:.4});
+  const gold=new THREE.MeshStandardMaterial({color:0xd8b777,metalness:.62,roughness:.3});
+  const glass=new THREE.MeshPhysicalMaterial({color:0x77d8e8,metalness:.18,roughness:.18,transparent:true,opacity:.42,clearcoat:1,side:THREE.DoubleSide});
+  const green=new THREE.MeshStandardMaterial({color:0x64bd83,roughness:.75});
+  const add=(geo,mat,x,y,z)=>{const mesh=new THREE.Mesh(geo,mat);mesh.position.set(x,y,z);site.add(mesh);return mesh;};
+  const box=(x,y,z,w,h,d,mat)=>add(new THREE.BoxGeometry(w,h,d),mat,x,y,z);
+  add(new THREE.CylinderGeometry(.125,.135,.012,32),dark,0,.006,0);
+  add(new THREE.TorusGeometry(.119,.0025,6,48),gold,0,.014,0).rotation.x=Math.PI/2;
+  if(structureName==='ฐานที่อยู่อาศัย'){
+   const dome=add(new THREE.SphereGeometry(.071,24,16,0,Math.PI*2,0,Math.PI/2),glass,0,.017,0);
+   const rib=add(new THREE.TorusGeometry(.071,.0025,6,32),steel,0,.018,0);rib.rotation.x=Math.PI/2;
+   box(0,.032,-.025,.055,.034,.05,steel);
+   box(.025,.045,-.025,.018,.018,.052,dark);
+   const antenna=add(new THREE.CylinderGeometry(.002,.003,.055,8),gold,-.075,.04,.04);
+   antenna.rotation.z=-.18;
+  }else if(structureName==='ห้องปฏิบัติการ'){
+   box(0,.042,0,.145,.065,.105,steel);
+   box(0,.078,0,.151,.009,.111,dark);
+   for(let x=-.052;x<=.053;x+=.035)box(x,.045,.054,.018,.035,.004,glass);
+   box(-.025,.092,-.02,.045,.018,.045,gold);
+   const mast=add(new THREE.CylinderGeometry(.002,.003,.075,8),gold,.055,.11,-.03);
+   mast.rotation.z=-.12;
+   add(new THREE.SphereGeometry(.014,12,8),glass,.055,.151,-.03);
+   for(let x of [-.09,.09]){const panel=box(x,.025,-.075,.055,.004,.035,new THREE.MeshStandardMaterial({color:0x245a83,metalness:.55,roughness:.3}));panel.rotation.z=-.16;}
+  }else if(structureName==='โรงเรือนปลูกพืช'){
+   box(0,.025,0,.17,.018,.115,dark);
+   box(0,.061,0,.158,.065,.103,glass);
+   for(let row=0;row<3;row++)for(let col=0;col<5;col++){
+    const crop=add(new THREE.ConeGeometry(.008,.025,6),green,-.055+col*.027,.038,-.032+row*.03);
+    crop.rotation.x=.12;
+   }
+   for(let x of [-.08,.08])box(x,.064,0,.004,.075,.115,steel);
+  }else if(structureName==='แผงพลังงานแสงอาทิตย์'){
+   for(let row=0;row<2;row++)for(let col=0;col<3;col++){
+    const x=-.075+col*.075,z=-.045+row*.09;
+    const leg=add(new THREE.CylinderGeometry(.002,.003,.035,6),steel,x,.027,z);leg.rotation.z=-.22;
+    const panel=box(x,.046,z,.062,.005,.052,new THREE.MeshStandardMaterial({color:0x245c88,metalness:.62,roughness:.28,emissive:0x0b2842,emissiveIntensity:.22}));
+    panel.rotation.x=-.24;panel.rotation.z=-.22;
+    for(let edge=-1;edge<=1;edge++)box(x+edge*.018,.049,z,.0015,.002,.05,gold);
+   }
+  }
+  site.scale.setScalar(.58);
+  site.position.copy(pos(parcel.lon,parcel.lat,1.002));
+  site.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),normal.clone().normalize());
+  site.userData={structureId:item.id,parcelId:parcel.id,ownerId:item.owner_id,structureType:structureName};
+  group.add(site);buildingMeshes.set(item.id||String(index),site);
  });
 }
  // Build the M-003 landmark immediately on page load; online world updates will refresh it later.
@@ -1684,6 +1732,13 @@ function selectPlot(p){
  const listing=(world.mlcMarket||[]).find(x=>x.parcel_id===p.id);
  const claim=(world.claims||[]).find(x=>x.parcel_id===p.id);
  const isOwner=!!(world.user&&claim?.owner_id===world.user.id);
+ const constructionTools=document.querySelector("#parcelConstructionTools");
+ const constructionNote=document.querySelector("#constructionAccessNote");
+ if(constructionTools)constructionTools.style.display=isOwner?"block":"none";
+ if(constructionNote){
+  constructionNote.style.display=isOwner?"none":"block";
+  constructionNote.textContent=!world.user?"Sign in as a member to build on land you own.":claim?"Construction is restricted to the verified owner of this parcel.":"Acquire this parcel first. Only its verified owner can place structures.";
+ }
  const isListed=!!(listing&&listing.is_listed);
  const price=isListed?Number(listing.price_mlc)||0:0;
  document.body.classList.toggle("plot-selected",document.body.classList.contains("authenticated"));
@@ -1853,13 +1908,15 @@ document.querySelector('#mlcTransfer').onclick=async()=>{
  catch(error){toast('MLC transfer failed: '+(error.message||'Check the details and try again'));}
  finally{button.disabled=false;button.textContent='↔ Transfer MLC';}
 };
-const typeMap={Habitat:'Habitat Dome',Lab:'Research Laboratory',Greenhouse:'Agricultural Greenhouse',Solar:'Solar Power Array',NuclearPlant:'Nuclear Energy Complex'};
+const typeMap={Habitat:'ฐานที่อยู่อาศัย',Lab:'ห้องปฏิบัติการ',Greenhouse:'โรงเรือนปลูกพืช',Solar:'แผงพลังงานแสงอาทิตย์',NuclearPlant:'โรงไฟฟ้านิวเคลียร์ขนาดใหญ่'};
 document.querySelector('#build').onclick=async()=>{
  if(!selected){toast('Select a parcel first');return;}
  const choice=document.querySelector('#building').value;
  if(choice==='NuclearPlant'&&selected.id!=='M-003'){toast('The Nuclear Energy Complex can only be built on parcel M-003');return;}
  const world=window.MarsWorldServer?.getState?.();
  if(!world?.user){toast('Sign in to build structures');openLogin();return;}
+ const ownership=(world.claims||[]).find(x=>x.parcel_id===selected.id);
+ if(ownership?.owner_id!==world.user.id){toast('Only the verified owner of this parcel can build here');return;}
  if(!world.db){toast('Server unavailable. Please try again.');return;}
  const type=typeMap[choice];
  const button=document.querySelector('#build');button.disabled=true;button.textContent='Constructing…';
