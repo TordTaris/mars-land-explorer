@@ -17,8 +17,18 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;p
 @media(max-width:700px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}main{padding:16px 12px 40px}th,td{padding:8px 6px}}
 </style></head>
 <body><main>
-<div class="top"><div class="eyebrow">LOCAL MARS · PUBLIC DATA PORTAL</div><a href="/">← Back to LOCAL MARS</a></div>
-<section class="hero"><div class="eyebrow">GLOBAL SATELLITE DATA NETWORK</div><h1>Worldwide Orbital Catalog</h1><p>Publicly accessible orbital element records shared from the LOCAL MARS persistent data service. Browse catalogued objects from navigation, government/public military, weather, Earth-observation and space-station groups.</p></section>
+<div class="top"><div class="eyebrow">LOCAL MARS · RESTRICTED ADMIN PORTAL</div><div class="tools" style="margin:0"><button id="adminSignOut" type="button" hidden>SIGN OUT</button><a href="/">← Back to LOCAL MARS</a></div></div>
+<section class="hero"><div class="eyebrow">GLOBAL SATELLITE DATA NETWORK</div><h1>Administrator Satellite Console</h1><p>Satellite catalog search is restricted to verified LOCAL MARS administrators. Public visitors and standard members cannot search or retrieve the catalog.</p></section>
+<section id="loginPanel" class="panel" style="max-width:520px">
+ <div class="eyebrow">ADMINISTRATOR AUTHENTICATION</div><h2 style="margin:8px 0">Sign in to continue</h2>
+ <form id="adminLogin" class="tools" style="display:grid;grid-template-columns:1fr;gap:10px">
+  <input id="adminEmail" type="email" autocomplete="username" placeholder="Administrator email" required>
+  <input id="adminPassword" type="password" autocomplete="current-password" placeholder="Password" required>
+  <button id="adminLoginButton" type="submit">VERIFY ADMIN ACCESS</button>
+ </form>
+ <div id="authMessage" class="muted" role="status">Only accounts registered in the LOCAL MARS administrator list can continue.</div>
+</section>
+<section id="adminCatalog" hidden>
 <div class="grid">
  <div class="card"><div class="metric" id="total">—</div><div class="muted">CATALOG RECORDS</div></div>
  <div class="card"><div class="metric" id="groups">—</div><div class="muted">DATA GROUPS</div></div>
@@ -31,12 +41,32 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;p
  <div class="table-wrap"><table><thead><tr><th>OBJECT</th><th>CATALOG ID</th><th>GROUP</th><th>ORBIT EPOCH (UTC)</th><th>ORBITAL PERIOD</th><th>INCLINATION</th></tr></thead><tbody id="rows"><tr><td colspan="6">Connecting to public catalog…</td></tr></tbody></table></div>
 </div>
 <div class="foot"><b>Source & limitations.</b> Orbital elements are provided by CelesTrak GP/OMM and refreshed by the LOCAL MARS server on a two-hour schedule. These are catalog-derived orbital elements, not live radar telemetry, satellite communications, or spacecraft command links. The MILITARY group includes only objects present in the public catalog; it does not imply access to classified data. Please follow the <a href="https://celestrak.org/usage-policy.php" target="_blank" rel="noopener">CelesTrak usage policy</a> and <a href="https://celestrak.org/NORAD/documentation/gp-data-formats.php" target="_blank" rel="noopener">GP data documentation</a>. Data may be redistributed subject to the source provider's terms; no separate reuse licence is asserted here.</div>
-<div class="muted" style="margin-top:14px">LOCAL MARS · ARES PUBLIC SATELLITE DATA LINK · READ ONLY</div>
+<div class="muted" style="margin-top:14px">LOCAL MARS · ARES ADMIN SATELLITE DATA CONSOLE · READ ONLY</div>
+</section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 (()=>{'use strict';
 const URL='https://tppgfxsdeuujidcjnfdl.supabase.co',KEY='sb_publishable_xQ0_NkSu2TMeIyJnAE94kw_WWQT2T3E';
+const db=window.supabase.createClient(URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const loginPanel=$('loginPanel'),catalog=$('adminCatalog'),loginButton=$('adminLoginButton');
+function setAuthMessage(message,ok=false){$('authMessage').textContent=message;$('authMessage').style.color=ok?'var(--green)':'var(--muted)';}
+async function verifyAdmin(){
+ const {data:{session}}=await db.auth.getSession();
+ if(!session){catalog.hidden=true;loginPanel.hidden=false;$('adminSignOut').hidden=true;return;}
+ loginButton.disabled=true;setAuthMessage('Checking administrator authorization…');
+ const {error}=await db.rpc('mars_admin_overview');
+ if(error){catalog.hidden=true;loginPanel.hidden=false;$('adminSignOut').hidden=false;setAuthMessage('Access denied. This account is not registered as a LOCAL MARS administrator.');return;}
+ loginPanel.hidden=true;catalog.hidden=false;$('adminSignOut').hidden=false;setAuthMessage('Administrator verified.',true);load();
+}
+$('adminLogin').addEventListener('submit',async e=>{
+ e.preventDefault();loginButton.disabled=true;setAuthMessage('Signing in and verifying administrator role…');
+ const {error}=await db.auth.signInWithPassword({email:$('adminEmail').value.trim(),password:$('adminPassword').value});
+ if(error){setAuthMessage('Sign in failed: '+error.message);loginButton.disabled=false;return;}
+ await verifyAdmin();loginButton.disabled=false;
+});
+$('adminSignOut').addEventListener('click',async()=>{await db.auth.signOut();catalog.hidden=true;loginPanel.hidden=false;$('adminSignOut').hidden=true;setAuthMessage('Signed out.');});
+db.auth.onAuthStateChange((_event)=>{setTimeout(verifyAdmin,0);});
 const groups={GNSS:'Global Navigation',MILITARY:'Publicly Catalogued Government/Military',WEATHER:'Weather', 'EARTH-RESOURCES':'Earth Observation & Resources',STATIONS:'Space Stations'};
 const $=id=>document.getElementById(id);let all=[];
 function draw(){
@@ -55,7 +85,6 @@ function draw(){
 async function load(){
  $('reload').disabled=true;$('health').textContent='CONNECTING';
  try{
-  const db=window.supabase.createClient(URL,KEY);
   const {data,error}=await db.from('ares_satellite_catalog_snapshots').select('group_id,payload,record_count,fetched_at,source_status').order('group_id');
   if(error)throw error;if(!data?.length)throw new Error('No public snapshots available');
   all=[];let newest=0;
@@ -69,6 +98,7 @@ async function load(){
  }catch(e){$('health').textContent='OFFLINE';$('rows').innerHTML='<tr><td colspan="6">Unable to load public catalog: '+String(e.message||e).replace(/[<>]/g,'')+'</td></tr>';console.error(e)}
  finally{$('reload').disabled=false}
 }
-$('search').addEventListener('input',draw);$('group').addEventListener('change',draw);$('reload').addEventListener('click',load);load();
+$('search').addEventListener('input',draw);$('group').addEventListener('change',draw);$('reload').addEventListener('click',load);
+verifyAdmin();
 })();
 </script></body></html>
