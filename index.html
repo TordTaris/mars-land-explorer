@@ -1501,9 +1501,8 @@ for(const layer of cosmicStarLayers){
 const controls=new OrbitControls(camera,renderer.domElement);
 controls.enableDamping=true;
 controls.dampingFactor=.065;
-controls.enableRotate=true;
-controls.minAzimuthAngle=-Infinity;
-controls.maxAzimuthAngle=Infinity;
+// Rotate the complete Mars globe group directly so vertical drag can pass through both poles and complete 360 degrees.
+controls.enableRotate=false;
 controls.minPolarAngle=.01;
 controls.maxPolarAngle=Math.PI-.01;
 controls.minDistance=1.35;
@@ -1516,6 +1515,12 @@ controls.autoRotate=true;
 controls.autoRotateSpeed=.35;
 renderer.domElement.style.touchAction='none';
 renderer.domElement.setAttribute('aria-label','หมุนดาวอังคารได้ 360 องศาโดยลากเมาส์หรือใช้นิ้ว');
+let marsDragPointer=null,lastMarsX=0,lastMarsY=0;
+renderer.domElement.addEventListener('pointerdown',event=>{if(event.pointerType==='mouse'&&event.button!==0)return;marsDragPointer=event.pointerId;lastMarsX=event.clientX;lastMarsY=event.clientY;renderer.domElement.setPointerCapture(event.pointerId);});
+renderer.domElement.addEventListener('pointermove',event=>{if(marsDragPointer!==event.pointerId)return;const dx=event.clientX-lastMarsX,dy=event.clientY-lastMarsY;lastMarsX=event.clientX;lastMarsY=event.clientY;group.rotation.y+=dx*.008;group.rotation.x+=dy*.008;});
+const endMarsDrag=event=>{if(marsDragPointer===event.pointerId)marsDragPointer=null;};
+renderer.domElement.addEventListener('pointerup',endMarsDrag);
+renderer.domElement.addEventListener('pointercancel',endMarsDrag);
 // Canonical parcel coordinates match the shared Supabase world_parcels table.
 const parcels=[
 ['M-001',-160,-55,120,1000],['M-002',-93,-26,157,1275],['M-003',-26,3,9999999,1550],['M-004',41,32,231,1825],
