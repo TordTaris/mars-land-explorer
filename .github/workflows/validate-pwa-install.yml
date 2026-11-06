@@ -43,8 +43,8 @@ jobs:
           chat = Path("chat.js").read_text(encoding="utf-8")
 
           required_html = [
-              'id="lmInstallDock"',
-              'id="lmInstallAppBtn"',
+              'id="lmMoreInstallBtn"',
+              'id="lmInstallConfirm"',
               'id="lmInstallDialog"',
               'id="local-mars-install-controller"',
               "beforeinstallprompt",
