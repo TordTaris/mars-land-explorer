@@ -3,7 +3,7 @@
 const $=id=>document.getElementById(id);
 const overlay=$('lmChatOverlay'),openButton=$('lmChatOpen'),closeButton=$('lmChatClose'),messages=$('lmChatMessages'),form=$('lmChatForm'),input=$('lmChatInput'),send=$('lmChatSend'),notice=$('lmChatNotice'),signIn=$('lmChatSignIn'),connection=$('lmChatConnection'),online=$('lmChatOnline');
 if(!overlay||!messages||!form)return;
-let db=null,user=null,channel=null,connecting=false,sending=false,seen=new Set(),onlineUsers=new Set();
+let db=null,user=null,channel=null,connecting=false,sending=false,reconnectTimer=null,reconnectAttempt=0,seen=new Set(),onlineUsers=new Set();
 const lang=()=>window.LOCAL_MARS_I18N?.language||document.documentElement.lang||'en';
 function state(){try{return window.MarsWorldServer?.getState?.()||null}catch(_){return null}}
 function nameOf(u){const meta=u?.user_metadata||{};return String(meta.display_name||meta.full_name||u?.email?.split('@')[0]||'Explorer').trim().slice(0,48)||'Explorer';}
@@ -41,13 +41,20 @@ function countPresence(){
  onlineUsers=ids;updateOnline();
 }
 async function disconnect(){
+ if(reconnectTimer){clearTimeout(reconnectTimer);reconnectTimer=null;}
  if(channel&&db){const old=channel;channel=null;try{await db.removeChannel(old)}catch(_){}}
  onlineUsers.clear();updateOnline();
+}
+function scheduleReconnect(){
+ if(reconnectTimer||!overlay.classList.contains('open')||!user)return;
+ const delay=Math.min(30000,1000*Math.pow(2,reconnectAttempt++));
+ status('สัญญาณขัดข้อง · กำลังเชื่อมต่อใหม่');
+ reconnectTimer=setTimeout(()=>{reconnectTimer=null;connect();},delay);
 }
 async function connect(){
  const s=state();db=s?.db||db;user=s?.user||null;controls();
  if(!overlay.classList.contains('open'))return;
- if(!db){status('รอการเชื่อมต่อฐานข้อมูล');return;}
+ if(!db){status('รอการเชื่อมต่อฐานข้อมูล');scheduleReconnect();return;}
  if(!user){await disconnect();status('ต้องเข้าสู่ระบบสมาชิก');empty('เข้าสู่ระบบเพื่อดูและส่งข้อความในห้องสนทนา');controls();return;}
  if(channel||connecting)return;
  connecting=true;status('กำลังเชื่อมต่อห้องสนทนา');
@@ -58,11 +65,13 @@ async function connect(){
  ch.on('presence',{event:'leave'},countPresence);
  ch.subscribe(async(st,err)=>{
   if(st==='SUBSCRIBED'){
-   channel=ch;status('เชื่อมต่อแล้ว · LIVE',true);
+   channel=ch;reconnectAttempt=0;status('เชื่อมต่อแล้ว · LIVE',true);
    try{await ch.track({userId:user.id,displayName:nameOf(user),onlineAt:new Date().toISOString()});}catch(_){}
    controls();await loadRecent();
   }else if(st==='CHANNEL_ERROR'||st==='TIMED_OUT'||st==='CLOSED'){
-   status('การเชื่อมต่อขัดข้อง');notice.textContent=err?.message||'กำลังรอการเชื่อมต่อใหม่';channel=null;controls();
+   if(channel===ch)channel=null;
+   try{await db.removeChannel(ch)}catch(_){}
+   notice.textContent=err?.message||'กำลังรอการเชื่อมต่อใหม่';controls();scheduleReconnect();
   }
  });
  connecting=false;
@@ -82,10 +91,10 @@ async function hide(){overlay.classList.remove('open');overlay.setAttribute('ari
 openButton?.addEventListener('click',show);
 closeButton?.addEventListener('click',hide);
 overlay.addEventListener('click',e=>{if(e.target===overlay)hide();});
-signIn.addEventListener('click',()=>{hide();document.querySelector('.lm-command-dock [data-tab="account"]')?.click();});
+signIn.addEventListener('click',()=>{hide();document.getElementById('account')?.click();});
 form.addEventListener('submit',sendMessage);
 input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit();}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('open'))hide();});
-document.addEventListener('mars-auth-state',async e=>{user=e.detail?.user||null;await disconnect();controls();if(overlay.classList.contains('open'))connect();else if(!user)empty('เข้าสู่ระบบเพื่อดูและส่งข้อความในห้องสนทนา');});
+document.addEventListener('mars-auth-state',async e=>{user=e.detail?.user||null;await disconnect();reconnectAttempt=0;controls();if(overlay.classList.contains('open'))connect();else if(!user)empty('เข้าสู่ระบบเพื่อดูและส่งข้อความในห้องสนทนา');});
 let attempts=0;const wait=setInterval(()=>{const s=state();if(s?.db){clearInterval(wait);db=s.db;user=s.user||null;controls();}else if(++attempts>100)clearInterval(wait);},250);
 })();
