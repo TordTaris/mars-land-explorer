@@ -982,6 +982,13 @@ header .status{flex:0 1 40%!important;width:auto!important;min-width:0!important
 }
 @media(min-width:761px) and (max-height:650px){.lm-solar-panel{max-height:calc(100dvh - 90px);top:68px}.lm-solar-hint{bottom:8px}}
 </style>
+
+<style id="lm-solar-icon-right">
+/* Icon-only Solar System launcher aligned to the upper-right */
+#lmSolarOpen{top:calc(env(safe-area-inset-top, 0px) + 62px);right:18px;left:auto;transform:none;width:46px;height:46px;padding:0;display:grid;place-items:center;border:1px solid #e9b96c99;border-radius:15px;background:linear-gradient(135deg,rgba(24,40,60,.96),rgba(57,42,32,.96));color:#ffe5b3;font:normal 24px/1 system-ui,sans-serif;letter-spacing:0;box-shadow:0 8px 28px #0008;backdrop-filter:blur(12px);white-space:normal;cursor:pointer}
+#lmSolarOpen:active{transform:scale(.94)}
+@media(max-width:760px){#lmSolarOpen{top:calc(env(safe-area-inset-top, 0px) + 60px);right:12px;width:44px;height:44px;font-size:23px}}
+</style>
 </head>
 <body>\n<div id="lmStartup" role="status" aria-live="polite"><div id="lmStartupCard"><div id="lmStartupMark">LOCAL <b>MARS</b></div><div id="lmStartupText">INITIALIZING PLANETARY SYSTEMS…</div><div id="lmStartupTrack"></div></div></div>
 <script>
@@ -2467,7 +2474,7 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
 
 
 
-<button id="lmSolarOpen" type="button" aria-haspopup="dialog" aria-controls="lmSolarOverlay" aria-expanded="false">☼　SOLAR SYSTEM 3D</button>
+<button id="lmSolarOpen" type="button" aria-label="Open Solar System" title="Solar System" aria-haspopup="dialog" aria-controls="lmSolarOverlay" aria-expanded="false">🔭</button>
 <section id="lmSolarOverlay" role="dialog" aria-modal="true" aria-label="Interactive 3D Solar System" aria-hidden="true">
  <div id="lmSolarCanvas"></div>
  <header class="lm-solar-top"><div><div class="lm-solar-brand">LOCAL MARS <span>· SOLAR SYSTEM</span></div><div id="lmSolarStatus" class="lm-solar-status">PREPARING PLANETARY ORBITS…</div></div><button id="lmSolarClose" type="button">✕ CLOSE</button></header>
