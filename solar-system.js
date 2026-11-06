@@ -1,0 +1,174 @@
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const $ = (id) => document.getElementById(id);
+const openButton = $('lmSolarOpen');
+const overlay = $('lmSolarOverlay');
+const closeButton = $('lmSolarClose');
+const canvasHost = $('lmSolarCanvas');
+const status = $('lmSolarStatus');
+const detailName = $('lmSolarPlanetName');
+const detailType = $('lmSolarPlanetType');
+const detailText = $('lmSolarPlanetText');
+const detailFacts = $('lmSolarPlanetFacts');
+if (!openButton || !overlay || !canvasHost) {
+  console.warn('LOCAL MARS Solar System: interface mount point missing');
+} else {
+  let renderer, scene, camera, controls, animationId;
+  let initialized = false, paused = false, speed = 1, selected = null;
+  const planetObjects = [];
+  const orbitPivots = [];
+  const raycaster = new THREE.Raycaster();
+  const pointer = new THREE.Vector2();
+  const clock = new THREE.Clock();
+  const planetData = [
+    {name:'Mercury',thai:'ดาวพุธ',type:'Terrestrial planet',color:0xaaa49c,radius:.23,orbit:4.1,period:88,desc:'ดาวเคราะห์ที่อยู่ใกล้ดวงอาทิตย์ที่สุด พื้นผิวเต็มไปด้วยหลุมอุกกาบาตและมีอุณหภูมิเปลี่ยนแปลงรุนแรง',facts:['Mean diameter · 4,879 km','Mean distance · 57.9 million km','Orbital period · 88 Earth days']},
+    {name:'Venus',thai:'ดาวศุกร์',type:'Terrestrial planet',color:0xe5bd82,radius:.34,orbit:5.7,period:224.7,desc:'ดาวเคราะห์ที่ร้อนที่สุดในระบบสุริยะ มีชั้นบรรยากาศหนาแน่นซึ่งประกอบด้วยคาร์บอนไดออกไซด์',facts:['Mean diameter · 12,104 km','Mean distance · 108.2 million km','Orbital period · 224.7 Earth days']},
+    {name:'Earth',thai:'โลก',type:'Terrestrial planet',color:0x3288cf,radius:.36,orbit:7.4,period:365.25,desc:'บ้านของเรา โลกมีมหาสมุทร น้ำในสถานะของเหลว และเป็นดาวเคราะห์เดียวที่ยืนยันว่ามีสิ่งมีชีวิต',facts:['Mean diameter · 12,742 km','Mean distance · 149.6 million km','Orbital period · 365.25 days']},
+    {name:'Mars',thai:'ดาวอังคาร',type:'Terrestrial planet · LOCAL MARS',color:0xc65d3e,radius:.29,orbit:9.2,period:687,desc:'ดาวเคราะห์สีแดงและศูนย์กลางของ LOCAL MARS สำรวจต่อไปยังโลกจำลองและแปลงพื้นที่ M-001 ถึง M-019 ได้',facts:['Mean diameter · 6,779 km','Mean distance · 227.9 million km','Orbital period · 687 Earth days']},
+    {name:'Jupiter',thai:'ดาวพฤหัสบดี',type:'Gas giant',color:0xd4a77d,radius:1.02,orbit:13.1,period:4332.6,desc:'ดาวเคราะห์ที่ใหญ่ที่สุด มีแถบเมฆหลายชั้นและพายุขนาดมหึมา รวมถึงจุดแดงใหญ่',facts:['Mean diameter · 139,820 km','Mean distance · 778.6 million km','Orbital period · 11.86 Earth years']},
+    {name:'Saturn',thai:'ดาวเสาร์',type:'Gas giant',color:0xd8c08c,radius:.83,orbit:17.3,period:10759,desc:'โดดเด่นด้วยระบบวงแหวนที่ประกอบด้วยอนุภาคน้ำแข็ง เศษหิน และฝุ่นจำนวนมาก',facts:['Mean diameter · 116,460 km','Mean distance · 1.43 billion km','Orbital period · 29.45 Earth years']},
+    {name:'Uranus',thai:'ดาวยูเรนัส',type:'Ice giant',color:0x85d5d8,radius:.59,orbit:21.3,period:30687,desc:'ดาวเคราะห์น้ำแข็งยักษ์ที่มีแกนหมุนเอียงมากจนดูคล้ายกลิ้งไปตามวงโคจร',facts:['Mean diameter · 50,724 km','Mean distance · 2.87 billion km','Orbital period · 84 Earth years']},
+    {name:'Neptune',thai:'ดาวเนปจูน',type:'Ice giant',color:0x416fe0,radius:.57,orbit:25.4,period:60190,desc:'ดาวเคราะห์ที่อยู่ไกลดวงอาทิตย์ที่สุดในบรรดาดาวเคราะห์ทั้งแปด มีลมแรงมากในชั้นบรรยากาศ',facts:['Mean diameter · 49,244 km','Mean distance · 4.50 billion km','Orbital period · 164.8 Earth years']}
+  ];
+  function makeStripeTexture(base, stripe) {
+    const c=document.createElement('canvas'); c.width=512;c.height=256;
+    const x=c.getContext('2d');
+    x.fillStyle=base;x.fillRect(0,0,512,256);
+    for(let y=0;y<256;y++){
+      const wave=Math.sin(y*.12)*8+Math.sin(y*.037)*10;
+      x.globalAlpha=.12+((Math.sin(y*.23)+1)*.12);
+      x.fillStyle=stripe;x.fillRect(0,y,512,Math.max(1,2+wave*.12));
+    }
+    x.globalAlpha=1;
+    const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;return t;
+  }
+  function addStars() {
+    const count=2400, positions=new Float32Array(count*3);
+    for(let i=0;i<count;i++){
+      const r=THREE.MathUtils.randFloat(42,95), u=THREE.MathUtils.randFloat(-1,1), a=Math.random()*Math.PI*2;
+      const q=Math.sqrt(1-u*u);positions[i*3]=r*q*Math.cos(a);positions[i*3+1]=r*u;positions[i*3+2]=r*q*Math.sin(a);
+    }
+    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(positions,3));
+    scene.add(new THREE.Points(g,new THREE.PointsMaterial({color:0xcbdcf5,size:.12,transparent:true,opacity:.85,sizeAttenuation:true})));
+  }
+  function makeOrbit(radius) {
+    const points=[];for(let i=0;i<=256;i++){const a=i/256*Math.PI*2;points.push(new THREE.Vector3(Math.cos(a)*radius,0,Math.sin(a)*radius));}
+    const line=new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(points),new THREE.LineBasicMaterial({color:0x526984,transparent:true,opacity:.43}));
+    scene.add(line);
+  }
+  function build() {
+    if(initialized)return;
+    try {
+      scene=new THREE.Scene();scene.background=new THREE.Color(0x030711);
+      camera=new THREE.PerspectiveCamera(45,1,.1,300);camera.position.set(0,22,39);
+      renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.7));
+      renderer.outputColorSpace=THREE.SRGBColorSpace;
+      renderer.toneMapping=THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure=1.15;
+      canvasHost.replaceChildren(renderer.domElement);
+      controls=new OrbitControls(camera,renderer.domElement);
+      controls.enableDamping=true;controls.dampingFactor=.07;controls.enablePan=true;
+      controls.minDistance=5;controls.maxDistance=75;controls.maxPolarAngle=Math.PI*.92;
+      controls.target.set(0,0,0);controls.update();
+      scene.add(new THREE.AmbientLight(0x8799b8,.42));
+      const sunLight=new THREE.PointLight(0xffd5a1,1900,0,1.6);sunLight.position.set(0,0,0);scene.add(sunLight);
+      const sun=new THREE.Mesh(new THREE.SphereGeometry(1.55,64,48),new THREE.MeshBasicMaterial({color:0xffb23f}));
+      scene.add(sun);
+      const glow=new THREE.Mesh(new THREE.SphereGeometry(1.95,48,32),new THREE.MeshBasicMaterial({color:0xff8c28,transparent:true,opacity:.13,side:THREE.BackSide,depthWrite:false}));
+      scene.add(glow);
+      const corona=new THREE.Mesh(new THREE.SphereGeometry(2.35,48,32),new THREE.MeshBasicMaterial({color:0xff6a24,transparent:true,opacity:.045,side:THREE.BackSide,depthWrite:false}));
+      scene.add(corona);
+      addStars();
+      planetData.forEach((p,i)=>{
+        makeOrbit(p.orbit);
+        const pivot=new THREE.Group();scene.add(pivot);orbitPivots.push({pivot,period:p.period,index:i});
+        const material=new THREE.MeshStandardMaterial({color:p.color,roughness:.88,metalness:.02});
+        if(p.name==='Jupiter')material.map=makeStripeTexture('#bd8b62','#f3d2a5');
+        if(p.name==='Saturn')material.map=makeStripeTexture('#c6aa78','#f0ddb0');
+        const mesh=new THREE.Mesh(new THREE.SphereGeometry(p.radius,48,36),material);
+        mesh.position.set(p.orbit,0,0);mesh.userData.planetIndex=i;pivot.add(mesh);
+        if(p.name==='Saturn'){
+          const ring=new THREE.Mesh(new THREE.RingGeometry(1.12,1.85,96),new THREE.MeshStandardMaterial({color:0xcdbb91,side:THREE.DoubleSide,transparent:true,opacity:.82,roughness:1}));
+          ring.rotation.x=-Math.PI/2;ring.rotation.y=.12;mesh.add(ring);
+        }
+        if(p.name==='Uranus'){
+          const ring=new THREE.Mesh(new THREE.RingGeometry(.78,1.02,80),new THREE.MeshStandardMaterial({color:0x9bcfd0,side:THREE.DoubleSide,transparent:true,opacity:.38}));
+          ring.rotation.x=-Math.PI/2;ring.rotation.y=.25;mesh.add(ring);
+        }
+        if(p.name==='Earth'){
+          const moonPivot=new THREE.Group();mesh.add(moonPivot);
+          const moon=new THREE.Mesh(new THREE.SphereGeometry(.09,24,16),new THREE.MeshStandardMaterial({color:0xb9b8b3,roughness:1}));
+          moon.position.set(.68,0,0);moonPivot.add(moon);mesh.userData.moonPivot=moonPivot;
+        }
+        planetObjects.push(mesh);
+      });
+      renderer.domElement.addEventListener('pointerup',event=>{
+        if(event.button!==0)return;
+        const rect=renderer.domElement.getBoundingClientRect();
+        pointer.x=((event.clientX-rect.left)/rect.width)*2-1;
+        pointer.y=-((event.clientY-rect.top)/rect.height)*2+1;
+        raycaster.setFromCamera(pointer,camera);
+        const hits=raycaster.intersectObjects(planetObjects,false);
+        if(hits.length)selectPlanet(hits[0].object.userData.planetIndex);
+      });
+      $('lmSolarPause').addEventListener('click',()=>{
+        paused=!paused;$('lmSolarPause').textContent=paused?'RESUME':'PAUSE';
+        status.textContent=paused?'ORBIT SIMULATION PAUSED':'ORBIT SIMULATION RUNNING';
+      });
+      $('lmSolarSpeed').addEventListener('click',()=>{
+        speed=speed===1?3:speed===3?10:1;$('lmSolarSpeed').textContent='SPEED · '+speed+'×';
+      });
+      $('lmSolarReset').addEventListener('click',()=>{
+        controls.target.set(0,0,0);camera.position.set(0,22,39);controls.update();selectPlanet(3);
+      });
+      $('lmSolarBackMars').addEventListener('click',()=>{closeView();document.getElementById('navExplore')?.click();});
+      document.querySelectorAll('[data-solar-planet]').forEach(b=>b.addEventListener('click',()=>selectPlanet(Number(b.dataset.solarPlanet))));
+      initialized=true;resize();
+      selectPlanet(3);
+      status.textContent='ORBIT SIMULATION RUNNING · VISUAL SCALE';
+    } catch(err) {
+      console.error('LOCAL MARS Solar System initialization failed',err);
+      status.textContent='3D ENGINE ERROR · '+(err?.message||'Unable to initialize');
+    }
+  }
+  function selectPlanet(i) {
+    const p=planetData[i];if(!p)return;selected=i;
+    detailName.textContent=p.thai+' · '+p.name;detailType.textContent=p.type;
+    detailText.textContent=p.desc;
+    detailFacts.innerHTML=p.facts.map(f=>'<div>'+f+'</div>').join('');
+    document.querySelectorAll('[data-solar-planet]').forEach(b=>b.classList.toggle('selected',Number(b.dataset.solarPlanet)===i));
+    status.textContent='SELECTED · '+p.name.toUpperCase();
+    if(p.name==='Mars')$('lmSolarMarsLink').hidden=false;else $('lmSolarMarsLink').hidden=true;
+  }
+  function resize() {
+    if(!renderer||!camera)return;
+    const w=Math.max(1,canvasHost.clientWidth),h=Math.max(1,canvasHost.clientHeight);
+    renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
+  }
+  function tick() {
+    animationId=requestAnimationFrame(tick);
+    if(!overlay.classList.contains('open')||!renderer)return;
+    const delta=Math.min(clock.getDelta(),.05);
+    if(!paused){
+      orbitPivots.forEach(({pivot,period,index})=>{pivot.rotation.y+=delta*speed*(.19/Math.sqrt(period/88));});
+      planetObjects.forEach((p,i)=>{p.rotation.y+=delta*speed*(i===0?.8:.34);if(p.userData.moonPivot)p.userData.moonPivot.rotation.y+=delta*speed*1.8;});
+    }
+    controls.update();renderer.render(scene,camera);
+  }
+  function openView() {
+    overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');
+    openButton.setAttribute('aria-expanded','true');
+    build();resize();if(!animationId)tick();clock.getDelta();
+  }
+  function closeView() {
+    overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true');
+    openButton.setAttribute('aria-expanded','false');
+  }
+  openButton.addEventListener('click',openView);
+  closeButton.addEventListener('click',closeView);
+  window.addEventListener('resize',resize);
+  window.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('open'))closeView();});
+  $('lmSolarMarsLink').addEventListener('click',()=>{closeView();document.getElementById('navExplore')?.click();});
+}
