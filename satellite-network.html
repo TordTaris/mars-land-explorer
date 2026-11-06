@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>LOCAL MARS · Global Satellite Data Network</title>
-<meta name="description" content="Public read-only satellite orbital catalog data shared by LOCAL MARS.">
+<meta name="description" content="Administrator-only satellite catalog access for LOCAL MARS.">
 <style>
 :root{color-scheme:dark;--bg:#07111c;--panel:#0d1d2b;--line:#294253;--gold:#e8d09e;--muted:#9ab0bf;--green:#86edbd}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#18364b 0,#07111c 55%);color:#e7f0f5;font:14px/1.5 system-ui, sans-serif}
@@ -48,15 +48,17 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;p
 <script>
 (()=>{'use strict';
 const URL='https://tppgfxsdeuujidcjnfdl.supabase.co',KEY='sb_publishable_xQ0_NkSu2TMeIyJnAE94kw_WWQT2T3E';
+const groups={GNSS:'Global Navigation',MILITARY:'Publicly Catalogued Government/Military',WEATHER:'Weather', 'EARTH-RESOURCES':'Earth Observation & Resources',STATIONS:'Space Stations'};
+const $=id=>document.getElementById(id);let all=[];
 const db=window.supabase.createClient(URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const loginPanel=$('loginPanel'),catalog=$('adminCatalog'),loginButton=$('adminLoginButton');
 function setAuthMessage(message,ok=false){$('authMessage').textContent=message;$('authMessage').style.color=ok?'var(--green)':'var(--muted)';}
 async function verifyAdmin(){
  const {data:{session}}=await db.auth.getSession();
- if(!session){catalog.hidden=true;loginPanel.hidden=false;$('adminSignOut').hidden=true;return;}
+ if(!session){catalog.hidden=true;loginPanel.hidden=false;$('adminSignOut').hidden=true;loginButton.disabled=false;return;}
  loginButton.disabled=true;setAuthMessage('Checking administrator authorization…');
  const {error}=await db.rpc('mars_admin_overview');
- if(error){catalog.hidden=true;loginPanel.hidden=false;$('adminSignOut').hidden=false;setAuthMessage('Access denied. This account is not registered as a LOCAL MARS administrator.');return;}
+ if(error){catalog.hidden=true;loginPanel.hidden=false;$('adminSignOut').hidden=false;setAuthMessage('Access denied. This account is not registered as a LOCAL MARS administrator. Account ID: '+session.user.id+'. Send this ID to the project owner for administrator authorization.');loginButton.disabled=false;return;}
  loginPanel.hidden=true;catalog.hidden=false;$('adminSignOut').hidden=false;setAuthMessage('Administrator verified.',true);load();
 }
 $('adminLogin').addEventListener('submit',async e=>{
@@ -67,8 +69,6 @@ $('adminLogin').addEventListener('submit',async e=>{
 });
 $('adminSignOut').addEventListener('click',async()=>{await db.auth.signOut();catalog.hidden=true;loginPanel.hidden=false;$('adminSignOut').hidden=true;setAuthMessage('Signed out.');});
 db.auth.onAuthStateChange((_event)=>{setTimeout(verifyAdmin,0);});
-const groups={GNSS:'Global Navigation',MILITARY:'Publicly Catalogued Government/Military',WEATHER:'Weather', 'EARTH-RESOURCES':'Earth Observation & Resources',STATIONS:'Space Stations'};
-const $=id=>document.getElementById(id);let all=[];
 function draw(){
  const q=$('search').value.trim().toLowerCase(),g=$('group').value;
  const list=all.filter(x=>(!g||x.group===g)&&(!q||[x.name,x.id,x.intl,x.group].join(' ').toLowerCase().includes(q)));
