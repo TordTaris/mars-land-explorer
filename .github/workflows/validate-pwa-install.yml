@@ -8,6 +8,8 @@ on:
       - "sw.js"
       - "parcels/**"
       - "member-workspace.js"
+      - "chat.js"
+      - ".github/workflows/uptime-monitor.yml"
       - "parcels/**"
       - ".github/workflows/validate-pwa-install.yml"
   push:
