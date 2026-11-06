@@ -162,9 +162,20 @@ async function walletBalances(){
 }
 async function grantMlcStarter(){
  if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบออนไลน์ก่อน'}};
- const result=await S.db.rpc('mars_wallet_mlc_grant_starter');
- if(result.error)return result;
- return await walletBalances();
+ const grant=await S.db.rpc('mars_wallet_mlc_grant_starter');
+ if(grant.error)return grant;
+ const refreshed=await walletBalances();
+ if(refreshed.error)return {error:refreshed.error,grant:grant.data};
+ return {data:refreshed.data,grant:grant.data};
+}
+async function walletTransactions(limit=8){
+ if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบออนไลน์ก่อน'}};
+ const safeLimit=Math.max(1,Math.min(20,Number(limit)||8));
+ const {data,error}=await S.db.from('mars_wallet_ledger')
+  .select('amount,reason,resource,created_at')
+  .eq('user_id',S.user.id).eq('resource','mlc')
+  .order('created_at',{ascending:false}).limit(safeLimit);
+ return error?{error}:{data:data||[]};
 }
 async function transferMlc(recipient,amount){
  if(!S.db||!S.user)return {error:{message:'กรุณาเข้าสู่ระบบออนไลน์ก่อน'}};
@@ -205,6 +216,6 @@ async function setParcelListing(parcel,isListed,price){
  return synced?.error?{data:result.data,syncWarning:synced.error.message}:result;
 }
 
-window.MarsWorldServer={connect,auth,resetPassword,updatePassword,logout,refresh,claim,claimUsd,build,m003Access,walletBalances,grantMlcStarter,transferMlc,reserveParcel,purchaseParcel,setParcelListing,recordActivity,getState:()=>({user:S.user,parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,mlcMarket:S.mlcMarket,db:S.db})};
+window.MarsWorldServer={connect,auth,resetPassword,updatePassword,logout,refresh,claim,claimUsd,build,m003Access,walletBalances,walletTransactions,grantMlcStarter,transferMlc,reserveParcel,purchaseParcel,setParcelListing,recordActivity,getState:()=>({user:S.user,parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,mlcMarket:S.mlcMarket,db:S.db})};
 document.addEventListener('DOMContentLoaded',connect);
 })();
