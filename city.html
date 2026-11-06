@@ -785,21 +785,26 @@ function makeConstructionRover(){
  for(const x of [-.23,.23])for(const z of [-.13,.13]){const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.085,.085,.07,10),darkMat);wheel.rotation.z=Math.PI/2;wheel.position.set(x,.1,z);rover.add(wheel)}
  const mast=new THREE.Mesh(new THREE.CylinderGeometry(.025,.035,.2,8),darkMat);mast.position.set(0,.37,-.04);rover.add(mast);
  const lamp=new THREE.Mesh(new THREE.SphereGeometry(.055,10,8),lampMat);lamp.position.set(0,.49,-.04);rover.add(lamp);
+ const armPivot=new THREE.Group();armPivot.position.set(0,.31,.02);rover.add(armPivot);
+ const arm=new THREE.Mesh(new THREE.BoxGeometry(.075,.42,.075),bodyMat);arm.position.set(0,.21,0);arm.rotation.z=-.32;armPivot.add(arm);
+ const cable=new THREE.Mesh(new THREE.CylinderGeometry(.012,.012,.17,6),darkMat);cable.position.set(.12,.4,0);armPivot.add(cable);
+ const hook=new THREE.Mesh(new THREE.BoxGeometry(.09,.045,.09),lampMat);hook.position.set(.12,.30,0);armPivot.add(hook);
+ rover.userData.armPivot=armPivot;rover.userData.hook=hook;
  rover.traverse(o=>{if(o.isMesh)o.castShadow=true});return rover;
 }
 function createConstructionSite(data){
  const group=new THREE.Group();group.position.set(data.x,data.level*2.5,data.z);scene.add(group);
  const soil=new THREE.Mesh(new THREE.CircleGeometry(.88,24),new THREE.MeshStandardMaterial({color:0x986044,roughness:1}));soil.rotation.x=-Math.PI/2;soil.position.y=.025;group.add(soil);
- const foundation=new THREE.Mesh(new THREE.BoxGeometry(1.28,.16,1.16),new THREE.MeshStandardMaterial({color:0xb9c5c7,roughness:.9}));foundation.position.y=.12;foundation.visible=false;foundation.castShadow=true;group.add(foundation);
+ const foundation=new THREE.Mesh(new THREE.BoxGeometry(1.28,.16,1.16),new THREE.MeshStandardMaterial({color:0xb9c5c7,roughness:.9}));foundation.position.y=.12;foundation.scale.y=.02;foundation.visible=false;foundation.castShadow=true;group.add(foundation);
  const frame=new THREE.Group(),frameMat=new THREE.MeshStandardMaterial({color:0xe5a36d,metalness:.25,roughness:.55});
  for(const x of [-.48,.48])for(const z of [-.42,.42]){const post=new THREE.Mesh(new THREE.BoxGeometry(.075,.78,.075),frameMat);post.position.set(x,.57,z);post.castShadow=true;frame.add(post)}
  for(const y of [.24,.94]){const beamX=new THREE.Mesh(new THREE.BoxGeometry(1.02,.07,.07),frameMat);beamX.position.y=y;frame.add(beamX);const beamZ=new THREE.Mesh(new THREE.BoxGeometry(.07,.07,.9),frameMat);beamZ.position.y=y;frame.add(beamZ)}
- frame.visible=false;group.add(frame);
+ frame.scale.y=.02;frame.visible=false;group.add(frame);
  const equipment=new THREE.Group(),equipMat=new THREE.MeshStandardMaterial({color:0x4e9db5,metalness:.45,roughness:.4});
  const crate=new THREE.Mesh(new THREE.BoxGeometry(.34,.3,.3),equipMat);crate.position.set(.22,.27,0);crate.castShadow=true;equipment.add(crate);
  const mast=new THREE.Mesh(new THREE.CylinderGeometry(.025,.04,.72,8),new THREE.MeshStandardMaterial({color:0xc5d0d7,metalness:.65,roughness:.35}));mast.position.set(-.34,.5,-.25);equipment.add(mast);
  const dish=new THREE.Mesh(new THREE.SphereGeometry(.13,12,8,0,Math.PI*2,0,Math.PI/2),new THREE.MeshStandardMaterial({color:0xffb36c,metalness:.4,roughness:.35,side:THREE.DoubleSide}));dish.position.set(-.34,.88,-.25);equipment.add(dish);
- equipment.visible=false;group.add(equipment);
+ equipment.scale.y=.02;equipment.visible=false;group.add(equipment);
  const rover=makeConstructionRover();group.add(rover);
  const site={data,group,foundation,frame,equipment,rover,stage:-1,progress:0};constructionSites.push(site);return site;
 }
@@ -817,8 +822,17 @@ function updateConstructionJobs(elapsed){
  for(let i=constructionSites.length-1;i>=0;i--){
   const site=constructionSites[i],p=Math.min(1,Math.max(0,(Date.now()-site.data.startedAt)/site.data.durationMs));
   site.progress=p;const stage=p<.2?0:p<.4?1:p<.66?2:p<.88?3:4;
-  if(stage!==site.stage){site.stage=stage;site.foundation.visible=stage>=1;site.frame.visible=stage>=2;site.equipment.visible=stage>=3}
+  if(stage!==site.stage)site.stage=stage;
+  const foundationProgress=Math.max(0,Math.min(1,(p-.2)/.2));
+  const frameProgress=Math.max(0,Math.min(1,(p-.4)/.26));
+  const equipmentProgress=Math.max(0,Math.min(1,(p-.66)/.22));
+  site.foundation.visible=p>=.2;site.foundation.scale.y=Math.max(.02,foundationProgress);site.foundation.position.y=.08*foundationProgress;
+  site.frame.visible=p>=.4;site.frame.scale.y=Math.max(.02,frameProgress);
+  site.equipment.visible=p>=.66;site.equipment.scale.y=Math.max(.02,equipmentProgress);
   const angle=elapsed*.9+(site.data.x+site.data.z)*.12;site.rover.position.set(Math.cos(angle)*.98,.035,Math.sin(angle)*.78);site.rover.rotation.y=-angle;
+  const workIntensity=stage===2?1:stage===3?.7:.3;
+  if(site.rover.userData.armPivot)site.rover.userData.armPivot.rotation.z=Math.sin(elapsed*2.2+site.data.x)*.34*workIntensity;
+  if(site.rover.userData.hook)site.rover.userData.hook.position.y=.30+Math.sin(elapsed*3+site.data.z)*.035*workIntensity;
   if(p>=1){
    scene.remove(site.group);const building=makeBuilding(site.data.type,site.data.x,site.data.z,site.data.level);building.userData={...site.data,x:site.data.x,z:site.data.z,type:site.data.type,level:site.data.level};buildings.push(building);constructionSites.splice(i,1);completed=true;toast("ก่อสร้างเสร็จแล้ว • "+buildingNames[site.data.type]);if(building.userData.worldParcelId&&building.userData.recordId)publishWorldParcelStructure(building.userData);
   }
@@ -839,7 +853,19 @@ document.querySelector('#save').onclick=()=>save(true);document.querySelector('#
 try{const data=JSON.parse(localStorage.getItem(citySaveKey)||'null');if(data){if((Number(data.currencyVersion)||1)<3){const savedVersion=Number(data.currencyVersion)||1;data.credits=savedVersion===2?Math.round(Number(data.credits??17500)/3.5*1.8):Math.round(Number(data.credits??5000)*1.8);data.currencyVersion=3;localStorage.setItem(citySaveKey,JSON.stringify(data));}credits=data.credits??credits;Object.assign(resources,data.resources||{});(data.buildings||[]).forEach(b=>{const g=makeBuilding(b.type,b.x,b.z,b.level||0);g.userData={...b,level:b.level||0};buildings.push(g)});(data.roads||[]).forEach(r=>addRoad(r.x,r.z,r.level||0));(data.jobs||[]).forEach(j=>{if(j&&Number.isFinite(j.startedAt)&&Number.isFinite(j.durationMs)&&j.durationMs>0&&buildingNames[j.type])createConstructionSite(j)});updateHUD();renderConstructionJobs()}}catch(e){console.warn('Could not restore local construction save',e)}
 function makeColonist(color,x,z){const p=new THREE.Group();const body=new THREE.Mesh(new THREE.CapsuleGeometry(.12,.3,4,7),new THREE.MeshStandardMaterial({color}));body.position.y=.32;p.add(body);const head=new THREE.Mesh(new THREE.SphereGeometry(.105,10,8),new THREE.MeshStandardMaterial({color:0xd9b89f}));head.position.y=.58;p.add(head);p.position.set(x,.04,z);scene.add(p);return p}
 const colonists=[makeColonist(0x68c9d8,-1,1),makeColonist(0xe7b46d,1,0),makeColonist(0x8bd49b,0,-1)];document.querySelector('#npcCount').textContent=colonists.length;
-const clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04);const forward=new THREE.Vector3(-Math.sin(camYaw),0,-Math.cos(camYaw)),side=new THREE.Vector3(Math.cos(camYaw),0,-Math.sin(camYaw));const move=new THREE.Vector3();if(keys.forward)move.add(forward);if(keys.back)move.sub(forward);if(keys.right)move.add(side);if(keys.left)move.sub(side);if(move.lengthSq()){move.normalize();avatar.position.addScaledVector(move,dt*3.3);yaw=Math.atan2(move.x,move.z);avatar.rotation.y=yaw}avatar.position.y=Math.max(0,avatar.position.y-dt*1.8);const target=new THREE.Vector3(avatar.position.x,avatar.position.y+1.05,avatar.position.z);const horizontal=distance*Math.cos(camPitch);camera.position.set(target.x+Math.sin(camYaw)*horizontal,target.y+distance*Math.sin(camPitch)+1.1,target.z+Math.cos(camYaw)*horizontal);camera.lookAt(target);marker.position.set(avatar.position.x,.04,avatar.position.z);colonists.forEach((p,i)=>{const t=clock.elapsedTime*.35+i*2.1;p.position.x=Math.sin(t)*3+i*.5;p.position.z=Math.cos(t)*3;p.rotation.y=t});updateConstructionJobs(clock.elapsedTime);renderer.render(scene,camera)}animate();
+function updateConstructionCrew(elapsed,dt){
+ const localSites=constructionSites.filter(site=>!site.data.ownerId||site.data.ownerId===onlineUser?.id);
+ if(!localSites.length){colonists.forEach((p,i)=>{const t=elapsed*.35+i*2.1;p.position.x=Math.sin(t)*3+i*.5;p.position.z=Math.cos(t)*3;p.position.y=.04;p.rotation.y=t});return}
+ colonists.forEach((p,i)=>{
+  const site=localSites[i%localSites.length],phase=elapsed*.7+i*2.1,angle=phase+(i*2.094);
+  const targetX=site.data.x+Math.cos(angle)*1.35,targetZ=site.data.z+Math.sin(angle)*1.15;
+  p.position.x+=(targetX-p.position.x)*Math.min(1,dt*1.5);
+  p.position.z+=(targetZ-p.position.z)*Math.min(1,dt*1.5);
+  p.position.y=.04+Math.abs(Math.sin(elapsed*7+i))*.025;
+  p.rotation.y=Math.atan2(site.data.x-p.position.x,site.data.z-p.position.z);
+ });
+}
+const clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04);const forward=new THREE.Vector3(-Math.sin(camYaw),0,-Math.cos(camYaw)),side=new THREE.Vector3(Math.cos(camYaw),0,-Math.sin(camYaw));const move=new THREE.Vector3();if(keys.forward)move.add(forward);if(keys.back)move.sub(forward);if(keys.right)move.add(side);if(keys.left)move.sub(side);if(move.lengthSq()){move.normalize();avatar.position.addScaledVector(move,dt*3.3);yaw=Math.atan2(move.x,move.z);avatar.rotation.y=yaw}avatar.position.y=Math.max(0,avatar.position.y-dt*1.8);const target=new THREE.Vector3(avatar.position.x,avatar.position.y+1.05,avatar.position.z);const horizontal=distance*Math.cos(camPitch);camera.position.set(target.x+Math.sin(camYaw)*horizontal,target.y+distance*Math.sin(camPitch)+1.1,target.z+Math.cos(camYaw)*horizontal);camera.lookAt(target);marker.position.set(avatar.position.x,.04,avatar.position.z);updateConstructionCrew(clock.elapsedTime,dt);updateConstructionJobs(clock.elapsedTime);renderer.render(scene,camera)}animate();
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});updateHUD();
 </script>
 <script>
