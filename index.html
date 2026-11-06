@@ -1367,13 +1367,6 @@ aresFrontModel.traverse(node=>{
  }
 });
 aresFrontDisplay.add(aresFrontModel);
-const aresFrontBeacon=new THREE.Mesh(
- new THREE.SphereGeometry(.018,16,12),
- new THREE.MeshBasicMaterial({color:0x70eaff,depthTest:false,depthWrite:false})
-);
-aresFrontBeacon.position.set(0,.09,0);
-aresFrontBeacon.renderOrder=32;
-aresFrontDisplay.add(aresFrontBeacon);
 aresFrontDisplay.position.set(.40,.22,1.02);
 aresFrontDisplay.renderOrder=30;
 group.add(aresFrontDisplay);
