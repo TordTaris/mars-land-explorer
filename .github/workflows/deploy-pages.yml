@@ -87,11 +87,11 @@ jobs:
           assert manifest.get("display") == "standalone", "PWA standalone display missing"
           assert any(icon.get("sizes") == "192x192" for icon in manifest.get("icons", [])), "192px PWA icon declaration missing"
           assert any(icon.get("sizes") == "512x512" for icon in manifest.get("icons", [])), "512px PWA icon declaration missing"
-          cache_match = re.search(r'const CACHE = "local-mars-v4-(\\d+)"', sw)
+          cache_match = re.search(r'const CACHE = "local-mars-v4-(\d+)"', sw)
           assert cache_match and int(cache_match.group(1)) >= 98, "service worker cache version must be v4-98 or newer"
           for page in ("dual-ai.html", "download-ai.html"):
               source = Path(page).read_text(encoding="utf-8")
-              assert not re.search(r"[\\u0E00-\\u0E7F]", source), f"{page} must contain English-only UI text"
+              assert not re.search(r"[\u0E00-\u0E7F]", source), f"{page} must contain English-only UI text"
           assert 'id="local-mars-mobile-header-and-aegis-scale-v462"' in html, "mobile header and AEGIS layout fix missing"
           assert "colonyRoot.scale.setScalar(.30)" in html, "planetary AEGIS scale missing"
           assert "relaySatellite.scale.setScalar(.18)" in html, "planetary satellite scale missing"
