@@ -63,5 +63,5 @@ jobs:
           test -s supabase/functions/create-usd-checkout/index.ts
           test -s supabase/functions/refresh-fx-rates/index.ts
           grep -q "sale_price_usd" world-server.js
-          grep -q "USD Checkout" index.html
+          grep -q "plotUsdPrice" index.html
           ! grep -q "payment_method_types" supabase/functions/create-usd-checkout/index.ts
