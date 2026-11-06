@@ -12,7 +12,7 @@ permissions:
   deployments: write
 
 concurrency:
-  group: pages-recovery
+  group: pages-recovery-final
   cancel-in-progress: true
 
 jobs:
