@@ -2,137 +2,75 @@
 <html lang="th">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#081321">
-<title>LOCAL MARS · Free Local AI</title>
+<meta name="theme-color" content="#081321"><title>LOCAL MARS · Online AI</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 :root{color-scheme:dark;--bg:#07111f;--panel:#10243a;--line:#b99b6670;--gold:#e3c17c;--muted:#a9bacb;--cyan:#75e5ef}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -10%,#24435b 0,#091728 48%,#050b14 100%);color:#f4eddf;font:14px system-ui,sans-serif;min-height:100vh}
-header{padding:18px max(16px,calc((100vw - 900px)/2));border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;background:#071321cc}
-.brand{font-weight:900;letter-spacing:2px}.brand b{color:var(--gold)}a{color:var(--cyan);text-decoration:none}.wrap{width:min(900px,calc(100% - 28px));margin:26px auto}
-.eyebrow{font-size:10px;letter-spacing:2px;color:var(--gold);font-weight:800}h1{font-size:clamp(26px,5vw,42px);margin:8px 0}.sub{color:var(--muted);line-height:1.6}
+header{padding:18px max(16px,calc((100vw - 900px)/2));border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;background:#071321cc}.brand{font-weight:900;letter-spacing:2px}.brand b{color:var(--gold)}a{color:var(--cyan);text-decoration:none}
+.wrap{width:min(900px,calc(100% - 28px));margin:26px auto}.eyebrow{font-size:10px;letter-spacing:2px;color:var(--gold);font-weight:800}h1{font-size:clamp(26px,5vw,42px);margin:8px 0}.sub{color:var(--muted);line-height:1.6}
 .panel{border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#112943ed,#091625f5);box-shadow:0 18px 45px #0007;padding:16px;margin:16px 0}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}select,textarea{border:1px solid #5d7790;border-radius:12px;background:#071321;color:#fff;padding:12px;font:14px system-ui}select{flex:1;min-width:220px}textarea{width:100%;min-height:100px;resize:vertical;line-height:1.6}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}textarea{border:1px solid #5d7790;border-radius:12px;background:#071321;color:#fff;padding:12px;font:14px system-ui;width:100%;min-height:100px;resize:vertical;line-height:1.6}
 button{border:1px solid #8c7954;background:#152b41;color:#f6ebd5;border-radius:10px;padding:11px 15px;font-weight:750;cursor:pointer}button.primary{background:linear-gradient(120deg,#e1bd73,#aa7b3d);color:#1b150d;border-color:#f0d79d}button:disabled{opacity:.5;cursor:not-allowed}
-#status{margin:10px 0;color:var(--muted);line-height:1.6}.bar{height:7px;background:#24384b;border-radius:8px;overflow:hidden;margin:10px 0}.bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,#75e5ef,#e3c17c);transition:width .2s}
+#status{margin:10px 0;color:var(--muted);line-height:1.6}.badge{display:inline-block;padding:4px 8px;border:1px solid #75e5ef66;border-radius:20px;color:#9beef4;font-size:11px}
 #chat{display:flex;flex-direction:column;gap:10px;max-height:55vh;overflow:auto}.msg{padding:12px 14px;border-radius:13px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65}.user{background:#203b54;align-self:flex-end;max-width:92%}.assistant{background:#0b1a29;border:1px solid #b99b6640;align-self:stretch}.note{font-size:12px;color:#9fb1c2;line-height:1.6}
-.badge{display:inline-block;padding:4px 8px;border:1px solid #75e5ef66;border-radius:20px;color:#9beef4;font-size:11px}
 @media(max-width:600px){header{padding:14px}.wrap{margin:18px auto}.panel{padding:13px}button{padding:10px 12px}}
-</style>
-</head>
+</style></head>
 <body>
-<header><div class="brand">LOCAL <b>MARS</b> · FREE AI</div><a href="./">← กลับหน้าสำรวจ</a></header>
+<header><div class="brand">LOCAL <b>MARS</b> · ONLINE AI</div><a href="./">← กลับหน้าสำรวจ</a></header>
 <main class="wrap">
- <div class="eyebrow">ON-DEVICE INFERENCE · NO API BILLING</div>
- <h1>LOCAL MARS Free AI</h1>
- <p class="sub">เปลี่ยนจากการเรียก Grok/GPT แบบคิดค่าบริการ เป็นโมเดล AI แบบเปิดที่ประมวลผลบนอุปกรณ์ของคุณ ไม่ต้องใช้ API Key ไม่ต้องเติมเครดิต และไม่ต้องเข้าสู่ระบบ AI ภายนอก</p>
+ <div class="eyebrow">CLOUD INFERENCE · NO MODEL DOWNLOAD</div>
+ <h1>LOCAL MARS Online AI</h1>
+ <p class="sub">ถามตอบผ่าน AI บนเซิร์ฟเวอร์ออนไลน์ ไม่ต้องดาวน์โหลดโมเดลลงโทรศัพท์ ไม่ใช้ WebGPU และไม่ต้องเปิดเครื่องแรง</p>
  <section class="panel">
-  <div class="row"><span class="badge">ประมวลผลบนอุปกรณ์</span><span class="badge">ไม่มีค่า API</span><span class="badge">ไม่ส่งข้อความไปเซิร์ฟเวอร์ AI</span></div>
-  <p class="eyebrow">เลือกโมเดลภายในเครื่อง</p>
-  <div class="row">
-   <select id="model">
-    <option value="Llama-3.2-1B-Instruct-q4f16_1-MLC">Llama 3.2 1B · แนะนำสำหรับเริ่มต้น</option>
-    <option value="SmolLM2-360M-Instruct-q4f32_1-MLC">SmolLM2 360M · รุ่นเล็ก ใช้ทรัพยากรน้อยกว่า</option>
-   </select>
-   <button id="load" class="primary">โหลดโมเดลฟรี</button>
-  </div>
-  <div class="bar"><i id="progress"></i></div>
-  <div id="status" aria-live="polite">กำลังตรวจสอบ WebGPU…</div>
-  <p class="note">ครั้งแรกต้องดาวน์โหลดไฟล์โมเดลจากเครือข่ายและใช้พื้นที่เก็บข้อมูลบนอุปกรณ์ หลังโหลดแล้วเบราว์เซอร์อาจเก็บโมเดลไว้ใช้ซ้ำได้ การทำงานขึ้นกับ WebGPU หน่วยความจำ และประสิทธิภาพของอุปกรณ์</p>
+  <div class="row"><span class="badge">ประมวลผลบน Cloud</span><span class="badge">ไม่ดาวน์โหลดโมเดล</span><span class="badge">Free Tier</span></div>
+  <div id="status" aria-live="polite">กำลังตรวจสอบการเข้าสู่ระบบ LOCAL MARS…</div>
+  <p class="note">ใช้ Gemini API รุ่น Flash-Lite ผ่าน Supabase Edge Function โดยเก็บ API Key ไว้ฝั่งเซิร์ฟเวอร์เท่านั้น บริการฟรีมีโควตาและอาจจำกัดคำขอเมื่อใช้งานมาก</p>
  </section>
+ <section class="panel"><div id="chat" aria-live="polite"><div class="msg assistant">สวัสดีครับ นี่คือ LOCAL MARS Online AI เมื่อเชื่อมต่อสำเร็จแล้วสามารถเริ่มถามได้เลย</div></div></section>
  <section class="panel">
-  <div id="chat" aria-live="polite"><div class="msg assistant">สวัสดีครับ นี่คือ LOCAL MARS Free AI เมื่อโหลดโมเดลสำเร็จแล้ว คุณสามารถเริ่มสนทนาได้</div></div>
+  <textarea id="prompt" maxlength="5000" placeholder="พิมพ์คำถามหรือคำสั่งของคุณ…"></textarea>
+  <div class="row" style="margin-top:10px"><button id="send" class="primary" disabled>ส่งข้อความ</button><button id="clear">ล้างบทสนทนา</button><a id="login" href="./" style="display:none">ไปเข้าสู่ระบบ</a></div>
  </section>
- <section class="panel">
-  <textarea id="prompt" maxlength="4000" placeholder="พิมพ์คำถามหรือคำสั่งของคุณ…"></textarea>
-  <div class="row" style="margin-top:10px"><button id="send" class="primary" disabled>ส่งข้อความ</button><button id="clear">ล้างบทสนทนา</button></div>
- </section>
- <p class="note">ข้อจำกัด: โมเดลขนาดเล็กอาจตอบภาษาไทยหรือวิเคราะห์งานซับซ้อนได้ไม่เท่า Grok/GPT บนคลาวด์ คำตอบเป็นข้อมูลจากโมเดล ไม่ใช่การเชื่อมต่อข้อมูลสดหรือการควบคุมระบบจริง</p>
+ <p class="note">หมายเหตุ: ระบบนี้ต้องเข้าสู่ระบบ LOCAL MARS และต้องตั้งค่า GEMINI_API_KEY ใน Supabase Secrets ก่อน จึงจะตอบคำถามได้</p>
 </main>
-<script type="module">
-const $ = id => document.getElementById(id);
-let engine = null, busy = false, history = [], webllm = null;
-const status = (s) => $("status").textContent = s;
-const setProgress = p => $("progress").style.width = Math.max(0,Math.min(100,p)) + "%";
-const addMessage = (role, text) => {
- const el = document.createElement("div");
- el.className = "msg " + role;
- el.textContent = text;
- $("chat").appendChild(el);
- $("chat").scrollTop = $("chat").scrollHeight;
-};
-async function checkGPU(){
- if (!("gpu" in navigator)) {
-  status("เบราว์เซอร์นี้ไม่รองรับ WebGPU — กรุณาเปิดลิงก์ด้วย Google Chrome รุ่นล่าสุด โดยเปิดจากแอป Chrome โดยตรง");
-  $("load").disabled = true;
-  return false;
- }
- try {
-  const adapter = await navigator.gpu.requestAdapter();
-  if (!adapter) throw new Error("ไม่พบ GPU adapter");
-  status("พบ WebGPU แล้ว · กดโหลดโมเดลเพื่อเริ่มต้น");
-  return true;
- } catch(e) {
-  status("WebGPU ใช้งานไม่ได้: " + (e?.message || String(e)) + " · ลอง Chrome รุ่นล่าสุดและตรวจการรองรับ GPU");
-  $("load").disabled = true;
-  return false;
- }
+<script>
+const SUPABASE_URL="https://tppgfxsdeuujidcjnfdl.supabase.co";
+const SUPABASE_KEY="sb_publishable_xQ0_NkSu2TMeIyJnAE94kw_WWQT2T3E";
+const $=id=>document.getElementById(id);
+const supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+let session=null,busy=false,history=[];
+function status(s){$("status").textContent=s;}
+function add(role,text){const el=document.createElement("div");el.className="msg "+role;el.textContent=text;$("chat").appendChild(el);$("chat").scrollTop=$("chat").scrollHeight;}
+async function checkSession(){
+ try{
+  const {data,error}=await supabase.auth.getSession();
+  if(error)throw error;
+  session=data.session;
+  if(!session){status("ยังไม่ได้เข้าสู่ระบบ LOCAL MARS กรุณาเข้าสู่ระบบจากหน้าหลัก แล้วกลับมาหน้านี้");$("login").style.display="inline";return;}
+  status("เชื่อมต่อบัญชี LOCAL MARS แล้ว · พร้อมใช้ Online AI");
+  $("send").disabled=false;
+ }catch(e){status("ตรวจสอบบัญชีไม่สำเร็จ: "+e.message);}
 }
-$("load").addEventListener("click", async () => {
- if (busy || engine) return;
- busy = true; $("load").disabled = true; $("load").textContent = "กำลังเริ่ม…";
- status("กำลังเชื่อมต่อไลบรารี AI ภายในเครื่อง…"); setProgress(1);
- try {
-  if (!("gpu" in navigator)) throw new Error("เบราว์เซอร์ไม่มี WebGPU กรุณาเปิดด้วย Chrome รุ่นล่าสุด");
-  const adapter = await navigator.gpu.requestAdapter();
-  if (!adapter) throw new Error("อุปกรณ์ไม่พบ GPU ที่รองรับ WebGPU");
-  if (!webllm) {
-   status("กำลังดาวน์โหลดตัวโหลด AI (WebLLM)…");
-   webllm = await import("https://esm.run/@mlc-ai/web-llm");
-  }
-  const model = $("model").value;
-  status("กำลังดาวน์โหลดและเตรียมโมเดล " + model + " — ครั้งแรกอาจใช้เวลาหลายนาที");
-  engine = await webllm.CreateMLCEngine(model, {
-   initProgressCallback: report => {
-    const p = Math.round((report.progress || 0) * 100);
-    setProgress(p);
-    status(report.text || ("กำลังเตรียมโมเดล " + p + "%"));
-   }
-  });
-  setProgress(100);
-  status("โหลดโมเดลสำเร็จ · LOCAL AI พร้อมใช้งานโดยไม่ใช้ API เครดิต");
-  $("send").disabled = false;
-  $("model").disabled = true;
-  $("load").textContent = "พร้อมใช้งาน";
- } catch(e) {
-  engine = null; setProgress(0);
-  status("เริ่มโหลดไม่สำเร็จ: " + (e?.message || String(e)) + " · หากเปิดในเบราว์เซอร์ในแอป ให้ลองเปิดด้วย Chrome โดยตรง");
-  $("load").disabled = false; $("load").textContent = "ลองโหลดอีกครั้ง";
- } finally { busy = false; }
-});
-$("send").addEventListener("click", send);
-$("prompt").addEventListener("keydown", e => { if ((e.ctrlKey || e.metaKey) && e.key === "Enter") send(); });
 async function send(){
- const prompt = $("prompt").value.trim();
- if (!prompt || !engine || busy) return;
- busy = true; $("send").disabled = true; $("prompt").value = "";
- addMessage("user", prompt); status("LOCAL AI กำลังประมวลผลบนอุปกรณ์ของคุณ…");
- try {
-  history.push({role:"user",content:prompt});
-  const response = await engine.chat.completions.create({
-   messages:[{role:"system",content:"You are LOCAL MARS Free AI. Answer helpfully and clearly in Thai unless the user asks for another language. Be honest about uncertainty and never claim to operate external systems."},...history.slice(-8)],
-   temperature:0.7,max_tokens:700
-  });
-  const answer = response.choices?.[0]?.message?.content || "โมเดลไม่ได้ส่งข้อความตอบกลับ";
-  history.push({role:"assistant",content:answer}); history=history.slice(-8);
-  addMessage("assistant",answer);
-  status("เสร็จแล้ว · ประมวลผลภายในอุปกรณ์ ไม่มีการเรียก API แบบคิดค่าบริการ");
- } catch(e) {
-  addMessage("assistant","เกิดข้อผิดพลาด: "+(e?.message||String(e)));
-  status("การประมวลผลขัดข้อง ลองส่งข้อความใหม่");
- } finally { busy=false; $("send").disabled=!engine; }
+ const prompt=$("prompt").value.trim();if(!prompt||!session||busy)return;
+ busy=true;$("send").disabled=true;$("prompt").value="";add("user",prompt);status("กำลังส่งคำถามไปประมวลผลบน Cloud…");
+ try{
+  const {data,error}=await supabase.functions.invoke("free-ai",{body:{prompt,history}});
+  if(error)throw error;
+  if(!data?.success)throw new Error(data?.error||"AI ยังไม่พร้อมใช้งาน");
+  const answer=data.answer||"ไม่มีข้อความตอบกลับ";
+  history.push({role:"user",content:prompt},{role:"assistant",content:answer});history=history.slice(-8);
+  add("assistant",answer);status("ตอบกลับแล้ว · "+(data.model||"Online AI")+" · Cloud inference");
+ }catch(e){
+  const msg=e?.context?.json?.error||e?.message||String(e);
+  add("assistant","ไม่สามารถประมวลผลได้: "+msg);
+  status("การเชื่อมต่อขัดข้อง กรุณาตรวจสถานะ API และลองใหม่");
+ }finally{busy=false;$("send").disabled=!session;}
 }
-$("clear").addEventListener("click",()=>{history=[];$("chat").replaceChildren();addMessage("assistant","ล้างบทสนทนาแล้ว พร้อมเริ่มใหม่");});
-checkGPU();
-</script>
-</body>
-</html>
+$("send").addEventListener("click",send);
+$("prompt").addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key==="Enter")send();});
+$("clear").addEventListener("click",()=>{history=[];$("chat").replaceChildren();add("assistant","ล้างบทสนทนาแล้ว พร้อมเริ่มใหม่");});
+supabase.auth.onAuthStateChange((_event,s)=>{session=s;$("send").disabled=!session;if(session)status("เข้าสู่ระบบแล้ว · Online AI พร้อมใช้งาน");});
+checkSession();
+</script></body></html>
