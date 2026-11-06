@@ -974,7 +974,7 @@ header .status{flex:0 1 40%!important;width:auto!important;min-width:0!important
     <button class="lm-system-card" data-system-target="chat" data-search-terms="แชต แชท chat สนทนา ข้อความ online realtime ห้องสนทนา"><span class="lm-system-art">💬</span><b>LIVE CHAT · แชตออนไลน์</b><small>คุยกับสมาชิก LOCAL MARS แบบเรียลไทม์</small><em class="lm-system-state">MEMBER ACCESS</em></button>
     <button class="lm-system-card" data-system-target="account" data-search-terms="สมาชิก เข้าสู่ระบบ บัญชี account sign in"><span class="lm-system-art">👤</span><b>Member Account</b><small>Sign in and manage your session</small><em class="lm-system-state">MEMBER ACCESS</em></button>
     <button class="lm-system-card" data-system-target="wallet" data-search-terms="กระเป๋าเงิน ยอดเงิน mlc wallet balance"><span class="lm-system-art">💠</span><b>MLC Wallet</b><small>View your in-app MLC balance</small><em class="lm-system-state">MEMBER ACCESS</em></button>
-    <button class="lm-system-card" id="lmMoreInstallBtn" type="button" data-search-terms="ติดตั้งแอป install app download updates update"><span class="lm-system-art">⬇️</span><b>Install App</b><small>Install LOCAL MARS on this device</small><em class="lm-system-state">APP MODULE</em></button>
+    <button class="lm-system-card" id="lmMoreInstallBtn" type="button" data-system-target="install" data-search-terms="ติดตั้งแอป install app download updates update"><span class="lm-system-art">⬇️</span><b>Install App</b><small>Install LOCAL MARS on this device</small><em class="lm-system-state">APP MODULE</em></button>
    </div>
   </div>
   <div class="lm-systems-foot"><span>LOCAL MARS · PLANETARY CIVILIZATION NETWORK</span><span>Choose a system to continue</span></div>
@@ -1732,7 +1732,16 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
  if(!installBtn||!dialog)return;
  let installPrompt=null, registration=null;
  const isInstalled=()=>window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
- const openGuide=()=>{dialog.classList.add('open');closeBtn?.focus()};
+ const openGuide=()=>{
+   if(isInstalled()){
+     dynamic.innerHTML='<p><b>LOCAL MARS is already installed on this device.</b></p><p>Open it from your home screen or app list.</p>';
+     confirmBtn.textContent='OK';
+     status.textContent='Installed app detected.';
+   }else if(!installPrompt){
+     confirmBtn.textContent='Show install steps';
+   }
+   dialog.classList.add('open');closeBtn?.focus();
+ };
  const closeGuide=()=>dialog.classList.remove('open');
  window.addEventListener('beforeinstallprompt',event=>{
    event.preventDefault();installPrompt=event;
@@ -1742,14 +1751,25 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
  window.addEventListener('appinstalled',()=>{
    installPrompt=null;status.textContent='LOCAL MARS installed successfully.';
  });
- installBtn.addEventListener('click',openGuide);
+ // The More directory routes this card through the install action map below.
  closeBtn?.addEventListener('click',closeGuide);
  confirmBtn?.addEventListener('click',async()=>{
-   if(!installPrompt){closeGuide();return}
-   installPrompt.prompt();
-   const choice=await installPrompt.userChoice;
-   status.textContent=choice?.outcome==='accepted'?'Installation accepted. Follow your device prompts.':'Installation was not completed. Use the browser menu instructions above.';
-   installPrompt=null;confirmBtn.textContent='Got it';
+   if(!installPrompt){
+     dynamic.innerHTML='<p><b>Install from your browser</b></p><ol><li>Open this page in Chrome (not an in-app browser).</li><li>Tap the Chrome menu ⋮ in the top corner.</li><li>Choose <b>Install app</b> or <b>Add to Home screen</b>.</li><li>Confirm the installation.</li></ol><p>If the option is missing, reload this page in Chrome and check again after the page finishes loading.</p>';
+     status.textContent='Direct install is not available in this browser session. Follow the steps above.';
+     confirmBtn.textContent='Show install steps';
+     return;
+   }
+   try{
+     installPrompt.prompt();
+     const choice=await installPrompt.userChoice;
+     status.textContent=choice?.outcome==='accepted'?'Installation accepted. Follow your device prompts.':'Installation was not completed. You can try again from the Chrome menu.';
+   }catch(error){
+     status.textContent='Could not start the install prompt. Please use the Chrome menu instructions.';
+     console.warn('LOCAL MARS install prompt:',error);
+   }finally{
+     installPrompt=null;confirmBtn.textContent='Show install steps';
+   }
  });
  dialog.addEventListener('click',event=>{if(event.target===dialog)closeGuide()});
  document.addEventListener('keydown',event=>{if(event.key==='Escape')closeGuide()});
@@ -1839,7 +1859,8 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
   workspace:()=>document.getElementById('lmWorkspaceOpen')?.click(),
   chat:()=>document.getElementById('lmChatOpen')?.click(),
   account:()=>document.querySelector('.lm-command-dock [data-tab="account"]')?.click(),
-  wallet:()=>document.querySelector('.lm-command-dock [data-tab="wallet"]')?.click()
+  wallet:()=>document.querySelector('.lm-command-dock [data-tab="wallet"]')?.click(),
+  install:()=>document.getElementById('lmInstallDialog')?.classList.add('open')
  };
  overlay.querySelectorAll('[data-system-target]').forEach(card=>card.addEventListener('click',()=>{
   const target=card.dataset.systemTarget;shut();actions[target]?.();
