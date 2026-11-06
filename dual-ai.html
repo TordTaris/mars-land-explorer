@@ -31,7 +31,7 @@ button,select{border:1px solid #8c7954;background:#152b41;color:#f6ebd5;border-r
   <p class="note">Cloud AI ใช้บัญชี LOCAL MARS และ Supabase Edge Function ชื่อ free-ai พร้อม GEMINI_API_KEY ฝั่งเซิร์ฟเวอร์ หากยังไม่ได้ตั้งค่า Cloud จะไม่พร้อมใช้งาน แต่ Local AI ใช้แยกกันได้</p>
  </section>
  <section class="panel"><div id="chat" aria-live="polite"><div class="msg assistant">สวัสดีครับ ผมคือ LOCAL MARS AI เลือก Local หรือ Cloud แล้วเริ่มสนทนาได้</div></div></section>
- <section class="panel"><textarea id="prompt" maxlength="5000" placeholder="พิมพ์คำถามหรือคำสั่ง…"></textarea><div class="row" style="margin-top:9px"><button id="send" class="primary">ส่งข้อความ</button><button id="downloadTxt" disabled>ดาวน์โหลด TXT</button><button id="downloadJson" disabled>ดาวน์โหลด JSON</button><button id="clear">ล้างบทสนทนา</button><a id="login" href="./" style="display:none">ไปเข้าสู่ระบบ</a></div></section>
+ <section class="panel"><textarea id="prompt" maxlength="5000" placeholder="พิมพ์คำถามถึง LOCAL MARS AI ได้ที่นี่…"></textarea><div class="row" style="margin-top:9px"><button id="send" class="primary">ส่งคำถามให้ AI</button><button id="downloadTxt" disabled>ดาวน์โหลด TXT</button><button id="downloadJson" disabled>ดาวน์โหลด JSON</button><button id="clear">ล้างบทสนทนา</button><a id="login" href="./" style="display:none">ไปเข้าสู่ระบบ</a></div></section>
 </main>
 <script type="module">
 const $=id=>document.getElementById(id);
@@ -41,7 +41,7 @@ let engine=null,loading=false,busy=false,mode="local",session=null,history=[],tr
 const supabase=window.supabase?.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 function setStatus(s){$("status").textContent=s}
 function modelStatus(s){$("modelStatus").textContent=s}
-function add(role,text){const el=document.createElement("div");el.className="msg "+role;el.textContent=text;$("chat").appendChild(el);$("chat").scrollTop=$("chat").scrollHeight;transcript.push({role,content:text,time:new Date().toISOString()});$("downloadTxt").disabled=$("downloadJson").disabled=!transcript.length}
+function add(role,text){const el=document.createElement("div");el.className="msg "+role;el.textContent=text;$("chat").appendChild(el);$("chat").scrollTop=$("chat").scrollHeight;transcript.push({role,content:text,time:new Date().toISOString()});$("downloadTxt").disabled=$("downloadJson").disabled=!transcript.length;return el}
 function download(name,body,type){const u=URL.createObjectURL(new Blob([body],{type}));const a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1200)}
 function updateMode(){ $("modeBadge").textContent=mode.toUpperCase();$("localMode").classList.toggle("primary",mode==="local");$("cloudMode").classList.toggle("primary",mode==="cloud");}
 async function loadModel(){
@@ -57,25 +57,37 @@ async function loadModel(){
  finally{loading=false;$("loadModel").disabled=!!engine}
 }
 async function send(){
- const prompt=$("prompt").value.trim();if(!prompt||busy)return;
- if(mode==="local"&&!engine){setStatus("กรุณากดดาวน์โหลด / โหลดโมเดลก่อน หรือเลือก Cloud AI");return}
+ const prompt=$("prompt").value.trim();
+ if(!prompt||busy)return;
+ if(mode==="local"&&!engine){setStatus("ยังไม่ได้โหลดโมเดล · กด “ดาวน์โหลด / โหลดโมเดล” ก่อน แล้วจึงส่งคำถามได้");modelStatus("รอโหลดโมเดลเพื่อเริ่มสนทนา");return}
  if(mode==="cloud"&&!session){setStatus("Cloud AI ต้องเข้าสู่ระบบ LOCAL MARS ก่อน");$("login").style.display="inline";return}
- busy=true;$("send").disabled=true;$("prompt").value="";add("user",prompt);setStatus(mode==="local"?"กำลังประมวลผลบนอุปกรณ์…":"กำลังส่งคำถามไป Cloud…");
+ busy=true;$("send").disabled=true;$("send").textContent="กำลังคิด…";$("prompt").value="";
+ add("user",prompt);
+ const pending=add("assistant",mode==="local"?"LOCAL MARS AI กำลังประมวลผลคำถามบนอุปกรณ์…":"กำลังส่งคำถามไปยัง Cloud AI…");
+ setStatus(mode==="local"?"กำลังให้ LOCAL MARS AI ประมวลผลบนอุปกรณ์":"กำลังส่งคำถามไป Cloud AI");
  try{
   let answer="";
   if(mode==="local"){
-   const messages=[{role:"system",content:"You are LOCAL MARS AI. Answer helpfully in Thai unless the user requests another language."},...history,{role:"user",content:prompt}];
-   const result=await engine.chat.completions.create({messages,temperature:0.7,max_tokens:700});
-   answer=result.choices?.[0]?.message?.content||"ไม่มีข้อความตอบกลับ";
+   const messages=[{role:"system",content:"You are LOCAL MARS AI, the built-in assistant of the LOCAL MARS application. Answer the user's question helpfully, accurately, and in Thai unless the user requests another language. If you are uncertain, say so clearly."},...history,{role:"user",content:prompt}];
+   const result=await engine.chat.completions.create({messages,temperature:0.7,max_tokens:900});
+   answer=result?.choices?.[0]?.message?.content;
   }else{
    const {data,error}=await supabase.functions.invoke("free-ai",{body:{prompt,history}});
-   if(error)throw error; if(!data?.success)throw new Error(data?.error||"Cloud AI ยังไม่พร้อม");
-   answer=data.answer||"ไม่มีข้อความตอบกลับ";
+   if(error)throw error;
+   if(!data?.success)throw new Error(data?.error||"Cloud AI ยังไม่พร้อม");
+   answer=data.answer;
   }
-  history.push({role:"user",content:prompt},{role:"assistant",content:answer});history=history.slice(-8);
-  add("assistant",answer);setStatus(mode==="local"?"ตอบกลับแล้ว · ประมวลผลในอุปกรณ์":"ตอบกลับแล้ว · "+(mode==="cloud"?"Cloud AI":"AI"));
- }catch(e){const msg=e?.context?.json?.error||e?.message||String(e);add("assistant","เกิดข้อผิดพลาด: "+msg);setStatus("ประมวลผลไม่สำเร็จ · ตรวจการเชื่อมต่อและลองใหม่")}
- finally{busy=false;$("send").disabled=false}
+  if(typeof answer!=="string"||!answer.trim())throw new Error("AI ไม่ได้ส่งข้อความตอบกลับ");
+  pending.textContent=answer;
+  transcript[transcript.length-1].content=answer;
+  history.push({role:"user",content:prompt},{role:"assistant",content:answer});history=history.slice(-10);
+  setStatus(mode==="local"?"LOCAL MARS AI ตอบกลับแล้ว · ประมวลผลภายในอุปกรณ์":"Cloud AI ตอบกลับแล้ว");
+ }catch(e){
+  const msg=e?.context?.json?.error||e?.message||String(e);
+  pending.textContent="ขออภัย ประมวลผลไม่สำเร็จ: "+msg+"\\nตรวจสอบว่าโหลดโมเดลสำเร็จและอุปกรณ์รองรับ WebGPU แล้วลองอีกครั้ง";
+  transcript[transcript.length-1].content=pending.textContent;
+  setStatus("ส่งคำถามไม่สำเร็จ · ตรวจสถานะโมเดลหรือการเชื่อมต่อแล้วลองใหม่");
+ }finally{busy=false;$("send").disabled=false;$("send").textContent="ส่งคำถามให้ AI";$("prompt").focus()}
 }
 $("loadModel").addEventListener("click",loadModel);
 $("unload").addEventListener("click",async()=>{if(!engine)return;try{await engine.unload();engine=null;$("unload").disabled=true;$("loadModel").disabled=false;modelStatus("ปลดโมเดลออกจากหน่วยความจำแล้ว · ไฟล์ที่แคชไว้อาจยังคงอยู่ในเบราว์เซอร์")}catch(e){modelStatus("ปลดโมเดลไม่สำเร็จ: "+e.message)}});
