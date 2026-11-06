@@ -1367,12 +1367,6 @@ aresFrontModel.traverse(node=>{
  }
 });
 aresFrontDisplay.add(aresFrontModel);
-const aresFrontHalo=new THREE.Mesh(
- new THREE.TorusGeometry(.075,.004,10,56),
- new THREE.MeshBasicMaterial({color:0xe7c77f,transparent:true,opacity:.95,depthTest:false,depthWrite:false})
-);
-aresFrontHalo.renderOrder=31;
-aresFrontDisplay.add(aresFrontHalo);
 const aresFrontBeacon=new THREE.Mesh(
  new THREE.SphereGeometry(.018,16,12),
  new THREE.MeshBasicMaterial({color:0x70eaff,depthTest:false,depthWrite:false})
