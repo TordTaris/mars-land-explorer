@@ -1431,25 +1431,25 @@ function satelliteOrbitalState(now=Date.now()){
  return {angle:((angle%(Math.PI*2))+Math.PI*2)%(Math.PI*2),radius:1.12,elapsed};
 }
 function launchSmallSatellite(){
- if(satelliteLaunchAt){toast('RECON-01 IS ALREADY IN ITS CONTINUOUS ORBIT');return;}
+ if(satelliteLaunchAt){toast('RECON-01 IS ALREADY STATIONED ABOVE M-003');return;}
  satelliteLaunchAt=Date.now();
  group.add(relaySatellite);
  relaySatellite.visible=true;
- toast('ORBITAL SIMULATION STARTED');
- window.MarsWorldServer?.recordActivity?.('satellite_launch','orbital_asset','relay-satellite',{orbit:'low_mars_orbit',simulation:true}).then(result=>{if(result?.error)console.warn('Satellite launch history was not saved:',result.error.message);}).catch(error=>console.warn('Satellite launch history was not saved:',error));
+ toast('M-003 ORBITAL RELAY STATIONED');
+ window.MarsWorldServer?.recordActivity?.('satellite_launch','orbital_asset','relay-satellite',{orbit:'m003_stationkeeping',ground_node:'M-003',simulation:true}).then(result=>{if(result?.error)console.warn('Satellite launch history was not saved:',result.error.message);}).catch(error=>console.warn('Satellite launch history was not saved:',error));
  const launchButton=document.querySelector('#navSatellite');
- if(launchButton){launchButton.classList.add('active');launchButton.textContent='🛰️ Satellite Active';}
+ if(launchButton){launchButton.classList.add('active');launchButton.textContent='🛰️ M-003 Relay Active';}
 }
 document.querySelector('#navSatellite').onclick=launchSmallSatellite;
 // Restore the same globally-timed orbit on every app start.
 (function restoreOrbitalSatellite(){
- const cameraFacing=new THREE.Vector3(0,0,1).applyQuaternion(relayOrbitQuaternion.clone().invert());
- satelliteOrbitStartAngle=Math.atan2(cameraFacing.z,cameraFacing.x);
+ // RECON-01 is station-kept directly above the M-003 ground node.
+ // The surface normal is derived from the same canonical parcel coordinates.
+ const m003Normal=pos(-26,3,1.003).normalize();
  group.add(relaySatellite);
  relaySatellite.visible=true;
- const orbit=satelliteOrbitalState();
- relaySatellite.position.set(orbit.radius*Math.cos(orbit.angle),0,orbit.radius*Math.sin(orbit.angle)).applyQuaternion(relayOrbitQuaternion);
- relaySatellite.quaternion.copy(relayOrbitQuaternion);
+ relaySatellite.position.copy(m003Normal).multiplyScalar(1.12);
+ relaySatellite.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),m003Normal);
 })();
 function toast(s){const t=document.querySelector('#toast');t.textContent=s;t.style.display='block';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.style.display='none',2600)}
 document.querySelector('#buyMlc').onclick=async()=>{
@@ -1584,7 +1584,7 @@ const arrivalReport=document.createElement('div');arrivalReport.id='lm-arrival-r
 const landingTargets=[pos(-4,14,1.0),pos(4,14,1.0)];const landingNormals=landingTargets.map(v=>v.clone().normalize());const landingOrientations=landingNormals.map(n=>new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),n));const landingCraft=[passengerShuttle,cargoLifter];
 // Two independent landing pads are placed beside AEGIS SETTLEMENT (0°E, 16°N).
 const landingPads=landingTargets.map((target,i)=>{const pad=new THREE.Group();pad.position.copy(target);pad.quaternion.copy(landingOrientations[i]);group.add(pad);const deck=new THREE.Mesh(new THREE.CircleGeometry(.065,40),new THREE.MeshStandardMaterial({color:0x263746,metalness:.55,roughness:.62,transparent:true,opacity:.92,side:THREE.DoubleSide}));deck.rotation.x=-Math.PI/2;deck.position.y=.004;pad.add(deck);const rim=new THREE.Mesh(new THREE.TorusGeometry(.068,.003,8,48),new THREE.MeshBasicMaterial({color:i===0?0x65eaff:0xe6bd78,transparent:true,opacity:.95}));rim.rotation.x=-Math.PI/2;rim.position.y=.008;pad.add(rim);const inner=new THREE.Mesh(new THREE.TorusGeometry(.043,.0015,6,40),new THREE.MeshBasicMaterial({color:0xc7d9e5,transparent:true,opacity:.6}));inner.rotation.x=-Math.PI/2;inner.position.y=.009;pad.add(inner);for(let k=0;k<4;k++){const q=k*Math.PI/2;const light=new THREE.Mesh(new THREE.SphereGeometry(.004,8,6),new THREE.MeshBasicMaterial({color:0x6ee7ff}));light.position.set(Math.cos(q)*.056,.012,Math.sin(q)*.056);pad.add(light);}const shadow=new THREE.Mesh(new THREE.CircleGeometry(.058,32),new THREE.MeshBasicMaterial({color:0x05090f,transparent:true,opacity:.38,depthWrite:false,side:THREE.DoubleSide}));shadow.rotation.x=-Math.PI/2;shadow.position.y=.013;pad.add(shadow);return pad;});
-function animate(){requestAnimationFrame(animate);controls.update();const t=Date.now()*.001;const elapsed=(Date.now()-landingStart)/1000;landingCraft.forEach((craft,i)=>{const progress=THREE.MathUtils.clamp((elapsed-i*3)/22,0,1);const eased=progress*progress*(3-2*progress);const radius=1.12-(1.12-1.03)*eased;craft.position.copy(landingNormals[i]).multiplyScalar(radius);craft.quaternion.copy(landingOrientations[i]);craft.rotateY(i===0?0:Math.PI*.35);});if(arrivalStatus)arrivalStatus.textContent=elapsed<25?'DESCENT TO AEGIS LANDING PADS': 'BOTH SPACECRAFT LANDED · AEGIS SITE SECURE';if(satelliteLaunchAt){const orbit=satelliteOrbitalState();const relayAngle=orbit.angle;const relayPosition=new THREE.Vector3(orbit.radius*Math.cos(relayAngle),0,orbit.radius*Math.sin(relayAngle)).applyQuaternion(relayOrbitQuaternion);relaySatellite.position.copy(relayPosition);relaySatellite.quaternion.copy(relayOrbitQuaternion);relaySatellite.rotateY(-relayAngle+Math.PI/2);relayBeacon.material.color.setHex(Math.sin(t*4)>0?0x66efff:0x2ca9ff);}if(satelliteLinkConnected){const sameHemisphere=relaySatellite.position.dot(satelliteGroundStation.position)>.18;satelliteLinkLine.visible=sameHemisphere;satelliteLinkGeometry.setFromPoints([relaySatellite.position.clone(),satelliteGroundStation.position.clone()]);satelliteLinkLine.material.opacity=.52+Math.sin(t*3)*.24;stationBeacon.scale.setScalar(1+Math.sin(t*4)*.18);}turbine.rotation.y=t*1.8;beacon.material.opacity=.55+Math.sin(t*3)*.4;beaconLight.intensity=.45+Math.sin(t*3)*.3;renderer.render(scene,camera);if(!firstPlanetFrame){firstPlanetFrame=true;const startup=document.getElementById('lmStartup');if(startup){const label=document.getElementById('lmStartupText');if(label)label.textContent='PLANET ONLINE · LOADING TERRAIN DETAILS';setTimeout(()=>startup.classList.add('is-ready'),180);}setTimeout(()=>{try{const texture=makeMarsTexture();marsMat.map=texture;marsMat.bumpMap=texture;marsMat.bumpScale=.075;marsMat.needsUpdate=true;}catch(error){console.warn('LOCAL MARS terrain detail skipped:',error);}},80);}}animate();
+function animate(){requestAnimationFrame(animate);controls.update();const t=Date.now()*.001;const elapsed=(Date.now()-landingStart)/1000;landingCraft.forEach((craft,i)=>{const progress=THREE.MathUtils.clamp((elapsed-i*3)/22,0,1);const eased=progress*progress*(3-2*progress);const radius=1.12-(1.12-1.03)*eased;craft.position.copy(landingNormals[i]).multiplyScalar(radius);craft.quaternion.copy(landingOrientations[i]);craft.rotateY(i===0?0:Math.PI*.35);});if(arrivalStatus)arrivalStatus.textContent=elapsed<25?'DESCENT TO AEGIS LANDING PADS': 'BOTH SPACECRAFT LANDED · AEGIS SITE SECURE';if(satelliteLaunchAt){const m003Normal=satelliteGroundStation.position.clone().normalize();relaySatellite.position.copy(m003Normal).multiplyScalar(1.12);relaySatellite.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),m003Normal);relaySatellite.rotateY(t*.08);relayBeacon.material.color.setHex(Math.sin(t*4)>0?0x66efff:0x2ca9ff);}if(satelliteLinkConnected){const sameHemisphere=relaySatellite.position.dot(satelliteGroundStation.position)>.18;satelliteLinkLine.visible=sameHemisphere;satelliteLinkGeometry.setFromPoints([relaySatellite.position.clone(),satelliteGroundStation.position.clone()]);satelliteLinkLine.material.opacity=.52+Math.sin(t*3)*.24;stationBeacon.scale.setScalar(1+Math.sin(t*4)*.18);}turbine.rotation.y=t*1.8;beacon.material.opacity=.55+Math.sin(t*3)*.4;beaconLight.intensity=.45+Math.sin(t*3)*.3;renderer.render(scene,camera);if(!firstPlanetFrame){firstPlanetFrame=true;const startup=document.getElementById('lmStartup');if(startup){const label=document.getElementById('lmStartupText');if(label)label.textContent='PLANET ONLINE · LOADING TERRAIN DETAILS';setTimeout(()=>startup.classList.add('is-ready'),180);}setTimeout(()=>{try{const texture=makeMarsTexture();marsMat.map=texture;marsMat.bumpMap=texture;marsMat.bumpScale=.075;marsMat.needsUpdate=true;}catch(error){console.warn('LOCAL MARS terrain detail skipped:',error);}},80);}}animate();
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
 </script>
 <script>
