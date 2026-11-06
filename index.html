@@ -1956,6 +1956,9 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
 #lmChatSend:disabled,#lmChatInput:disabled{opacity:.45}
 #lmChatForm small{display:block;margin-top:6px;color:#8199ae;font-size:9px}
 @media(max-width:760px){#lmChatOverlay{padding:7px;align-items:stretch}#lmChatCard{height:100%;min-height:0;width:100%;border-radius:16px}#lmChatHeader{padding:14px 13px 11px}#lmChatMessages{padding:11px}#lmChatForm{padding:10px 10px max(12px,env(safe-area-inset-bottom))}}
+
+/* Hide the top mission / land quick-action strip to keep the planet view clear */
+.lm-mobile-view-tools{display:none!important}
 </style>
 <div id="lmInstallDialog" role="dialog" aria-modal="true" aria-labelledby="lmInstallTitle">
   <div id="lmInstallCard">
