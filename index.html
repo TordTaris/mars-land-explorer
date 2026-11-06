@@ -943,18 +943,6 @@ header .status{flex:0 1 40%!important;width:auto!important;min-width:0!important
    <div><small>ORBIT PERIOD</small><strong>~2 HOURS</strong></div>
    <div><small>DEPLOYMENT</small><strong id="lmStationState">STOWED</strong></div>
   </div>
-  <section id="aresPublicSatelliteLink" aria-label="Public satellite orbital data">
-   <div class="ares-link-head"><span>GLOBAL SATELLITE DATA LINK</span><span id="aresDataStatus">● STANDBY</span></div>
-   <p class="ares-link-note">PUBLIC ORBITAL CATALOG · READ-ONLY DATA · NO SPACECRAFT COMMAND UPLINK</p>
-   <div class="ares-link-summary"><b id="aresSatelliteCount">—</b><span>CATALOG OBJECTS LOADED</span><b id="aresDataEpoch">—</b><span>NEWEST ORBIT DATA (UTC)</span></div>
-   <div id="aresSatelliteGroups" class="ares-satellite-groups">
-    <div class="ares-satellite-empty">Open the data link to load publicly catalogued satellite groups.</div>
-   </div>
-   <button type="button" id="aresConnectPublicData">CONNECT PUBLIC SATELLITE DATA</button>
-   <a href="https://celestrak.org/NORAD/elements/" target="_blank" rel="noopener noreferrer" class="ares-source-link">OPEN CELESTRAK PUBLIC CATALOG ↗</a>
-   <a href="/satellite-network.html" class="ares-source-link">OPEN ADMIN SATELLITE CONSOLE ↗</a>
-   <p class="ares-link-foot">Data provider: CelesTrak GP / OMM. Cached for 2 hours in accordance with its usage policy. Orbital elements are catalog data, not live telemetry or a physical connection to ARES.</p>
-  </section>
   <div style="padding:10px;border:1px solid #ffffff18;border-radius:10px;background:#071523;color:#aebfd0;font-size:11px">
    <b style="color:#e8d09e">MISSION LOADOUT</b><br>
    • Central crew and research module<br>
@@ -2238,87 +2226,6 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
  },true);
 })();
 </script>
-<style id="ares-public-satellite-link-style">
-#aresPublicSatelliteLink{margin:12px 0;padding:11px;border:1px solid #5dc7dc66;border-radius:12px;background:linear-gradient(145deg,#081b2b,#06121f)}
-#aresPublicSatelliteLink .ares-link-head{display:flex;justify-content:space-between;gap:8px;color:#c5f3fa;font:800 10px system-ui;letter-spacing:1px}
-#aresDataStatus{color:#e8c98d;white-space:nowrap}
-#aresPublicSatelliteLink .ares-link-note{margin:6px 0 9px;color:#82a6b8;font:700 8px/1.5 system-ui;letter-spacing:.65px}
-#aresPublicSatelliteLink .ares-link-summary{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;align-items:center;padding:8px;border-radius:8px;background:#ffffff08}
-#aresPublicSatelliteLink .ares-link-summary b{color:#8de7f0;font:800 13px system-ui}
-#aresPublicSatelliteLink .ares-link-summary span{color:#90a9b8;font:700 8px system-ui;letter-spacing:.5px}
-#aresSatelliteGroups{display:grid;gap:7px;margin-top:8px}
-#aresSatelliteGroups .ares-satellite-group{padding:8px;border:1px solid #29475a;border-radius:9px;background:#071522}
-#aresSatelliteGroups .ares-group-title{display:flex;justify-content:space-between;gap:8px;color:#e8d09e;font:800 9px system-ui;letter-spacing:.7px}
-#aresSatelliteGroups .ares-group-title small{color:#8eb6c7;font-size:8px}
-#aresSatelliteGroups .ares-sat-row{display:flex;justify-content:space-between;gap:8px;padding-top:6px;margin-top:6px;border-top:1px solid #ffffff12;color:#c8dbe5;font:9px/1.4 system-ui}
-#aresSatelliteGroups .ares-sat-row span:last-child{color:#8ca9bb;white-space:nowrap}
-#aresSatelliteGroups .ares-satellite-empty{padding:9px;color:#9db3c1;font:10px/1.5 system-ui}
-#aresPublicSatelliteLink button{width:100%;margin-top:9px;padding:9px;border:1px solid #56c8d9;border-radius:9px;background:#103246;color:#e0fbff;font:800 9px system-ui;letter-spacing:.7px}
-#aresPublicSatelliteLink button:disabled{opacity:.55}
-#aresPublicSatelliteLink .ares-source-link{display:block;margin-top:8px;text-align:center;color:#8ee3ee;font:800 8px system-ui;letter-spacing:.7px;text-decoration:none}
-#aresPublicSatelliteLink .ares-link-foot{margin:8px 0 0;color:#738b9d;font:8px/1.5 system-ui}
-</style>
-<script id="ares-public-satellite-data-link">
-(()=>{'use strict';
-const root=document.getElementById('aresPublicSatelliteLink');if(!root)return;
-const $=id=>document.getElementById(id),CACHE_KEY='local-mars-ares-public-gp-v1',TTL=2*60*60*1000;
-const groups=[
- {id:'GNSS',label:'GLOBAL NAVIGATION · GPS / GLONASS / GALILEO / BEIDOU'},
- {id:'MILITARY',label:'PUBLICLY CATALOGUED GOVERNMENT SATELLITES'},
- {id:'WEATHER',label:'WEATHER SATELLITES'},
- {id:'EARTH-RESOURCES',label:'EARTH OBSERVATION & RESOURCES'},
- {id:'STATIONS',label:'ORBITAL RESEARCH STATIONS'}
-];
-const safeText=v=>v==null?'—':String(v);
-function readCache(){try{return JSON.parse(localStorage.getItem(CACHE_KEY)||'{}')}catch(_){return {}}}
-function writeCache(v){try{localStorage.setItem(CACHE_KEY,JSON.stringify(v))}catch(_){}}
-function epochOf(rows){return rows.map(x=>Date.parse(x.EPOCH||'')).filter(Number.isFinite).sort((a,b)=>b-a)[0]||0}
-function render(data){
- const host=$('aresSatelliteGroups');host.replaceChildren();let total=0,newest=0;
- groups.forEach(g=>{
-  const rows=Array.isArray(data[g.id])?data[g.id]:[];total+=rows.length;newest=Math.max(newest,epochOf(rows));
-  const card=document.createElement('div');card.className='ares-satellite-group';
-  const head=document.createElement('div');head.className='ares-group-title';
-  const label=document.createElement('span');label.textContent=g.label;
-  const count=document.createElement('small');count.textContent=rows.length+' OBJECTS';head.append(label,count);card.append(head);
-  if(!rows.length){const empty=document.createElement('div');empty.className='ares-sat-row';empty.textContent='No records returned for this group.';card.append(empty)}
-  rows.slice(0,4).forEach(item=>{
-   const row=document.createElement('div');row.className='ares-sat-row';
-   const name=document.createElement('span');name.textContent=safeText(item.OBJECT_NAME||item.SATNAME||'Unnamed satellite');
-   const id=document.createElement('span');id.textContent='CAT '+safeText(item.NORAD_CAT_ID||item.OBJECT_ID);
-   row.append(name,id);card.append(row);
-  });
-  if(rows.length>4){const more=document.createElement('small');more.style.cssText='display:block;margin-top:6px;color:#7895a7;font:8px system-ui';more.textContent='+'+(rows.length-4)+' more in source catalog';card.append(more)}
-  host.append(card);
- });
- $('aresSatelliteCount').textContent=total.toLocaleString();
- $('aresDataEpoch').textContent=newest?new Date(newest).toISOString().replace('T',' ').slice(0,16):'—';
-}
-async function connect(){
- const button=$('aresConnectPublicData');if(!button)return;button.disabled=true;
- $('aresDataStatus').textContent='● LOADING PERSISTENT CATALOG';$('aresDataStatus').style.color='#f0ce8a';
- try{
-  const result=await window.MarsWorldServer?.getPublicSatelliteCatalog?.();
-  if(result?.error)throw new Error(result.error.message||'Persistent catalog unavailable');
-  const rows=result?.data||[];if(!rows.length)throw new Error('No persistent catalog snapshots are available yet');
-  const data={},cache=readCache();
-  rows.forEach(item=>{if(Array.isArray(item.payload)){data[item.group_id]=item.payload;cache[item.group_id]={at:Date.parse(item.fetched_at)||Date.now(),rows:item.payload}}});
-  writeCache(cache);render(data);
-  const newestSync=rows.map(x=>Date.parse(x.fetched_at)||0).sort((a,b)=>b-a)[0]||0;
-  $('aresDataStatus').textContent='● PERSISTENT DATA LINK ACTIVE';$('aresDataStatus').style.color='#86edbd';
-  $('aresDataStatus').title='Supabase stored catalog · last server sync '+(newestSync?new Date(newestSync).toISOString():'unknown')+' · automatic refresh every 2 hours';
-  $('aresDataStatus').dataset.syncAt=newestSync?new Date(newestSync).toISOString():'';
- }catch(error){
-  $('aresDataStatus').textContent='○ PERSISTENT LINK OFFLINE';$('aresDataStatus').style.color='#ffbd8d';
-  const cache=readCache(),cached={};let hasCache=false;
-  groups.forEach(g=>{if(Array.isArray(cache[g.id]?.rows)){cached[g.id]=cache[g.id].rows;hasCache=true}});
-  if(hasCache)render(cached);
-  const note=document.createElement('div');note.className='ares-satellite-empty';note.textContent='Persistent catalog unavailable: '+error.message+(hasCache?' · Showing device cache only.':'');$('aresSatelliteGroups').prepend(note);
-  console.warn('ARES persistent satellite catalog:',error);
- }finally{button.disabled=false}
-}
-$('aresConnectPublicData')?.addEventListener('click',connect);
-document.addEventListener('click',event=>{if(event.target?.id==='navSatellite'||event.target?.id==='lmStationOpen')connect()},{capture:true});
-})();
-</script>
+
+
 </body></html>
