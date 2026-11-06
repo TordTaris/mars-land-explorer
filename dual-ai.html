@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#081321"><title>LOCAL MARS AI · Local + Cloud</title>
+<html lang="th" translate="no" class="notranslate"><head><meta charset="utf-8"><meta name="google" content="notranslate"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#081321"><title>LOCAL MARS AI · Local + Cloud</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 :root{color-scheme:dark;--bg:#07111f;--panel:#10243a;--line:#b99b6670;--gold:#e3c17c;--muted:#a9bacb;--cyan:#75e5ef}
@@ -13,7 +13,7 @@ button,select{border:1px solid #8c7954;background:#152b41;color:#f6ebd5;border-r
 #progress{width:100%;height:9px;border-radius:9px;background:#071321;overflow:hidden;border:1px solid #49627a;margin:8px 0}#bar{height:100%;width:0;background:linear-gradient(90deg,#61d7e8,#e3c17c);transition:width .2s}
 #chat{display:flex;flex-direction:column;gap:9px;max-height:48vh;overflow:auto}.msg{padding:11px 13px;border-radius:12px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65}.user{background:#203b54;align-self:flex-end;max-width:92%}.assistant{background:#0b1a29;border:1px solid #b99b6640;align-self:stretch}.note{font-size:12px;color:#9fb1c2;line-height:1.6}
 @media(max-width:600px){header{padding:13px}.wrap{margin:15px auto}.panel{padding:12px}button{padding:10px 11px}}
-</style></head><body>
+</style></head><body translate="no" class="notranslate">
 <header><div class="brand">LOCAL <b>MARS</b> · AI CENTER</div><div class="row"><a href="./download-ai.html">Download Center</a><a href="./">← หน้าหลัก</a></div></header>
 <main class="wrap">
  <div class="eyebrow">LOCAL INFERENCE + CLOUD BACKUP</div><h1>LOCAL MARS AI</h1>
@@ -31,7 +31,7 @@ button,select{border:1px solid #8c7954;background:#152b41;color:#f6ebd5;border-r
   <p class="note">Cloud AI ใช้บัญชี LOCAL MARS และ Supabase Edge Function ชื่อ free-ai พร้อม GEMINI_API_KEY ฝั่งเซิร์ฟเวอร์ หากยังไม่ได้ตั้งค่า Cloud จะไม่พร้อมใช้งาน แต่ Local AI ใช้แยกกันได้</p>
  </section>
  <section class="panel"><div id="chat" aria-live="polite"><div class="msg assistant">สวัสดีครับ ผมคือ LOCAL MARS AI เลือก Local หรือ Cloud แล้วเริ่มสนทนาได้</div></div></section>
- <section class="panel"><textarea id="prompt" maxlength="5000" placeholder="พิมพ์คำถามถึง LOCAL MARS AI ได้ที่นี่…"></textarea><div class="row" style="margin-top:9px"><button id="send" class="primary">ส่งคำถามให้ AI</button><button id="downloadTxt" disabled>ดาวน์โหลด TXT</button><button id="downloadJson" disabled>ดาวน์โหลด JSON</button><button id="clear">ล้างบทสนทนา</button><a id="login" href="./" style="display:none">ไปเข้าสู่ระบบ</a></div></section>
+ <section class="panel"><textarea id="prompt" maxlength="5000" placeholder="พิมพ์คำถามถึง LOCAL MARS AI ได้ที่นี่…"></textarea><div class="row" style="margin-top:9px"><button id="send" type="button" class="primary">ส่งคำถามให้ AI</button><button id="downloadTxt" disabled>ดาวน์โหลด TXT</button><button id="downloadJson" disabled>ดาวน์โหลด JSON</button><button id="clear">ล้างบทสนทนา</button><a id="login" href="./" style="display:none">ไปเข้าสู่ระบบ</a></div></section>
 </main>
 <script type="module">
 const $=id=>document.getElementById(id);
