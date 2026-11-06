@@ -1679,6 +1679,7 @@ const parcels=[
 ].map(p=>({id:p[0],lon:p[1],lat:p[2],price:Math.round(p[3]*1.8),areaSqm:p[4],owner:null,building:null,physicalAreaWorldUnits:MARS_PHYSICAL.squareMetersToWorldArea(p[4])}));
 const markerMat=(color)=>new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:.3});
 const markers=[];
+const markerHitTargets=[];
 const buildingMeshes=new Map();
 function clearSharedBuildings(){for(const mesh of buildingMeshes.values())group.remove(mesh);buildingMeshes.clear();}
 function renderSharedBuildings(structures){
@@ -1924,6 +1925,13 @@ parcels.forEach(p=>{
   ring.rotation.x=Math.PI/2;ring.position.y=-.004;m.add(ring);
  }
  group.add(m);markers.push(m);
+ // Invisible enlarged hit target makes small planetary pins easy to tap on phones.
+ const hitTarget=new THREE.Mesh(
+  new THREE.SphereGeometry(.032,12,10),
+  new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false,colorWrite:false})
+ );
+ hitTarget.position.copy(normal);hitTarget.userData.plot=p;
+ group.add(hitTarget);markerHitTargets.push(hitTarget);
 });
  // NEW EXPLORER ZONE — dedicated landing and training area (visual landmark, not a purchasable parcel).
  const explorerZone=new THREE.Group();group.add(explorerZone);
@@ -1939,20 +1947,30 @@ parcels.forEach(p=>{
  const zoneLabel=document.createElement('div');zoneLabel.textContent='NEW EXPLORER ZONE';Object.assign(zoneLabel.style,{position:'absolute',color:'#a9f4ff',font:'800 9px system-ui',letterSpacing:'1.5px',textShadow:'0 0 10px #38cdeeff',whiteSpace:'nowrap',pointerEvents:'none'});
 const ray=new THREE.Raycaster(),pointer=new THREE.Vector2();let selected=null,auto=true;
 function openM003Base(){const world=window.MarsWorldServer?.getState?.();if(!world?.user){toast('Sign in to verify M-003 ownership');openLogin();return;}const owns=(world.claims||[]).some(c=>c.parcel_id==='M-003'&&c.owner_id===world.user.id);if(!owns){toast('This secure function is restricted to the M-003 owner');return;}location.href='./m003-base.html';}
+// Parcel selection listens at document capture phase. The globe's custom
+// rotation handler calls stopImmediatePropagation() on the canvas, so a
+// canvas-level pointerdown listener would never receive taps on touch devices.
 let parcelTapStart=null;
-renderer.domElement.addEventListener('pointerdown',e=>{parcelTapStart={x:e.clientX,y:e.clientY};});
-renderer.domElement.addEventListener('pointerup',e=>{
- if(!parcelTapStart)return;
- const moved=Math.hypot(e.clientX-parcelTapStart.x,e.clientY-parcelTapStart.y)>10;
- parcelTapStart=null;
- if(moved)return; // Rotating or panning the planet must not change the selected parcel.
- pointer.x=e.clientX/innerWidth*2-1;pointer.y=-(e.clientY/innerHeight)*2+1;
+const isMarsCanvasEvent=e=>e.composedPath?.().includes(renderer.domElement)||e.target===renderer.domElement;
+document.addEventListener('pointerdown',e=>{
+ if(!isMarsCanvasEvent(e)||(e.pointerType==='mouse'&&e.button!==0))return;
+ if(parcelTapStart){parcelTapStart=null;return;} // A multi-touch gesture is a zoom, never a parcel tap.
+ parcelTapStart={id:e.pointerId,x:e.clientX,y:e.clientY};
+},{capture:true,passive:true});
+document.addEventListener('pointerup',e=>{
+ if(!parcelTapStart||parcelTapStart.id!==e.pointerId)return;
+ const start=parcelTapStart;parcelTapStart=null;
+ if(!isMarsCanvasEvent(e)||Math.hypot(e.clientX-start.x,e.clientY-start.y)>10)return;
+ const rect=renderer.domElement.getBoundingClientRect();
+ if(!rect.width||!rect.height)return;
+ pointer.x=((e.clientX-rect.left)/rect.width)*2-1;
+ pointer.y=-((e.clientY-rect.top)/rect.height)*2+1;
  ray.setFromCamera(pointer,camera);
- const hits=ray.intersectObjects(markers,false);
+ const hits=ray.intersectObjects(markerHitTargets,false);
  if(hits.length){selectPlot(hits[0].object.userData.plot);return;}
- // A tap on an unmarked part of Mars dismisses the previous parcel details.
  clearParcelSelection();
-});
+},{capture:true,passive:true});
+document.addEventListener('pointercancel',e=>{if(parcelTapStart?.id===e.pointerId)parcelTapStart=null;},{capture:true,passive:true});
 function clearParcelSelection(){
  selected=null;
  document.body.classList.remove("plot-selected");
