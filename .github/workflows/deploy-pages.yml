@@ -12,11 +12,36 @@ permissions:
   deployments: write
 
 concurrency:
-  group: pages-recovery-final
+  group: pages-cleanup
   cancel-in-progress: true
 
 jobs:
+  cancel-stale:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel stale GitHub Pages deployment locks
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const staleShas = [
+              '76338d1dcd31e9b1017562f03ec371e64bd772e4',
+              '53a13e185229dda3963031b069190d2ea55ae8c4',
+              '4507c6b854b57125b63f92c65fa3fae8b342a77f'
+            ];
+            for (const sha of staleShas) {
+              try {
+                await github.request('POST /repos/{owner}/{repo}/pages/deployments/{pages_deployment_id}/cancel', {
+                  owner, repo, pages_deployment_id: sha
+                });
+                core.notice(`Cancelled stale Pages deployment ${sha}.`);
+              } catch (error) {
+                core.warning(`Cancel for ${sha}: ${error.status || 'error'} ${error.message}`);
+              }
+            }
+
   deploy:
+    needs: cancel-stale
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -210,26 +235,6 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: _site
-
-      - name: Attempt to cancel stale GitHub Pages deployment lock
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { owner, repo } = context.repo;
-            const blockedShas = [
-              '76338d1dcd31e9b1017562f03ec371e64bd772e4',
-              '53a13e185229dda3963031b069190d2ea55ae8c4'
-            ];
-            for (const blockedSha of blockedShas) {
-              try {
-                await github.request('POST /repos/{owner}/{repo}/pages/deployments/{pages_deployment_id}/cancel', {
-                  owner, repo, pages_deployment_id: blockedSha
-                });
-                core.notice(`Cancelled stale GitHub Pages deployment ${blockedSha}.`);
-              } catch (error) {
-                core.warning(`Pages cancel for ${blockedSha} returned ${error.status || 'an error'}: ${error.message}. Continuing.`);
-              }
-            }
 
       - name: Deploy to GitHub Pages
         id: deployment
