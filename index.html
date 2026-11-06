@@ -1516,20 +1516,29 @@ controls.autoRotateSpeed=.35;
 renderer.domElement.style.touchAction='none';
 renderer.domElement.setAttribute('aria-label','ลากขึ้นลงหรือซ้ายขวาเพื่อหมุนดาวอังคารรอบแกนกลางได้ 360 องศา');
 let marsDragPointer=null,lastMarsX=0,lastMarsY=0;
-const marsWorldUp=new THREE.Vector3(0,1,0);
-const marsScreenRight=new THREE.Vector3(1,0,0);
-renderer.domElement.addEventListener('pointerdown',event=>{if(event.pointerType==='mouse'&&event.button!==0)return;marsDragPointer=event.pointerId;lastMarsX=event.clientX;lastMarsY=event.clientY;renderer.domElement.setPointerCapture(event.pointerId);});
+const marsVerticalAxis=new THREE.Vector3(1,0,0);
+const marsHorizontalAxis=new THREE.Vector3(0,1,0);
+renderer.domElement.addEventListener('pointerdown',event=>{
+ if(event.pointerType==='mouse'&&event.button!==0)return;
+ if(marsDragPointer!==null)return;
+ event.preventDefault();event.stopImmediatePropagation();
+ marsDragPointer=event.pointerId;lastMarsX=event.clientX;lastMarsY=event.clientY;
+ try{renderer.domElement.setPointerCapture(event.pointerId);}catch(_){}
+},{capture:true,passive:false});
 renderer.domElement.addEventListener('pointermove',event=>{
  if(marsDragPointer!==event.pointerId)return;
+ event.preventDefault();event.stopImmediatePropagation();
  const dx=event.clientX-lastMarsX,dy=event.clientY-lastMarsY;
  lastMarsX=event.clientX;lastMarsY=event.clientY;
- // Incremental world-axis quaternion rotation keeps the pivot at the planet's exact center.
- if(dx)group.rotateOnWorldAxis(marsWorldUp,-dx*.008);
- if(dy){const verticalAxis=marsScreenRight.clone().applyQuaternion(camera.quaternion).normalize();group.rotateOnWorldAxis(verticalAxis,dy*.008);}
-});
-const endMarsDrag=event=>{if(marsDragPointer===event.pointerId)marsDragPointer=null;};
-renderer.domElement.addEventListener('pointerup',endMarsDrag);
-renderer.domElement.addEventListener('pointercancel',endMarsDrag);
+ // Apply incremental quaternions to the globe group itself. No Euler angles or polar-angle clamp:
+ // the pivot remains (0,0,0), and vertical rotation can accumulate without a 180-degree limit.
+ if(dx)group.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(marsHorizontalAxis,-dx*.01));
+ if(dy)group.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(marsVerticalAxis,dy*.01));
+ group.quaternion.normalize();
+},{capture:true,passive:false});
+const endMarsDrag=event=>{if(marsDragPointer===event.pointerId){event.preventDefault();marsDragPointer=null;}};
+renderer.domElement.addEventListener('pointerup',endMarsDrag,{capture:true});
+renderer.domElement.addEventListener('pointercancel',endMarsDrag,{capture:true});
 // Canonical parcel coordinates match the shared Supabase world_parcels table.
 const parcels=[
 ['M-001',-160,-55,120,1000],['M-002',-93,-26,157,1275],['M-003',-26,3,9999999,1550],['M-004',41,32,231,1825],
