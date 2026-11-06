@@ -1530,9 +1530,9 @@ renderer.domElement.addEventListener('pointermove',event=>{
  event.preventDefault();event.stopImmediatePropagation();
  const dx=event.clientX-lastMarsX,dy=event.clientY-lastMarsY;
  lastMarsX=event.clientX;lastMarsY=event.clientY;
- // Apply incremental quaternions to the globe group itself. No Euler angles or polar-angle clamp:
- // the pivot remains (0,0,0), and vertical rotation can accumulate without a 180-degree limit.
- if(dx)group.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(marsHorizontalAxis,-dx*.01));
+ // Match finger direction: drag right rotates the visible surface right; drag left rotates it left.
+ // Vertical drag follows the same direction. Incremental quaternions avoid Euler wrapping and angle clamps.
+ if(dx)group.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(marsHorizontalAxis,dx*.01));
  if(dy)group.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(marsVerticalAxis,dy*.01));
  group.quaternion.normalize();
 },{capture:true,passive:false});
