@@ -13,12 +13,12 @@ ul{color:#d5dfeb;line-height:1.9;padding-left:22px}.file{font-weight:800;color:#
 </style></head><body>
 <header><div class="brand">LOCAL <b>MARS</b> · DOWNLOAD CENTER</div><a href="./">← หน้าหลัก</a></header>
 <main><div class="eyebrow">OFFICIAL WEB APP PACKAGE</div><h1>LOCAL MARS AI</h1>
-<p class="sub">ดาวน์โหลดไฟล์เว็บแอป LOCAL MARS AI เป็นไฟล์ HTML ไฟล์เดียว แล้วเปิดใช้งานผ่านเบราว์เซอร์ได้ ไม่ต้องติดตั้งโมเดล AI หรือโปรแกรมเพิ่มเติม</p>
-<section class="card"><div class="row"><span class="pill">HTML ไฟล์เดียว</span><span class="pill">Cloud AI</span><span class="pill">ไม่ต้องโหลดโมเดล</span></div>
+<p class="sub">เปิดใช้งาน LOCAL MARS AI และเลือกดาวน์โหลดโมเดลมารันบนอุปกรณ์ผ่าน WebGPU หรือใช้ Cloud AI เป็นทางเลือก</p>
+<section class="card"><div class="row"><span class="pill">HTML ไฟล์เดียว</span><span class="pill">Cloud AI</span><span class="pill">ดาวน์โหลดโมเดลได้</span></div>
 <h2>LOCAL MARS Online AI</h2><p class="muted">ไฟล์แอป: <span class="file">local-mars-ai.html</span><br>รูปแบบ: HTML · ดาวน์โหลดจาก GitHub Repository</p>
-<div class="row"><button id="download">ดาวน์โหลด LOCAL MARS AI</button><a class="muted" href="https://raw.githubusercontent.com/TordTaris/mars-land-explorer/main/dual-ai.html" target="_blank" rel="noopener">เปิดไฟล์ต้นฉบับ</a></div><div id="status" role="status" aria-live="polite"></div></section>
-<section class="card"><h3>วิธีใช้งาน</h3><ul><li>กดปุ่มดาวน์โหลดไฟล์ HTML</li><li>เปิดไฟล์ด้วย Chrome หรือเบราว์เซอร์ที่รองรับ</li><li>เชื่อมต่ออินเทอร์เน็ตและเข้าสู่ระบบ LOCAL MARS</li><li>ใช้งาน AI ผ่าน Cloud โดยไม่ต้องดาวน์โหลดโมเดล</li></ul>
-<p class="muted">ข้อกำหนด: แอปที่ดาวน์โหลดเป็นเว็บไคลเอนต์ ต้องใช้อินเทอร์เน็ต บัญชี LOCAL MARS และบริการ Supabase/Gemini ที่ตั้งค่าไว้แล้ว การดาวน์โหลดไฟล์ไม่ได้ทำให้ AI ทำงานแบบออฟไลน์</p></section>
+<div class="row"><button id="download">ดาวน์โหลดไฟล์แอป LOCAL MARS AI</button> <a href="./dual-ai.html"><button type="button" class="secondary">เปิด AI และโหลดโมเดล</button></a><a class="muted" href="https://raw.githubusercontent.com/TordTaris/mars-land-explorer/main/dual-ai.html" target="_blank" rel="noopener">เปิดไฟล์ต้นฉบับ</a></div><div id="status" role="status" aria-live="polite"></div></section>
+<section class="card"><h3>วิธีใช้งาน</h3><ul><li>กดปุ่มดาวน์โหลดไฟล์ HTML</li><li>เปิดไฟล์ด้วย Chrome หรือเบราว์เซอร์ที่รองรับ</li><li>เปิดหน้า AI แล้วกด “ดาวน์โหลด / โหลดโมเดล” เพื่อดาวน์โหลดโมเดลครั้งแรก</li><li>ต้องใช้อุปกรณ์ที่รองรับ WebGPU และพื้นที่ว่างเพียงพอ</li><li>หรือเลือก Cloud AI และเข้าสู่ระบบ LOCAL MARS</li></ul>
+<p class="muted">ข้อกำหนด: แอปที่ดาวน์โหลดเป็นเว็บไคลเอนต์ ต้องใช้อินเทอร์เน็ต บัญชี LOCAL MARS และบริการ Supabase/Gemini ที่ตั้งค่าไว้แล้ว โหมด Local จะดาวน์โหลดโมเดลและประมวลผลบนอุปกรณ์หลังโหลดสำเร็จ ส่วน Cloud ต้องใช้อินเทอร์เน็ตและบัญชีที่เข้าสู่ระบบ</p></section>
 <p class="muted">แหล่งไฟล์: TordTaris/mars-land-explorer · หากดาวน์โหลดไม่สำเร็จ ใช้ลิงก์เปิดไฟล์ต้นฉบับแล้วเลือกบันทึกหน้าเว็บ</p></main>
 <script>
 const button=document.getElementById("download"),status=document.getElementById("status");
