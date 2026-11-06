@@ -1059,6 +1059,10 @@ const camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,.1,100);camer
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;root.appendChild(renderer.domElement);
 scene.add(new THREE.AmbientLight(0xffffff,1.2));const sun=new THREE.DirectionalLight(0xffd2b2,2.5);sun.position.set(4,3,5);scene.add(sun);
 const group=new THREE.Group();scene.add(group);
+// Canonical physical scale for every LOCAL MARS surface calculation.
+// Three.js keeps the globe normalized to radius 1 for camera precision; one world unit equals the mean Mars radius.
+const MARS_PHYSICAL=Object.freeze({meanRadiusMeters:3389500,meanDiameterMeters:6779000,globeRadiusUnits:1,metersToWorldUnits(m){return Number(m)/this.meanRadiusMeters;},worldUnitsToMeters(u){return Number(u)*this.meanRadiusMeters;},squareMetersToWorldArea(a){return Number(a)/(this.meanRadiusMeters*this.meanRadiusMeters);}});
+window.LOCAL_MARS_PHYSICAL_SCALE=MARS_PHYSICAL;
 const marsMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:1});
 function makeMarsTexture(){
  // Deterministic procedural albedo + relief: no paid texture service or API required.
@@ -1203,12 +1207,12 @@ for(const layer of cosmicStarLayers){
 const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.minDistance=1.7;controls.maxDistance=8;controls.autoRotate=true;controls.autoRotateSpeed=.35;
 // Canonical parcel coordinates match the shared Supabase world_parcels table.
 const parcels=[
-['M-001',-160,-55,120],['M-002',-93,-26,157],['M-003',-26,3,9999999],['M-004',41,32,231],
-['M-005',108,-49,268],['M-006',175,-20,305],['M-007',-118,9,342],['M-008',-51,38,379],
-['M-009',16,-43,156],['M-010',83,-14,193],['M-011',150,15,230],['M-012',-143,44,267],
-['M-013',-88,55,420],['M-014',-34,-68,450],['M-015',28,62,480],['M-016',78,5,510],
-['M-017',138,-58,540],['M-018',-174,-2,570],['M-019',5,24,600]
-] .map(p=>({id:p[0],lon:p[1],lat:p[2],price:Math.round(p[3]*1.8),owner:null,building:null}));
+['M-001',-160,-55,120,1000],['M-002',-93,-26,157,1275],['M-003',-26,3,9999999,1550],['M-004',41,32,231,1825],
+['M-005',108,-49,268,2100],['M-006',175,-20,305,2375],['M-007',-118,9,342,2750],['M-008',-51,38,379,3125],
+['M-009',16,-43,156,1400],['M-010',83,-14,193,1675],['M-011',150,15,230,1950],['M-012',-143,44,267,2225],
+['M-013',-88,55,420,2500],['M-014',-34,-68,450,2750],['M-015',28,62,480,3000],['M-016',78,5,510,3250],
+['M-017',138,-58,540,3500],['M-018',-174,-2,570,3750],['M-019',5,24,600,4000]
+].map(p=>({id:p[0],lon:p[1],lat:p[2],price:Math.round(p[3]*1.8),areaSqm:p[4],owner:null,building:null,physicalAreaWorldUnits:MARS_PHYSICAL.squareMetersToWorldArea(p[4])}));
 const markerMat=(color)=>new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:.3});
 const markers=[];
 const buildingMeshes=new Map();
@@ -1405,7 +1409,7 @@ function selectPlot(p){
  document.querySelector("#plotInfo").style.display="none";document.querySelector("#plotActions").style.display="block";
  document.querySelector("#plotName").textContent=p.id;
  document.querySelector("#building").querySelector('option[value="NuclearPlant"]').disabled=p.id!=="M-003";
- document.querySelector("#plotMeta").textContent="Coordinates "+p.lat+"°N / "+p.lon+"°E • "+(isOwner?"OWNED BY YOU":claim?"OWNED · "+(isListed?"FOR SALE":"NOT LISTED"):"UNCLAIMED");
+ document.querySelector("#plotMeta").textContent="Coordinates "+p.lat+"° / "+p.lon+"° • "+Number(p.areaSqm||0).toLocaleString("en-US")+" m² • "+(isOwner?"OWNED BY YOU":claim?"OWNED · "+(isListed?"FOR SALE":"NOT LISTED"):"UNCLAIMED");
  document.querySelector("#plotMlcPrice").textContent=isListed?price.toLocaleString("en-US")+" MLC":"NOT FOR SALE";
  document.querySelector("#plotMlcStatus").textContent=isOwner?"You control this parcel's MLC listing.":isListed?"Available for purchase · 15-minute reservation required.":claim?"The owner has not listed this parcel.":"This parcel is not currently listed.";
  document.querySelector("#plotMlcBalance").textContent="Wallet balance: "+(document.querySelector("#mlcBalance")?.textContent||"Sign in to view");
