@@ -895,6 +895,45 @@ header .status{flex:0 1 40%!important;width:auto!important;min-width:0!important
 @media(max-width:650px){#lmStationCard{padding:15px}#lmStationCard h2{font-size:17px}}
 </style>
 
+
+<style id="lm-solar-system-styles">
+#lmSolarOpen{position:fixed;z-index:90;top:61px;left:50%;transform:translateX(-50%);border:1px solid #e9b96c99;border-radius:999px;padding:9px 17px;background:linear-gradient(120deg,#18283cF2,#392a20F2);color:#ffe5b3;font:800 11px system-ui;letter-spacing:1.35px;box-shadow:0 8px 28px #0008;backdrop-filter:blur(12px);white-space:nowrap}
+#lmSolarOpen:active{transform:translateX(-50%) scale(.97)}
+#lmSolarOverlay{position:fixed;inset:0;z-index:2000;display:none;background:#030711;color:#edf4ff;font:13px system-ui,sans-serif;overflow:hidden}
+#lmSolarOverlay.open{display:block}
+#lmSolarCanvas{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 48%,#111d31 0,#050a14 60%,#02040a 100%)}
+#lmSolarCanvas canvas{width:100%;height:100%;display:block;touch-action:none}
+.lm-solar-top{position:absolute;z-index:3;top:0;left:0;right:0;min-height:65px;padding:13px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(#030711f2,#030711a8,transparent)}
+.lm-solar-brand{font-weight:900;letter-spacing:2px;font-size:15px}.lm-solar-brand span{color:#ffc16d}.lm-solar-status{font-size:10px;color:#8de6d0;letter-spacing:.8px;margin-top:3px}
+#lmSolarClose{border:1px solid #52627a;background:#101c2e;color:#fff;border-radius:10px;padding:9px 13px;font-weight:800}
+.lm-solar-panel{position:absolute;z-index:3;top:82px;bottom:20px;width:220px;max-height:calc(100dvh - 102px);overflow:auto;border:1px solid #ffffff20;border-radius:16px;background:#091321df;backdrop-filter:blur(14px);box-shadow:0 12px 40px #0008;padding:13px}
+#lmSolarPlanetList{left:14px}.lm-solar-detail{right:14px;width:250px}
+.lm-solar-kicker{font-size:9px;letter-spacing:1.5px;color:#8bd9e8;font-weight:800;margin-bottom:9px}
+.lm-solar-planet-btn{width:100%;display:flex;align-items:center;gap:9px;text-align:left;margin:4px 0;padding:8px;border:1px solid transparent;background:#101d30;color:#eaf2ff;border-radius:9px;font-size:11px}
+.lm-solar-planet-btn.selected{border-color:#e7b76c;background:#34291e;color:#ffe1ac}
+.lm-solar-dot{width:12px;height:12px;flex:0 0 12px;border-radius:50%;box-shadow:0 0 12px currentColor}
+.lm-solar-detail h2{font-size:20px;margin:0 0 5px;color:#fff}
+#lmSolarPlanetType{font-size:9px;letter-spacing:1px;color:#e8bd7e;text-transform:uppercase}
+#lmSolarPlanetText{font-size:11px;line-height:1.65;color:#b8c8dc;margin:13px 0}
+#lmSolarPlanetFacts{font-size:10px;line-height:1.9;color:#dce8f6;border-top:1px solid #ffffff20;padding-top:8px}
+.lm-solar-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:13px}
+.lm-solar-actions button,.lm-solar-mars-link{font-size:10px;padding:9px 6px}
+.lm-solar-mars-link{width:100%;margin-top:8px;border:1px solid #d68d65;background:#352018;color:#ffd0b4;border-radius:9px;font-weight:800}
+.lm-solar-hint{position:absolute;z-index:2;left:50%;bottom:22px;transform:translateX(-50%);padding:7px 12px;border:1px solid #ffffff20;border-radius:99px;background:#07111dc9;color:#a9bed5;font-size:10px;white-space:nowrap;pointer-events:none}
+@media(max-width:760px){
+ #lmSolarOpen{top:59px;font-size:10px;padding:8px 13px}
+ .lm-solar-top{min-height:58px;padding:10px 12px}
+ .lm-solar-brand{font-size:12px}.lm-solar-status{font-size:8px}
+ .lm-solar-panel{top:auto;bottom:12px;max-height:39dvh;width:calc(50% - 18px);padding:9px;border-radius:13px}
+ #lmSolarPlanetList{left:10px}.lm-solar-detail{right:10px;width:calc(50% - 18px)}
+ .lm-solar-kicker{font-size:8px}.lm-solar-planet-btn{font-size:9px;padding:6px;gap:6px}
+ .lm-solar-detail h2{font-size:15px}#lmSolarPlanetText{font-size:9px;line-height:1.45;margin:8px 0}
+ #lmSolarPlanetFacts{font-size:8px;line-height:1.6}
+ .lm-solar-actions{gap:4px;margin-top:8px}.lm-solar-actions button,.lm-solar-mars-link{font-size:8px;padding:7px 3px}
+ .lm-solar-hint{bottom:calc(39dvh + 22px);font-size:8px}
+}
+@media(max-width:390px){.lm-solar-panel{width:calc(50% - 14px)}#lmSolarPlanetList{left:7px}.lm-solar-detail{right:7px}.lm-solar-planet-btn{font-size:8px}}
+</style>
 </head>
 <body>\n<div id="lmStartup" role="status" aria-live="polite"><div id="lmStartupCard"><div id="lmStartupMark">LOCAL <b>MARS</b></div><div id="lmStartupText">INITIALIZING PLANETARY SYSTEMS…</div><div id="lmStartupTrack"></div></div></div>
 <script>
@@ -2342,5 +2381,31 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
 })();
 </script>
 
+
+
+<button id="lmSolarOpen" type="button" aria-haspopup="dialog" aria-controls="lmSolarOverlay" aria-expanded="false">☼　SOLAR SYSTEM 3D</button>
+<section id="lmSolarOverlay" role="dialog" aria-modal="true" aria-label="Interactive 3D Solar System" aria-hidden="true">
+ <div id="lmSolarCanvas"></div>
+ <header class="lm-solar-top"><div><div class="lm-solar-brand">LOCAL MARS <span>· SOLAR SYSTEM</span></div><div id="lmSolarStatus" class="lm-solar-status">PREPARING PLANETARY ORBITS…</div></div><button id="lmSolarClose" type="button">✕ CLOSE</button></header>
+ <nav id="lmSolarPlanetList" class="lm-solar-panel" aria-label="Select a planet">
+  <div class="lm-solar-kicker">SELECT A PLANET</div>
+  <button class="lm-solar-planet-btn" data-solar-planet="0"><i class="lm-solar-dot" style="background:#aaa49c;color:#aaa49c"></i>Mercury · ดาวพุธ</button>
+  <button class="lm-solar-planet-btn" data-solar-planet="1"><i class="lm-solar-dot" style="background:#e5bd82;color:#e5bd82"></i>Venus · ดาวศุกร์</button>
+  <button class="lm-solar-planet-btn" data-solar-planet="2"><i class="lm-solar-dot" style="background:#3288cf;color:#3288cf"></i>Earth · โลก</button>
+  <button class="lm-solar-planet-btn" data-solar-planet="3"><i class="lm-solar-dot" style="background:#c65d3e;color:#c65d3e"></i>Mars · ดาวอังคาร</button>
+  <button class="lm-solar-planet-btn" data-solar-planet="4"><i class="lm-solar-dot" style="background:#d4a77d;color:#d4a77d"></i>Jupiter · ดาวพฤหัสบดี</button>
+  <button class="lm-solar-planet-btn" data-solar-planet="5"><i class="lm-solar-dot" style="background:#d8c08c;color:#d8c08c"></i>Saturn · ดาวเสาร์</button>
+  <button class="lm-solar-planet-btn" data-solar-planet="6"><i class="lm-solar-dot" style="background:#85d5d8;color:#85d5d8"></i>Uranus · ดาวยูเรนัส</button>
+  <button class="lm-solar-planet-btn" data-solar-planet="7"><i class="lm-solar-dot" style="background:#416fe0;color:#416fe0"></i>Neptune · ดาวเนปจูน</button>
+ </nav>
+ <aside class="lm-solar-panel lm-solar-detail">
+  <div class="lm-solar-kicker">PLANETARY INTELLIGENCE</div><h2 id="lmSolarPlanetName">ดาวอังคาร · Mars</h2><div id="lmSolarPlanetType">Terrestrial planet</div>
+  <p id="lmSolarPlanetText">กำลังเตรียมข้อมูลดาวเคราะห์…</p><div id="lmSolarPlanetFacts"></div>
+  <div class="lm-solar-actions"><button id="lmSolarPause" type="button">PAUSE</button><button id="lmSolarSpeed" type="button">SPEED · 1×</button><button id="lmSolarReset" type="button">RESET VIEW</button><button id="lmSolarBackMars" type="button">BACK TO MARS</button></div>
+  <button id="lmSolarMarsLink" class="lm-solar-mars-link" type="button" hidden>OPEN LOCAL MARS WORLD</button>
+ </aside>
+ <div class="lm-solar-hint">DRAG · ROTATE VIEW　 |　 PINCH / SCROLL · ZOOM　 |　 TAP PLANET · DETAILS</div>
+</section>
+<script type="module" src="./solar-system.js"></script>
 
 </body></html>
