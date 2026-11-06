@@ -1671,19 +1671,31 @@ function renderSharedBuildings(structures){
     const panel=box(x,.04,-.105,.045,.004,.035,new THREE.MeshStandardMaterial({color:0x245c88,metalness:.62,roughness:.28}));
     panel.rotation.x=-.2;
    }
-   // Google wordmark sign on the front fascia of the M-001 data center.
-   const signBacking=new THREE.Mesh(new THREE.BoxGeometry(.11,.027,.006),new THREE.MeshStandardMaterial({color:0xffffff,roughness:.42}));
-   signBacking.position.set(-.012,.081,.059);site.add(signBacking);
-   const logoCanvas=document.createElement('canvas');logoCanvas.width=512;logoCanvas.height=128;
+   // Google wordmark: duplicate the sign on all four vertical sides so it remains
+   // visible regardless of the viewer's camera angle around the M-001 parcel.
+   const logoCanvas=document.createElement('canvas');logoCanvas.width=768;logoCanvas.height=192;
    const logoCtx=logoCanvas.getContext('2d');
-   logoCtx.fillStyle='#ffffff';logoCtx.fillRect(0,0,512,128);
-   logoCtx.font='bold 82px Arial, sans-serif';logoCtx.textBaseline='middle';
+   logoCtx.clearRect(0,0,768,192);
+   logoCtx.font='bold 128px Arial, sans-serif';logoCtx.textBaseline='middle';
    const logoLetters=[['G','#4285F4'],['o','#EA4335'],['o','#FBBC05'],['g','#4285F4'],['l','#34A853'],['e','#EA4335']];
-   let logoX=38;
-   for(const [letter,color] of logoLetters){logoCtx.fillStyle=color;logoCtx.fillText(letter,logoX,66);logoX+=logoCtx.measureText(letter).width-2;}
+   let logoX=62;
+   for(const [letter,color] of logoLetters){logoCtx.fillStyle=color;logoCtx.fillText(letter,logoX,98);logoX+=logoCtx.measureText(letter).width-3;}
    const logoTexture=new THREE.CanvasTexture(logoCanvas);logoTexture.colorSpace=THREE.SRGBColorSpace;
-   const logoFace=new THREE.Mesh(new THREE.PlaneGeometry(.101,.025),new THREE.MeshBasicMaterial({map:logoTexture,side:THREE.DoubleSide}));
-   logoFace.position.set(-.012,.081,.0625);site.add(logoFace);
+   const signMaterial=new THREE.MeshBasicMaterial({map:logoTexture,transparent:true,side:THREE.DoubleSide});
+   const signBackingMaterial=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.38,metalness:.05});
+   const addGoogleSign=(x,z,rotationY)=>{
+    const backing=new THREE.Mesh(new THREE.BoxGeometry(.11,.029,.005),signBackingMaterial);
+    backing.position.set(x,.081,z);backing.rotation.y=rotationY;site.add(backing);
+    const face=new THREE.Mesh(new THREE.PlaneGeometry(.103,.025),signMaterial);
+    face.position.set(x,.081,z+(Math.abs(Math.cos(rotationY))>.5?Math.sign(Math.cos(rotationY))*.0035:0));
+    face.rotation.y=rotationY;
+    if(Math.abs(Math.cos(rotationY))<.5)face.position.x=x+Math.sign(Math.sin(rotationY))*.0035;
+    site.add(face);
+   };
+   addGoogleSign(-.012,.059,0);
+   addGoogleSign(-.012,-.059,Math.PI);
+   addGoogleSign(.066,0,Math.PI/2);
+   addGoogleSign(-.09,0,-Math.PI/2);
   }
   site.scale.setScalar(parcel.id==='M-001'?.68:.58);
   site.position.copy(pos(parcel.lon,parcel.lat,1.002));
