@@ -824,6 +824,22 @@ header .status{flex:0 1 40%!important;width:auto!important;min-width:0!important
 @media(max-width:360px){header .brand .brand-lockup small{display:none!important}}
 </style>
 <style id="local-mars-auth-upgrade">#login .modal{width:min(410px,100%);max-height:min(88dvh,720px);overflow:auto;padding:22px;border:1px solid #d2b477aa;background:linear-gradient(150deg,#14283d,#071321);box-shadow:0 24px 80px #000b,inset 0 1px #fff2}#login .modal input{width:100%;min-height:44px;margin:6px 0;padding:12px 13px;border:1px solid #8d805f88;border-radius:10px;background:#071321;color:#fff;font-size:13px;outline:none}#login .modal input:focus{border-color:#e3c17c;box-shadow:0 0 0 3px #d7b57522}#login .modal button{min-height:42px}#login #authFeedback[data-state="error"]{color:#ffaaa0!important}#login #authFeedback[data-state="success"]{color:#a8e8c2!important}@media(max-width:480px){#login .modal{padding:17px}#login .modal h3{font-size:11px}}</style>
+
+<style id="lm-orbital-station-ui">
+#lmStationPanel{position:fixed;z-index:45;inset:0;display:none;place-items:center;padding:16px;background:#020711c9;backdrop-filter:blur(9px)}
+#lmStationPanel.open{display:grid}
+#lmStationCard{width:min(440px,100%);max-height:88dvh;overflow:auto;padding:19px;border:1px solid #d4b575a8;border-radius:18px;background:linear-gradient(145deg,#10243a,#07111f);box-shadow:0 22px 70px #000b;color:#f6edda;font:13px/1.55 system-ui}
+#lmStationCard h2{margin:3px 0 5px;color:#e6c98f;font-size:19px;letter-spacing:1px}
+#lmStationCard .eyebrow{font-size:9px;letter-spacing:2px;color:#8ddbea;font-weight:800}
+#lmStationCard .station-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}
+#lmStationCard .station-metrics div{padding:10px;border:1px solid #ffffff20;border-radius:10px;background:#ffffff08}
+#lmStationCard small{display:block;color:#9fb3c7;font-size:9px;letter-spacing:.8px}
+#lmStationCard strong{color:#f6e5c2}
+#lmStationCard button{width:100%;min-height:43px;margin-top:8px}
+#lmStationOpen{display:block;width:100%;margin-top:8px;padding:7px;border:1px solid #65d9e9aa;border-radius:8px;background:#12384a;color:#dffaff;font:700 9px system-ui;letter-spacing:.8px}
+@media(max-width:650px){#lmStationCard{padding:15px}#lmStationCard h2{font-size:17px}}
+</style>
+
 </head>
 <body>\n<div id="lmStartup" role="status" aria-live="polite"><div id="lmStartupCard"><div id="lmStartupMark">LOCAL <b>MARS</b></div><div id="lmStartupText">INITIALIZING PLANETARY SYSTEMS…</div><div id="lmStartupTrack"></div></div></div>
 <script>
@@ -851,8 +867,34 @@ header .status{flex:0 1 40%!important;width:auto!important;min-width:0!important
  <div style="display:flex;justify-content:space-between;gap:8px;color:#a9c5d3"><span>APP SESSION</span><b id="lm-satellite-session" style="color:#dffaff">STARTING</b></div>
  <div style="display:flex;justify-content:space-between;gap:8px;color:#a9c5d3"><span>HEARTBEAT</span><b id="lm-satellite-heartbeat" style="color:#dffaff">—</b></div>
  <div style="margin-top:5px;color:#829cac;font-size:8px;line-height:1.4">Simulated orbital link · runs while LOCAL MARS is open. Not a real spacecraft connection.</div>
+ <button id="lmStationOpen" type="button">ARES ORBITAL STATION CONTROL</button>
  <button id="lm-satellite-reconnect" type="button" style="width:100%;margin-top:8px;padding:7px;border:1px solid #65d9e9aa;border-radius:8px;background:#12384a;color:#dffaff;font:700 9px system-ui;letter-spacing:.8px">RECONNECT LINK</button>
 </div>
+
+<div id="lmStationPanel" role="dialog" aria-modal="true" aria-labelledby="lmStationTitle">
+ <section id="lmStationCard">
+  <div class="eyebrow">LOCAL MARS · ORBITAL ENGINEERING</div>
+  <h2 id="lmStationTitle">ARES ORBITAL STATION</h2>
+  <p style="margin:0;color:#b5c4d1">Modular research, communications and crew-transfer platform · Mars low orbit.</p>
+  <div class="station-metrics">
+   <div><small>ORBIT CLASS</small><strong>LOW MARS ORBIT</strong></div>
+   <div><small>ALTITUDE MODEL</small><strong>400 KM (NOMINAL)</strong></div>
+   <div><small>ORBIT PERIOD</small><strong>~2 HOURS</strong></div>
+   <div><small>DEPLOYMENT</small><strong id="lmStationState">STOWED</strong></div>
+  </div>
+  <div style="padding:10px;border:1px solid #ffffff18;border-radius:10px;background:#071523;color:#aebfd0;font-size:11px">
+   <b style="color:#e8d09e">MISSION LOADOUT</b><br>
+   • Central crew and research module<br>
+   • Two solar-array wings and power bus<br>
+   • Communications dish and docking ports<br>
+   • Autonomous orbital station-keeping simulation
+  </div>
+  <button class="primary" id="lmStationDeploy">🚀 DEPLOY STATION INTO ORBIT</button>
+  <button id="lmStationClose">CLOSE CONTROL</button>
+  <p style="margin:10px 0 0;color:#8195a9;font-size:9px">Simulation only. The 400 km altitude and two-hour period are nominal scenario values; the 3D model is visually enlarged and is not to physical scale. Deployment state is saved on this device.</p>
+ </section>
+</div>
+
 <header><div class="brand"><span class="brand-insignia" aria-hidden="true"><img src="./icon.svg" alt=""></span><span class="brand-lockup"><strong>LOCAL <b>MARS</b></strong><small>PLANETARY CIVILIZATION NETWORK</small></span></div><div class="status" id="worldServerStatus">CONNECTING TO MARS NETWORK…</div></header>
 <section class="panel left">
 <h3>MISSION CONTROL</h3>
@@ -1156,6 +1198,64 @@ document.querySelector('#lm-satellite-reconnect')?.addEventListener('click',()=>
 setSatelliteLink(true);
 // Realistic compact relay satellite: keep the spacecraft visually small against the Mars globe.
 relaySatellite.scale.setScalar(.18);
+
+
+// ARES ORBITAL STATION — modular 3D station in the simulated Mars low-orbit layer.
+const aresStation=new THREE.Group();
+const stationHull=new THREE.MeshStandardMaterial({color:0xd9d6cb,metalness:.72,roughness:.28});
+const stationDark=new THREE.MeshStandardMaterial({color:0x34495b,metalness:.65,roughness:.32});
+const stationGold=new THREE.MeshStandardMaterial({color:0xd9b66f,metalness:.7,roughness:.25});
+const stationSolar=new THREE.MeshStandardMaterial({color:0x14517a,metalness:.55,roughness:.25,emissive:0x09243b,emissiveIntensity:.4});
+const stationGlow=new THREE.MeshBasicMaterial({color:0x6feaff});
+const stationCore=new THREE.Mesh(new THREE.CylinderGeometry(.033,.033,.19,16),stationHull);
+stationCore.rotation.z=Math.PI/2;aresStation.add(stationCore);
+const crewModule=new THREE.Mesh(new THREE.CylinderGeometry(.045,.045,.105,16),stationHull);
+crewModule.rotation.z=Math.PI/2;crewModule.position.x=-.015;aresStation.add(crewModule);
+const labModule=new THREE.Mesh(new THREE.SphereGeometry(.046,16,12),stationDark);
+labModule.scale.set(1.45,.85,.85);labModule.position.x=.12;aresStation.add(labModule);
+for(const side of [-1,1]){
+ const truss=new THREE.Mesh(new THREE.BoxGeometry(.19,.009,.012),stationGold);
+ truss.position.set(side*.18,0,0);aresStation.add(truss);
+ const wing=new THREE.Mesh(new THREE.BoxGeometry(.24,.008,.105),stationSolar);
+ wing.position.set(side*.34,.008,0);aresStation.add(wing);
+ for(let k=0;k<5;k++){
+  const cell=new THREE.Mesh(new THREE.BoxGeometry(.003,.011,.105),stationGlow);
+  cell.position.set(side*.34+(k-2)*.043,.014,0);aresStation.add(cell);
+ }
+ const radiator=new THREE.Mesh(new THREE.BoxGeometry(.09,.006,.055),stationHull);
+ radiator.position.set(side*.12,-.065,0);aresStation.add(radiator);
+}
+const dockingPort=new THREE.Mesh(new THREE.TorusGeometry(.035,.007,8,24),stationGold);
+dockingPort.position.x=.235;dockingPort.rotation.y=Math.PI/2;aresStation.add(dockingPort);
+const commDish=new THREE.Mesh(new THREE.SphereGeometry(.035,16,10,0,Math.PI*2,0,Math.PI/2),stationHull);
+commDish.position.set(-.09,.065,.035);commDish.rotation.x=Math.PI;aresStation.add(commDish);
+const stationMast=new THREE.Mesh(new THREE.CylinderGeometry(.003,.003,.12,8),stationGold);
+stationMast.position.set(-.09,.12,.035);aresStation.add(stationMast);
+const stationBeacon3d=new THREE.Mesh(new THREE.SphereGeometry(.012,10,8),stationGlow);
+stationBeacon3d.position.set(-.09,.185,.035);aresStation.add(stationBeacon3d);
+aresStation.scale.setScalar(.24);
+aresStation.visible=false;
+group.add(aresStation);
+const ARES_ORBIT_RADIUS=1+400000/MARS_PHYSICAL.meanRadiusMeters;
+const ARES_ORBIT_PERIOD_SECONDS=7200;
+const ARES_DEPLOY_KEY='localmars-ares-orbital-station-v1';
+let aresDeployEpoch=Number(localStorage.getItem(ARES_DEPLOY_KEY)||0);
+if(Number.isFinite(aresDeployEpoch)&&aresDeployEpoch>0){aresStation.visible=true;document.getElementById('lmStationState').textContent='IN ORBIT';}
+else aresDeployEpoch=0;
+const aresPanel=document.getElementById('lmStationPanel');
+document.getElementById('lmStationOpen')?.addEventListener('click',()=>aresPanel?.classList.add('open'));
+document.getElementById('lmStationClose')?.addEventListener('click',()=>aresPanel?.classList.remove('open'));
+aresPanel?.addEventListener('click',event=>{if(event.target===aresPanel)aresPanel.classList.remove('open');});
+document.getElementById('lmStationDeploy')?.addEventListener('click',()=>{
+ if(aresDeployEpoch){toast('ARES STATION IS ALREADY IN ORBIT');return;}
+ aresDeployEpoch=Date.now();
+ try{localStorage.setItem(ARES_DEPLOY_KEY,String(aresDeployEpoch));}catch(error){console.warn('Station state could not be persisted:',error);}
+ aresStation.visible=true;
+ document.getElementById('lmStationState').textContent='IN ORBIT';
+ document.getElementById('lmStationDeploy').textContent='✓ STATION DEPLOYED';
+ toast('ARES ORBITAL STATION DEPLOYED · MARS LEO');
+ window.MarsWorldServer?.recordActivity?.('orbital_station_deployed','orbital_asset','ares-station',{orbit:'mars_low_orbit',nominal_altitude_km:400,period_seconds:ARES_ORBIT_PERIOD_SECONDS,simulation:true})?.then(result=>{if(result?.error)console.warn('Station activity was not saved:',result.error.message);}).catch(error=>console.warn('Station activity was not saved:',error));
+});
 
 // MARS ATMOSPHERIC TRANSPORT — two clearly visible 3D craft flying above the surface.
 // Atmospheric vehicles remain animated; the visible orbital guide ring is removed.
@@ -1632,7 +1732,7 @@ const arrivalReport=document.createElement('div');arrivalReport.id='lm-arrival-r
 const landingTargets=[pos(-4,14,1.0),pos(4,14,1.0)];const landingNormals=landingTargets.map(v=>v.clone().normalize());const landingOrientations=landingNormals.map(n=>new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),n));const landingCraft=[passengerShuttle,cargoLifter];
 // Two independent landing pads are placed beside AEGIS SETTLEMENT (0°E, 16°N).
 const landingPads=landingTargets.map((target,i)=>{const pad=new THREE.Group();pad.position.copy(target);pad.quaternion.copy(landingOrientations[i]);group.add(pad);const deck=new THREE.Mesh(new THREE.CircleGeometry(.065,40),new THREE.MeshStandardMaterial({color:0x263746,metalness:.55,roughness:.62,transparent:true,opacity:.92,side:THREE.DoubleSide}));deck.rotation.x=-Math.PI/2;deck.position.y=.004;pad.add(deck);const rim=new THREE.Mesh(new THREE.TorusGeometry(.068,.003,8,48),new THREE.MeshBasicMaterial({color:i===0?0x65eaff:0xe6bd78,transparent:true,opacity:.95}));rim.rotation.x=-Math.PI/2;rim.position.y=.008;pad.add(rim);const inner=new THREE.Mesh(new THREE.TorusGeometry(.043,.0015,6,40),new THREE.MeshBasicMaterial({color:0xc7d9e5,transparent:true,opacity:.6}));inner.rotation.x=-Math.PI/2;inner.position.y=.009;pad.add(inner);for(let k=0;k<4;k++){const q=k*Math.PI/2;const light=new THREE.Mesh(new THREE.SphereGeometry(.004,8,6),new THREE.MeshBasicMaterial({color:0x6ee7ff}));light.position.set(Math.cos(q)*.056,.012,Math.sin(q)*.056);pad.add(light);}const shadow=new THREE.Mesh(new THREE.CircleGeometry(.058,32),new THREE.MeshBasicMaterial({color:0x05090f,transparent:true,opacity:.38,depthWrite:false,side:THREE.DoubleSide}));shadow.rotation.x=-Math.PI/2;shadow.position.y=.013;pad.add(shadow);return pad;});
-function animate(){requestAnimationFrame(animate);controls.update();const t=Date.now()*.001;const elapsed=(Date.now()-landingStart)/1000;landingCraft.forEach((craft,i)=>{const progress=THREE.MathUtils.clamp((elapsed-i*3)/22,0,1);const eased=progress*progress*(3-2*progress);const radius=1.12-(1.12-1.03)*eased;craft.position.copy(landingNormals[i]).multiplyScalar(radius);craft.quaternion.copy(landingOrientations[i]);craft.rotateY(i===0?0:Math.PI*.35);});if(arrivalStatus)arrivalStatus.textContent=elapsed<25?'DESCENT TO AEGIS LANDING PADS': 'BOTH SPACECRAFT LANDED · AEGIS SITE SECURE';if(satelliteLaunchAt){const m003Normal=satelliteGroundStation.position.clone().normalize();relaySatellite.position.copy(m003Normal).multiplyScalar(1.12);relaySatellite.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),m003Normal);relaySatellite.rotateY(t*.08);relayBeacon.material.color.setHex(Math.sin(t*4)>0?0x66efff:0x2ca9ff);}if(satelliteLinkConnected){const sameHemisphere=relaySatellite.position.dot(satelliteGroundStation.position)>.18;satelliteLinkLine.visible=sameHemisphere;satelliteLinkGeometry.setFromPoints([relaySatellite.position.clone(),satelliteGroundStation.position.clone()]);satelliteLinkLine.material.opacity=.52+Math.sin(t*3)*.24;stationBeacon.scale.setScalar(1+Math.sin(t*4)*.18);}turbine.rotation.y=t*1.8;beacon.material.opacity=.55+Math.sin(t*3)*.4;beaconLight.intensity=.45+Math.sin(t*3)*.3;renderer.render(scene,camera);if(!firstPlanetFrame){firstPlanetFrame=true;const startup=document.getElementById('lmStartup');if(startup){const label=document.getElementById('lmStartupText');if(label)label.textContent='PLANET ONLINE · LOADING TERRAIN DETAILS';setTimeout(()=>startup.classList.add('is-ready'),180);}setTimeout(()=>{try{const texture=makeMarsTexture();marsMat.map=texture;marsMat.bumpMap=texture;marsMat.bumpScale=.075;marsMat.needsUpdate=true;}catch(error){console.warn('LOCAL MARS terrain detail skipped:',error);}},80);}}animate();
+function animate(){requestAnimationFrame(animate);controls.update();const t=Date.now()*.001;const elapsed=(Date.now()-landingStart)/1000;landingCraft.forEach((craft,i)=>{const progress=THREE.MathUtils.clamp((elapsed-i*3)/22,0,1);const eased=progress*progress*(3-2*progress);const radius=1.12-(1.12-1.03)*eased;craft.position.copy(landingNormals[i]).multiplyScalar(radius);craft.quaternion.copy(landingOrientations[i]);craft.rotateY(i===0?0:Math.PI*.35);});if(arrivalStatus)arrivalStatus.textContent=elapsed<25?'DESCENT TO AEGIS LANDING PADS': 'BOTH SPACECRAFT LANDED · AEGIS SITE SECURE';if(aresDeployEpoch){const phase=((Date.now()-aresDeployEpoch)/1000/ARES_ORBIT_PERIOD_SECONDS)*Math.PI*2;const inclination=.42;aresStation.position.set(Math.cos(phase)*ARES_ORBIT_RADIUS,Math.sin(phase)*ARES_ORBIT_RADIUS*Math.sin(inclination),Math.sin(phase)*ARES_ORBIT_RADIUS*Math.cos(inclination));aresStation.lookAt(0,0,0);aresStation.rotateY(t*.025);stationBeacon3d.material.color.setHex(Math.sin(t*3)>0?0x6feaff:0xd8b66d);}if(satelliteLaunchAt){const m003Normal=satelliteGroundStation.position.clone().normalize();relaySatellite.position.copy(m003Normal).multiplyScalar(1.12);relaySatellite.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),m003Normal);relaySatellite.rotateY(t*.08);relayBeacon.material.color.setHex(Math.sin(t*4)>0?0x66efff:0x2ca9ff);}if(satelliteLinkConnected){const sameHemisphere=relaySatellite.position.dot(satelliteGroundStation.position)>.18;satelliteLinkLine.visible=sameHemisphere;satelliteLinkGeometry.setFromPoints([relaySatellite.position.clone(),satelliteGroundStation.position.clone()]);satelliteLinkLine.material.opacity=.52+Math.sin(t*3)*.24;stationBeacon.scale.setScalar(1+Math.sin(t*4)*.18);}turbine.rotation.y=t*1.8;beacon.material.opacity=.55+Math.sin(t*3)*.4;beaconLight.intensity=.45+Math.sin(t*3)*.3;renderer.render(scene,camera);if(!firstPlanetFrame){firstPlanetFrame=true;const startup=document.getElementById('lmStartup');if(startup){const label=document.getElementById('lmStartupText');if(label)label.textContent='PLANET ONLINE · LOADING TERRAIN DETAILS';setTimeout(()=>startup.classList.add('is-ready'),180);}setTimeout(()=>{try{const texture=makeMarsTexture();marsMat.map=texture;marsMat.bumpMap=texture;marsMat.bumpScale=.075;marsMat.needsUpdate=true;}catch(error){console.warn('LOCAL MARS terrain detail skipped:',error);}},80);}}animate();
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
 </script>
 <script>
