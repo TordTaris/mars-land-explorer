@@ -1553,6 +1553,32 @@ controls.mouseButtons={LEFT:THREE.MOUSE.ROTATE,MIDDLE:THREE.MOUSE.DOLLY,RIGHT:TH
 controls.autoRotate=false;
 controls.autoRotateSpeed=.35;
 renderer.domElement.style.touchAction='none';
+ // On-screen zoom controls for the Mars globe.
+ const zoomHud=document.createElement('div');
+ zoomHud.id='lmPlanetZoomControls';
+ zoomHud.setAttribute('role','group');
+ zoomHud.setAttribute('aria-label','Planet zoom controls');
+ zoomHud.innerHTML='<div class="lm-zoom-caption">PLANET ZOOM</div><button type="button" data-zoom="in" aria-label="Zoom in" title="Zoom in">+</button><button type="button" data-zoom="out" aria-label="Zoom out" title="Zoom out">−</button><button type="button" data-zoom="reset" aria-label="Reset zoom" title="Reset zoom">↺</button>';
+ const zoomStyle=document.createElement('style');
+ zoomStyle.textContent='#lmPlanetZoomControls{position:fixed;z-index:10035;right:16px;bottom:92px;display:flex;align-items:center;gap:7px;padding:7px 9px;border:1px solid #c6a66b99;border-radius:13px;background:rgba(5,15,27,.9);box-shadow:0 8px 25px #0008;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}#lmPlanetZoomControls .lm-zoom-caption{color:#e2c68e;font:800 9px system-ui;letter-spacing:1px;padding:0 3px}#lmPlanetZoomControls button{width:38px;height:38px;min-width:38px;padding:0;border:1px solid #b99a6388;border-radius:10px;background:linear-gradient(145deg,#1b344b,#0b1929);color:#f7e8c9;font:700 23px/1 system-ui;touch-action:manipulation}#lmPlanetZoomControls button:active{background:#b58b4e;color:#111;transform:scale(.96)}@media(max-width:650px){#lmPlanetZoomControls{right:10px;bottom:calc(env(safe-area-inset-bottom,0px) + 70px);gap:5px;padding:5px 7px}#lmPlanetZoomControls .lm-zoom-caption{font-size:8px}#lmPlanetZoomControls button{width:36px;height:36px;min-width:36px}}';
+ document.head.appendChild(zoomStyle);
+ document.body.appendChild(zoomHud);
+ const changePlanetZoom=factor=>{
+  const offset=camera.position.clone().sub(controls.target);
+  const distance=THREE.MathUtils.clamp(offset.length()*factor,controls.minDistance,controls.maxDistance);
+  offset.setLength(distance);
+  camera.position.copy(controls.target).add(offset);
+  controls.update();
+ };
+ zoomHud.addEventListener('click',event=>{
+  const button=event.target.closest('button[data-zoom]');
+  if(!button)return;
+  event.preventDefault();event.stopPropagation();
+  if(button.dataset.zoom==='in')changePlanetZoom(.8);
+  else if(button.dataset.zoom==='out')changePlanetZoom(1.25);
+  else {const offset=camera.position.clone().sub(controls.target);offset.setLength(3.55);camera.position.copy(controls.target).add(offset);controls.update();}
+ });
+
 renderer.domElement.setAttribute('aria-label','ลากขึ้นลงหรือซ้ายขวาเพื่อหมุนดาวอังคารรอบแกนกลางได้ 360 องศา');
 let marsDragPointer=null,lastMarsX=0,lastMarsY=0;
 const marsVerticalAxis=new THREE.Vector3(1,0,0);
