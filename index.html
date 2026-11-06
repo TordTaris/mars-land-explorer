@@ -2027,52 +2027,6 @@ const state=JSON.parse(localStorage.getItem('localmars-demo')||localStorage.getI
 parcels.forEach(p=>{if(state.owned.includes(p.id))p.owner=state.profile?.name||'You'});
 function save(){localStorage.setItem('localmars-demo',JSON.stringify(state));updateStats()}
 function updateStats(){const world=window.MarsWorldServer?.getState?.();const user=world?.user;document.querySelector('#owned').textContent=user?(world.claims||[]).filter(x=>x.owner_id===user.id).length:0;document.querySelector('#buildings').textContent=user?(world.structures||[]).filter(x=>x.owner_id===user.id).length:0;markers.forEach(m=>m.material.color.set(m.userData.plot.owner?0xffa45f:(Number(m.userData.plot.id.slice(2))>=13?0xffd58a:0x55dce8)))}
-/* PARCEL QUICK FINDER — searchable directory for direct land inspection */
-(function installParcelQuickFinder(){
- if(document.getElementById('lmParcelFinder'))return;
- const style=document.createElement('style');
- style.textContent=`
- #lmParcelFinder{position:fixed;z-index:10030;left:50%;top:calc(env(safe-area-inset-top,0px) + 66px);transform:translateX(-50%);width:min(390px,calc(100vw - 24px));font:12px system-ui,sans-serif;color:#f4ead5;pointer-events:none}
- #lmParcelFinder button,#lmParcelFinder input{font:inherit}
- #lmParcelFinderToggle{pointer-events:auto;display:flex;align-items:center;justify-content:center;gap:8px;margin:auto;padding:10px 15px;border:1px solid #d7b879;border-radius:13px;background:linear-gradient(145deg,#1a3046f5,#091727f5);color:#f6e5c4;font-weight:850;letter-spacing:.5px;box-shadow:0 8px 26px #0008}
- #lmParcelFinderPanel{display:none;pointer-events:auto;margin-top:8px;padding:12px;border:1px solid #c6a66b99;border-radius:16px;background:rgba(6,17,30,.97);box-shadow:0 18px 48px #000b;backdrop-filter:blur(16px)}
- #lmParcelFinder.open #lmParcelFinderPanel{display:block}
- #lmParcelFinderSearch{width:100%;padding:11px 12px;border:1px solid #607b91;border-radius:10px;background:#0b1b2c;color:#fff;outline:none}
- #lmParcelFinderList{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px;max-height:min(42dvh,340px);overflow:auto}
- #lmParcelFinderList button{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-height:55px;padding:9px;border:1px solid #526d83;border-radius:10px;background:#10263b;color:#f4ead5;text-align:left}
- #lmParcelFinderList button:active{border-color:#f0cf8c;background:#263b50}
- #lmParcelFinderList small{color:#9fb4c7;font-size:9px}
- #lmParcelFinderClose{display:block;margin:9px 0 0 auto;padding:6px 10px}
- @media(max-width:650px){#lmParcelFinder{top:calc(env(safe-area-inset-top,0px) + 58px);width:min(360px,calc(100vw - 20px))}#lmParcelFinderToggle{padding:9px 13px;font-size:11px}#lmParcelFinderPanel{padding:10px}#lmParcelFinderList{grid-template-columns:1fr 1fr;max-height:38dvh}#lmParcelFinderList button{min-height:52px;padding:8px}}
- `;
- document.head.appendChild(style);
- const root=document.createElement('div');root.id='lmParcelFinder';
- root.innerHTML='<section id="lmParcelFinderPanel" aria-label="Parcel directory"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px"><strong>📍 FIND LAND · ค้นหาพื้นที่</strong><span style="font-size:10px;color:#9fb4c7">LOCAL MARS</span></div><input id="lmParcelFinderSearch" type="search" placeholder="ค้นหา M-001 หรือพิกัด…" aria-label="ค้นหาพื้นที่"><div id="lmParcelFinderList"></div><button id="lmParcelFinderClose" type="button">ปิด ✕</button></section>';
- document.body.appendChild(root);
- const search=root.querySelector('#lmParcelFinderSearch'),list=root.querySelector('#lmParcelFinderList');
- const close=()=>root.classList.remove('open');
- const render=()=>{
-  const q=search.value.trim().toLowerCase();
-  const world=window.MarsWorldServer?.getState?.()||{};
-  const sorted=[...markers].map(m=>m.userData.plot).sort((a,b)=>a.id.localeCompare(b.id,undefined,{numeric:true}));
-  list.replaceChildren();
-  sorted.filter(p=>(p.id+' '+p.lat+' '+p.lon).toLowerCase().includes(q)).forEach(p=>{
-   const claim=(world.claims||[]).find(c=>c.parcel_id===p.id);
-   const listed=(world.mlcMarket||[]).find(x=>x.parcel_id===p.id&&x.is_listed);
-   const b=document.createElement('button');b.type='button';
-   const name=document.createElement('strong');name.textContent='📍 '+p.id;
-   const meta=document.createElement('small');meta.textContent=p.lat.toFixed(1)+'°, '+p.lon.toFixed(1)+'° · '+(claim?(listed?'ลงขายอยู่':'มีเจ้าของ'):'ยังไม่มีเจ้าของ');
-   b.append(name,meta);b.addEventListener('click',()=>{selectPlot(p);close();});
-   list.appendChild(b);
-  });
-  if(!list.children.length){const empty=document.createElement('small');empty.textContent='ไม่พบพื้นที่ที่ค้นหา';list.appendChild(empty);}
- };
- window.openLmParcelFinder=()=>{root.classList.add('open');render();search.focus({preventScroll:true});};
- search.addEventListener('input',render);
- root.querySelector('#lmParcelFinderClose').addEventListener('click',close);
- document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
-})();
-
 // Deterministic orbital clock: the simulated satellite advances in UTC even while this page is closed.
 // Fixed launch epoch: 2026-11-06 05:02 ICT. Never reset on refresh or app restart.
 const SATELLITE_ORBIT_EPOCH=Date.UTC(2026,10,5,22,2,0);
@@ -2517,7 +2471,6 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
   chat:()=>document.getElementById('lmChatOpen')?.click(),
   account:()=>{const signedIn=!!window.MarsWorldServer?.getState?.()?.user;if(signedIn){document.getElementById('lmWorkspaceOpen')?.click();return;}const signIn=document.getElementById('account');if(signIn){signIn.click();return;}const accountTab=document.querySelector('.lm-command-dock [data-tab="account"]');if(accountTab)accountTab.click();else window.dispatchEvent(new CustomEvent('local-mars-open-account'));},
   wallet:()=>document.querySelector('.lm-command-dock [data-tab="wallet"]')?.click(),
-   finder:()=>window.openLmParcelFinder?.(),
   install:()=>document.getElementById('lmInstallDialog')?.classList.add('open')
  };
  overlay.querySelectorAll('[data-system-target]').forEach(card=>card.addEventListener('click',()=>{
