@@ -1350,7 +1350,10 @@ group.add(aresStation);
    aresPreviewCamera.position.set(.92,.58,1.35);
    aresPreviewCamera.lookAt(0,0,0);
    aresPreviewModel=aresStation.clone(true);
-   aresPreviewModel.scale.setScalar(1);
+   // The orbital object is created hidden before deployment; THREE.Group.clone() copies that hidden state.
+   // Force the close-up copy visible so the preview can render even while the globe object is toggled.
+   aresPreviewModel.visible=true;
+   aresPreviewModel.scale.setScalar(1.35);
    aresPreviewModel.position.set(0,0,0);
    aresPreviewScene.add(aresPreviewModel);
    aresPreviewScene.add(new THREE.HemisphereLight(0xd9efff,0x263449,2.1));
