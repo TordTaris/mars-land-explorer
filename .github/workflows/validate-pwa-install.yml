@@ -6,7 +6,9 @@ on:
       - "index.html"
       - "manifest.webmanifest"
       - "sw.js"
+      - "parcels/**"
       - "member-workspace.js"
+      - "parcels/**"
       - ".github/workflows/validate-pwa-install.yml"
   push:
     branches: [main]
@@ -60,12 +62,19 @@ jobs:
               path = icon.get("src", "").removeprefix("./")
               assert path and Path(path).is_file(), f"manifest icon not found: {path}"
 
-          assert 'const CACHE = "local-mars-v4-70"' in sw, "service worker cache version was not bumped"
+          assert 'const CACHE = "local-mars-v4-71"' in sw, "service worker cache version was not bumped"
           assert '"./member-workspace.js"' in sw, "member workspace missing from offline cache"
           assert '<script src="./member-workspace.js" defer></script>' in html, "member workspace script missing"
           assert "postgres_changes" in workspace, "member workspace Realtime subscription missing"
           assert "isNewParcel=Number(p.id.slice(2))>=13" in html, "new parcel marker renderer missing"
           assert "TorusGeometry(.038,.0028,8,48)" in html, "new parcel marker ring missing"
+          for n in range(1, 20):
+              route = Path(f"parcels/M-{n:03}/index.html")
+              assert route.is_file(), f"offline parcel route missing: {route}"
+              assert f"parcel=M-{n:03}" in route.read_text(encoding="utf-8"), f"parcel route target mismatch: {route}"
+              assert f'"./parcels/M-{n:03}/index.html"' in sw, f"offline cache entry missing: M-{n:03}"
+          assert Path("parcels/index.html").is_file(), "parcel directory index missing"
+          assert '"./parcels/index.html"' in sw, "parcel directory missing from offline cache"
           assert '"./manifest.webmanifest"' in sw and '"./icon.svg"' in sw, "PWA core assets missing from offline cache"
 
           marker = '<script id="local-mars-install-controller">'

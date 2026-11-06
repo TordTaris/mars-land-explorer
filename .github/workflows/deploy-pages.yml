@@ -42,7 +42,7 @@ jobs:
           for item in required:
               assert Path(item).is_file(), f"required app asset missing: {item}"
 
-          for n in range(1, 13):
+          for n in range(1, 20):
               route = Path(f"parcels/M-{n:03}/index.html")
               assert route.is_file(), f"parcel route missing: {route}"
               source = route.read_text(encoding="utf-8")
@@ -71,7 +71,7 @@ jobs:
           assert manifest.get("display") == "standalone", "PWA standalone display missing"
           assert any(icon.get("sizes") == "192x192" for icon in manifest.get("icons", [])), "192px PWA icon declaration missing"
           assert any(icon.get("sizes") == "512x512" for icon in manifest.get("icons", [])), "512px PWA icon declaration missing"
-          assert 'const CACHE = "local-mars-v4-70"' in sw, "service worker cache version not bumped"
+          assert 'const CACHE = "local-mars-v4-71"' in sw, "service worker cache version not bumped"
           assert 'id="local-mars-mobile-header-and-aegis-scale-v462"' in html, "mobile header and AEGIS layout fix missing"
           assert "colonyRoot.scale.setScalar(.30)" in html, "planetary AEGIS scale missing"
           assert "relaySatellite.scale.setScalar(.18)" in html, "planetary satellite scale missing"
@@ -110,7 +110,7 @@ jobs:
               '"./manifest.webmanifest"', '"./icon.svg"'
           ):
               assert asset in sw, f"service worker precache entry missing: {asset}"
-          for n in range(1, 13):
+          for n in range(1, 20):
               assert f'"./parcels/M-{n:03}/index.html"' in sw, f"parcel offline cache entry missing: M-{n:03}"
 
           module = re.search(r'<script type="module">\s*(.*?)\s*</script>', html, re.S)
@@ -132,7 +132,7 @@ jobs:
           assert mission_script, "Mission Trainer script missing"
           Path("/tmp/mars-mission.js").write_text(mission_script.group(1), encoding="utf-8")
 
-          print("LOCAL MARS: app routes, all 12 parcel routes, M-003, TOP SECRET demo, premium assets, TH/EN dictionaries and PWA assets validated.")
+          print("LOCAL MARS: app routes, all 19 parcel routes, M-003, TOP SECRET demo, premium assets, TH/EN dictionaries and PWA assets validated.")
           PY
           node --check /tmp/mars-main.mjs
           node --check /tmp/mars-city.mjs
