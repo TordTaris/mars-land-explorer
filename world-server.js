@@ -77,7 +77,7 @@ async function connect(){
  S.db=window.supabase.createClient(CONFIG.url,CONFIG.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});bindLifecycle();
  const {data,error}=await S.db.auth.getSession();if(error){status(error.message);return {error};}
  S.user=data.session?.user||null;authView();emitAuth();subscribe();if(S.user)walletBalances();
- S.db.auth.onAuthStateChange((_event,session)=>{S.user=session?.user||null;authView();emitAuth();subscribe();refresh();if(S.user)walletBalances();});
+ S.db.auth.onAuthStateChange((event,session)=>{S.user=session?.user||null;authView();emitAuth();if(event==='PASSWORD_RECOVERY')document.dispatchEvent(new CustomEvent('mars-password-recovery'));subscribe();refresh();if(S.user)walletBalances();});
  return {data:{user:S.user}};
 }
 async function auth(mode){
@@ -106,6 +106,24 @@ async function recordActivity(action,entityType='app',entityId=null,metadata={})
  });
  if(result.error){console.warn('LOCAL MARS activity log failed:',result.error.message);return {error:result.error};}
  return {data:{saved:true}};
+}
+async function resetPassword(){
+ if(!S.db)return {error:{message:'เซิร์ฟเวอร์ยังไม่พร้อม'}};
+ const email=($('email')?.value||'').trim();
+ if(!email||!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))return {error:{message:'กรุณากรอกอีเมลให้ถูกต้องก่อนขอรีเซ็ตรหัสผ่าน'}};
+ const redirectTo=new URL('./?auth=recovery',window.location.href).href;
+ const result=await S.db.auth.resetPasswordForEmail(email,{redirectTo});
+ if(result.error){status(result.error.message);return {error:result.error};}
+ status('ส่งคำขอรีเซ็ตรหัสผ่านแล้ว หากอีเมลนี้ลงทะเบียนไว้จะได้รับลิงก์',true);
+ return {data:{sent:true}};
+}
+async function updatePassword(password){
+ if(!S.db)return {error:{message:'เซิร์ฟเวอร์ยังไม่พร้อม'}};
+ if(typeof password!=='string'||password.length<8)return {error:{message:'รหัสผ่านใหม่ต้องมีอย่างน้อย 8 ตัวอักษร'}};
+ const result=await S.db.auth.updateUser({password});
+ if(result.error){status(result.error.message);return {error:result.error};}
+ status('เปลี่ยนรหัสผ่านสำเร็จ',true);
+ return {data:{user:result.data.user}};
 }
 async function logout(){if(S.db)await S.db.auth.signOut();S.user=null;authView();emitAuth();status('ออกจากระบบแล้ว');}
 async function claim(parcel){
@@ -187,6 +205,6 @@ async function setParcelListing(parcel,isListed,price){
  return synced?.error?{data:result.data,syncWarning:synced.error.message}:result;
 }
 
-window.MarsWorldServer={connect,auth,logout,refresh,claim,claimUsd,build,m003Access,walletBalances,grantMlcStarter,transferMlc,reserveParcel,purchaseParcel,setParcelListing,recordActivity,getState:()=>({user:S.user,parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,mlcMarket:S.mlcMarket,db:S.db})};
+window.MarsWorldServer={connect,auth,resetPassword,updatePassword,logout,refresh,claim,claimUsd,build,m003Access,walletBalances,grantMlcStarter,transferMlc,reserveParcel,purchaseParcel,setParcelListing,recordActivity,getState:()=>({user:S.user,parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,mlcMarket:S.mlcMarket,db:S.db})};
 document.addEventListener('DOMContentLoaded',connect);
 })();
