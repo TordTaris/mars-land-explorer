@@ -1191,6 +1191,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    <div class="lm-system-grid">
     <button class="lm-system-card" data-system-target="explore" data-search-terms="mars ดาวอังคาร สำรวจ planet explorer แปลงที่ดิน land"><span class="lm-system-art">🌎</span><b>Planet Explorer</b><small>Rotate Mars and inspect parcels</small><em class="lm-system-state">APP MODULE</em></button>
     <button class="lm-system-card" data-system-target="market" data-search-terms="ตลาด ซื้อขายที่ดิน ราคา mlc marketplace land listing"><span class="lm-system-art">🪙</span><b>Land Marketplace</b><small>Browse land listings and MLC prices</small><em class="lm-system-state">APP MODULE</em></button>
+    <button class="lm-system-card" data-system-target="finder" data-search-terms="find land parcel finder ค้นหาที่ดิน ค้นหาแปลง M-001 พิกัด"><span class="lm-system-art">📍</span><b>Find Land</b><small>Search parcels by ID or coordinates</small><em class="lm-system-state">EXPLORE TOOL</em></button>
    </div>
   </div>
   <div class="lm-system-group" data-system-group="development">
@@ -2047,10 +2048,10 @@ function updateStats(){const world=window.MarsWorldServer?.getState?.();const us
  `;
  document.head.appendChild(style);
  const root=document.createElement('div');root.id='lmParcelFinder';
- root.innerHTML='<button id="lmParcelFinderToggle" type="button" aria-expanded="false">📍 FIND LAND <span>·</span> เลือกพื้นที่</button><section id="lmParcelFinderPanel" aria-label="Parcel directory"><input id="lmParcelFinderSearch" type="search" placeholder="ค้นหา M-001 หรือพิกัด…" aria-label="ค้นหาพื้นที่"><div id="lmParcelFinderList"></div><button id="lmParcelFinderClose" type="button">ปิด ✕</button></section>';
+ root.innerHTML='<section id="lmParcelFinderPanel" aria-label="Parcel directory"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px"><strong>📍 FIND LAND · ค้นหาพื้นที่</strong><span style="font-size:10px;color:#9fb4c7">LOCAL MARS</span></div><input id="lmParcelFinderSearch" type="search" placeholder="ค้นหา M-001 หรือพิกัด…" aria-label="ค้นหาพื้นที่"><div id="lmParcelFinderList"></div><button id="lmParcelFinderClose" type="button">ปิด ✕</button></section>';
  document.body.appendChild(root);
- const toggle=root.querySelector('#lmParcelFinderToggle'),search=root.querySelector('#lmParcelFinderSearch'),list=root.querySelector('#lmParcelFinderList');
- const close=()=>{root.classList.remove('open');toggle.setAttribute('aria-expanded','false')};
+ const search=root.querySelector('#lmParcelFinderSearch'),list=root.querySelector('#lmParcelFinderList');
+ const close=()=>root.classList.remove('open');
  const render=()=>{
   const q=search.value.trim().toLowerCase();
   const world=window.MarsWorldServer?.getState?.()||{};
@@ -2067,7 +2068,7 @@ function updateStats(){const world=window.MarsWorldServer?.getState?.();const us
   });
   if(!list.children.length){const empty=document.createElement('small');empty.textContent='ไม่พบพื้นที่ที่ค้นหา';list.appendChild(empty);}
  };
- toggle.addEventListener('click',()=>{const opening=!root.classList.contains('open');root.classList.toggle('open',opening);toggle.setAttribute('aria-expanded',String(opening));if(opening){render();search.focus();}});
+ window.openLmParcelFinder=()=>{root.classList.add('open');render();search.focus({preventScroll:true});};
  search.addEventListener('input',render);
  root.querySelector('#lmParcelFinderClose').addEventListener('click',close);
  document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
@@ -2517,6 +2518,7 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
   chat:()=>document.getElementById('lmChatOpen')?.click(),
   account:()=>{const signedIn=!!window.MarsWorldServer?.getState?.()?.user;if(signedIn){document.getElementById('lmWorkspaceOpen')?.click();return;}const signIn=document.getElementById('account');if(signIn){signIn.click();return;}const accountTab=document.querySelector('.lm-command-dock [data-tab="account"]');if(accountTab)accountTab.click();else window.dispatchEvent(new CustomEvent('local-mars-open-account'));},
   wallet:()=>document.querySelector('.lm-command-dock [data-tab="wallet"]')?.click(),
+   finder:()=>window.openLmParcelFinder?.(),
   install:()=>document.getElementById('lmInstallDialog')?.classList.add('open')
  };
  overlay.querySelectorAll('[data-system-target]').forEach(card=>card.addEventListener('click',()=>{
