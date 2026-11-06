@@ -32,7 +32,7 @@ jobs:
           from pathlib import Path
 
           required = [
-              "index.html", "install.html", "member-workspace.js", "city.html", "underground.html", "mission-trainer.html", "news.html",
+              "index.html", "dual-ai.html", "install.html", "member-workspace.js", "city.html", "underground.html", "mission-trainer.html", "news.html",
               "m003-base.html", "m003-dimension-gate.html", "top-secret-demo.html",
               "civilization.html", "i18n.js", "premium-ui.css",
               "world-server.js", "nasa-data.js", "multiverse.js", "easy-play.js", "chat.js",
@@ -55,6 +55,11 @@ jobs:
           news = Path("news.html").read_text(encoding="utf-8")
           workspace = Path("member-workspace.js").read_text(encoding="utf-8")
           chat = Path("chat.js").read_text(encoding="utf-8")
+          dual_ai = Path("dual-ai.html").read_text(encoding="utf-8")
+          dual_ai_script = re.search(r"<script>(.*?)</script>", dual_ai, re.S)
+          assert dual_ai_script and "functions.invoke" in dual_ai_script.group(1), "Dual AI client integration missing"
+          assert "XAI_API_KEY" not in dual_ai and "OPENAI_API_KEY" not in dual_ai, "Provider API keys must never appear in browser code"
+          Path("/tmp/local-mars-dual-ai.js").write_text(dual_ai_script.group(1), encoding="utf-8")
           dimension_gate = Path("m003-dimension-gate.html").read_text(encoding="utf-8")
           manifest = json.loads(Path("manifest.webmanifest").read_text(encoding="utf-8"))
           sw = Path("sw.js").read_text(encoding="utf-8")
@@ -73,6 +78,7 @@ jobs:
           assert "Dashboard · แดชบอร์ด" in html and 'data-lm-en="Dashboard"' in html, "Member Dashboard entry missing"
           assert "แดชบอร์ดสมาชิก" in html, "Dashboard title missing"
           assert 'id="lmChatOverlay"' in html and 'data-system-target="chat"' in html, "Live chat UI and menu entry missing"
+          assert 'href="./dual-ai.html"' in html, "Dual AI entry missing from More menu"
           assert 'id="lmChatOpen"' in html and '"./chat.js"' in sw, "Chat launcher and offline asset missing"
           assert "getElementById('account')" in chat and "scheduleReconnect" in chat, "Chat login and reconnect handling missing"
           assert 'src="./chat.js"' in html and "mars_chat_messages" in chat and "postgres_changes" in chat and "presence" in chat, "Live chat client integration missing"
@@ -156,6 +162,7 @@ jobs:
 
           print("LOCAL MARS: app routes, all 19 parcel routes, M-003, TOP SECRET demo, premium assets, TH/EN dictionaries and PWA assets validated.")
           PY
+          node --check /tmp/local-mars-dual-ai.js
           node --check /tmp/mars-main.mjs
           node --check /tmp/mars-city.mjs
           node --check /tmp/mars-underground.js
@@ -174,10 +181,11 @@ jobs:
       - name: Prepare complete static site
         run: |
           mkdir -p _site
-          cp index.html install.html city.html underground.html mission-trainer.html news.html m003-base.html m003-dimension-gate.html top-secret-demo.html civilization.html i18n.js premium-ui.css world-server.js nasa-data.js member-workspace.js multiverse.js easy-play.js chat.js update-manager.js manifest.webmanifest sw.js icon.svg _site/
+          cp index.html dual-ai.html install.html city.html underground.html mission-trainer.html news.html m003-base.html m003-dimension-gate.html top-secret-demo.html civilization.html i18n.js premium-ui.css world-server.js nasa-data.js member-workspace.js multiverse.js easy-play.js chat.js update-manager.js manifest.webmanifest sw.js icon.svg _site/
           cp -R locales _site/locales
           cp -R parcels _site/parcels
           touch _site/.nojekyll
+          test -s _site/dual-ai.html
           test -s _site/install.html
           test -s _site/member-workspace.js
           test -s _site/chat.js
