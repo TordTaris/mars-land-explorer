@@ -1,7 +1,7 @@
 // LOCAL MARS v4.0 — network-first updates with complete offline app shell.
-const CACHE = "local-mars-v4-78";
+const CACHE = "local-mars-v4-79";
 const CORE = [
-  "./", "./index.html", "./install.html", "./city.html", "./underground.html", "./mission-trainer.html",
+  "./", "./index.html", "./update-manager.js", "./install.html", "./city.html", "./underground.html", "./mission-trainer.html",
   "./parcels/M-001/index.html",
   "./parcels/M-002/index.html",
   "./parcels/M-003/index.html",

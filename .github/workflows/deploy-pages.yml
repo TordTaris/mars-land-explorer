@@ -80,7 +80,7 @@ jobs:
           assert manifest.get("display") == "standalone", "PWA standalone display missing"
           assert any(icon.get("sizes") == "192x192" for icon in manifest.get("icons", [])), "192px PWA icon declaration missing"
           assert any(icon.get("sizes") == "512x512" for icon in manifest.get("icons", [])), "512px PWA icon declaration missing"
-          assert 'const CACHE = "local-mars-v4-78"' in sw, "service worker cache version not bumped"
+          assert 'const CACHE = "local-mars-v4-79"' in sw, "service worker cache version not bumped"
           assert 'id="local-mars-mobile-header-and-aegis-scale-v462"' in html, "mobile header and AEGIS layout fix missing"
           assert "colonyRoot.scale.setScalar(.30)" in html, "planetary AEGIS scale missing"
           assert "relaySatellite.scale.setScalar(.18)" in html, "planetary satellite scale missing"
@@ -91,7 +91,11 @@ jobs:
           assert "const canAfford=walletReady&&balanceValue>=price" in html, "MLC insufficient-balance purchase guard missing"
           assert "TorusGeometry(.038,.0028,8,48)" in html, "new parcel gold surface ring missing"
           assert "M-019" in html and "19 parcels" in html, "new parcel range missing"
-          assert "navigator.serviceWorker.register('./sw.js'" in html, "service worker registration missing"
+          assert 'src="./update-manager.js"' in html, "automatic update manager missing"
+          assert '"./update-manager.js"' in sw, "update manager missing from offline cache"
+          manager = Path("update-manager.js").read_text(encoding="utf-8")
+          assert "registration.update()" in manager and "5 * 60 * 1000" in manager, "periodic online update checks missing"
+          assert "controllerchange" in manager and "location.reload()" in manager, "automatic safe update application missing"
           assert manifest.get("start_url") == "./" and manifest.get("scope") == "./", "manifest paths must be relative to the GitHub Pages project root"
           assert th and en, "Thai and English dictionaries must not be empty"
           for icon in manifest.get("icons", []):
@@ -149,6 +153,7 @@ jobs:
           node --check /tmp/mars-underground.js
           node --check /tmp/mars-mission.js
           node --check sw.js
+          node --check update-manager.js
           node --check world-server.js
           node --check multiverse.js
           node --check easy-play.js
@@ -160,12 +165,13 @@ jobs:
       - name: Prepare complete static site
         run: |
           mkdir -p _site
-          cp index.html install.html city.html underground.html mission-trainer.html m003-base.html m003-dimension-gate.html top-secret-demo.html civilization.html i18n.js premium-ui.css world-server.js nasa-data.js member-workspace.js multiverse.js easy-play.js manifest.webmanifest sw.js icon.svg _site/
+          cp index.html install.html city.html underground.html mission-trainer.html m003-base.html m003-dimension-gate.html top-secret-demo.html civilization.html i18n.js premium-ui.css world-server.js nasa-data.js member-workspace.js multiverse.js easy-play.js update-manager.js manifest.webmanifest sw.js icon.svg _site/
           cp -R locales _site/locales
           cp -R parcels _site/parcels
           touch _site/.nojekyll
           test -s _site/install.html
           test -s _site/member-workspace.js
+          test -s _site/update-manager.js
           test -s _site/locales/th.json
           test -s _site/locales/en.json
           test -s _site/mission-trainer.html

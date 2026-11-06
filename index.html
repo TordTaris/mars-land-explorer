@@ -1612,14 +1612,7 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
   pulse();
  })();
 </script>
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js', { scope: './' })
-      .catch(error => console.warn('LOCAL MARS offline support unavailable:', error));
-  });
-}
-</script>
+<script src="./update-manager.js" defer></script>
 
 <!-- LOCAL MARS bilingual interface: auto locale + manual language switch -->
 
