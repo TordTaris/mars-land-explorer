@@ -1351,6 +1351,41 @@ aresOrbitMarker.add(aresMarkerCore,aresMarkerRing);
 aresOrbitMarker.visible=false;
 group.add(aresOrbitMarker);
 
+// Always-visible presentation copy on the camera-facing hemisphere.
+// The real ARES object continues its full orbital motion; this locator prevents Mars
+// from hiding the only visual cue when the simulated station moves to the far side.
+const aresFrontDisplay=new THREE.Group();
+const aresFrontModel=aresStation.clone(true);
+aresFrontModel.visible=true;
+aresFrontModel.scale.setScalar(.075);
+aresFrontModel.position.set(0,0,0);
+aresFrontModel.traverse(node=>{
+ if(node.isMesh){
+  node.renderOrder=30;
+  const materials=Array.isArray(node.material)?node.material:[node.material];
+  materials.forEach(material=>{if(material){material.depthTest=false;material.depthWrite=false;material.needsUpdate=true;}});
+ }
+});
+aresFrontDisplay.add(aresFrontModel);
+const aresFrontHalo=new THREE.Mesh(
+ new THREE.TorusGeometry(.075,.004,10,56),
+ new THREE.MeshBasicMaterial({color:0xe7c77f,transparent:true,opacity:.95,depthTest:false,depthWrite:false})
+);
+aresFrontHalo.renderOrder=31;
+aresFrontDisplay.add(aresFrontHalo);
+const aresFrontBeacon=new THREE.Mesh(
+ new THREE.SphereGeometry(.018,16,12),
+ new THREE.MeshBasicMaterial({color:0x70eaff,depthTest:false,depthWrite:false})
+);
+aresFrontBeacon.position.set(0,.09,0);
+aresFrontBeacon.renderOrder=32;
+aresFrontDisplay.add(aresFrontBeacon);
+aresFrontDisplay.position.set(.40,.22,1.02);
+aresFrontDisplay.renderOrder=30;
+group.add(aresFrontDisplay);
+
+// Dedicated live 3D close-up renderer: preserve true physical scale on the globe,
+
 // Dedicated live 3D close-up renderer: preserve true physical scale on the globe,
  // while showing the same station geometry at readable scale in the control panel.
  let aresPreviewRenderer=null,aresPreviewScene=null,aresPreviewCamera=null,aresPreviewModel=null;
