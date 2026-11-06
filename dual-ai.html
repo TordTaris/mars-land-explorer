@@ -1,63 +1,136 @@
 <!doctype html>
-<html lang="en">
+<html lang="th">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#081321"><title>LOCAL MARS · Dual AI</title>
+<meta name="theme-color" content="#081321">
+<title>LOCAL MARS · Free Local AI</title>
 <style>
 :root{color-scheme:dark;--bg:#07111f;--panel:#10243a;--line:#b99b6670;--gold:#e3c17c;--muted:#a9bacb;--cyan:#75e5ef}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -10%,#24435b 0,#091728 48%,#050b14 100%);color:#f4eddf;font:14px system-ui,sans-serif;min-height:100vh}
-header{padding:18px max(16px,calc((100vw - 1000px)/2));border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;background:#071321cc}
-.brand{font-weight:900;letter-spacing:2px}.brand b{color:var(--gold)}a{color:var(--cyan);text-decoration:none}.wrap{width:min(1000px,calc(100% - 28px));margin:26px auto}
+header{padding:18px max(16px,calc((100vw - 900px)/2));border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;background:#071321cc}
+.brand{font-weight:900;letter-spacing:2px}.brand b{color:var(--gold)}a{color:var(--cyan);text-decoration:none}.wrap{width:min(900px,calc(100% - 28px));margin:26px auto}
 .eyebrow{font-size:10px;letter-spacing:2px;color:var(--gold);font-weight:800}h1{font-size:clamp(26px,5vw,42px);margin:8px 0}.sub{color:var(--muted);line-height:1.6}
-.auth,.composer,.result{border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#112943ed,#091625f5);box-shadow:0 18px 45px #0007}
-.auth{padding:13px 16px;margin:18px 0;color:var(--muted)}.composer{padding:16px;margin:18px 0}
-textarea{width:100%;min-height:125px;resize:vertical;padding:14px;border:1px solid #5d7790;border-radius:12px;background:#071321;color:#fff;font:14px/1.6 system-ui;outline:none}textarea:focus{border-color:var(--gold)}
-.modes{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}button{border:1px solid #8c7954;background:#152b41;color:#f6ebd5;border-radius:10px;padding:11px 15px;font-weight:750;cursor:pointer}button.selected,button.primary{background:linear-gradient(120deg,#e1bd73,#aa7b3d);color:#1b150d;border-color:#f0d79d}button:disabled{opacity:.55;cursor:wait}
-#send{width:100%;margin-top:4px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.result{padding:16px;min-width:0}.result h2{font-size:17px;margin:0 0 10px}.result .model{font-size:10px;color:var(--gold);letter-spacing:1px;margin-bottom:12px}.answer{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;color:#e7edf5}.error{color:#ffb2a9}.empty{color:#8094a9;font-style:italic}
-footer{color:#8094a9;font-size:11px;line-height:1.6;margin:18px 0 35px}
-@media(max-width:700px){header{padding:14px}.wrap{margin:18px auto}.grid{grid-template-columns:1fr}.result{padding:14px}button{padding:10px 12px}}
+.panel{border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#112943ed,#091625f5);box-shadow:0 18px 45px #0007;padding:16px;margin:16px 0}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}select,textarea{border:1px solid #5d7790;border-radius:12px;background:#071321;color:#fff;padding:12px;font:14px system-ui}select{flex:1;min-width:220px}textarea{width:100%;min-height:100px;resize:vertical;line-height:1.6}
+button{border:1px solid #8c7954;background:#152b41;color:#f6ebd5;border-radius:10px;padding:11px 15px;font-weight:750;cursor:pointer}button.primary{background:linear-gradient(120deg,#e1bd73,#aa7b3d);color:#1b150d;border-color:#f0d79d}button:disabled{opacity:.5;cursor:not-allowed}
+#status{margin:10px 0;color:var(--muted);line-height:1.6}.bar{height:7px;background:#24384b;border-radius:8px;overflow:hidden;margin:10px 0}.bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,#75e5ef,#e3c17c);transition:width .2s}
+#chat{display:flex;flex-direction:column;gap:10px;max-height:55vh;overflow:auto}.msg{padding:12px 14px;border-radius:13px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65}.user{background:#203b54;align-self:flex-end;max-width:92%}.assistant{background:#0b1a29;border:1px solid #b99b6640;align-self:stretch}.note{font-size:12px;color:#9fb1c2;line-height:1.6}
+.badge{display:inline-block;padding:4px 8px;border:1px solid #75e5ef66;border-radius:20px;color:#9beef4;font-size:11px}
+@media(max-width:600px){header{padding:14px}.wrap{margin:18px auto}.panel{padding:13px}button{padding:10px 12px}}
 </style>
 </head>
 <body>
-<header><div class="brand">LOCAL <b>MARS</b> · DUAL AI</div><a href="./">← Back to Explorer</a></header>
+<header><div class="brand">LOCAL <b>MARS</b> · FREE AI</div><a href="./">← กลับหน้าสำรวจ</a></header>
 <main class="wrap">
- <div class="eyebrow">INTELLIGENCE COORDINATION · GROK × GPT</div>
- <h1>Two AI minds. One workspace.</h1>
- <p class="sub">Ask Grok and GPT independently, or send one prompt to both and compare their answers. Dual AI requires a signed-in LOCAL MARS member account.</p>
- <div class="auth" id="auth">Checking LOCAL MARS member session…</div>
- <section class="composer">
-  <label for="prompt" class="eyebrow">YOUR PROMPT</label>
-  <textarea id="prompt" maxlength="5000" placeholder="Ask a question, request an analysis, or describe a LOCAL MARS task…"></textarea>
-  <div class="modes" role="group" aria-label="AI mode">
-   <button type="button" data-mode="both" class="selected">Grok + GPT</button>
-   <button type="button" data-mode="grok">Grok only</button>
-   <button type="button" data-mode="gpt">GPT only</button>
+ <div class="eyebrow">ON-DEVICE INFERENCE · NO API BILLING</div>
+ <h1>LOCAL MARS Free AI</h1>
+ <p class="sub">เปลี่ยนจากการเรียก Grok/GPT แบบคิดค่าบริการ เป็นโมเดล AI แบบเปิดที่ประมวลผลบนอุปกรณ์ของคุณ ไม่ต้องใช้ API Key ไม่ต้องเติมเครดิต และไม่ต้องเข้าสู่ระบบ AI ภายนอก</p>
+ <section class="panel">
+  <div class="row"><span class="badge">ประมวลผลบนอุปกรณ์</span><span class="badge">ไม่มีค่า API</span><span class="badge">ไม่ส่งข้อความไปเซิร์ฟเวอร์ AI</span></div>
+  <p class="eyebrow">เลือกโมเดลภายในเครื่อง</p>
+  <div class="row">
+   <select id="model">
+    <option value="Llama-3.2-1B-Instruct-q4f16_1-MLC">Llama 3.2 1B · แนะนำสำหรับเริ่มต้น</option>
+    <option value="SmolLM2-360M-Instruct-q4f32_1-MLC">SmolLM2 360M · รุ่นเล็ก ใช้ทรัพยากรน้อยกว่า</option>
+   </select>
+   <button id="load" class="primary">โหลดโมเดลฟรี</button>
   </div>
-  <button type="button" id="send" class="primary">Run Dual AI</button>
-  <p id="status" class="sub" aria-live="polite">Ready when you are.</p>
+  <div class="bar"><i id="progress"></i></div>
+  <div id="status" aria-live="polite">กำลังตรวจสอบ WebGPU…</div>
+  <p class="note">ครั้งแรกต้องดาวน์โหลดไฟล์โมเดลจากเครือข่ายและใช้พื้นที่เก็บข้อมูลบนอุปกรณ์ หลังโหลดแล้วเบราว์เซอร์อาจเก็บโมเดลไว้ใช้ซ้ำได้ การทำงานขึ้นกับ WebGPU หน่วยความจำ และประสิทธิภาพของอุปกรณ์</p>
  </section>
- <section class="grid" aria-live="polite">
-  <article class="result"><h2>◈ Grok · xAI</h2><div class="model" id="grok-model">NOT RUN</div><div class="answer empty" id="grok-answer">Grok's response will appear here.</div></article>
-  <article class="result"><h2>✧ GPT · OpenAI</h2><div class="model" id="gpt-model">NOT RUN</div><div class="answer empty" id="gpt-answer">GPT's response will appear here.</div></article>
+ <section class="panel">
+  <div id="chat" aria-live="polite"><div class="msg assistant">สวัสดีครับ นี่คือ LOCAL MARS Free AI เมื่อโหลดโมเดลสำเร็จแล้ว คุณสามารถเริ่มสนทนาได้</div></div>
  </section>
- <footer>Provider API usage may incur separate charges. API keys remain on the Supabase server and are never sent to this page. AI output can be incorrect; verify important decisions. LOCAL MARS MLC and mining simulations are not real cryptocurrency or monetary assets.</footer>
+ <section class="panel">
+  <textarea id="prompt" maxlength="4000" placeholder="พิมพ์คำถามหรือคำสั่งของคุณ…"></textarea>
+  <div class="row" style="margin-top:10px"><button id="send" class="primary" disabled>ส่งข้อความ</button><button id="clear">ล้างบทสนทนา</button></div>
+ </section>
+ <p class="note">ข้อจำกัด: โมเดลขนาดเล็กอาจตอบภาษาไทยหรือวิเคราะห์งานซับซ้อนได้ไม่เท่า Grok/GPT บนคลาวด์ คำตอบเป็นข้อมูลจากโมเดล ไม่ใช่การเชื่อมต่อข้อมูลสดหรือการควบคุมระบบจริง</p>
 </main>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-(()=> {
- const SUPABASE_URL="https://tppgfxsdeuujidcjnfdl.supabase.co";
- const SUPABASE_KEY="sb_publishable_xQ0_NkSu2TMeIyJnAE94kw_WWQT2T3E";
- const db=window.supabase?.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
- const $=id=>document.getElementById(id);
- let mode="both",history=[],session=null,busy=false;
- const authText=()=>{ $("auth").textContent=session?.user?"● Signed in · "+(session.user.email||"LOCAL MARS member"):"Not signed in · Please sign in from the LOCAL MARS Explorer first."; };
- async function init(){if(!db){$("auth").textContent="Supabase client failed to load.";return;}const {data,error}=await db.auth.getSession();if(error){$("auth").textContent=error.message;return;}session=data.session;authText();db.auth.onAuthStateChange((_event,s)=>{session=s;authText();});}
- document.querySelectorAll("[data-mode]").forEach(button=>button.addEventListener("click",()=>{mode=button.dataset.mode;document.querySelectorAll("[data-mode]").forEach(b=>b.classList.toggle("selected",b===button));$("send").textContent=mode==="both"?"Run Dual AI":mode==="grok"?"Ask Grok":"Ask GPT";}));
- function render(name,result){const model=$(name+"-model"),answer=$(name+"-answer");if(!result){model.textContent="NOT REQUESTED";answer.textContent="Not requested in this run.";answer.className="answer empty";return;}model.textContent=result.model||"PROVIDER";answer.textContent=result.ok?result.text:(result.error||"Provider unavailable.");answer.className=result.ok?"answer":"answer error";}
- async function run(){if(busy)return;const prompt=$("prompt").value.trim();if(!prompt){$("status").textContent="Enter a prompt first.";return;}if(!session?.access_token){$("status").textContent="Sign in to LOCAL MARS first, then return here.";return;}busy=true;$("send").disabled=true;$("status").textContent="Contacting AI providers securely…";render("grok",null);render("gpt",null);
- try{const {data,error}=await db.functions.invoke("dual-ai",{body:{mode,prompt,history}});if(error)throw new Error(error.message||"Dual AI request failed.");if(!data?.results)throw new Error(data?.error||"Unexpected server response.");render("grok",data.results.grok);render("gpt",data.results.gpt);$("status").textContent=data.partial?"One provider responded; the other returned an error.":data.success?"Completed · Independent answers from selected provider(s).":"No provider returned a response.";history.push({role:"user",content:prompt});const combined=[data.results.grok?.text,data.results.gpt?.text].filter(Boolean).join("\n\n");if(combined)history.push({role:"assistant",content:combined.slice(0,5000)});history=history.slice(-8);
- }catch(e){$("status").textContent=e.message||"Connection failed."; }finally{busy=false;$("send").disabled=false;}}
- $("send").addEventListener("click",run);$("prompt").addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key==="Enter")run();});init();
-})();
+<script type="module">
+import { CreateMLCEngine } from "https://esm.run/@mlc-ai/web-llm";
+const $ = id => document.getElementById(id);
+let engine = null, busy = false, history = [];
+const status = (s) => $("status").textContent = s;
+const addMessage = (role, text) => {
+ const el = document.createElement("div");
+ el.className = "msg " + role;
+ el.textContent = text;
+ $("chat").appendChild(el);
+ $("chat").scrollTop = $("chat").scrollHeight;
+};
+async function checkGPU(){
+ if (!("gpu" in navigator)) {
+  status("อุปกรณ์หรือเบราว์เซอร์นี้ยังไม่รองรับ WebGPU จึงยังเปิด AI ภายในเครื่องไม่ได้ ลองใช้ Chrome รุ่นล่าสุดบนอุปกรณ์ที่รองรับ");
+  $("load").disabled = true;
+  return false;
+ }
+ try {
+  const adapter = await navigator.gpu.requestAdapter();
+  if (!adapter) throw new Error("ไม่พบ GPU adapter");
+  status("พบ WebGPU แล้ว · พร้อมโหลดโมเดล AI ภายในเครื่อง");
+  return true;
+ } catch(e) {
+  status("WebGPU ใช้งานไม่ได้บนอุปกรณ์นี้: " + e.message);
+  $("load").disabled = true;
+  return false;
+ }
+}
+$("load").addEventListener("click", async () => {
+ if (busy || engine) return;
+ busy = true; $("load").disabled = true;
+ const model = $("model").value;
+ try {
+  engine = await CreateMLCEngine(model, {
+   initProgressCallback: report => {
+    const p = Math.max(0, Math.min(100, Math.round((report.progress || 0) * 100)));
+    $("progress").style.width = p + "%";
+    status(report.text || ("กำลังเตรียมโมเดล " + p + "%"));
+   }
+  });
+  status("โหลดโมเดลสำเร็จ · LOCAL AI พร้อมใช้งานโดยไม่ใช้ API เครดิต");
+  $("send").disabled = false;
+  $("model").disabled = true;
+  $("load").textContent = "พร้อมใช้งาน";
+ } catch(e) {
+  engine = null;
+  status("โหลดโมเดลไม่สำเร็จ: " + (e?.message || String(e)) + " · ตรวจอินเทอร์เน็ต พื้นที่ว่าง และ WebGPU แล้วลองใหม่");
+  $("load").disabled = false;
+ } finally { busy = false; }
+});
+$("send").addEventListener("click", send);
+$("prompt").addEventListener("keydown", e => { if ((e.ctrlKey || e.metaKey) && e.key === "Enter") send(); });
+async function send(){
+ const prompt = $("prompt").value.trim();
+ if (!prompt || !engine || busy) return;
+ busy = true; $("send").disabled = true;
+ $("prompt").value = "";
+ addMessage("user", prompt);
+ status("LOCAL AI กำลังประมวลผลบนอุปกรณ์ของคุณ…");
+ try {
+  history.push({role:"user", content:prompt});
+  const response = await engine.chat.completions.create({
+   messages: [{role:"system",content:"You are LOCAL MARS Free AI. Answer helpfully and clearly in Thai unless the user asks for another language. Be honest about uncertainty and never claim to operate external systems."}, ...history.slice(-8)],
+   temperature: 0.7,
+   max_tokens: 700
+  });
+  const answer = response.choices?.[0]?.message?.content || "โมเดลไม่ได้ส่งข้อความตอบกลับ";
+  history.push({role:"assistant",content:answer});
+  history = history.slice(-8);
+  addMessage("assistant", answer);
+  status("เสร็จแล้ว · ประมวลผลภายในอุปกรณ์ ไม่มีการเรียก API แบบคิดค่าบริการ");
+ } catch(e) {
+  addMessage("assistant", "เกิดข้อผิดพลาด: " + (e?.message || String(e)));
+  status("การประมวลผลขัดข้อง ลองส่งข้อความใหม่");
+ } finally { busy = false; $("send").disabled = !engine; }
+}
+$("clear").addEventListener("click", () => {
+ history = [];
+ $("chat").replaceChildren();
+ addMessage("assistant","ล้างบทสนทนาแล้ว พร้อมเริ่มใหม่");
+});
+checkGPU();
 </script>
-</body></html>
+</body>
+</html>
