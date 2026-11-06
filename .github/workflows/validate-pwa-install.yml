@@ -65,7 +65,8 @@ jobs:
               path = icon.get("src", "").removeprefix("./")
               assert path and Path(path).is_file(), f"manifest icon not found: {path}"
 
-          assert 'const CACHE = "local-mars-v4-80"' in sw, "service worker cache version was not bumped"
+          cache_match = re.search(r'const CACHE = "local-mars-v4-(\d+)"', sw)
+          assert cache_match and int(cache_match.group(1)) >= 80, "service worker cache version is missing or outdated"
           assert "Dashboard · แดชบอร์ด" in html and 'data-lm-en="Dashboard"' in html, "Member Dashboard entry missing"
           assert "แดชบอร์ดสมาชิก" in html, "Dashboard title missing"
           assert 'id="lmChatOverlay"' in html and 'data-system-target="chat"' in html, "Live chat UI and menu entry missing"
