@@ -67,13 +67,12 @@ jobs:
 
           cache_match = re.search(r'const CACHE = "local-mars-v4-(\d+)"', sw)
           assert cache_match and int(cache_match.group(1)) >= 80, "service worker cache version is missing or outdated"
-          assert "Dashboard · แดชบอร์ด" in html and 'data-lm-en="Dashboard"' in html, "Member Dashboard entry missing"
-          assert "แดชบอร์ดสมาชิก" in html, "Dashboard title missing"
+          assert 'data-system-target="workspace"' in html and '<b>Dashboard</b>' in html and 'Member overview and activity' in html, "Member Dashboard entry missing"
           assert 'id="lmChatOverlay"' in html and 'data-system-target="chat"' in html, "Live chat UI and menu entry missing"
           assert 'id="lmChatOpen"' in html and '"./chat.js"' in sw, "Chat launcher and offline asset missing"
           assert "getElementById('account')" in chat and "scheduleReconnect" in chat, "Chat login and reconnect handling missing"
           assert 'src="./chat.js"' in html and "mars_chat_messages" in chat and "postgres_changes" in chat and "presence" in chat, "Live chat client integration missing"
-          assert 'data-search-terms="ตลาด ซื้อขายที่ดิน ราคา mlc marketplace land listing"' in html, "Thai and English marketplace search terms missing"
+          assert 'data-search-terms="marketplace land listings prices mlc"' in html and '<b>Land Marketplace</b>' in html, "Land Marketplace entry missing"
           assert ".lm-system-grid{grid-template-columns:minmax(0,1fr)" in html, "mobile More menu must use readable single-column cards"
           assert '"./member-workspace.js"' in sw, "member workspace missing from offline cache"
           assert '"./update-manager.js"' in sw, "automatic update manager missing from offline cache"
