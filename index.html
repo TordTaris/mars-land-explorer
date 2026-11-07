@@ -1128,6 +1128,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  </select>
  <button class="primary full" id="build">🏗️ Place Structure</button>
  <button class="full" id="openConstruction3D">🏗️ Open 3D Construction</button>
+ <button class="full" id="enterBuiltArea" type="button" style="display:none;border-color:#79c9ad;color:#baf4d9">↗ ENTER BUILT AREA</button>
  <button class="full" id="openM003Base" style="display:none">🔐 OPEN M-003 PRIVATE BASE</button>
 </div>
 <div id="constructionAccessNote" class="small" style="display:none;margin-top:9px;padding:10px;border:1px solid #52677a;border-radius:10px;background:#0a1928"></div>
@@ -1982,6 +1983,16 @@ function clearParcelSelection(){
 }
 function selectPlot(p){
  selected=p;const world=window.MarsWorldServer?.getState?.()||{};
+ const builtStructures=(world.structures||[]).filter(item=>item.parcel_id===p.id);
+ const isLandmark=p.id==='M-001'||p.id==='M-003';
+ const enterBuiltArea=document.querySelector('#enterBuiltArea');
+ if(enterBuiltArea){
+  const hasBuiltArea=builtStructures.length>0||isLandmark;
+  enterBuiltArea.style.display=hasBuiltArea?'block':'none';
+  enterBuiltArea.textContent=builtStructures.length>0?'↗ ENTER BUILT AREA · '+builtStructures.length+' STRUCTURE'+(builtStructures.length===1?'':'S'):'↗ ENTER FACILITY';
+  enterBuiltArea.setAttribute('aria-label','Enter built area '+p.id);
+  enterBuiltArea.title='Open the dedicated workspace for '+p.id;
+ }
   const m003Entry=document.querySelector("#openM003Base");if(m003Entry)m003Entry.style.display=p.id==="M-003"?"block":"none";
  const listing=(world.mlcMarket||[]).find(x=>x.parcel_id===p.id);
  const claim=(world.claims||[]).find(x=>x.parcel_id===p.id);
@@ -2191,6 +2202,7 @@ document.querySelector('#build').onclick=async()=>{
  finally{button.disabled=false;button.textContent='🏗️ Place Structure';}
 };
 document.querySelector('#openConstruction3D').onclick=()=>{if(!selected){toast('Select a Mars parcel first');return;}location.href='./parcels/'+encodeURIComponent(selected.id)+'/';};
+document.querySelector('#enterBuiltArea').onclick=()=>{if(!selected){toast('Select a parcel first');return;}const world=window.MarsWorldServer?.getState?.()||{};const hasStructure=(world.structures||[]).some(item=>item.parcel_id===selected.id);if(!hasStructure&&selected.id!=='M-001'&&selected.id!=='M-003'){toast('No built structure is registered on this parcel yet');return;}location.href='./parcels/'+encodeURIComponent(selected.id)+'/';};
  document.querySelector('#openM003Base').onclick=()=>{if(!selected||selected.id!=='M-003'){toast('Select M-003 first');return;}openM003Base();};
  document.querySelector('#closePlotPanel').onclick=()=>{document.body.classList.remove('plot-selected');selected=null;document.querySelector('#plotActions').style.display='none';document.querySelector('#plotInfo').style.display='block';};
 const loginModal=document.querySelector('#login'),authFeedback=document.querySelector('#authFeedback');
