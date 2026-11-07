@@ -180,8 +180,8 @@ function showSecurity(hasPassword){
  unlockButton.textContent=setupMode?'SET PASSWORD AND OPEN BASE':'VERIFY AND OPEN BASE';
 }
 async function renderBase(rows,archive){
- if(!rows.length){gateTitle.textContent='NO FACILITY DATA';gateText.textContent='No underground level records were found in the database.';return;}
- loaded=true;document.querySelector('#gate').hidden=true;document.querySelector('#content').hidden=false;connection.textContent='M-003 UNLOCKED · CONFIDENTIAL ARCHIVE AUTHORIZED';
+ if(!rows.length&&!archive){gateTitle.textContent='FACILITY DATA UNAVAILABLE';gateText.textContent='No underground level records or confidential archive were returned. Check the secure connection and retry.';return;}
+ loaded=true;document.querySelector('#gate').hidden=true;document.querySelector('#content').hidden=false;connection.textContent=archive?'M-003 UNLOCKED · CONFIDENTIAL ARCHIVE AUTHORIZED':'M-003 UNLOCKED · ARCHIVE NOT FOUND';
  const content=document.querySelector('#content');const prior=document.querySelector('#m003ConfidentialArchive');prior?.remove();
  if(archive){
   const section=document.createElement('section');section.id='m003ConfidentialArchive';section.className='card';section.style.cssText='margin-top:12px;border-color:#c5a56b;background:linear-gradient(145deg,#18283a,#091523)';
@@ -207,7 +207,7 @@ async function verifyAndLoad(){
  if(!owns){connection.textContent='ACCESS DENIED';gateTitle.textContent='M-003 OWNER ACCESS ONLY';gateText.textContent='The signed-in account is not authorized to access the underground facility database.';securityForm.hidden=true;return;}
  connection.textContent='OWNER VERIFIED';
  const result=await window.MarsWorldServer.m003Access('status');
- if(result?.error){gateTitle.textContent='SECURITY SERVICE UNAVAILABLE';gateText.textContent=result.error.message+' Apply Supabase migration 022 and deploy the m003-access Edge Function.';return;}
+ if(result?.error){gateTitle.textContent='SECURITY SERVICE UNAVAILABLE';gateText.textContent=result.error.message+' Check the connection and try again. If the problem continues, contact LOCAL MARS support.';return;}
  showSecurity(Boolean(result.data?.has_password));
 }
 unlockButton.addEventListener('click',async()=>{
