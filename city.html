@@ -1246,7 +1246,7 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
  function hideMenuBar(){closePanels();toolbar?.classList.add('menu-hidden');showMenu?.classList.add('visible')}
  function revealMenuBar(){toolbar?.classList.remove('menu-hidden');showMenu?.classList.remove('visible')}
  info?.addEventListener('click',()=>{revealMenuBar();const opening=!left.classList.contains('open');closePanels();if(opening){left.classList.add('open');info.classList.add('active');info.setAttribute('aria-expanded','true')}});
- build?.addEventListener('click',()=>{revealMenuBar();const opening=!right.classList.contains('open');closePanels();if(opening){right.classList.add('open');build.classList.add('active');build.setAttribute('aria-expanded','true')}});
+ build?.addEventListener('click',()=>{revealMenuBar();const opening=!right.classList.contains('open');closePanels();if(opening){right.classList.add('open');build.classList.add('active');build.setAttribute('aria-expanded','true');buildMode?.click();}});
  hide?.addEventListener('click',hideMenuBar);
  showMenu?.addEventListener('click',revealMenuBar);
  document.addEventListener('keydown',e=>{if(e.key==='Escape')hideMenuBar()});
