@@ -150,7 +150,7 @@ jobs:
           assert 'href="./m003-dimension-gate.html"' in Path("m003-base.html").read_text(encoding="utf-8"), "M-003 Dimension Gate link missing"
           assert "PROJECT DIMENSION GATE" in dimension_gate, "Dimension Gate page content missing"
           chronos = Path("chronos-time-lab.html").read_text(encoding="utf-8")
-          assert "CHRONOS TIME RESEARCH LAB" in chronos and "OWNER VERIFIED" in chronos, "M-003 CHRONOS research page missing"
+          assert "CHRONOS Time Research Lab" in chronos and "OWNER VERIFIED" in chronos, "M-003 CHRONOS research page missing"
           assert "chronos-time-lab.html" in Path("m003-base.html").read_text(encoding="utf-8"), "M-003 CHRONOS entry link missing"
           ibm5100 = Path("m003-ibm5100.html").read_text(encoding="utf-8")
           assert "IBM 5100 WORKSTATION" in ibm5100 and "runBasic" in ibm5100, "IBM 5100 simulator page missing"
