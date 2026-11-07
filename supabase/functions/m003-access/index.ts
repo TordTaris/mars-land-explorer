@@ -105,7 +105,9 @@ Deno.serve(async (req) => {
     const { data: floors, error: floorsError } = await admin.from("m003_private_base")
       .select("floor_no,room_name,description,system_status").order("floor_no");
     if (floorsError) return json({ error: "Unable to load underground base records." }, 503);
-    return json({ ok: true, data: floors ?? [] });
+    const { data: archive, error: archiveError } = await admin.rpc("get_m003_confidential_archive");
+    if (archiveError) return json({ error: "Unable to load the M-003 confidential archive." }, 503);
+    return json({ ok: true, data: floors ?? [], confidential_archive: archive ?? null });
   } catch (error) {
     console.error("M-003 access function error", error);
     return json({ error: "M-003 security service encountered an unexpected error." }, 500);
