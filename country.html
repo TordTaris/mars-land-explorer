@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080d17"><title>LOCAL MARS | Country Network</title>
+<style>
+:root{color-scheme:dark;--bg:#080d17;--panel:#101d2d;--line:#34475d;--gold:#dfbd7d;--text:#edf4ff;--muted:#9bb0c9;--green:#80dfb2;--red:#ff9b82}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 0,#27394d,#080d17 65%);color:var(--text);font:14px system-ui,sans-serif;min-height:100vh}
+header{position:sticky;top:0;z-index:5;background:#080f1deF;border-bottom:1px solid #dfbd7d55;padding:14px 18px;display:flex;justify-content:space-between;gap:12px;align-items:center;backdrop-filter:blur(14px)}.brand{font-weight:900;letter-spacing:2px}.brand b{color:var(--gold)}#status{font-size:11px;color:var(--green)}
+main{max-width:1050px;margin:auto;padding:24px 16px 50px}.eyebrow{font-size:10px;letter-spacing:2px;color:var(--gold);font-weight:800}h1{font-size:clamp(25px,5vw,38px);margin:7px 0}.sub{color:var(--muted);line-height:1.6;max-width:760px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:20px 0}.card{background:linear-gradient(145deg,#14283d,#0b1726);border:1px solid #dfbd7d4d;border-radius:15px;padding:16px;min-width:0}.card h2{font-size:12px;letter-spacing:1.3px;color:var(--gold);margin:0 0 12px}.metric{font-size:28px;font-weight:850}.muted{color:var(--muted);font-size:12px;line-height:1.55}
+label{display:block;color:var(--muted);font-size:11px;margin:10px 0 5px}input,select{width:100%;background:#091523;color:var(--text);border:1px solid #435a73;border-radius:9px;padding:11px;font:inherit}button,.btn{border:1px solid #9c8052;background:#192b40;color:var(--text);border-radius:9px;padding:10px 13px;font:inherit;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}button.primary,.btn.primary{background:linear-gradient(120deg,#dfbd7d,#9c7540);color:#17120a;border:0}.wide{width:100%;margin-top:12px}.row{display:flex;gap:8px;flex-wrap:wrap}.country{border:1px solid #ffffff20;border-radius:12px;padding:13px;margin:9px 0;background:#081523}.country-head{display:flex;gap:10px;align-items:center}.flag{font-size:28px}.country strong{font-size:16px}.country small{display:block;color:var(--muted);margin-top:3px}.pill{font-size:10px;border:1px solid #8c754b;border-radius:30px;padding:3px 7px;color:var(--gold)}#message{padding:10px 12px;border:1px solid #415a72;border-radius:10px;margin:14px 0;color:var(--muted);display:none}.territory{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid #ffffff18;font-size:12px}.territory:last-child{border:0}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.metric{font-size:24px}header{padding:12px}.row>*{flex:1}}
+</style></head><body>
+<header><div class="brand">LOCAL <b>MARS</b> <span style="font-size:10px;color:#9bb0c9">/ COUNTRY NETWORK</span></div><div id="status">Connecting…</div></header>
+<main><div class="eyebrow">PLANETARY GOVERNANCE · SHARED WORLD</div><h1>Country Network</h1><p class="sub">Found a country on Mars using land parcels you already own. The capital and every added territory must be claimed by your account. Each parcel can belong to only one country.</p>
+<div id="message" role="status" aria-live="polite"></div>
+<section class="grid">
+<div class="card"><h2>REGISTERED COUNTRIES</h2><div class="metric" id="countryCount">—</div><div class="muted">Active nations in the shared simulation</div></div>
+<div class="card"><h2>MY CITIZENSHIP</h2><div class="metric" id="myMemberships">—</div><div class="muted">Countries joined by this account</div></div>
+<div class="card"><h2>MY CLAIMED LAND</h2><div class="metric" id="myParcels">—</div><div class="muted">Eligible parcels for founding or expansion</div></div>
+</section>
+<section class="grid">
+<div class="card"><h2>FOUND A COUNTRY</h2>
+<label for="countryName">Country name</label><input id="countryName" maxlength="48" placeholder="e.g. Aegis Republic">
+<label for="countryCode">Country code (2–5 characters)</label><input id="countryCode" maxlength="5" placeholder="AEG" autocapitalize="characters">
+<label for="countryFlag">National flag emoji</label><input id="countryFlag" maxlength="16" value="🏳️">
+<label for="government">Government model</label><select id="government"><option value="republic">Republic</option><option value="council">Council</option><option value="federation">Federation</option></select>
+<label for="capital">Capital parcel (must be owned by you)</label><select id="capital"><option value="">Sign in and load your claimed parcels</option></select>
+<button id="found" class="primary wide">Establish Country</button><p class="muted">You become the founding President. The capital parcel is automatically registered as the first territory.</p></div>
+<div class="card"><h2>EXPAND TERRITORY</h2>
+<label for="myCountry">Country you govern</label><select id="myCountry"><option value="">No country leadership found</option></select>
+<label for="territoryParcel">Additional parcel (must be owned by you and unassigned)</label><select id="territoryParcel"><option value="">No eligible parcel</option></select>
+<button id="addTerritory" class="primary wide">Add Territory</button>
+<hr style="border:0;border-top:1px solid #ffffff20;margin:18px 0">
+<h2>MEMBERSHIP</h2><label for="joinCountry">Join an active country</label><select id="joinCountry"><option value="">Loading countries…</option></select><button id="join" class="wide">Join as Citizen</button>
+<p class="muted">Membership is per account. Country leadership is assigned only by secured database functions.</p></div>
+<div class="card"><h2>COUNTRY REGISTER</h2><div id="countries" class="muted">Loading country records…</div></div>
+</section>
+<div class="row"><a class="btn" href="./civilization.html">Civilization Center</a><a class="btn" href="./city.html">City Builder</a><a class="btn" href="./index.html">Planet Explorer</a></div>
+<p class="muted" style="margin-top:18px">LOCAL MARS is a fictional planetary settlement simulation. Country status, territory, citizenship and governance have no legal or real-world sovereignty effect. MLC balances and land rights remain simulation-only.</p>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script><script src="./world-server.js"></script>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id);let db=null,user=null,countries=[],territories=[],claims=[],members=[];
+function message(text,ok=false){const el=$('message');el.textContent=text;el.style.display='block';el.style.borderColor=ok?'#5a9b7a':'#a66c5c';el.style.color=ok?'#9de5bd':'#ffc0aa';}
+function option(select,value,label){const o=document.createElement('option');o.value=value;o.textContent=label;select.append(o);}
+function getState(){return window.MarsWorldServer?.getState?.()||{};}
+function ownedParcels(){return claims.filter(x=>x.owner_id===user?.id).map(x=>x.parcel_id);}
+function fillSelects(){const owned=ownedParcels();const used=new Set(territories.map(x=>x.parcel_id));const capital=$('capital'),extra=$('territoryParcel');capital.replaceChildren();extra.replaceChildren();option(capital,'','Select a claimed parcel');option(extra,'','Select an unassigned claimed parcel');owned.forEach(id=>{option(capital,id,id);if(!used.has(id))option(extra,id,id);});if(!owned.length){option(capital,'','No claimed parcels found');option(extra,'','No claimed parcels found');}
+ const leadership=members.filter(m=>['president','minister'].includes(m.role));const myIds=new Set(leadership.map(m=>m.country_id));const mine=countries.filter(c=>myIds.has(c.id));const gov=$('myCountry');gov.replaceChildren();option(gov,'','Select a country you govern');mine.forEach(c=>option(gov,c.id,c.flag_emoji+' '+c.country_name));}
+function render(){const host=$('countries');host.replaceChildren();$('countryCount').textContent=countries.length;$('myMemberships').textContent=members.length;$('myParcels').textContent=ownedParcels().length;
+ const join=$('joinCountry');join.replaceChildren();option(join,'','Select a country');countries.forEach(c=>option(join,c.id,c.flag_emoji+' '+c.country_name+' ('+c.country_code+')'));
+ if(!countries.length){host.textContent='No countries have been founded yet. Be the first to establish one.';return;}
+ countries.forEach(c=>{const card=document.createElement('div');card.className='country';const head=document.createElement('div');head.className='country-head';const flag=document.createElement('span');flag.className='flag';flag.textContent=c.flag_emoji;const title=document.createElement('div');const name=document.createElement('strong');name.textContent=c.country_name;const meta=document.createElement('small');meta.textContent=c.country_code+' · '+c.government_type.toUpperCase()+' · Capital '+c.capital_parcel_id;title.append(name,meta);head.append(flag,title);const count=territories.filter(t=>t.country_id===c.id).length;const pill=document.createElement('span');pill.className='pill';pill.textContent=count+' parcel'+(count===1?'':'s');head.append(pill);card.append(head);const list=document.createElement('div');list.style.marginTop='9px';territories.filter(t=>t.country_id===c.id).forEach(t=>{const line=document.createElement('div');line.className='territory';const left=document.createElement('span');left.textContent=t.parcel_id===c.capital_parcel_id?'★ '+t.parcel_id+' · CAPITAL':t.parcel_id;const right=document.createElement('span');right.textContent='Territory';line.append(left,right);list.append(line);});card.append(list);host.append(card);});
+}
+async function load(){const s=getState();db=s.db||db;user=s.user||null;claims=s.claims||[];if(!db){$('status').textContent='DATABASE NOT CONNECTED';message('World database is not connected. Reload after the Planet Explorer finishes connecting.');return;}
+ $('status').textContent=user?'● ONLINE · '+(user.email||'MEMBER'):'● ONLINE · SIGN IN REQUIRED';
+ if(!user){countries=[];territories=[];members=[];render();message('Sign in from Planet Explorer to found a country, claim territory, or join a country.');fillSelects();return;}
+ const [c,t,m]=await Promise.all([db.from('mars_countries').select('id,country_code,country_name,flag_emoji,capital_parcel_id,founder_id,government_type,status').eq('status','active').order('created_at',{ascending:true}),db.from('mars_country_territories').select('parcel_id,country_id,assigned_by,assigned_at'),db.from('mars_country_members').select('country_id,user_id,role').eq('user_id',user.id)]);
+ for(const r of [c,t,m])if(r.error)throw r.error;countries=c.data||[];territories=t.data||[];members=m.data||[];fillSelects();render();
+}
+$('found').addEventListener('click',async()=>{try{if(!user)return message('Sign in first.');const name=$('countryName').value.trim(),code=$('countryCode').value.trim().toUpperCase(),flag=$('countryFlag').value.trim()||'🏳️',capital=$('capital').value;if(!name||!code||!capital)return message('Complete the country name, code, and capital parcel.');const {data,error}=await db.rpc('mars_country_create',{p_country_name:name,p_country_code:code,p_flag_emoji:flag,p_capital_parcel_id:capital,p_government_type:$('government').value});if(error)throw error;message('Country founded successfully. You are the founding President.',true);await load();}catch(e){message(e.message||'Could not found country.');}});
+$('addTerritory').addEventListener('click',async()=>{try{if(!user)return message('Sign in first.');const country=$('myCountry').value,parcel=$('territoryParcel').value;if(!country||!parcel)return message('Choose a country you govern and an unassigned parcel you own.');const {error}=await db.rpc('mars_country_assign_territory',{p_country_id:country,p_parcel_id:parcel});if(error)throw error;message('Territory added successfully.',true);await load();}catch(e){message(e.message||'Could not add territory.');}});
+$('join').addEventListener('click',async()=>{try{if(!user)return message('Sign in first.');const id=$('joinCountry').value;if(!id)return message('Choose a country to join.');const {error}=await db.rpc('mars_country_join',{p_country_id:id});if(error)throw error;message('Citizenship registered successfully.',true);await load();}catch(e){message(e.message||'Could not join country.');}});
+document.addEventListener('mars-world-updated',()=>{const s=getState();claims=s.claims||claims;fillSelects();});document.addEventListener('mars-auth-state',()=>load().catch(e=>message(e.message)));window.addEventListener('online',()=>load().catch(e=>message(e.message)));
+const wait=setInterval(()=>{if(window.MarsWorldServer?.getState?.()?.db){clearInterval(wait);load().catch(e=>message(e.message||'Unable to load countries.'));}},250);setTimeout(()=>clearInterval(wait),15000);
+})();
+</script></body></html>
