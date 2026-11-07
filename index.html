@@ -296,8 +296,8 @@ body.authenticated.plot-selected .right button:disabled{opacity:.45!important;cu
 </style>
 
 <style id="local-mars-bilingual-menu">
-#lmMenuToggle{white-space:nowrap;font-weight:850;letter-spacing:.3px;border:1px solid #e0bd78;background:linear-gradient(145deg,#5b4728,#172b40);color:#fff0cf;box-shadow:0 4px 14px #0005}
-#lmMenuDropdown{position:fixed;z-index:10030;left:50%;bottom:76px;transform:translateX(-50%);width:min(270px,calc(100vw - 24px));padding:13px;border:1px solid #c6a66b;background:linear-gradient(150deg,#142b43,#071321);border-radius:15px;box-shadow:0 18px 48px #000b;color:#f5e8cf}
+#lmMenuToggle{position:relative;z-index:10031;pointer-events:auto;touch-action:manipulation;cursor:pointer;white-space:nowrap;font-weight:850;letter-spacing:.3px;border:1px solid #e0bd78;background:linear-gradient(145deg,#5b4728,#172b40);color:#fff0cf;box-shadow:0 4px 14px #0005}
+#lmMenuDropdown{position:fixed;z-index:10032;pointer-events:auto;left:50%;bottom:76px;transform:translateX(-50%);width:min(270px,calc(100vw - 24px));padding:13px;border:1px solid #c6a66b;background:linear-gradient(150deg,#142b43,#071321);border-radius:15px;box-shadow:0 18px 48px #000b;color:#f5e8cf}
 #lmMenuDropdown[hidden]{display:none!important}
 #lmMenuDropdown .lm-menu-heading{font-size:10px;font-weight:900;letter-spacing:1.4px;color:#e7c783;margin:0 0 9px}
 #lmMenuDropdown{max-height:min(72dvh,560px);overflow-y:auto}
@@ -2411,9 +2411,19 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
  const close=document.getElementById('lmSystemsClose');
  const search=document.getElementById('lmSystemsSearch');
  const empty=document.getElementById('lmSystemsEmpty');
- if(!overlay||!toggle||!close||!search)return;
  const guide=document.getElementById('lmMenuDropdown');
  const guideToggle=document.getElementById('lmMenuToggle');
+ // Keep the Guide independent from the optional More directory controls.
+ if(guide&&guideToggle){
+  guideToggle.addEventListener('click',()=>{
+   const willOpen=guide.hasAttribute('hidden');
+   overlay?.classList.remove('open');overlay?.setAttribute('aria-hidden','true');
+   toggle?.setAttribute('aria-expanded','false');floatToggle?.setAttribute('aria-expanded','false');
+   if(willOpen)guide.removeAttribute('hidden');else guide.setAttribute('hidden','');
+   guideToggle.setAttribute('aria-expanded',String(!!willOpen));
+  });
+ }
+ if(!overlay||!toggle||!close||!search)return;
  const open=()=>{
   search.value='';applySearch();
   guide?.setAttribute('hidden','');
@@ -2430,12 +2440,6 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
  floatToggle?.addEventListener('click',()=>overlay.classList.contains('open')?shut():open());
  close.addEventListener('click',shut);
  overlay.addEventListener('click',event=>{if(event.target===overlay)shut();});
- guideToggle?.addEventListener('click',()=>{
-  const willOpen=guide?.hasAttribute('hidden');
-  overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true');toggle.setAttribute('aria-expanded','false');floatToggle?.setAttribute('aria-expanded','false');
-  if(guide){if(willOpen)guide.removeAttribute('hidden');else guide.setAttribute('hidden','');}
-  guideToggle.setAttribute('aria-expanded',String(!!willOpen));
- });
  document.addEventListener('keydown',event=>{
   if(event.key==='Escape'&&overlay.classList.contains('open'))shut();
   if(event.key==='Escape'&&guide&&!guide.hasAttribute('hidden')){guide.setAttribute('hidden','');guideToggle?.setAttribute('aria-expanded','false');}
