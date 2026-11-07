@@ -175,6 +175,13 @@ jobs:
 
           city_module = re.search(r'<script type="module">\s*(.*?)\s*</script>', city, re.S)
           assert city_module, "city builder module missing"
+          assert 'id="lmGuideAccount"' in html and 'href="./city.html#construction"' in html, "actionable Guide links missing"
+          assert "if(tab==='colony'){location.href='./city.html';return}" in html, "Colony navigation must open City Builder"
+          assert 'id="construction"' in city and 'CONSTRUCTION WORKFLOW' in city, "English construction guide missing"
+          assert 'id="place" class="primary wide" disabled' in city and 'id="remove" class="wide" disabled' in city, "construction actions must wait for a selected grid tile"
+          assert "document.querySelector('#place').disabled=false" in city, "selecting a grid tile must enable construction"
+          assert "mars_city_place_structure" in city, "online construction RPC integration missing"
+          assert not re.search(r'[\\u0E00-\\u0E7F]', city), "City Builder must remain English-only"
           assert 'id="constructionList"' in city, "construction progress panel missing"
           assert "function updateConstructionJobs" in city, "construction simulation loop missing"
           assert "function updateConstructionCrew" in city and "rover.userData.armPivot" in city, "active construction crew animation missing"
