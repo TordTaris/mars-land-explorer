@@ -51,6 +51,7 @@ function lockStation(){
  $('#gateText').textContent='Sign in with the registered M-003 owner account to access this workstation.';
 }
 document.addEventListener('mars-auth-state',()=>{lockStation();verify()});
+document.addEventListener('mars-world-updated',()=>{if(!ready)verify()});
 async function verify(){const w=window.MarsWorldServer?.getState?.(),u=w?.user;if(!u){lockStation();return}const owns=(w.claims||[]).some(c=>c.parcel_id==='M-003'&&c.owner_id===u.id);if(!owns){lockStation();$('#status').textContent='ACCESS DENIED';$('#gateTitle').textContent='OWNER ACCESS ONLY';$('#gateText').textContent='This station is restricted to the registered M-003 owner.';return}$('#security').hidden=false;$('#status').textContent='OWNER VERIFIED';$('#gateTitle').textContent='M-003 SECURITY CHECK';$('#gateText').textContent='Enter the M-003 underground-base security password to access the IBM 5100 station.'}
 $('#unlock').onclick=async()=>{const p=$('#pass').value;if(!p)return;$('#hint').textContent='Verifying…';try{const r=await window.MarsWorldServer.m003Access('verify',p);if(r?.error||!r.data?.data){$('#hint').textContent=r?.error?.message||'Access verification failed.';return}ready=true;$('#gate').hidden=true;$('#content').hidden=false;$('#status').textContent='STATION ONLINE';refreshRemote()}catch(e){$('#hint').textContent='Security service unavailable.'}};document.addEventListener('mars-auth-state',verify);document.addEventListener('mars-world-updated',verify);setTimeout(verify,1000);
 </script></body></html>
