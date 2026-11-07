@@ -2610,7 +2610,8 @@ body:not(.lm-star-view-mode) #lm-satellite-link{
   <div class="ov-grid" id="lmOversightChecks" aria-live="polite">
    <div class="ov-check"><b>Waiting for scan</b><p>Run the scan to inspect this browser session.</p></div>
   </div>
-  <div id="lmOversightLastScan">No scan has been run in this session.</div>
+  <div id="lmOversightLastScan">No browser scan has been run in this session.</div>
+  <div class="ov-section"><h3>BACKEND AI AGENT AUDIT · AUTOMATIC EVERY 5 MINUTES</h3><div id="lmOversightAgentReport" class="ov-grid"><div class="ov-check"><b>Waiting for backend report</b><p>Sign in to view the latest server-side diagnostic run.</p></div></div></div>
   <div class="ov-section"><h3>AI AGENT DIRECTORY · NO HUMAN STAFF ROLES</h3><div class="ov-roles">
    <div class="ov-role"><b>AI-01 · Director Agent</b><span>Coordinates the AI oversight team, prioritizes audits, evaluates risk and prepares operational decisions for authorized review.</span></div>
    <div class="ov-role"><b>AI-02 · Operations Agent</b><span>Checks application availability, key routes, navigation, interface loading and service-worker registration.</span></div>
@@ -2618,7 +2619,7 @@ body:not(.lm-star-view-mode) #lm-satellite-link{
    <div class="ov-role"><b>AI-04 · Data & Security Agent</b><span>Reviews data-integrity signals, authentication and access-control evidence when secure backend diagnostics are connected.</span></div>
    <div class="ov-role"><b>AI-05 · Quality & Incident Agent</b><span>Organizes test cases, classifies detected defects, prepares incident reports and verifies fixes.</span></div>
   </div></div>
-  <div class="ov-foot">AI STAFFING POLICY: All five positions are AI-agent roles; no human staff positions are defined in this organization. In this build, the directory describes assigned responsibilities only—the agents are not yet autonomous services and do not run continuously in the background. The browser scan is a local diagnostic, not a saved audit log. Backend health, Supabase connectivity, authentication security, payment integrity and production route checks require secure server-side integrations and authenticated tests. Human authorization remains required for sensitive changes and production actions.</div>
+  <div class="ov-foot">AI STAFFING POLICY: All five positions are AI-agent roles; no human staff positions are defined. The server-side agents run deterministic diagnostic rules every five minutes and persist their findings in Supabase; they do not make LLM/API calls or incur model-token charges. The browser scan remains a separate local diagnostic. These checks do not certify payment integrity, external production routes, or physical satellite infrastructure. Human authorization remains required for sensitive changes and production actions.</div>
  </div>
 </section>
 <script id="lm-oversight-controller">
@@ -2626,7 +2627,24 @@ body:not(.lm-star-view-mode) #lm-satellite-link{
  const overlay=document.getElementById('lmOversightOverlay'),opener=document.getElementById('lmOversightOpen'),closer=document.getElementById('lmOversightClose'),scan=document.getElementById('lmOversightScan'),checks=document.getElementById('lmOversightChecks'),last=document.getElementById('lmOversightLastScan');
  if(!overlay||!opener||!closer||!scan||window.__lmOversightBound)return;window.__lmOversightBound=true;
  const item=(name,state,detail)=>'<div class="ov-check"><div class="ov-check-top"><b>'+name+'</b><span class="ov-state">'+state+'</span></div><p>'+detail+'</p></div>';
+ function safeText(value){return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
+ async function loadBackendReport(){
+  const report=document.getElementById('lmOversightAgentReport');
+  const state=window.MarsWorldServer?.getState?.();
+  const db=state?.db,user=state?.user;
+  if(!report)return;
+  if(!user||!db){report.innerHTML='<div class="ov-check"><b>Sign-in required</b><p>Sign in to LOCAL MARS to view persisted backend audit results.</p></div>';return;}
+  report.innerHTML='<div class="ov-check"><b>Loading backend audit…</b><p>Retrieving the latest scheduled diagnostic report.</p></div>';
+  const {data,error}=await db.from('lmso_audit_runs').select('id,overall_status,agent_count,findings,created_at').order('created_at',{ascending:false}).limit(1).maybeSingle();
+  if(error){report.innerHTML='<div class="ov-check"><b>Backend report unavailable</b><p>'+safeText(error.message)+'</p></div>';return;}
+  if(!data){report.innerHTML='<div class="ov-check"><b>No report yet</b><p>The scheduled audit will publish its first report on the next run.</p></div>';return;}
+  const status=data.overall_status||'UNKNOWN';
+  const statusColor=status==='HEALTHY'?'#9ee6bd':status==='DEGRADED'?'#f2ce87':'#ff9d9d';
+  const agents=Array.isArray(data.findings)?data.findings:[];
+  report.innerHTML='<div class="ov-check"><div class="ov-check-top"><b>Overall system assessment</b><span class="ov-state" style="color:'+statusColor+'">'+safeText(status)+'</span></div><p>'+safeText(data.agent_count)+' AI agents · '+safeText(new Date(data.created_at).toLocaleString())+'</p></div>'+agents.map(agent=>'<div class="ov-check"><div class="ov-check-top"><b>'+safeText(agent.agent_id)+' · '+safeText(agent.agent_name)+'</b><span class="ov-state" style="color:'+(agent.status==='HEALTHY'?'#9ee6bd':agent.status==='DEGRADED'?'#f2ce87':'#ff9d9d')+'">'+safeText(agent.status)+'</span></div><p>'+safeText((agent.checks||[]).map(check=>check.name+': '+check.detail).join(' · '))+'</p></div>').join('');
+ }
  function runScan(){
+  loadBackendReport();
   const online=navigator.onLine;
   const core=!!document.querySelector('.lm-command-dock')&&!!document.getElementById('lmSystemsOverlay');
   const guide=!!document.getElementById('lmMenuToggle')&&!!document.getElementById('lmMenuDropdown');
@@ -2647,7 +2665,7 @@ body:not(.lm-star-view-mode) #lm-satellite-link{
    item('Offline service','CHECKING','Checking service-worker registration…')
   ].join('');
   swPromise.then(([s,d])=>{const el=[...checks.querySelectorAll('.ov-check')].find(x=>x.querySelector('b')?.textContent==='Offline service');if(el)el.outerHTML=item('Offline service',s,d)});
-  last.textContent='Last browser scan: '+new Date().toLocaleString()+' · Results are not persisted.';
+  last.textContent='Last browser scan: '+new Date().toLocaleString()+' · Browser results are temporary; backend agent reports are persisted.';
  }
  function show(){overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');runScan()}
  function hide(){overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true')}
