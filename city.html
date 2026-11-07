@@ -513,7 +513,10 @@ header .brand .brand-lockup small{display:block!important;color:#aebdca!importan
   <button id="satelliteTransmitButton" type="button" class="wide" disabled>📡 TRANSMIT FACTORY TELEMETRY</button>
   <button id="satelliteAutoButton" type="button" class="wide" disabled>AUTO UPLINK · OFF</button>
   <div id="satelliteTransferLog" class="hint" style="margin-top:8px">Transfer log: no telemetry sent yet.</div>
-  <p class="hint" style="margin-bottom:0">Orbital relays and data transfer are simulated in LOCAL MARS. No real satellite or spacecraft connection is established.</p>
+  <div id="satelliteCloudStatus" class="resource-stock" style="margin-top:8px;padding:8px;background:#0b1725;border-radius:8px">CLOUD LINK · SIGN IN REQUIRED</div>
+  <div style="margin-top:10px;font-weight:800;color:#e2c184">CONTROL CENTER · LATEST RECEIVED TELEMETRY</div>
+  <div id="satelliteTelemetryFeed" class="hint" style="margin-top:6px">No cloud telemetry received yet.</div>
+  <p class="hint" style="margin-bottom:0">Orbital relays are simulated. Authenticated uploads are stored in LOCAL MARS Supabase. No real satellite or spacecraft connection is established.</p>
  </section>
 </section></section>
 
@@ -686,15 +689,16 @@ async function loadOnlineCity(){
 async function connectCityOnline(){
  const {data,error}=await marsDB.auth.getSession();if(error)throw error;onlineUser=data.session?.user||null;
  const button=document.querySelector('#cityAccount');if(button)button.textContent=onlineUser?'👤 '+(onlineUser.email||'Account').split('@')[0]:'👤 Sign in';
- if(onlineUser)await loadOnlineCity();
- else{const label=document.querySelector('header .status');if(label)label.textContent='● SIGN IN TO SYNC';}
+ if(onlineUser){await loadOnlineCity();await loadClimateTelemetryFeed()}
+ else{const label=document.querySelector('header .status');if(label)label.textContent='● SIGN IN TO SYNC';loadClimateTelemetryFeed()}
  if(onlineChannel)await marsDB.removeChannel(onlineChannel);
  onlineChannel=marsDB.channel('local-mars-city-shared')
   .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_buildings'},()=>scheduleOnlineCitySync())
   .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_resources'},()=>scheduleOnlineCitySync())
+  .on('postgres_changes',{event:'INSERT',schema:'public',table:'mars_climate_telemetry'},()=>loadClimateTelemetryFeed())
   .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_national_flags'},async()=>{if(!onlineUser)return;const f=await marsDB.from('mars_city_national_flags').select('id,owner_id,country_code,country_name,flag_emoji,x,z,level,created_at').order('created_at',{ascending:true});if(!f.error&&Array.isArray(f.data))syncOnlineFlags(f.data);else console.warn('LOCAL MARS flags realtime sync:',f.error);})
   .subscribe((state,error)=>{const label=document.querySelector('header .status');if(!label)return;if(state==='SUBSCRIBED'){if(onlineReady)label.textContent='● ONLINE · SHARED COLONY';}else if(state==='CHANNEL_ERROR'||state==='TIMED_OUT'){console.warn('LOCAL MARS realtime:',state,error);label.textContent=onlineReady?'● ONLINE · REALTIME RETRY':'● SYNC RETRY';}});
- marsDB.auth.onAuthStateChange((_event,session)=>{onlineUser=session?.user||null;const b=document.querySelector('#cityAccount');if(b)b.textContent=onlineUser?'👤 '+(onlineUser.email||'Account').split('@')[0]:'👤 Sign in';if(onlineUser){const label=document.querySelector('header .status');if(label)label.textContent='● CONNECTING · SYNCING';setTimeout(()=>{if(onlineUser)loadOnlineCity();},0);}else{onlineReady=false;onlineCityId=null;const s=document.querySelector('header .status');if(s)s.textContent='● THIRD-PERSON MODE · LOCAL';}});
+ marsDB.auth.onAuthStateChange((_event,session)=>{onlineUser=session?.user||null;const b=document.querySelector('#cityAccount');if(b)b.textContent=onlineUser?'👤 '+(onlineUser.email||'Account').split('@')[0]:'👤 Sign in';if(onlineUser){const label=document.querySelector('header .status');if(label)label.textContent='● CONNECTING · SYNCING';setTimeout(()=>{if(onlineUser){loadOnlineCity();loadClimateTelemetryFeed()}},0);}else{onlineReady=false;onlineCityId=null;const s=document.querySelector('header .status');if(s)s.textContent='● THIRD-PERSON MODE · LOCAL';}});
 }
 async function placeOnline(type,x,z,level,worldParcelId=null){
  if(!onlineUser){toast('Please sign in before building in the online city.');return false;}
@@ -888,7 +892,7 @@ const constructionStages=["Survey Area","Lay Foundation","Assemble Structure","I
 const constructionSites=[];let lastConstructionUi=0;
 const climateSystems={atmosphere:false,oxygen:false,thermal:false,pressure:false,dust:false};
 const climateTelemetry={temperature:-63,pressure:.6,oxygen:.13,co2:95.3,dust:100};
-const satelliteNetwork={auto:false,packets:0,lastSent:null,signal:96.4,latency:4.8,lastPacket:null};
+const satelliteNetwork={auto:false,packets:0,cloudPackets:0,lastSent:null,lastCloudSent:null,cloudStatus:'SIGN IN REQUIRED',signal:96.4,latency:4.8,lastPacket:null};
 let climateUiAccumulator=0,satelliteUiAccumulator=0;
 function climateFactoryBuilt(){return buildings.some(b=>b.userData?.type==='climate')||constructionSites.some(s=>s.data?.type==='climate'&&s.progress>=1)}
 function updateClimateUI(){
@@ -907,19 +911,37 @@ function updateSatelliteUI(){
  const latency=document.querySelector('#satelliteLatency');if(latency)latency.textContent=factory?satelliteNetwork.latency.toFixed(1)+' s':'—';
  const signal=document.querySelector('#satelliteSignal');if(signal)signal.textContent=factory?satelliteNetwork.signal.toFixed(1)+'%':'—';
  ['satelliteRelay1','satelliteRelay2','satelliteRelay3'].forEach((id,i)=>{const el=document.getElementById(id);if(el)el.textContent=factory?(i===0?'LINKED':i===1?'STANDBY':'BACKUP'):'STANDBY'});
- const send=document.querySelector('#satelliteTransmitButton');if(send)send.disabled=!factory;
- const auto=document.querySelector('#satelliteAutoButton');if(auto){auto.disabled=!factory;auto.textContent='AUTO UPLINK · '+(satelliteNetwork.auto?'ON':'OFF');auto.classList.toggle('active',satelliteNetwork.auto)}
+ const cloud=document.querySelector('#satelliteCloudStatus');if(cloud)cloud.textContent=!onlineUser?'CLOUD LINK · SIGN IN REQUIRED':!activeWorldParcelId?'CLOUD LINK · OPEN A PARCEL WORKSPACE':satelliteNetwork.cloudStatus+' · '+satelliteNetwork.cloudPackets+' PACKETS STORED';
+ const send=document.querySelector('#satelliteTransmitButton');if(send)send.disabled=!factory||!onlineUser||!activeWorldParcelId;
+ const auto=document.querySelector('#satelliteAutoButton');if(auto){auto.disabled=!factory||!onlineUser||!activeWorldParcelId;auto.textContent='AUTO UPLINK · '+(satelliteNetwork.auto?'ON':'OFF');auto.classList.toggle('active',satelliteNetwork.auto)}
  const transfer=document.querySelector('#satelliteTransferLog');if(transfer)transfer.textContent=satelliteNetwork.lastSent?'Last transfer: '+new Date(satelliteNetwork.lastSent).toLocaleString()+' · Packet '+satelliteNetwork.packets+' · '+(satelliteNetwork.lastPacket?.bytes||0)+' bytes':'Transfer log: no telemetry sent yet.';
 }
-function transmitClimateTelemetry(){
+async function loadClimateTelemetryFeed(){
+ const feed=document.querySelector('#satelliteTelemetryFeed');if(!feed)return;
+ if(!onlineUser){feed.textContent='Sign in to view telemetry shared by Mars facilities.';return}
+ const result=await marsDB.from('mars_climate_telemetry').select('id,parcel_id,packet_id,relay_id,temperature_c,pressure_kpa,oxygen_pct,co2_pct,dust_index,signal_pct,latency_ms,created_at').order('created_at',{ascending:false}).limit(8);
+ if(result.error){feed.textContent='Cloud feed unavailable: '+cityErrorText(result.error);return}
+ feed.replaceChildren();
+ if(!result.data?.length){feed.textContent='No cloud telemetry received yet.';return}
+ result.data.forEach(row=>{const item=document.createElement('div');item.style.cssText='padding:7px 8px;margin:5px 0;background:#0b1725;border-radius:7px;border:1px solid rgba(115,160,190,.18)';const head=document.createElement('b');head.style.color='#9ce8c0';head.textContent=row.parcel_id+' · '+row.relay_id;const detail=document.createElement('div');detail.textContent='Temp '+row.temperature_c+' °C · Pressure '+row.pressure_kpa+' kPa · O₂ '+row.oxygen_pct+'% · CO₂ '+row.co2_pct+'%';const meta=document.createElement('small');meta.style.color='#9bb0c9';meta.textContent='Dust '+row.dust_index+' · Signal '+row.signal_pct+'% · '+new Date(row.created_at).toLocaleString();item.append(head,detail,meta);feed.append(item)});
+}
+async function transmitClimateTelemetry(){
  if(!climateFactoryBuilt()){toast('Climate Control Factory is required for satellite uplink');return}
- const packet={id:'MARS-TLM-'+String(satelliteNetwork.packets+1).padStart(6,'0'),parcel:activeWorldParcelId||'LOCAL-CITY',sentAt:new Date().toISOString(),temperature:Number(climateTelemetry.temperature.toFixed(2)),pressure:Number(climateTelemetry.pressure.toFixed(3)),oxygen:Number(climateTelemetry.oxygen.toFixed(3)),co2:Number(climateTelemetry.co2.toFixed(2)),dust:Number(climateTelemetry.dust.toFixed(1)),systems:{...climateSystems},bytes:192};
- satelliteNetwork.packets++;satelliteNetwork.lastSent=packet.sentAt;satelliteNetwork.lastPacket=packet;satelliteNetwork.signal=Math.max(88,Math.min(99.8,96.4+Math.sin(satelliteNetwork.packets*.73)*2.1));satelliteNetwork.latency=Number((4.2+Math.abs(Math.sin(satelliteNetwork.packets*.41))*2.6).toFixed(1));
- updateSatelliteUI();save(false);toast('Telemetry packet '+packet.id+' transmitted through simulated orbital relay');
+ if(!onlineUser||!activeWorldParcelId){satelliteNetwork.cloudStatus='SIGN IN / PARCEL REQUIRED';updateSatelliteUI();toast('Sign in and open the M-001 parcel workspace to upload telemetry');return}
+ const nextPacket=satelliteNetwork.packets+1,packetId='MARS-TLM-'+Date.now()+'-'+nextPacket;
+ const signal=Math.max(88,Math.min(99.8,96.4+Math.sin(nextPacket*.73)*2.1));
+ const latency=Number((4.2+Math.abs(Math.sin(nextPacket*.41))*2.6).toFixed(1));
+ const relays=['MARS-RELAY-01','POLAR-RELAY-02','DEEP-RELAY-03'],relayId=relays[(nextPacket-1)%relays.length];
+ const row={parcel_id:activeWorldParcelId,owner_id:onlineUser.id,packet_id:packetId,relay_id:relayId,temperature_c:Number(climateTelemetry.temperature.toFixed(2)),pressure_kpa:Number(climateTelemetry.pressure.toFixed(3)),oxygen_pct:Number(climateTelemetry.oxygen.toFixed(3)),co2_pct:Number(climateTelemetry.co2.toFixed(2)),dust_index:Number(climateTelemetry.dust.toFixed(1)),systems:{...climateSystems},signal_pct:Number(signal.toFixed(2)),latency_ms:Math.round(latency*1000)};
+ satelliteNetwork.cloudStatus='UPLINKING';updateSatelliteUI();
+ const upload=await marsDB.from('mars_climate_telemetry').insert(row);
+ if(upload.error){satelliteNetwork.cloudStatus='UPLOAD FAILED';updateSatelliteUI();console.error('Climate telemetry upload failed:',upload.error);toast('Telemetry not stored: '+cityErrorText(upload.error));return}
+ satelliteNetwork.packets=nextPacket;satelliteNetwork.cloudPackets++;satelliteNetwork.lastSent=new Date().toISOString();satelliteNetwork.lastCloudSent=satelliteNetwork.lastSent;satelliteNetwork.lastPacket={...row,bytes:192};satelliteNetwork.signal=signal;satelliteNetwork.latency=latency;satelliteNetwork.cloudStatus='CLOUD SYNC OK';
+ updateSatelliteUI();save(false);await loadClimateTelemetryFeed();toast('Telemetry stored in cloud · '+packetId);
 }
 document.querySelector('#satelliteTransmitButton')?.addEventListener('click',transmitClimateTelemetry);
 document.querySelector('#satelliteAutoButton')?.addEventListener('click',()=>{if(!climateFactoryBuilt())return;satelliteNetwork.auto=!satelliteNetwork.auto;satelliteUiAccumulator=0;updateSatelliteUI();save(false);toast('Satellite auto uplink '+(satelliteNetwork.auto?'enabled':'disabled'))});
-function updateSatelliteNetwork(dt){if(!satelliteNetwork.auto||!climateFactoryBuilt())return;satelliteUiAccumulator+=dt;if(satelliteUiAccumulator>=15){satelliteUiAccumulator=0;transmitClimateTelemetry()}}
+function updateSatelliteNetwork(dt){if(!satelliteNetwork.auto||!climateFactoryBuilt()||!onlineUser||!activeWorldParcelId)return;satelliteUiAccumulator+=dt;if(satelliteUiAccumulator>=15){satelliteUiAccumulator=0;transmitClimateTelemetry().catch(e=>console.error('Automatic climate telemetry upload:',e))}}
 function updateClimateSimulation(dt){
  if(!climateFactoryBuilt())return;
  const rate=Math.min(dt,.1);
