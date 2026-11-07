@@ -13,42 +13,73 @@
 </style><link rel="stylesheet" href="./premium-ui.css?v=20261106">
 </head><body>
 <header><div class="brand">LOCAL <b>MARS</b> / M-003</div><div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;justify-content:flex-end"><span class="stamp">TOP SECRET</span><div class="status" id="status">VERIFYING ACCESS</div></div></header>
-<main id="content" hidden>
-<section class="hero"><div class="classification">TOP SECRET // EYES ONLY // M-003</div><div class="eyebrow">CLASSIFIED SYSTEM DATABASE · EXPERIMENTAL DIVISION</div><h1>PROJECT DIMENSION GATE</h1>
-<div class="file-meta"><div class="meta-cell"><small>FILE DESIGNATION</small><b>M003-DG-001</b></div><div class="meta-cell"><small>SECURITY CLEARANCE</small><b>OWNER / LEVEL 5</b></div><div class="meta-cell"><small>DOCUMENT STATUS</small><b>RESTRICTED ARCHIVE</b></div></div>
-<div class="file-note">All documents and statuses are fictional LOCAL MARS simulation data. The classification is an in-app feature, not a government document or real-world secret.</div><p>M-003 advanced experimental database: development records for simulated magnetic-field waves, dimensional gate operations, matter transfer, and human transfer within LOCAL MARS.</p>
-<svg class="art" viewBox="0 0 960 390" role="img" aria-label="Illuminated dimensional gate in a science-fiction laboratory"><defs><radialGradient id="glow"><stop stop-color="#d7ffff"/><stop offset=".2" stop-color="#62ddeb"/><stop offset=".65" stop-color="#405cb4" stop-opacity=".55"/><stop offset="1" stop-color="#152443" stop-opacity="0"/></radialGradient><linearGradient id="wall" x2="0" y2="1"><stop stop-color="#193c56"/><stop offset="1" stop-color="#071321"/></linearGradient></defs><rect width="960" height="390" fill="url(#wall)"/><path d="M0 310H960M0 350H960" stroke="#31536b" stroke-width="3"/><path d="M130 390V95Q130 48 180 48H780Q830 48 830 95V390" fill="#091827" stroke="#547c91" stroke-width="8"/><ellipse cx="480" cy="205" rx="270" ry="190" fill="url(#glow)"/><ellipse cx="480" cy="205" rx="126" ry="170" fill="none" stroke="#7ceafa" stroke-width="13"/><ellipse cx="480" cy="205" rx="153" ry="192" fill="none" stroke="#d9b46f" stroke-width="5" stroke-dasharray="15 13"/><path d="M480 0V52M480 365V390M195 205H310M650 205H765M275 65L340 112M620 298L685 345M685 65L620 112M340 298L275 345" stroke="#73e4f2" stroke-width="6"/><path d="M410 205Q480 110 550 205Q480 300 410 205Z" fill="#e4ffff" opacity=".28"/><path d="M350 330H610" stroke="#d9b46f" stroke-width="5"/></svg>
-<p class="disclaimer">Images and records are fictional simulation elements, not proven technology or real-world experimental instructions.</p></section>
-<section class="panel"><div class="eyebrow">SYSTEM RECORDS / CONTROLLED DATA</div><h2>EXPERIMENTAL SYSTEM RECORDS</h2><div class="grid">
-<div class="phase"><b>01 · MAGNETIC FIELD</b><p>Magnetic-field and energy-wave control module.</p><small>SYSTEM STATUS: COMPLETED</small></div>
-<div class="phase"><b>02 · DIMENSIONAL SIGNAL</b><p>Simulated dimensional-anomaly signal detection records.</p><small>SYSTEM STATUS: COMPLETED</small></div>
-<div class="phase"><b>03 · GATE ACTIVATION</b><p>Dimensional gate ring status: activated in the simulated laboratory.</p><small>SYSTEM STATUS: COMPLETED</small></div>
-<div class="phase"><b>04 · MATTER TRANSFER</b><p>Simulated object transfer through the dimensional gate.</p><small>SYSTEM STATUS: COMPLETED</small></div>
-<div class="phase"><b>05 · HUMAN TRANSFER</b><p>Simulated human transfer test records through the dimensional gate.</p><small>SYSTEM STATUS: COMPLETED</small></div>
-<div class="phase"><b>06 · STABILITY ARCHIVE</b><p>Project stability database and operational history.</p><small>RECORD STATUS: ARCHIVED</small></div>
-</div></section><a class="action" href="./m003-base.html">← RETURN TO M-003 UNDERGROUND BASE</a></main>
-<section id="gate" class="panel"><div class="classification">TOP SECRET // ACCESS CONTROL</div><div class="eyebrow">M-003 OWNER SECURITY</div><h2 id="gateTitle">VERIFYING AUTHORIZATION</h2><p id="gateText">This page is restricted to the authenticated owner of M-003.</p><div style="max-width:380px;margin:14px auto;text-align:left"><label for="secretPass">M-003 SECURITY PASSWORD</label><input id="secretPass" type="password" minlength="10" maxlength="128" autocomplete="current-password" placeholder="Enter facility password" style="width:100%;padding:12px;background:#071321;color:white;border:1px solid #49627a;border-radius:8px"><button class="action" id="secretUnlock" type="button" style="margin-top:10px;width:100%">VERIFY AND UNSEAL</button><p id="secretHint" class="muted"></p></div><a class="action" href="./index.html">RETURN TO EXPLORATION</a></section>
+<main id="content" hidden><section class="panel"><div class="eyebrow">M-003 · PRIVATE ARCHIVE</div><h1 id="archiveTitle">SECURE ARCHIVE</h1><p>Records are requested from the protected server only after owner verification and password validation.</p><div id="secureRecords" aria-live="polite"></div></section><a class="action" href="./m003-base.html">← RETURN TO M-003 BASE</a></main>
+<section id="gate" class="panel"><div class="classification">TOP SECRET // ACCESS CONTROL</div><div class="eyebrow">M-003 OWNER SECURITY</div><h2 id="gateTitle">VERIFYING AUTHORIZATION</h2><p id="gateText">This page is restricted to the authenticated owner of M-003.</p><div style="max-width:380px;margin:14px auto;text-align:left">
+ <label for="secretPass">M-003 SECURITY PASSWORD</label>
+ <input id="secretPass" type="password" minlength="10" maxlength="128" autocomplete="new-password" placeholder="10–128 characters" style="width:100%;padding:12px;background:#071321;color:white;border:1px solid #49627a;border-radius:8px">
+ <label for="secretConfirm" id="confirmLabel" hidden style="display:block;margin-top:10px">CONFIRM PASSWORD</label>
+ <input id="secretConfirm" type="password" minlength="10" maxlength="128" autocomplete="new-password" placeholder="Confirm password" hidden style="width:100%;padding:12px;background:#071321;color:white;border:1px solid #49627a;border-radius:8px;margin-top:6px">
+ <button class="action" id="secretUnlock" type="button" style="margin-top:10px;width:100%">CHECKING SECURITY…</button>
+ <p id="secretHint" class="muted" aria-live="polite"></p></div><a class="action" href="./index.html">RETURN TO EXPLORATION</a></section>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script><script src="./world-server.js"></script><script>
-let secretUnlocked=false;
-async function verifyM003Secret(){
- const s=window.MarsWorldServer?.getState?.(),u=s?.user;
- if(!u){document.querySelector('#status').textContent='LOCKED';document.querySelector('#gateTitle').textContent='SIGN-IN REQUIRED';return}
- const owns=(s.claims||[]).some(c=>c.parcel_id==='M-003'&&c.owner_id===u.id);
- if(!owns){document.querySelector('#status').textContent='DENIED';document.querySelector('#gateTitle').textContent='OWNER ACCESS ONLY';document.querySelector('#gateText').textContent='Only the registered M-003 owner may access this sealed archive.';return}
- document.querySelector('#status').textContent='OWNER VERIFIED · SEALED';
- document.querySelector('#gateTitle').textContent='M-003 SECURITY CHECK';
+let m003Mode='loading';
+const $m=id=>document.getElementById(id);
+function showM003Message(message){$m('secretHint').textContent=message;}
+function setM003Mode(mode){
+ m003Mode=mode;
+ const setup=mode==='setup';
+ $m('confirmLabel').hidden=!setup;$m('secretConfirm').hidden=!setup;
+ $m('secretPass').autocomplete=setup?'new-password':'current-password';
+ $m('secretPass').placeholder=setup?'Create a strong password':'Enter facility password';
+ $m('secretUnlock').textContent=setup?'CREATE PASSWORD & UNLOCK':'VERIFY AND UNSEAL';
+ $m('status').textContent=setup?'PASSWORD SETUP REQUIRED':'OWNER VERIFIED · SEALED';
+ $m('gateTitle').textContent=setup?'SET M-003 SECURITY PASSWORD':'M-003 SECURITY CHECK';
 }
-document.querySelector('#secretUnlock').addEventListener('click',async()=>{
- const s=window.MarsWorldServer?.getState?.(),u=s?.user,p=document.querySelector('#secretPass').value,h=document.querySelector('#secretHint');
- if(!u||p.length<10){h.textContent='Sign in and enter the facility password (10–128 characters).';return}
- if(!(s.claims||[]).some(c=>c.parcel_id==='M-003'&&c.owner_id===u.id)){h.textContent='Owner verification failed.';return}
- const btn=document.querySelector('#secretUnlock');btn.disabled=true;h.textContent='Verifying…';
- try{const r=await window.MarsWorldServer.m003Access('verify',p);if(r?.error||!r?.data?.data){h.textContent=r?.error?.message||'Incorrect password or access denied.';return}
- secretUnlocked=true;document.querySelector('#gate').hidden=true;document.querySelector('#content').hidden=false;document.querySelector('#status').textContent='OWNER VERIFIED · UNSEALED';
- }catch(e){h.textContent='Security service unavailable.'}finally{btn.disabled=false}
+function renderM003Records(records){
+ const root=$m('secureRecords');root.replaceChildren();
+ const title=$m('archiveTitle');title.textContent="PROJECT DIMENSION GATE ARCHIVE";
+ if(!Array.isArray(records)||records.length===0){const p=document.createElement('p');p.textContent='No private records have been added to this archive yet.';root.append(p);return;}
+ records.forEach(row=>{
+  const card=document.createElement('section');card.className='panel';
+  const h=document.createElement('h2');h.textContent='LEVEL '+String(row.floor_no??'—')+' · '+String(row.room_name??'PRIVATE RECORD');
+  const p=document.createElement('p');p.textContent=String(row.description??'');
+  const s=document.createElement('div');s.className='status';s.textContent='STATUS: '+String(row.system_status??'RESTRICTED');
+  card.append(h,p,s);root.append(card);
+ });
+}
+async function initializeM003Gate(){
+ const s=window.MarsWorldServer?.getState?.();
+ if(!s?.user){$m('status').textContent='LOCKED';$m('gateTitle').textContent='SIGN-IN REQUIRED';$m('secretUnlock').disabled=true;showM003Message('Sign in to LOCAL MARS with the registered M-003 owner account first.');return;}
+ $m('secretUnlock').disabled=true;showM003Message('Checking owner authorization and security setup…');
+ try{
+  const r=await window.MarsWorldServer.m003Access('status');
+  if(r?.error){showM003Message(r.error.message||'Security service unavailable.');return;}
+  setM003Mode(r?.data?.has_password?'verify':'setup');
+  showM003Message(r?.data?.has_password?'Owner recognized. Enter the M-003 security password.':'Create the first M-003 security password. It is stored as a salted password hash.');
+ }catch(e){showM003Message('Security service unavailable. Please retry.');}
+ finally{$m('secretUnlock').disabled=false;}
+}
+$m('secretUnlock').addEventListener('click',async()=>{
+ const s=window.MarsWorldServer?.getState?.(),password=$m('secretPass').value;
+ if(!s?.user){showM003Message('Sign in is required.');return;}
+ if(password.length<10||password.length>128){showM003Message('Password must be 10–128 characters.');return;}
+ if(m003Mode==='setup'&&password!==$m('secretConfirm').value){showM003Message('The passwords do not match.');return;}
+ const btn=$m('secretUnlock');btn.disabled=true;showM003Message('Verifying securely with the M-003 server…');
+ try{
+  if(m003Mode==='setup'){
+   const created=await window.MarsWorldServer.m003Access('setup',password,$m('secretConfirm').value);
+   if(created?.error){showM003Message(created.error.message||'Password setup failed.');return;}
+  }
+  const result=await window.MarsWorldServer.m003Access('verify',password);
+  if(result?.error){showM003Message(result.error.message||'Access denied.');return;}
+  if(!result?.data?.ok||!Array.isArray(result?.data?.data)){showM003Message('The server did not return a valid private archive response.');return;}
+  renderM003Records(result.data.data);
+  $m('gate').hidden=true;$m('content').hidden=false;$m('status').textContent='OWNER VERIFIED · PRIVATE SESSION';
+ }catch(e){showM003Message('Security service unavailable. No private data was displayed.');}
+ finally{btn.disabled=false;}
 });
-document.addEventListener('mars-auth-state',verifyM003Secret);
-document.addEventListener('mars-world-updated',verifyM003Secret);
-setTimeout(verifyM003Secret,1000);
+document.addEventListener('mars-auth-state',initializeM003Gate);
+document.addEventListener('mars-world-updated',initializeM003Gate);
+setTimeout(initializeM003Gate,900);
 </script><script src="./easy-play.js" defer></script><script src="./i18n.js"></script>
 </body></html>
