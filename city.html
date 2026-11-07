@@ -338,6 +338,93 @@ header .brand .brand-lockup small{display:block!important;color:#aebdca!importan
 @media(max-width:360px){header .brand .brand-lockup small{display:none!important}}
 </style>
 <link rel="stylesheet" href="./premium-ui.css?v=20261106">
+<style id="local-mars-colony-mobile-layout-v4">
+/* Mobile Colony: compact command header, clear world viewport, thumb-safe controls */
+@media(max-width:760px){
+  body{min-height:100dvh;min-height:100svh}
+  header{
+    top:calc(env(safe-area-inset-top,0px) + 6px)!important;
+    left:7px!important;right:7px!important;
+    height:52px!important;min-height:52px!important;
+    padding:5px 8px!important;gap:6px!important;
+    border-radius:12px!important;overflow:hidden!important;
+  }
+  header>.brand{flex:1 1 42%;min-width:0!important;gap:5px!important}
+  header .brand-insignia{width:32px!important;height:32px!important;min-width:32px!important}
+  header .brand-lockup{min-width:0!important}
+  header .brand-lockup strong{font-size:clamp(11px,3.4vw,15px)!important;letter-spacing:1px!important}
+  header .brand-lockup small{display:block!important;font-size:6px!important;letter-spacing:.65px!important;white-space:nowrap!important}
+  header>div:last-child{
+    flex:0 1 55%;min-width:0!important;max-width:55%;
+    display:flex!important;align-items:center!important;justify-content:flex-end!important;
+    gap:4px!important;overflow:hidden!important
+  }
+  #cityAccount{
+    flex:0 1 auto!important;min-width:0!important;max-width:58%!important;
+    overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+    font-size:9px!important;padding:6px 7px!important
+  }
+  header .status{
+    flex:0 1 auto!important;min-width:0!important;max-width:42%!important;
+    overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+    font-size:6px!important;letter-spacing:0!important;padding:5px 5px!important
+  }
+  .view-toolbar{
+    top:calc(env(safe-area-inset-top,0px) + 66px)!important;
+    left:7px!important;right:7px!important;transform:none!important;
+    width:auto!important;max-width:none!important;
+    display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    gap:5px!important;padding:6px!important;border-radius:12px!important;
+    min-height:0!important
+  }
+  .view-btn{
+    width:100%!important;min-width:0!important;height:36px!important;min-height:36px!important;
+    padding:5px 6px!important;font-size:10px!important;line-height:1.1!important;
+    white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+    border-radius:9px!important
+  }
+  .view-btn.subtle{font-size:9px!important}
+  .panel.left.open,.panel.right.open{
+    top:calc(env(safe-area-inset-top,0px) + 158px)!important;
+    left:7px!important;right:7px!important;width:auto!important;
+    max-height:calc(100dvh - 300px - env(safe-area-inset-bottom,0px))!important;
+    padding:10px!important
+  }
+  .pad{
+    left:10px!important;bottom:calc(env(safe-area-inset-bottom,0px) + 68px)!important;
+    width:96px!important;height:86px!important;gap:3px!important;opacity:.72!important
+  }
+  .pad button{font-size:17px!important;border-radius:10px!important}
+  .pad [data-m="jump"]{font-size:9px!important}
+  .look{
+    right:9px!important;bottom:calc(env(safe-area-inset-bottom,0px) + 76px)!important;
+    max-width:43vw!important;font-size:8px!important;line-height:1.25!important;
+    padding:7px 8px!important;border-radius:9px!important
+  }
+  .bottom{
+    left:50%!important;right:auto!important;transform:translateX(-50%)!important;
+    bottom:calc(env(safe-area-inset-bottom,0px) + 7px)!important;
+    width:max-content!important;max-width:calc(100vw - 18px)!important;
+    display:flex!important;justify-content:center!important;gap:4px!important;
+    padding:5px!important;border-radius:12px!important
+  }
+  .bottom button{flex:0 0 auto!important;font-size:9px!important;padding:8px 9px!important}
+  .toast{bottom:calc(env(safe-area-inset-bottom,0px) + 62px)!important;max-width:88vw!important}
+  #world, #world canvas{touch-action:none}
+}
+@media(max-width:390px){
+  header .brand-lockup small{display:none!important}
+  header>.brand{flex-basis:38%}
+  header>div:last-child{flex-basis:60%;max-width:60%}
+  header .status{font-size:5px!important;padding:4px!important}
+  .view-btn{font-size:9px!important}
+  .bottom button{padding:7px 7px!important;font-size:8px!important}
+}
+@media(min-width:761px){
+  header{display:flex;align-items:center;gap:16px}
+  .view-toolbar{top:72px}
+}
+</style>
 </head><body><div id="world"></div>
 <header><div class="brand"><span class="brand-insignia" aria-hidden="true">LM</span><span class="brand-lockup"><strong>LOCAL <b>MARS</b></strong><small>PLANETARY CIVILIZATION NETWORK</small></span></div><div style="display:flex;align-items:center;gap:7px"><button id="cityAccount" type="button" style="pointer-events:auto;font-size:10px;padding:7px 9px">👤 Sign in</button><div class="status">● THIRD-PERSON MODE · LOCAL</div></div></header>
 <nav class="view-toolbar" aria-label="Screen Controls">
