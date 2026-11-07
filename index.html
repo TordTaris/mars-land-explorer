@@ -986,6 +986,10 @@ header .status{flex:0 1 40%!important;width:auto!important;min-width:0!important
 #lmSolarOpen:active{transform:scale(.94)}
 @media(max-width:760px){#lmSolarOpen{top:calc(env(safe-area-inset-top, 0px) + 60px);right:12px;width:44px;height:44px;font-size:23px}}
 </style>
+<style id="local-mars-guide-capture-fix">
+#lmMenuToggle{position:relative!important;z-index:2147483001!important;pointer-events:auto!important;touch-action:manipulation!important}
+#lmMenuDropdown:not([hidden]){display:block!important;visibility:visible!important;pointer-events:auto!important;z-index:2147483000!important;position:fixed!important;left:50%!important;right:auto!important;bottom:calc(env(safe-area-inset-bottom,0px) + 68px)!important;top:auto!important;transform:translateX(-50%)!important;width:min(320px,calc(100vw - 20px))!important;max-height: min(72dvh,560px)!important;overflow-y:auto!important}
+</style>
 </head>
 <body>\n<div id="lmStartup" role="status" aria-live="polite"><div id="lmStartupCard"><div id="lmStartupMark">LOCAL <b>MARS</b></div><div id="lmStartupText">INITIALIZING PLANETARY SYSTEMS…</div><div id="lmStartupTrack"></div></div></div>
 <script>
@@ -2413,15 +2417,38 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
  const empty=document.getElementById('lmSystemsEmpty');
  const guide=document.getElementById('lmMenuDropdown');
  const guideToggle=document.getElementById('lmMenuToggle');
- // Keep the Guide independent from the optional More directory controls.
- if(guide&&guideToggle){
-  guideToggle.addEventListener('click',()=>{
-   const willOpen=guide.hasAttribute('hidden');
-   overlay?.classList.remove('open');overlay?.setAttribute('aria-hidden','true');
-   toggle?.setAttribute('aria-expanded','false');floatToggle?.setAttribute('aria-expanded','false');
-   if(willOpen)guide.removeAttribute('hidden');else guide.setAttribute('hidden','');
-   guideToggle.setAttribute('aria-expanded',String(!!willOpen));
-  });
+ // Guide uses a document-level capture handler so other dock scripts cannot swallow the tap.
+ if(guide&&guideToggle&&!window.__lmGuideCaptureBound){
+  window.__lmGuideCaptureBound=true;
+  const closeGuide=()=>{
+   guide.setAttribute('hidden','');
+   guideToggle.setAttribute('aria-expanded','false');
+   guide.style.display='none';
+  };
+  document.addEventListener('click',event=>{
+   const trigger=event.target instanceof Element?event.target.closest('#lmMenuToggle'):null;
+   if(trigger){
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    const opening=guide.hasAttribute('hidden');
+    overlay?.classList.remove('open');overlay?.setAttribute('aria-hidden','true');
+    toggle?.setAttribute('aria-expanded','false');floatToggle?.setAttribute('aria-expanded','false');
+    if(opening){
+     guide.removeAttribute('hidden');
+     guide.style.display='block';
+     guide.style.visibility='visible';
+     guide.style.pointerEvents='auto';
+     guide.style.zIndex='2147483000';
+     guideToggle.setAttribute('aria-expanded','true');
+    }else closeGuide();
+    return;
+   }
+   if(!guide.hasAttribute('hidden')&&!guide.contains(event.target)){
+    closeGuide();
+   }
+  },true);
+  document.addEventListener('keydown',event=>{if(event.key==='Escape')closeGuide();});
  }
  if(!overlay||!toggle||!close||!search)return;
  const open=()=>{
