@@ -339,81 +339,81 @@ header .brand .brand-lockup small{display:block!important;color:#aebdca!importan
 </style>
 <link rel="stylesheet" href="./premium-ui.css?v=20261106">
 </head><body><div id="world"></div>
-<header><div class="brand"><span class="brand-insignia" aria-hidden="true">LM</span><span class="brand-lockup"><strong>LOCAL <b>MARS</b></strong><small>PLANETARY CIVILIZATION NETWORK</small></span></div><div style="display:flex;align-items:center;gap:7px"><button id="cityAccount" type="button" style="pointer-events:auto;font-size:10px;padding:7px 9px">👤 เข้าสู่ระบบ</button><div class="status">● THIRD-PERSON MODE · LOCAL</div></div></header>
-<nav class="view-toolbar" aria-label="เครื่องมือควบคุมหน้าจอ">
- <button id="toggleInfo" class="view-btn" aria-expanded="false">◉ ข้อมูลอาณานิคม</button>
- <button id="toggleBuild" class="view-btn" aria-expanded="false">＋ ก่อสร้าง</button>
- <button id="hidePanels" class="view-btn subtle">ซ่อนเมนู</button>
- <button id="openInventory" class="view-btn">🎒 กระเป๋าทรัพยากร</button>
+<header><div class="brand"><span class="brand-insignia" aria-hidden="true">LM</span><span class="brand-lockup"><strong>LOCAL <b>MARS</b></strong><small>PLANETARY CIVILIZATION NETWORK</small></span></div><div style="display:flex;align-items:center;gap:7px"><button id="cityAccount" type="button" style="pointer-events:auto;font-size:10px;padding:7px 9px">👤 Sign in</button><div class="status">● THIRD-PERSON MODE · LOCAL</div></div></header>
+<nav class="view-toolbar" aria-label="Screen Controls">
+ <button id="toggleInfo" class="view-btn" aria-expanded="false">◉ Colony Data</button>
+ <button id="toggleBuild" class="view-btn" aria-expanded="false">＋ Build</button>
+ <button id="hidePanels" class="view-btn subtle">Hide Menu</button>
+ <button id="openInventory" class="view-btn">🎒 Resource Inventory</button>
 </nav>
 <button id="showMenu" type="button" aria-label="Show menu">☰ SHOW MENU</button>
 
-<section class="panel left"><h3>COLONY COMMAND</h3><div class="row"><span>โหมด</span><b id="modeLabel">เดินสำรวจ</b></div><div class="row"><span>พิกัด</span><b id="position">0, 0</b></div><div class="row"><span>อาคาร</span><b id="count">0</b></div><div class="row"><span>เครดิตจำลอง</span><b id="credits">฿9,000 THB</b></div><p class="hint">กล้องอยู่ด้านหลังตัวละคร มองเห็นนักสำรวจและเมืองรอบตัว หมุนกล้องโดยลากหน้าจอด้านขวาหรือบนพื้นที่ว่าง</p><div class="tools"><button id="walk" class="active">🚶 เดินสำรวจ</button><button id="buildMode">🏗️ สร้างเมือง</button></div></section>
-<section class="panel right"><h3>BUILD MENU</h3><div class="row"><span>พื้นที่เลือก</span><b id="plot">ยังไม่เลือก</b></div><div class="row"><span>แปลงดาวอังคาร</span><b id="worldParcelLabel">ยังไม่เลือก</b></div><div class="hint" id="worldParcelHint">เลือกแปลงจากแผนที่ดาวอังคารเพื่อผูกงานก่อสร้าง</div><div id="worldParcelStatus" class="job-card" role="status" aria-live="polite">ยังไม่ได้เลือกแปลงเป้าหมาย</div><div class="row"><span>ถนน</span><b id="roadCount">0</b></div><div class="row"><span>NPC</span><b id="npcCount">3</b></div>
+<section class="panel left"><h3>COLONY COMMAND</h3><div class="row"><span>Mode</span><b id="modeLabel">Explore Mode</b></div><div class="row"><span>Coordinates</span><b id="position">0, 0</b></div><div class="row"><span> buildings</span><b id="count">0</b></div><div class="row"><span>Simulation Credits</span><b id="credits">9,000 Simulation Credits</b></div><p class="hint">The camera follows behind your character, showing the explorer and surrounding city. Drag the right side of the screen or an open area to rotate the camera.</p><div class="tools"><button id="walk" class="active">🚶 Explore Mode</button><button id="buildMode">🏗️ Build City</button></div></section>
+<section id="construction" class="panel right"><h3>BUILD MENU</h3><div class="job-card" style="margin:8px 0 12px" role="note"><b>CONSTRUCTION WORKFLOW</b><p style="margin:6px 0 0">1. Select a grid tile. 2. Choose a structure. 3. Press Place Structure. 4. Track progress in Live Construction. Sign in to synchronize buildings across devices.</p><p style="margin:6px 0 0"><a href="./index.html" style="color:#8de4bd">← Open Planet Explorer</a></p></div><div class="row"><span>Selected Plot</span><b id="plot">None Selected</b></div><div class="row"><span>แปลงMars</span><b id="worldParcelLabel">None Selected</b></div><div class="hint" id="worldParcelHint">เลือกแปลงจากแผนที่Marsเพื่อผูกงานConstruction</div><div id="worldParcelStatus" class="job-card" role="status" aria-live="polite">Not selectedTarget Parcel</div><div class="row"><span>Road</span><b id="roadCount">0</b></div><div class="row"><span>NPC</span><b id="npcCount">3</b></div>
 <div style="margin-top:10px;padding:9px;border:1px solid #c9a66e66;border-radius:11px;background:#091a2b">
- <div style="font-size:10px;font-weight:800;letter-spacing:1px;color:#e4c58b;margin-bottom:6px">🏳️ ธงประจำชาติสมาชิก</div>
+ <div style="font-size:10px;font-weight:800;letter-spacing:1px;color:#e4c58b;margin-bottom:6px">🏳️ Member National Flag</div>
  <select id="flagCountry" class="wide" style="margin-top:0">
-  <option value="TH" data-name="ประเทศไทย" data-emoji="🇹🇭">🇹🇭 ประเทศไทย</option>
-  <option value="US" data-name="สหรัฐอเมริกา" data-emoji="🇺🇸">🇺🇸 สหรัฐอเมริกา</option>
-  <option value="GB" data-name="สหราชอาณาจักร" data-emoji="🇬🇧">🇬🇧 สหราชอาณาจักร</option>
-  <option value="JP" data-name="ญี่ปุ่น" data-emoji="🇯🇵">🇯🇵 ญี่ปุ่น</option>
-  <option value="KR" data-name="เกาหลีใต้" data-emoji="🇰🇷">🇰🇷 เกาหลีใต้</option>
-  <option value="CN" data-name="จีน" data-emoji="🇨🇳">🇨🇳 จีน</option>
-  <option value="IN" data-name="อินเดีย" data-emoji="🇮🇳">🇮🇳 อินเดีย</option>
-  <option value="DE" data-name="เยอรมนี" data-emoji="🇩🇪">🇩🇪 เยอรมนี</option>
-  <option value="FR" data-name="ฝรั่งเศส" data-emoji="🇫🇷">🇫🇷 ฝรั่งเศส</option>
-  <option value="BR" data-name="บราซิล" data-emoji="🇧🇷">🇧🇷 บราซิล</option>
-  <option value="CA" data-name="แคนาดา" data-emoji="🇨🇦">🇨🇦 แคนาดา</option>
-  <option value="AU" data-name="ออสเตรเลีย" data-emoji="🇦🇺">🇦🇺 ออสเตรเลีย</option>
-  <option value="RU" data-name="รัสเซีย" data-emoji="🇷🇺">🇷🇺 รัสเซีย</option>
-  <option value="IT" data-name="อิตาลี" data-emoji="🇮🇹">🇮🇹 อิตาลี</option>
-  <option value="ES" data-name="สเปน" data-emoji="🇪🇸">🇪🇸 สเปน</option>
-  <option value="ID" data-name="อินโดนีเซีย" data-emoji="🇮🇩">🇮🇩 อินโดนีเซีย</option>
-  <option value="VN" data-name="เวียดนาม" data-emoji="🇻🇳">🇻🇳 เวียดนาม</option>
-  <option value="SG" data-name="สิงคโปร์" data-emoji="🇸🇬">🇸🇬 สิงคโปร์</option>
-  <option value="MY" data-name="มาเลเซีย" data-emoji="🇲🇾">🇲🇾 มาเลเซีย</option>
-  <option value="PH" data-name="ฟิลิปปินส์" data-emoji="🇵🇭">🇵🇭 ฟิลิปปินส์</option>
-  <option value="NZ" data-name="นิวซีแลนด์" data-emoji="🇳🇿">🇳🇿 นิวซีแลนด์</option>
-  <option value="MX" data-name="เม็กซิโก" data-emoji="🇲🇽">🇲🇽 เม็กซิโก</option>
-  <option value="NL" data-name="เนเธอร์แลนด์" data-emoji="🇳🇱">🇳🇱 เนเธอร์แลนด์</option>
-  <option value="SE" data-name="สวีเดน" data-emoji="🇸🇪">🇸🇪 สวีเดน</option>
-  <option value="CH" data-name="สวิตเซอร์แลนด์" data-emoji="🇨🇭">🇨🇭 สวิตเซอร์แลนด์</option>
-  <option value="AE" data-name="สหรัฐอาหรับเอมิเรตส์" data-emoji="🇦🇪">🇦🇪 สหรัฐอาหรับเอมิเรตส์</option>
-  <option value="TR" data-name="ตุรกี" data-emoji="🇹🇷">🇹🇷 ตุรกี</option>
-  <option value="ZA" data-name="แอฟริกาใต้" data-emoji="🇿🇦">🇿🇦 แอฟริกาใต้</option>
-  <option value="NG" data-name="ไนจีเรีย" data-emoji="🇳🇬">🇳🇬 ไนจีเรีย</option>
-  <option value="EG" data-name="อียิปต์" data-emoji="🇪🇬">🇪🇬 อียิปต์</option>
-  <option value="UA" data-name="ยูเครน" data-emoji="🇺🇦">🇺🇦 ยูเครน</option>
-  <option value="PL" data-name="โปแลนด์" data-emoji="🇵🇱">🇵🇱 โปแลนด์</option>
-  <option value="PT" data-name="โปรตุเกส" data-emoji="🇵🇹">🇵🇹 โปรตุเกส</option>
+  <option value="TH" data-name="Thailand" data-emoji="🇹🇭">🇹🇭 Thailand</option>
+  <option value="US" data-name="United States" data-emoji="🇺🇸">🇺🇸 United States</option>
+  <option value="GB" data-name="United Kingdom" data-emoji="🇬🇧">🇬🇧 United Kingdom</option>
+  <option value="JP" data-name="Japan" data-emoji="🇯🇵">🇯🇵 Japan</option>
+  <option value="KR" data-name="South Korea" data-emoji="🇰🇷">🇰🇷 South Korea</option>
+  <option value="CN" data-name="China" data-emoji="🇨🇳">🇨🇳 China</option>
+  <option value="IN" data-name="India" data-emoji="🇮🇳">🇮🇳 India</option>
+  <option value="DE" data-name="Germany" data-emoji="🇩🇪">🇩🇪 Germany</option>
+  <option value="FR" data-name="France" data-emoji="🇫🇷">🇫🇷 France</option>
+  <option value="BR" data-name="Brazil" data-emoji="🇧🇷">🇧🇷 Brazil</option>
+  <option value="CA" data-name="Canada" data-emoji="🇨🇦">🇨🇦 Canada</option>
+  <option value="AU" data-name="Australia" data-emoji="🇦🇺">🇦🇺 Australia</option>
+  <option value="RU" data-name="Russia" data-emoji="🇷🇺">🇷🇺 Russia</option>
+  <option value="IT" data-name="Italy" data-emoji="🇮🇹">🇮🇹 Italy</option>
+  <option value="ES" data-name="Spain" data-emoji="🇪🇸">🇪🇸 Spain</option>
+  <option value="ID" data-name="Indonesia" data-emoji="🇮🇩">🇮🇩 Indonesia</option>
+  <option value="VN" data-name="Vietnam" data-emoji="🇻🇳">🇻🇳 Vietnam</option>
+  <option value="SG" data-name="Singapore" data-emoji="🇸🇬">🇸🇬 Singapore</option>
+  <option value="MY" data-name="Malaysia" data-emoji="🇲🇾">🇲🇾 Malaysia</option>
+  <option value="PH" data-name="Philippines" data-emoji="🇵🇭">🇵🇭 Philippines</option>
+  <option value="NZ" data-name="New Zealand" data-emoji="🇳🇿">🇳🇿 New Zealand</option>
+  <option value="MX" data-name="Mexico" data-emoji="🇲🇽">🇲🇽 Mexico</option>
+  <option value="NL" data-name="Netherlands" data-emoji="🇳🇱">🇳🇱 Netherlands</option>
+  <option value="SE" data-name="Sweden" data-emoji="🇸🇪">🇸🇪 Sweden</option>
+  <option value="CH" data-name="Switzerland" data-emoji="🇨🇭">🇨🇭 Switzerland</option>
+  <option value="AE" data-name="United Arab Emirates" data-emoji="🇦🇪">🇦🇪 United Arab Emirates</option>
+  <option value="TR" data-name="Türkiye" data-emoji="🇹🇷">🇹🇷 Türkiye</option>
+  <option value="ZA" data-name="South Africa" data-emoji="🇿🇦">🇿🇦 South Africa</option>
+  <option value="NG" data-name="Nigeria" data-emoji="🇳🇬">🇳🇬 Nigeria</option>
+  <option value="EG" data-name="Egypt" data-emoji="🇪🇬">🇪🇬 Egypt</option>
+  <option value="UA" data-name="Ukraine" data-emoji="🇺🇦">🇺🇦 Ukraine</option>
+  <option value="PL" data-name="Poland" data-emoji="🇵🇱">🇵🇱 Poland</option>
+  <option value="PT" data-name="Portugal" data-emoji="🇵🇹">🇵🇹 Portugal</option>
  </select>
- <button id="placeFlag" class="primary wide">🚩 ปักธงบนช่องที่เลือก</button><button id="placeFlagHere" class="wide" style="margin-top:6px">📍 ปักธงตรงตำแหน่งฉัน</button>
- <div class="hint">เลือกประเทศ แล้วแตะช่องที่ต้องการ หรือใช้ปุ่มปักธงตรงตำแหน่งนักสำรวจได้ทันที</div>
+ <button id="placeFlag" class="primary wide">🚩 Place Flag on Selected Tile</button><button id="placeFlagHere" class="wide" style="margin-top:6px">📍 Place Flag at My Position</button>
+ <div class="hint">Choose a country, then tap a tile, or use the button to place your flag at the explorer's current position.</div>
 </div>
-<select id="building" class="wide"><option value="hab">โดมที่พักอาศัย</option><option value="green">เรือนกระจก</option><option value="lab">ห้องวิจัย</option><option value="solar">แผงพลังงาน</option><option value="hub">ศูนย์บัญชาการ</option><option value="tower">หอคอยสื่อสาร</option></select><button id="place" class="primary wide">วางอาคารบนช่องที่เลือก</button><button id="roadMode" class="wide">🛣️ วางถนน</button><select id="level" class="wide"><option value="0">ชั้นพื้นผิว L0</option><option value="1">ชั้นยกระดับ L1</option><option value="2">ชั้นยกระดับ L2</option></select><button id="remove" class="wide">รื้อถอนอาคารที่เลือก</button><p class="hint">แตะช่องตารางเพื่อเลือกตำแหน่ง แล้วเริ่มก่อสร้าง อาคารจะค่อย ๆ ปรากฏตามขั้นตอนในโลก 3D</p><div class="build-progress"><h3>🏗️ LIVE CONSTRUCTION</h3><div class="resource-stock" id="resourceStock">วัสดุสำรอง: โลหะ 120 • โพลิเมอร์ 90 • อิเล็กทรอนิกส์ 45</div><div id="constructionList" class="small">ยังไม่มีงานก่อสร้าง • เลือกช่องและเริ่มวางอาคาร</div></div></section>
+<select id="building" class="wide"><option value="hab">Habitat Dome</option><option value="green">Greenhouse</option><option value="lab">Research Lab</option><option value="solar">Solar Panel</option><option value="hub">Command Hub</option><option value="tower">Communications Tower</option></select><button id="place" class="primary wide">Place Structure on Selected Tile</button><button id="roadMode" class="wide">🛣️ Place Road</button><select id="level" class="wide"><option value="0">Surface Level L0</option><option value="1">Elevated Level L1</option><option value="2">Elevated Level L2</option></select><button id="remove" class="wide">Demolish Selected Structure</button><p class="hint">Tap a grid tile to choose a location, then start construction. Structures appear progressively in the 3D world.</p><div class="build-progress"><h3>🏗️ LIVE CONSTRUCTION</h3><div class="resource-stock" id="resourceStock">Available Materials: Metal 120 • Polymer 90 • Electronics 45</div><div id="constructionList" class="small">No active construction • Select a tile and place a structure</div></div></section>
 
 <section id="inventoryModal" class="inventory-modal" aria-hidden="true">
  <div class="inventory-backdrop" id="inventoryBackdrop"></div>
  <div class="inventory-window" role="dialog" aria-modal="true" aria-labelledby="inventoryTitle">
-  <div class="inventory-head"><div><div class="inventory-kicker">COLONY INVENTORY</div><h2 id="inventoryTitle">กระเป๋าทรัพยากร</h2><p>สินทรัพย์และทรัพยากรของอาณานิคม</p></div><button id="closeInventory" class="inventory-close" aria-label="ปิด">✕</button></div>
-  <div class="inventory-section-title">ยอดคงเหลือ</div>
+  <div class="inventory-head"><div><div class="inventory-kicker">COLONY INVENTORY</div><h2 id="inventoryTitle">Resource Inventory</h2><p>Colony Assets & Resources</p></div><button id="closeInventory" class="inventory-close" aria-label="Close">✕</button></div>
+  <div class="inventory-section-title">Balance</div>
   <div class="inventory-grid">
-   <article class="inventory-card credit"><span>💎 เครดิตทดลอง</span><strong id="inventoryCredits">฿9,000 THB</strong><small>มูลค่าอ้างอิง THB สำหรับระบบจำลอง ไม่ใช่ยอดชำระเงินจริง</small></article>
-   <article class="inventory-card energy"><span>⚡ พลังงาน</span><strong id="inventoryEnergy">850 kWh</strong><small>ค่าพลังงานจำลอง</small></article>
-   <article class="inventory-card"><span>🏗️ อาคาร</span><strong id="inventoryBuildings">0</strong><small>จำนวนอาคารที่สร้างแล้ว</small></article>
-   <article class="inventory-card"><span>🧑‍🚀 ประชากร NPC</span><strong>3</strong><small>ผู้ตั้งถิ่นฐานจำลอง</small></article>
+   <article class="inventory-card credit"><span>💎 Test Credits</span><strong id="inventoryCredits">9,000 Simulation Credits</strong><small>THB reference value for simulation only; not a real payment balance.</small></article>
+   <article class="inventory-card energy"><span>⚡ Energy</span><strong id="inventoryEnergy">850 kWh</strong><small>Simulated energy units</small></article>
+   <article class="inventory-card"><span>🏗️  buildings</span><strong id="inventoryBuildings">0</strong><small>Completed Buildings</small></article>
+   <article class="inventory-card"><span>🧑‍🚀 NPC Population</span><strong>3</strong><small>Simulated Settlers</small></article>
   </div>
-  <div class="inventory-section-title">คลังวัสดุก่อสร้าง</div>
+  <div class="inventory-section-title">Construction Materials Inventory</div>
   <div class="inventory-materials">
-   <div><span>🔩 โลหะ</span><b id="stockMetal">120</b></div>
-   <div><span>🧪 โพลิเมอร์</span><b id="stockPolymer">90</b></div>
-   <div><span>🔌 อิเล็กทรอนิกส์</span><b id="stockElectronics">45</b></div>
+   <div><span>🔩 Metal</span><b id="stockMetal">120</b></div>
+   <div><span>🧪 Polymer</span><b id="stockPolymer">90</b></div>
+   <div><span>🔌 Electronics</span><b id="stockElectronics">45</b></div>
   </div>
-  <div class="inventory-foot">ข้อมูลทั้งหมดเป็นทรัพยากรจำลองภายในระบบ ไม่ใช่เงินจริงหรือพลังงานที่ซื้อขายได้</div>
+  <div class="inventory-foot">All values are simulated resources, not real money or tradable energy.</div>
  </div>
 </section>
-<div class="pad"><button data-m="forward">▲</button><button data-m="left">◀</button><button data-m="back">▼</button><button data-m="right">▶</button><button data-m="jump">กระโดด</button></div><div class="look">ลากหน้าจอเพื่อหมุนกล้อง • เลื่อนสองนิ้วเพื่อซูม</div>
-<nav class="bottom"><button id="home">🌎 ดาวอังคาร</button><button id="reset">รีเซ็ตกล้อง</button><button id="save">💾 บันทึกเมือง</button></nav><div class="toast" id="toast"></div>
+<div class="pad"><button data-m="forward">▲</button><button data-m="left">◀</button><button data-m="back">▼</button><button data-m="right">▶</button><button data-m="jump">Jump</button></div><div class="look">Drag to rotate the camera • Pinch with two fingers to zoom</div>
+<nav class="bottom"><button id="home">🌎 Mars</button><button id="reset">Reset Camera</button><button id="save">💾 Save City</button></nav><div class="toast" id="toast"></div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 <script type="module">
 import * as THREE from 'three';
@@ -436,7 +436,7 @@ const parcelSideMeters=Math.sqrt(activeParcelAreaSqm);
 const buildCellSize=parcelSideMeters/21;
 const workspaceHalfSide=parcelSideMeters/2;
 window.LOCAL_MARS_PARCEL_METRICS={parcelId:activeWorldParcelId,areaSquareMeters:activeParcelAreaSqm,sideMeters:parcelSideMeters,cellSizeMeters:buildCellSize,planetMeanRadiusMeters:3389500};
-const worldParcelBuildingTypes={hab:'ฐานที่อยู่อาศัย',green:'โรงเรือนปลูกพืช',lab:'ห้องปฏิบัติการ',solar:'แผงพลังงานแสงอาทิตย์'};
+const worldParcelBuildingTypes={hab:'Habitat Dome',green:'Hydroponics',lab:'Laboratory',solar:'Solar Farm'};
 const parcelLinkCacheKey='mars-city-world-parcel-links-v1';
 const worldParcelPublishing=new Set();
 function readParcelLinkCache(){try{return JSON.parse(localStorage.getItem(parcelLinkCacheKey)||'{}')||{}}catch(e){return {}}}
@@ -444,7 +444,7 @@ function writeParcelLinkCache(id,value){try{const all=readParcelLinkCache();all[
 function setWorldParcelStatus(message,state='info',retryData=null){
  const el=document.querySelector('#worldParcelStatus');if(!el)return;
  el.textContent=message;el.dataset.state=state;
- if(retryData){const button=document.createElement('button');button.type='button';button.className='wide';button.style.marginTop='7px';button.textContent='ลองเชื่อมแปลงอีกครั้ง';button.addEventListener('click',async()=>{button.disabled=true;await publishWorldParcelStructure(retryData,true);if(button.isConnected)button.disabled=false;});el.appendChild(button);}
+ if(retryData){const button=document.createElement('button');button.type='button';button.className='wide';button.style.marginTop='7px';button.textContent='Retry Parcel Link';button.addEventListener('click',async()=>{button.disabled=true;await publishWorldParcelStructure(retryData,true);if(button.isConnected)button.disabled=false;});el.appendChild(button);}
 }
 function updateWorldParcelContext(){
  const label=document.querySelector('#worldParcelLabel'),hint=document.querySelector('#worldParcelHint');
@@ -535,13 +535,13 @@ async function loadOnlineCity(){
  remoteLoading=true;const userId=onlineUser.id;
  try{
   const init=await marsDB.rpc('mars_city_ensure');
-  if(init.error)throw Object.assign(new Error('ขั้นเตรียมเมือง (mars_city_ensure): '+cityErrorText(init.error)),init.error);
-  if(!init.data||!init.data.city_id)throw new Error('ขั้นเตรียมเมือง: RPC ไม่ส่ง city_id กลับมา กรุณาตรวจ migration 005');
+  if(init.error)throw Object.assign(new Error('City initialization (mars_city_ensure): '+cityErrorText(init.error)),init.error);
+  if(!init.data||!init.data.city_id)throw new Error('City initialization: the RPC did not return a city_id. Check migration 005.');
   if(!onlineUser||onlineUser.id!==userId)return;
   onlineCityId=init.data.city_id;const res=init.data.resources;
   if(res){credits=Number(res.credits??credits);energy=Number(res.energy??energy);resources.metal=Number(res.metal??resources.metal);resources.polymer=Number(res.polymer??resources.polymer);resources.electronics=Number(res.electronics??resources.electronics);}
   const q=await marsDB.from('mars_city_buildings').select('id,city_id,owner_id,building_type,name,position').order('created_at',{ascending:true});
-  if(q.error)throw Object.assign(new Error('ขั้นโหลดสิ่งปลูกสร้าง (mars_city_buildings): '+cityErrorText(q.error)),q.error);
+  if(q.error)throw Object.assign(new Error('Structure loading (mars_city_buildings): '+cityErrorText(q.error)),q.error);
   if(!onlineUser||onlineUser.id!==userId)return;
   const allRows=Array.isArray(q.data)?q.data:[];const rows=activeWorldParcelId?allRows.filter(row=>{const position=row.position||{};const cached=readParcelLinkCache()[String(row.id)]||{};return position.worldParcelId===activeWorldParcelId||cached.parcelId===activeWorldParcelId;}):allRows;syncOnlineStructures(rows);onlineRows=rows;onlineReady=true;remoteRetryCount=0;
   if(remoteRetryTimer){clearTimeout(remoteRetryTimer);remoteRetryTimer=null;}
@@ -553,13 +553,13 @@ async function loadOnlineCity(){
  }catch(e){
   console.error('LOCAL MARS city sync diagnostic:',{message:e?.message,code:e?.code,details:e?.details,hint:e?.hint});
   const label=document.querySelector('header .status');if(label)label.textContent=onlineReady?'● ONLINE · RETRYING':'● SYNC ERROR';
-  toast('ซิงก์เมืองไม่สำเร็จ: '+cityErrorText(e));
+  toast('City synchronization failed: '+cityErrorText(e));
   if(onlineUser&&onlineUser.id===userId&&!remoteRetryTimer){remoteRetryCount=Math.min(remoteRetryCount+1,5);const delay=Math.min(30000,2000*Math.pow(2,remoteRetryCount-1));remoteRetryTimer=setTimeout(()=>{remoteRetryTimer=null;if(onlineUser&&onlineUser.id===userId)loadOnlineCity();},delay);}
  }finally{remoteLoading=false;if(remoteReloadQueued){remoteReloadQueued=false;setTimeout(()=>{if(onlineUser)loadOnlineCity();},250);}}
 }
 async function connectCityOnline(){
  const {data,error}=await marsDB.auth.getSession();if(error)throw error;onlineUser=data.session?.user||null;
- const button=document.querySelector('#cityAccount');if(button)button.textContent=onlineUser?'👤 '+(onlineUser.email||'สมาชิก').split('@')[0]:'👤 เข้าสู่ระบบ';
+ const button=document.querySelector('#cityAccount');if(button)button.textContent=onlineUser?'👤 '+(onlineUser.email||'Account').split('@')[0]:'👤 Sign in';
  if(onlineUser)await loadOnlineCity();
  else{const label=document.querySelector('header .status');if(label)label.textContent='● SIGN IN TO SYNC';}
  if(onlineChannel)await marsDB.removeChannel(onlineChannel);
@@ -568,22 +568,22 @@ async function connectCityOnline(){
   .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_resources'},()=>scheduleOnlineCitySync())
   .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_national_flags'},async()=>{if(!onlineUser)return;const f=await marsDB.from('mars_city_national_flags').select('id,owner_id,country_code,country_name,flag_emoji,x,z,level,created_at').order('created_at',{ascending:true});if(!f.error&&Array.isArray(f.data))syncOnlineFlags(f.data);else console.warn('LOCAL MARS flags realtime sync:',f.error);})
   .subscribe((state,error)=>{const label=document.querySelector('header .status');if(!label)return;if(state==='SUBSCRIBED'){if(onlineReady)label.textContent='● ONLINE · SHARED COLONY';}else if(state==='CHANNEL_ERROR'||state==='TIMED_OUT'){console.warn('LOCAL MARS realtime:',state,error);label.textContent=onlineReady?'● ONLINE · REALTIME RETRY':'● SYNC RETRY';}});
- marsDB.auth.onAuthStateChange((_event,session)=>{onlineUser=session?.user||null;const b=document.querySelector('#cityAccount');if(b)b.textContent=onlineUser?'👤 '+(onlineUser.email||'สมาชิก').split('@')[0]:'👤 เข้าสู่ระบบ';if(onlineUser){const label=document.querySelector('header .status');if(label)label.textContent='● CONNECTING · SYNCING';setTimeout(()=>{if(onlineUser)loadOnlineCity();},0);}else{onlineReady=false;onlineCityId=null;const s=document.querySelector('header .status');if(s)s.textContent='● THIRD-PERSON MODE · LOCAL';}});
+ marsDB.auth.onAuthStateChange((_event,session)=>{onlineUser=session?.user||null;const b=document.querySelector('#cityAccount');if(b)b.textContent=onlineUser?'👤 '+(onlineUser.email||'Account').split('@')[0]:'👤 Sign in';if(onlineUser){const label=document.querySelector('header .status');if(label)label.textContent='● CONNECTING · SYNCING';setTimeout(()=>{if(onlineUser)loadOnlineCity();},0);}else{onlineReady=false;onlineCityId=null;const s=document.querySelector('header .status');if(s)s.textContent='● THIRD-PERSON MODE · LOCAL';}});
 }
 async function placeOnline(type,x,z,level,worldParcelId=null){
- if(!onlineUser){toast('กรุณาเข้าสู่ระบบสมาชิกก่อนสร้างเมืองออนไลน์');return false;}
+ if(!onlineUser){toast('Please sign in before building in the online city.');return false;}
  try{
   if(!onlineReady||!onlineCityId){await loadOnlineCity();}
-  if(!onlineReady||!onlineCityId){toast('เมืองออนไลน์ยังไม่พร้อม จึงยังไม่เริ่มก่อสร้าง');return false;}
+  if(!onlineReady||!onlineCityId){toast('The online city is not ready. Construction has not started.');return false;}
   const worldType=worldParcelId?worldParcelBuildingTypes[type]:null;
-  if(worldParcelId&&!worldType){toast('อาคารชนิดนี้ยังไม่รองรับการผูกกับแปลงดาว เลือก Habitat, Greenhouse, Lab หรือ Solar');return false;}
+  if(worldParcelId&&!worldType){toast(' buildingsThis structure cannot be linked to a Mars parcel. Choose Habitat, Greenhouse, Lab, or Solar.');return false;}
   if(worldParcelId){
    const claim=await marsDB.from('world_claims').select('parcel_id').eq('parcel_id',worldParcelId).eq('owner_id',onlineUser.id).maybeSingle();
    if(claim.error)throw claim.error;
-   if(!claim.data){setWorldParcelStatus('ยังเริ่มไม่ได้: บัญชีนี้ไม่ได้เป็นเจ้าของแปลง '+worldParcelId,'error');toast('ต้องเป็นเจ้าของแปลง '+worldParcelId+' ก่อนก่อสร้างออนไลน์');return false;}
+   if(!claim.data){setWorldParcelStatus('Cannot start: this account does not own parcel '+worldParcelId,'error');toast('You must own parcel '+worldParcelId+' ก่อนConstructionออนไลน์');return false;}
    const existing=await marsDB.from('world_structures').select('id,owner_id,structure_type').eq('parcel_id',worldParcelId).limit(1).maybeSingle();
    if(existing.error)throw existing.error;
-   if(existing.data){setWorldParcelStatus('แปลง '+worldParcelId+' มีอาคารบนดาวอยู่แล้ว','error');toast('แปลงนี้มีอาคารบนดาวแล้ว');return false;}
+   if(existing.data){setWorldParcelStatus('Parcel '+worldParcelId+' มี buildingsบนดาวอยู่แล้ว','error');toast('แปลงนี้มี buildingson Mars');return false;}
   }
   const r=await marsDB.rpc('mars_city_place_structure',{p_type:type,p_x:x,p_z:z,p_level:level});
   if(r.error)throw r.error;
@@ -595,15 +595,15 @@ async function placeOnline(type,x,z,level,worldParcelId=null){
    const saved=await marsDB.from('mars_city_buildings').update({position}).eq('id',building.id).eq('owner_id',onlineUser.id).select('id').maybeSingle();
    if(saved.error||!saved.data){
     console.warn('Could not persist world parcel link metadata:',saved.error||'no owned row returned');
-    setWorldParcelStatus('งานก่อสร้างถูกบันทึกในเมืองแล้ว แต่ข้อมูลผูกแปลงเก็บในอุปกรณ์นี้ก่อน','warning');
-   }else setWorldParcelStatus('กำลังก่อสร้างบนเมืองจำลอง • เมื่อเสร็จจะเผยแพร่ไปยัง '+worldParcelId);
+    setWorldParcelStatus('งานConstructionถูกSaveในเมืองแล้ว แต่dataผูกแปลงเก็บในEquipmentนี้ก่อน','warning');
+   }else setWorldParcelStatus('Under Constructionบนเมืองจำลอง • เมื่อเสร็จจะเผยแพร่ไปยัง '+worldParcelId);
   }
-  toast('บันทึก '+(buildingNames[type]||'ถนน')+' ลงเมืองออนไลน์แล้ว');
+  toast('Save '+(buildingNames[type]||'Road')+' to the online city');
   await loadOnlineCity();
   return true;
  }catch(e){
   console.error('LOCAL MARS construction error:',{message:e?.message,code:e?.code,details:e?.details,hint:e?.hint});
-  toast('ก่อสร้างออนไลน์ไม่สำเร็จ: '+cityErrorText(e));
+  toast('Constructionออนไลน์ไม่สำเร็จ: '+cityErrorText(e));
   return false;
  }
 }
@@ -630,22 +630,22 @@ async function publishWorldParcelStructure(data,force=false){
   if(existing.error)throw existing.error;
   let structureId;
   if(existing.data){
-   if(existing.data.owner_id!==onlineUser.id||existing.data.structure_type!==data.worldType)throw new Error('แปลงนี้มีอาคารชนิดอื่นอยู่แล้ว จึงไม่เขียนทับ');
+   if(existing.data.owner_id!==onlineUser.id||existing.data.structure_type!==data.worldType)throw new Error('แปลงนี้มี buildingsชนิดอื่นอยู่แล้ว จึงไม่เขียนทับ');
    structureId=existing.data.id;
   }else{
    const result=await marsDB.rpc('build_world_structure',{p_parcel_id:data.worldParcelId,p_type:data.worldType});
    if(result.error)throw result.error;
-   if(!result.data?.ok||!result.data?.structure_id)throw new Error('ฐานข้อมูลยังไม่ยืนยันอาคารบนแปลง');
+   if(!result.data?.ok||!result.data?.structure_id)throw new Error('ฐานdataยังไม่Confirm buildingsบนแปลง');
    structureId=result.data.structure_id;
   }
   await persistWorldParcelLinkState(data,'synced',{structureId});
-  setWorldParcelStatus('เผยแพร่อาคาร '+buildingNames[data.type]+' ลงแปลง '+data.worldParcelId+' บนดาวแล้ว','success');
-  toast('อาคารเชื่อมกับแปลง '+data.worldParcelId+' สำเร็จ');
+  setWorldParcelStatus('เผยแพร่ buildings '+buildingNames[data.type]+' to parcel '+data.worldParcelId+' on Mars','success');
+  toast(' buildingsLinked to parcel '+data.worldParcelId+' สำเร็จ');
  }catch(e){
   const message=cityErrorText(e);
   await persistWorldParcelLinkState(data,'failed',{error:message});
-  setWorldParcelStatus('สร้างในเมืองเสร็จแล้ว แต่เชื่อมแปลง '+data.worldParcelId+' ไม่สำเร็จ: '+message,'error',data);
-  toast('อาคารในเมืองเสร็จแล้ว แต่ยังเผยแพร่บนดาวไม่สำเร็จ');
+  setWorldParcelStatus('City construction is complete, but parcel linking failed for '+data.worldParcelId+' ไม่สำเร็จ: '+message,'error',data);
+  toast(' buildingsในเมืองเสร็จแล้ว แต่ยังเผยแพร่บนดาวไม่สำเร็จ');
  }finally{worldParcelPublishing.delete(publishKey);}
 }
 let flagSubmitting=false;
@@ -653,18 +653,18 @@ async function placeNationalFlag(){
  if(flagSubmitting)return;
  try{
   if(!onlineUser){
-   toast('กรุณาเข้าสู่ระบบก่อนปักธง');
+   toast('Please sign in before placing a flag.');
    await loginCity();
    const sessionResult=await marsDB.auth.getSession();
    if(sessionResult.error)throw sessionResult.error;
    onlineUser=sessionResult.data.session?.user||null;
-   if(!onlineUser){toast('ยังไม่ได้เข้าสู่ระบบ จึงยังปักธงออนไลน์ไม่ได้');return;}
+   if(!onlineUser){toast('You are not signed in. Online flag placement is unavailable.');return;}
   }
   // Flagging is an independent online feature; do not block it when colony/building sync is down.
   const authCheck=await marsDB.auth.getSession();
   if(authCheck.error)throw authCheck.error;
   onlineUser=authCheck.data.session?.user||onlineUser;
-  if(!onlineUser){toast('เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่');return;}
+  if(!onlineUser){toast('Your session has expired. Please sign in again.');return;}
   // If the user did not tap a grid tile, select the nearest valid tile automatically.
   if(!selected||!selected.userData){
    const px=Math.max(-9.5,Math.min(10.5,Number(avatar?.position?.x)||0));
@@ -677,19 +677,19 @@ async function placeNationalFlag(){
    },null);
    if(selected)selectCell(selected);
   }
-  if(!selected||!selected.userData){toast('ไม่พบช่องสำหรับปักธง กรุณาแตะพื้นตารางแล้วลองใหม่');return;}
+  if(!selected||!selected.userData){toast('No flag tile found. Tap a grid tile and try again.');return;}
   const select=document.querySelector('#flagCountry'),option=select?.options[select.selectedIndex];
-  if(!option||!select.value||!option.dataset.name||!option.dataset.emoji){toast('กรุณาเลือกประเทศที่ต้องการปักธง');return;}
+  if(!option||!select.value||!option.dataset.name||!option.dataset.emoji){toast('Select the country whose flag you want to place.');return;}
   const x=Number(selected.userData.x),z=Number(selected.userData.z),level=Number(currentLevel);
-  if(!Number.isFinite(x)||!Number.isFinite(z)||!Number.isInteger(level)||level<0||level>2||Math.abs(x)>10.5||Math.abs(z)>10.5){toast('ตำแหน่งปักธงไม่ถูกต้อง กรุณาเลือกช่องบนพื้นเมือง');return;}
+  if(!Number.isFinite(x)||!Number.isFinite(z)||!Number.isInteger(level)||level<0||level>2||Math.abs(x)>10.5||Math.abs(z)>10.5){toast('Invalid flag location. Select a tile on the city surface.');return;}
   const payload={owner_id:onlineUser.id,country_code:select.value,country_name:option.dataset.name,flag_emoji:option.dataset.emoji,x,z,level};
   flagSubmitting=true;
-  const button=document.querySelector('#placeFlag'),quickButton=document.querySelector('#placeFlagHere');if(button){button.disabled=true;button.textContent='กำลังบันทึกธง…';}if(quickButton){quickButton.disabled=true;quickButton.textContent='กำลังบันทึกธง…';}
+  const button=document.querySelector('#placeFlag'),quickButton=document.querySelector('#placeFlagHere');if(button){button.disabled=true;button.textContent='Saving flag…';}if(quickButton){quickButton.disabled=true;quickButton.textContent='Saving flag…';}
   // One active flag per account: placing again moves/replaces the previous flag.
   const result=await marsDB.from('mars_city_national_flags')
    .upsert(payload,{onConflict:'owner_id'}).select('id').single();
   if(result.error)throw result.error;
-  toast('ย้ายธงประจำตัวไปยังตำแหน่งใหม่แล้ว');
+  toast('Your national flag has been moved to its new position.');
   // Refresh flags directly so a building-table sync error cannot hide a saved flag.
   const flagRefresh=await marsDB.from('mars_city_national_flags')
    .select('id,owner_id,country_code,country_name,flag_emoji,x,z,level,created_at')
@@ -697,20 +697,20 @@ async function placeNationalFlag(){
   if(!flagRefresh.error&&Array.isArray(flagRefresh.data))syncOnlineFlags(flagRefresh.data);
  }catch(e){
   console.error('LOCAL MARS national flag error:',{message:e?.message,code:e?.code,details:e?.details,hint:e?.hint});
-  toast('ปักธงไม่สำเร็จ: '+cityErrorText(e));
+  toast('Unable to place flag: '+cityErrorText(e));
  }finally{
   flagSubmitting=false;
-  const button=document.querySelector('#placeFlag'),quickButton=document.querySelector('#placeFlagHere');if(button){button.disabled=false;button.textContent='🚩 ปักธงบนช่องที่เลือก';}if(quickButton){quickButton.disabled=false;quickButton.textContent='📍 ปักธงตรงตำแหน่งฉัน';}
+  const button=document.querySelector('#placeFlag'),quickButton=document.querySelector('#placeFlagHere');if(button){button.disabled=false;button.textContent='🚩 Place Flag on Selected Tile';}if(quickButton){quickButton.disabled=false;quickButton.textContent='📍 Place Flag at My Position';}
  }
 }
 async function loginCity(){
- if(onlineUser){if(confirm('ต้องการออกจากระบบ LOCAL MARS หรือไม่?'))await marsDB.auth.signOut();return;}
- const email=prompt('กรอกอีเมลสมาชิก LOCAL MARS');if(!email)return;
- const password=prompt('กรอกรหัสผ่าน (อย่างน้อย 8 ตัวอักษร)');if(!password)return;
- const signup=confirm('กด OK เพื่อสมัครสมาชิกใหม่ หรือ Cancel เพื่อเข้าสู่ระบบ');
+ if(onlineUser){if(confirm('Do you want to sign out of LOCAL MARS?'))await marsDB.auth.signOut();return;}
+ const email=prompt('Enter your LOCAL MARS member email.');if(!email)return;
+ const password=prompt('Enter password (at least 8 characters).');if(!password)return;
+ const signup=confirm('Select OK to register a new account, or Cancel to sign in.');
  const r=signup?await marsDB.auth.signUp({email:email.trim(),password,options:{emailRedirectTo:new URL('./',location.href).href,data:{display_name:email.split('@')[0]}}}):await marsDB.auth.signInWithPassword({email:email.trim(),password});
  if(r.error){toast(r.error.message);return;}
- if(signup&&!r.data.session)toast('สมัครแล้ว กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ');else toast('เข้าสู่ระบบ LOCAL MARS สำเร็จ');
+ if(signup&&!r.data.session)toast('Registration complete. Please verify your email before logging in.');else toast('Successfully signed in to LOCAL MARS.');
 }
 
 const root=document.querySelector('#world'),scene=new THREE.Scene();
@@ -757,18 +757,18 @@ const cells=[],buildings=[],roads=[],nationalFlags=[];for(let ix=0;ix<21;ix++)fo
 let selected=null,buildMode=false,roadMode=false,currentLevel=0,yaw=0,camYaw=0,camPitch=.24,distance=Math.max(6,parcelSideMeters*1.05),credits=9000,energy=850;
 const resources={metal:120,polymer:90,electronics:45};
 const recipes={hab:{credit:1440,metal:24,polymer:18,electronics:4},green:{credit:1170,metal:16,polymer:24,electronics:5},lab:{credit:1710,metal:28,polymer:12,electronics:12},solar:{credit:900,metal:18,polymer:6,electronics:8},hub:{credit:2160,metal:36,polymer:20,electronics:16},tower:{credit:720,metal:14,polymer:4,electronics:10}};
-const buildingNames={hab:"โดมที่พักอาศัย",green:"เรือนกระจก",lab:"ห้องวิจัย",solar:"แผงพลังงาน",hub:"ศูนย์บัญชาการ",tower:"หอคอยสื่อสาร"};
-const constructionStages=["ปรับพื้นที่","วางฐานราก","ประกอบโครงสร้าง","ติดตั้งอุปกรณ์","ตรวจสอบระบบ"];
+const buildingNames={hab:"Habitat Dome",green:"Greenhouse",lab:"Research Lab",solar:"Solar Panel",hub:"Command Hub",tower:"Communications Tower"};
+const constructionStages=["Survey Area","Lay Foundation","Assemble Structure","Install Equipment","System Inspection"];
 const constructionSites=[];let lastConstructionUi=0;
 const keys={forward:false,back:false,left:false,right:false};
-function updateHUD(){const energyNode=document.querySelector('#inventoryEnergy');if(energyNode)energyNode.textContent=energy.toLocaleString()+' kWh';const hudBuildCount=document.querySelector('#hudBuildCount');if(hudBuildCount)hudBuildCount.textContent=buildings.length;document.querySelector('#count').textContent=buildings.length;document.querySelector('#credits').textContent='฿'+credits.toLocaleString('th-TH')+' THB';document.querySelector('#position').textContent=Math.round(avatar.position.x)+', '+Math.round(avatar.position.z);document.querySelector('#modeLabel').textContent=roadMode?'วางถนน':buildMode?'สร้างเมือง':'เดินสำรวจ';document.querySelector('#roadCount').textContent=roads.length;const stock=document.querySelector('#resourceStock');if(stock)stock.textContent='วัสดุสำรอง: โลหะ '+resources.metal+' • โพลิเมอร์ '+resources.polymer+' • อิเล็กทรอนิกส์ '+resources.electronics+' • งานค้าง '+constructionSites.length}
+function updateHUD(){const energyNode=document.querySelector('#inventoryEnergy');if(energyNode)energyNode.textContent=energy.toLocaleString()+' kWh';const hudBuildCount=document.querySelector('#hudBuildCount');if(hudBuildCount)hudBuildCount.textContent=buildings.length;document.querySelector('#count').textContent=buildings.length;document.querySelector('#credits').textContent=credits.toLocaleString('en-US')+' Simulation Credits';document.querySelector('#position').textContent=Math.round(avatar.position.x)+', '+Math.round(avatar.position.z);document.querySelector('#modeLabel').textContent=roadMode?'Place Road':buildMode?'Build City':'Explore Mode';document.querySelector('#roadCount').textContent=roads.length;const stock=document.querySelector('#resourceStock');if(stock)stock.textContent='Available materials: Metal '+resources.metal+' • Polymer '+resources.polymer+' • Electronics '+resources.electronics+' • Pending jobs '+constructionSites.length}
 function toast(t){const el=document.querySelector('#toast');el.textContent=t;el.style.display='block';clearTimeout(window._toast);window._toast=setTimeout(()=>el.style.display='none',2200)}
-function selectCell(c){selected=c;document.querySelector('#plot').textContent='X '+c.userData.x.toFixed(0)+' / Z '+c.userData.z.toFixed(0);cells.forEach(m=>m.material.opacity=m===c?.28:0)}
+function selectCell(c){selected=c;document.querySelector('#plot').textContent='X '+c.userData.x.toFixed(0)+' / Z '+c.userData.z.toFixed(0);document.querySelector('#place').disabled=false;document.querySelector('#remove').disabled=false;cells.forEach(m=>m.material.opacity=m===c?.28:0)}
 const ray=new THREE.Raycaster(),pointer=new THREE.Vector2();let dragging=false,lastX=0,lastY=0,moved=0;
 renderer.domElement.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;lastY=e.clientY;moved=0;renderer.domElement.setPointerCapture(e.pointerId)});
 renderer.domElement.addEventListener('pointermove',e=>{if(!dragging)return;const dx=e.clientX-lastX,dy=e.clientY-lastY;moved+=Math.abs(dx)+Math.abs(dy);camYaw-=dx*.006;camPitch=Math.max(-.05,Math.min(.85,camPitch+dy*.004));lastX=e.clientX;lastY=e.clientY});
-renderer.domElement.addEventListener('pointerup',e=>{dragging=false;if(moved>12)return;pointer.x=e.clientX/innerWidth*2-1;pointer.y=-(e.clientY/innerHeight)*2+1;ray.setFromCamera(pointer,camera);const hits=ray.intersectObjects(cells);if(hits.length){selectCell(hits[0].object);if(roadMode){if(onlineUser)placeOnline('road',selected.userData.x,selected.userData.z,currentLevel);else addRoad(selected.userData.x,selected.userData.z,currentLevel);return}if(!buildMode)toast('เลือกพื้นที่แล้ว • เปิดโหมดสร้างเมืองเพื่อวางอาคาร')}});renderer.domElement.addEventListener('wheel',e=>{distance=Math.max(3.2,Math.min(12,distance+e.deltaY*.008))},{passive:true});
-function addRoad(x,z,level=0){if(roads.some(r=>r.userData.x===x&&r.userData.z===z&&r.userData.level===level)){toast('ถนนมีอยู่แล้ว');return}const r=new THREE.Group();const slab=new THREE.Mesh(new THREE.BoxGeometry(.94,.055,.94),new THREE.MeshStandardMaterial({color:0x46535c,roughness:.95}));slab.position.y=.03;r.add(slab);const stripe=new THREE.Mesh(new THREE.BoxGeometry(.06,.012,.68),new THREE.MeshBasicMaterial({color:0xe8c68a}));stripe.position.y=.064;r.add(stripe);r.position.set(x,level*2.5,z);r.userData={x,z,level};scene.add(r);roads.push(r);updateHUD();toast('วางถนนแล้ว • ชั้น L'+level)}
+renderer.domElement.addEventListener('pointerup',e=>{dragging=false;if(moved>12)return;pointer.x=e.clientX/innerWidth*2-1;pointer.y=-(e.clientY/innerHeight)*2+1;ray.setFromCamera(pointer,camera);const hits=ray.intersectObjects(cells);if(hits.length){selectCell(hits[0].object);if(roadMode){if(onlineUser)placeOnline('road',selected.userData.x,selected.userData.z,currentLevel);else addRoad(selected.userData.x,selected.userData.z,currentLevel);return}if(!buildMode)toast('Location selected • Enable Build City mode to place structures')}});renderer.domElement.addEventListener('wheel',e=>{distance=Math.max(3.2,Math.min(12,distance+e.deltaY*.008))},{passive:true});
+function addRoad(x,z,level=0){if(roads.some(r=>r.userData.x===x&&r.userData.z===z&&r.userData.level===level)){toast('A road already exists here');return}const r=new THREE.Group();const slab=new THREE.Mesh(new THREE.BoxGeometry(.94,.055,.94),new THREE.MeshStandardMaterial({color:0x46535c,roughness:.95}));slab.position.y=.03;r.add(slab);const stripe=new THREE.Mesh(new THREE.BoxGeometry(.06,.012,.68),new THREE.MeshBasicMaterial({color:0xe8c68a}));stripe.position.y=.064;r.add(stripe);r.position.set(x,level*2.5,z);r.userData={x,z,level};scene.add(r);roads.push(r);updateHUD();toast('Road placed • Level L'+level)}
 function makeBuilding(type,x,z,level=0){const g=new THREE.Group();let base,top;
 const concrete=new THREE.MeshStandardMaterial({color:0xb9c6c8,roughness:.8}),glass=new THREE.MeshStandardMaterial({color:0x68bdc9,metalness:.25,roughness:.2,transparent:true,opacity:.85}),orange=new THREE.MeshStandardMaterial({color:0xd8784e,roughness:.8});
 if(type==='hab'){base=new THREE.Mesh(new THREE.CylinderGeometry(.72,.8,.45,24),concrete);base.position.y=.23;top=new THREE.Mesh(new THREE.SphereGeometry(.68,24,16,0,Math.PI*2,0,Math.PI/2),glass);top.position.y=.44}
@@ -822,11 +822,11 @@ function createConstructionSite(data){
 }
 function renderConstructionJobs(){
  const list=document.querySelector("#constructionList");if(!list)return;
- if(!constructionSites.length){list.textContent="ยังไม่มีงานก่อสร้าง • เลือกช่องและเริ่มวางอาคาร";return}
+ if(!constructionSites.length){list.textContent="No active construction • Select a tile and place a structure";return}
  list.innerHTML=constructionSites.map(site=>{
   const p=Math.min(1,Math.max(0,(Date.now()-site.data.startedAt)/site.data.durationMs)),stage=constructionStages[p<.2?0:p<.4?1:p<.66?2:p<.88?3:4];
-  const parcelNote=site.data.worldParcelId?' • แปลง '+site.data.worldParcelId:'';
-  return '<div class="job-card"><div class="job-head"><b>'+buildingNames[site.data.type]+'</b><b>'+Math.floor(p*100)+'%</b></div><div class="job-stage">'+stage+' • ช่อง '+site.data.x.toFixed(0)+', '+site.data.z.toFixed(0)+' • L'+site.data.level+parcelNote+'</div><div class="job-track"><div class="job-fill" style="width:'+(p*100).toFixed(1)+'%"></div></div></div>';
+  const parcelNote=site.data.worldParcelId?' • Parcel '+site.data.worldParcelId:'';
+  return '<div class="job-card"><div class="job-head"><b>'+buildingNames[site.data.type]+'</b><b>'+Math.floor(p*100)+'%</b></div><div class="job-stage">'+stage+' • Tile '+site.data.x.toFixed(0)+', '+site.data.z.toFixed(0)+' • L'+site.data.level+parcelNote+'</div><div class="job-track"><div class="job-fill" style="width:'+(p*100).toFixed(1)+'%"></div></div></div>';
  }).join("");
 }
 function updateConstructionJobs(elapsed){
@@ -846,22 +846,22 @@ function updateConstructionJobs(elapsed){
   if(site.rover.userData.armPivot)site.rover.userData.armPivot.rotation.z=Math.sin(elapsed*2.2+site.data.x)*.34*workIntensity;
   if(site.rover.userData.hook)site.rover.userData.hook.position.y=.30+Math.sin(elapsed*3+site.data.z)*.035*workIntensity;
   if(p>=1){
-   scene.remove(site.group);const building=makeBuilding(site.data.type,site.data.x,site.data.z,site.data.level);building.userData={...site.data,x:site.data.x,z:site.data.z,type:site.data.type,level:site.data.level};buildings.push(building);constructionSites.splice(i,1);completed=true;toast("ก่อสร้างเสร็จแล้ว • "+buildingNames[site.data.type]);if(building.userData.worldParcelId&&building.userData.recordId)publishWorldParcelStructure(building.userData);
+   scene.remove(site.group);const building=makeBuilding(site.data.type,site.data.x,site.data.z,site.data.level);building.userData={...site.data,x:site.data.x,z:site.data.z,type:site.data.type,level:site.data.level};buildings.push(building);constructionSites.splice(i,1);completed=true;toast("Construction completed · "+buildingNames[site.data.type]);if(building.userData.worldParcelId&&building.userData.recordId)publishWorldParcelStructure(building.userData);
   }
  }
  if(elapsed-lastConstructionUi>.4){renderConstructionJobs();lastConstructionUi=elapsed}
  if(completed){updateHUD();save(false)}
 }
 
-document.querySelector('#place').onclick=async()=>{if(!selected){toast('แตะเลือกช่องตารางก่อน');return}const x=selected.userData.x,z=selected.userData.z,occupied=buildings.some(b=>b.userData.x===x&&b.userData.z===z&&(b.userData.level||0)===currentLevel)||constructionSites.some(s=>s.data.x===x&&s.data.z===z&&s.data.level===currentLevel);if(occupied){toast('ช่องนี้มีอาคารหรือกำลังก่อสร้างอยู่แล้ว');return}const type=document.querySelector('#building').value;if(activeWorldParcelId&&!worldParcelBuildingTypes[type]){toast('แปลงดาวรองรับ Habitat, Greenhouse, Lab และ Solar เท่านั้น');return}if(onlineUser){await placeOnline(type,x,z,currentLevel,activeWorldParcelId);return}const recipe=recipes[type];if(!recipe){toast('ไม่พบสูตรวัสดุของอาคาร');return}if(credits<recipe.credit){toast('เครดิตจำลองไม่เพียงพอ');return}for(const key of ['metal','polymer','electronics'])if(resources[key]<recipe[key]){toast('วัสดุไม่เพียงพอ: '+key);return}credits-=recipe.credit;for(const key of ['metal','polymer','electronics'])resources[key]-=recipe[key];const data={id:type+'-'+Date.now(),x,z,type,level:currentLevel,startedAt:Date.now(),durationMs:60000,worldParcelId:activeWorldParcelId,worldType:activeWorldParcelId?worldParcelBuildingTypes[type]:null,worldLinkStatus:activeWorldParcelId?'local-only':null};createConstructionSite(data);updateHUD();save(false);renderConstructionJobs();if(activeWorldParcelId)setWorldParcelStatus('LOCAL ONLY • อาคารนี้อยู่ในเครื่องและยังไม่เผยแพร่บนดาว ต้องเข้าสู่ระบบและเป็นเจ้าของแปลง');toast('เริ่มก่อสร้าง '+buildingNames[type]+' • ใช้เวลาจำลอง 60 วินาที')};
-document.querySelector('#remove').onclick=async()=>{if(!selected)return;const x=selected.userData.x,z=selected.userData.z;const item=buildings.find(b=>b.userData.x===x&&b.userData.z===z&&b.userData.level===currentLevel)||roads.find(b=>b.userData.x===x&&b.userData.z===z&&b.userData.level===currentLevel);if(item?.userData?.recordId&&onlineUser){if(item.userData.ownerId!==onlineUser.id){toast('รื้อถอนได้เฉพาะสิ่งปลูกสร้างของสมาชิกเจ้าของ');return}const r=await marsDB.rpc('mars_city_remove_structure',{p_building_id:item.userData.recordId});if(r.error){toast(r.error.message);return}await loadOnlineCity();toast('รื้อถอนและซิงก์โลกออนไลน์แล้ว');return}const i=buildings.indexOf(item);if(i>=0){scene.remove(item);buildings.splice(i,1);updateHUD();toast('รื้อถอนอาคารแล้ว');return}const ri=roads.indexOf(item);if(ri>=0){scene.remove(item);roads.splice(ri,1);updateHUD();toast('รื้อถอนถนนแล้ว');return}toast('ไม่มีสิ่งปลูกสร้างในช่องนี้')};
-function setMode(v){buildMode=v;roadMode=false;document.querySelector('#walk').classList.toggle('active',!v);document.querySelector('#buildMode').classList.toggle('active',v);cells.forEach(c=>c.material.opacity=v?.12:0);updateHUD()}
-document.querySelector('#roadMode').onclick=()=>{roadMode=!roadMode;buildMode=false;cells.forEach(c=>c.material.opacity=roadMode?.12:0);toast(roadMode?'แตะช่องเพื่อวางถนน':'ปิดโหมดถนน')};document.querySelector('#level').onchange=e=>{currentLevel=Number(e.target.value);toast('เลือกชั้น L'+currentLevel)};document.querySelector('#walk').onclick=()=>setMode(false);document.querySelector('#buildMode').onclick=()=>setMode(true);document.querySelector('#placeFlag').onclick=placeNationalFlag;document.querySelector('#placeFlagHere').onclick=()=>{selected=null;placeNationalFlag();};
+document.querySelector('#place').onclick=async()=>{if(!selected){toast('Select a grid tile first');return}const x=selected.userData.x,z=selected.userData.z,occupied=buildings.some(b=>b.userData.x===x&&b.userData.z===z&&(b.userData.level||0)===currentLevel)||constructionSites.some(s=>s.data.x===x&&s.data.z===z&&s.data.level===currentLevel);if(occupied){toast('This tile already contains a structure or active construction');return}const type=document.querySelector('#building').value;if(activeWorldParcelId&&!worldParcelBuildingTypes[type]){toast('Mars parcels support Habitat, Greenhouse, Lab, and Solar only.');return}if(onlineUser){await placeOnline(type,x,z,currentLevel,activeWorldParcelId);return}const recipe=recipes[type];if(!recipe){toast('No material recipe found for this structure');return}if(credits<recipe.credit){toast('Insufficient simulation credits');return}for(const key of ['metal','polymer','electronics'])if(resources[key]<recipe[key]){toast('Insufficient materials: '+key);return}credits-=recipe.credit;for(const key of ['metal','polymer','electronics'])resources[key]-=recipe[key];const data={id:type+'-'+Date.now(),x,z,type,level:currentLevel,startedAt:Date.now(),durationMs:60000,worldParcelId:activeWorldParcelId,worldType:activeWorldParcelId?worldParcelBuildingTypes[type]:null,worldLinkStatus:activeWorldParcelId?'local-only':null};createConstructionSite(data);updateHUD();save(false);renderConstructionJobs();if(activeWorldParcelId)setWorldParcelStatus('LOCAL ONLY •  buildingsนี้อยู่ในเครื่องและยังไม่เผยแพร่บนดาว ต้องLog Inและเป็นOwnerแปลง');toast('Construction started: '+buildingNames[type]+' · Simulated duration: 60 seconds.')};
+document.querySelector('#remove').onclick=async()=>{if(!selected)return;const x=selected.userData.x,z=selected.userData.z;const item=buildings.find(b=>b.userData.x===x&&b.userData.z===z&&b.userData.level===currentLevel)||roads.find(b=>b.userData.x===x&&b.userData.z===z&&b.userData.level===currentLevel);if(item?.userData?.recordId&&onlineUser){if(item.userData.ownerId!==onlineUser.id){toast('Only the member who owns a structure can demolish it.');return}const r=await marsDB.rpc('mars_city_remove_structure',{p_building_id:item.userData.recordId});if(r.error){toast(r.error.message);return}await loadOnlineCity();toast('Structure demolished and synchronized with the online world.');return}const i=buildings.indexOf(item);if(i>=0){scene.remove(item);buildings.splice(i,1);updateHUD();toast('Structure demolished');return}const ri=roads.indexOf(item);if(ri>=0){scene.remove(item);roads.splice(ri,1);updateHUD();toast('Road demolished');return}toast('No structure on this tile')};
+function setMode(v){buildMode=v;roadMode=false;document.querySelector('#walk').classList.toggle('active',!v);document.querySelector('#buildMode').classList.toggle('active',v);document.querySelector('#place').disabled=!selected;document.querySelector('#remove').disabled=!selected;cells.forEach(c=>c.material.opacity=v?.12:0);updateHUD()}
+document.querySelector('#roadMode').onclick=()=>{roadMode=!roadMode;buildMode=false;cells.forEach(c=>c.material.opacity=roadMode?.12:0);toast(roadMode?'Tap a tile to place a road':'Road mode disabled')};document.querySelector('#level').onchange=e=>{currentLevel=Number(e.target.value);toast('Selected level L'+currentLevel)};document.querySelector('#walk').onclick=()=>setMode(false);document.querySelector('#buildMode').onclick=()=>setMode(true);document.querySelector('#placeFlag').onclick=placeNationalFlag;document.querySelector('#placeFlagHere').onclick=()=>{selected=null;placeNationalFlag();};
 document.querySelectorAll('[data-m]').forEach(b=>{const k=b.dataset.m;b.addEventListener('pointerdown',e=>{e.preventDefault();if(k==='jump'){avatar.position.y=.6;return}keys[k]=true});['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,()=>keys[k]=false))});
 addEventListener('keydown',e=>{const map={w:'forward',ArrowUp:'forward',s:'back',ArrowDown:'back',a:'left',ArrowLeft:'left',d:'right',ArrowRight:'right'};if(map[e.key])keys[map[e.key]]=true});addEventListener('keyup',e=>{const map={w:'forward',ArrowUp:'forward',s:'back',ArrowDown:'back',a:'left',ArrowLeft:'left',d:'right',ArrowRight:'right'};if(map[e.key])keys[map[e.key]]=false});
-document.querySelector('#reset').onclick=()=>{camYaw=0;camPitch=.24;distance=Math.max(6,parcelSideMeters*1.05);toast('รีเซ็ตมุมกล้องแล้ว')};document.querySelector('#home').onclick=()=>location.href='./index.html';
-function save(showToast=true){const data={currencyVersion:3,credits,resources,buildings:buildings.filter(b=>!b.userData.remote).map(b=>b.userData),roads:roads.filter(b=>!b.userData.remote).map(r=>r.userData),jobs:constructionSites.map(s=>s.data)};localStorage.setItem(citySaveKey,JSON.stringify(data));if(showToast)toast(onlineUser?'เมืองบันทึกบนโลกออนไลน์แล้ว':'บันทึกเมืองไว้ในอุปกรณ์นี้แล้ว')}
-document.querySelector('#save').onclick=()=>save(true);document.querySelector('#cityAccount').onclick=loginCity;updateWorldParcelContext();connectCityOnline().catch(e=>{console.warn(e);toast('ระบบสมาชิกออนไลน์ยังไม่พร้อม: '+(e.message||e));});
+document.querySelector('#reset').onclick=()=>{camYaw=0;camPitch=.24;distance=Math.max(6,parcelSideMeters*1.05);toast('Camera reset')};document.querySelector('#home').onclick=()=>location.href='./index.html';
+function save(showToast=true){const data={currencyVersion:3,credits,resources,buildings:buildings.filter(b=>!b.userData.remote).map(b=>b.userData),roads:roads.filter(b=>!b.userData.remote).map(r=>r.userData),jobs:constructionSites.map(s=>s.data)};localStorage.setItem(citySaveKey,JSON.stringify(data));if(showToast)toast(onlineUser?'City saved to the online world.':'City saved on this device')}
+document.querySelector('#save').onclick=()=>save(true);document.querySelector('#cityAccount').onclick=loginCity;updateWorldParcelContext();connectCityOnline().catch(e=>{console.warn(e);toast('Online membership is not ready: '+(e.message||e));});
 try{const data=JSON.parse(localStorage.getItem(citySaveKey)||'null');if(data){if((Number(data.currencyVersion)||1)<3){const savedVersion=Number(data.currencyVersion)||1;data.credits=savedVersion===2?Math.round(Number(data.credits??17500)/3.5*1.8):Math.round(Number(data.credits??5000)*1.8);data.currencyVersion=3;localStorage.setItem(citySaveKey,JSON.stringify(data));}credits=data.credits??credits;Object.assign(resources,data.resources||{});(data.buildings||[]).forEach(b=>{const g=makeBuilding(b.type,b.x,b.z,b.level||0);g.userData={...b,level:b.level||0};buildings.push(g)});(data.roads||[]).forEach(r=>addRoad(r.x,r.z,r.level||0));(data.jobs||[]).forEach(j=>{if(j&&Number.isFinite(j.startedAt)&&Number.isFinite(j.durationMs)&&j.durationMs>0&&buildingNames[j.type])createConstructionSite(j)});updateHUD();renderConstructionJobs()}}catch(e){console.warn('Could not restore local construction save',e)}
 function makeColonist(color,x,z){const p=new THREE.Group();const body=new THREE.Mesh(new THREE.CapsuleGeometry(.12,.3,4,7),new THREE.MeshStandardMaterial({color}));body.position.y=.32;p.add(body);const head=new THREE.Mesh(new THREE.SphereGeometry(.105,10,8),new THREE.MeshStandardMaterial({color:0xd9b89f}));head.position.y=.58;p.add(head);p.position.set(x,.04,z);scene.add(p);return p}
 const colonists=[makeColonist(0x68c9d8,-1,1),makeColonist(0xe7b46d,1,0),makeColonist(0x8bd49b,0,-1)];document.querySelector('#npcCount').textContent=colonists.length;
@@ -906,15 +906,15 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
  const backdrop=document.querySelector('#inventoryBackdrop');
  function refreshInventory(){
   const get=id=>document.getElementById(id);
-  const creditText=get('credits')?.textContent||'฿9,000 THB';
+  const creditText=get('credits')?.textContent||'9,000 Simulation Credits';
   get('inventoryCredits').textContent=creditText;
   get('inventoryBuildings').textContent=get('count')?.textContent||'0';
   const readStock=()=>{const stock=get('resourceStock')?.textContent||'';return stock};
   const stock=readStock();
   const parse=(name,fallback)=>{const m=stock.match(new RegExp(name+'\\s+(\\d+)'));return m?m[1]:fallback};
-  get('stockMetal').textContent=parse('โลหะ','120');
-  get('stockPolymer').textContent=parse('โพลิเมอร์','90');
-  get('stockElectronics').textContent=parse('อิเล็กทรอนิกส์','45');
+  get('stockMetal').textContent=parse('Metal','120');
+  get('stockPolymer').textContent=parse('Polymer','90');
+  get('stockElectronics').textContent=parse('Electronics','45');
  }
  function show(){refreshInventory();modal.classList.add('open');modal.setAttribute('aria-hidden','false')}
  function hide(){modal.classList.remove('open');modal.setAttribute('aria-hidden','true')}
