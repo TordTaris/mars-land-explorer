@@ -477,7 +477,27 @@ header .brand .brand-lockup small{display:block!important;color:#aebdca!importan
  <button id="placeFlag" class="primary wide">🚩 Place Flag on Selected Tile</button><button id="placeFlagHere" class="wide" style="margin-top:6px">📍 Place Flag at My Position</button>
  <div class="hint">Choose a country, then tap a tile, or use the button to place your flag at the explorer's current position.</div>
 </div>
-<select id="building" class="wide"><option value="hab">Habitat Dome</option><option value="green">Greenhouse</option><option value="lab">Research Lab</option><option value="solar">Solar Panel</option><option value="hub">Command Hub</option><option value="tower">Communications Tower</option><option value="climate">Climate Control Factory</option></select><button id="place" class="primary wide" disabled>Place Structure on Selected Tile</button><button id="roadMode" class="wide">🛣️ Place Road</button><select id="level" class="wide"><option value="0">Surface Level L0</option><option value="1">Elevated Level L1</option><option value="2">Elevated Level L2</option></select><button id="remove" class="wide" disabled>Demolish Selected Structure</button><p class="hint">Tap a grid tile to choose a location, then start construction. Structures appear progressively in the 3D world.</p><div class="build-progress"><h3>🏗️ LIVE CONSTRUCTION</h3><div class="resource-stock" id="resourceStock">Available Materials: Metal 120 • Polymer 90 • Electronics 45</div><div id="constructionList" class="small">No active construction • Select a tile and place a structure</div></div></section>
+<select id="building" class="wide"><option value="hab">Habitat Dome</option><option value="green">Greenhouse</option><option value="lab">Research Lab</option><option value="solar">Solar Panel</option><option value="hub">Command Hub</option><option value="tower">Communications Tower</option><option value="climate">Climate Control Factory</option></select><button id="place" class="primary wide" disabled>Place Structure on Selected Tile</button><button id="roadMode" class="wide">🛣️ Place Road</button><select id="level" class="wide"><option value="0">Surface Level L0</option><option value="1">Elevated Level L1</option><option value="2">Elevated Level L2</option></select><button id="remove" class="wide" disabled>Demolish Selected Structure</button><p class="hint">Tap a grid tile to choose a location, then start construction. Structures appear progressively in the 3D world.</p><div class="build-progress"><h3>🏗️ LIVE CONSTRUCTION</h3><div class="resource-stock" id="resourceStock">Available Materials: Metal 120 • Polymer 90 • Electronics 45</div><div id="constructionList" class="small">No active construction • Select a tile and place a structure</div></div>
+<section id="climateControlPanel" class="build-progress" style="margin-top:12px;border:1px solid rgba(83,210,224,.38);background:linear-gradient(145deg,rgba(12,38,52,.96),rgba(14,22,36,.96));">
+ <h3 style="color:#7ee8ef">🌐 MARS CLIMATE ENGINEERING</h3>
+ <div id="climateFactoryStatus" class="resource-stock">FACTORY OFFLINE · Build a Climate Control Factory to activate systems</div>
+ <p class="hint">Local game simulation only. These controls do not change the real Martian atmosphere.</p>
+ <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0">
+  <div class="resource-stock">Surface temperature<strong id="climateTemp" style="display:block;font-size:18px;color:#fff">−63.0 °C</strong></div>
+  <div class="resource-stock">Atmospheric pressure<strong id="climatePressure" style="display:block;font-size:18px;color:#fff">0.60 kPa</strong></div>
+  <div class="resource-stock">Oxygen concentration<strong id="climateOxygen" style="display:block;font-size:18px;color:#fff">0.13%</strong></div>
+  <div class="resource-stock">CO₂ concentration<strong id="climateCO2" style="display:block;font-size:18px;color:#fff">95.30%</strong></div>
+ </div>
+ <div class="resource-stock" style="margin-bottom:8px">Dust index <strong id="climateDust" style="color:#fff">100 / 100</strong></div>
+ <div style="display:grid;gap:7px">
+  <button type="button" class="wide" data-climate-toggle="atmosphere" disabled>🧪 Atmosphere Processing · OFF</button>
+  <button type="button" class="wide" data-climate-toggle="oxygen" disabled>🫧 Oxygen Generation · OFF</button>
+  <button type="button" class="wide" data-climate-toggle="thermal" disabled>🌡️ Temperature Regulation · OFF</button>
+  <button type="button" class="wide" data-climate-toggle="pressure" disabled>📈 Pressure Regulation · OFF</button>
+  <button type="button" class="wide" data-climate-toggle="dust" disabled>🌪️ Dust Filtration · OFF</button>
+ </div>
+ <div id="climateSystemLog" class="hint" style="margin-top:9px">System log: awaiting factory construction.</div>
+</section></section>
 
 <section id="inventoryModal" class="inventory-modal" aria-hidden="true">
  <div class="inventory-backdrop" id="inventoryBackdrop"></div>
@@ -573,7 +593,7 @@ function syncOnlineStructures(rows){
    ||constructionSites.some(o=>String(o.data?.recordId)===id);
   if(exists)return;
   const p=row.position||{},rawType=String(p.game_type||row.name||row.building_type||'').toLowerCase();
-  const type=({habitat:'hab',greenhouse:'green',landing_pad:'tower',communications_tower:'tower',communication_tower:'tower',tower:'tower',road:'road'}[rawType]||rawType);
+  const type=({habitat:'hab',greenhouse:'green',landing_pad:'tower',communications_tower:'tower',communication_tower:'tower',tower:'tower',climate_control:'climate',road:'road'}[rawType]||rawType);
   const x=Number(p.x)||0,z=Number(p.z)||0,level=Number(p.level)||0,offset=cityOffset(row.owner_id);
   const cachedLink=readParcelLinkCache()[id]||{};
   const worldParcelId=p.worldParcelId||cachedLink.parcelId||null;
@@ -599,6 +619,7 @@ function syncOnlineStructures(rows){
   const o=roads[i],id=o.userData?.recordId;
   if(id&&!keep.has(String(id))){scene.remove(o);roads.splice(i,1);}
  }
+ updateClimateUI();
  for(let i=constructionSites.length-1;i>=0;i--){
   const site=constructionSites[i],id=site.data?.recordId;
   if(id&&!keep.has(String(id))){scene.remove(site.group);constructionSites.splice(i,1);}
@@ -847,6 +868,32 @@ const recipes={hab:{credit:1440,metal:24,polymer:18,electronics:4},green:{credit
 const buildingNames={hab:"Habitat Dome",green:"Greenhouse",lab:"Research Lab",solar:"Solar Panel",hub:"Command Hub",tower:"Communications Tower",climate:"Climate Control Factory"};
 const constructionStages=["Survey Area","Lay Foundation","Assemble Structure","Install Equipment","System Inspection"];
 const constructionSites=[];let lastConstructionUi=0;
+const climateSystems={atmosphere:false,oxygen:false,thermal:false,pressure:false,dust:false};
+const climateTelemetry={temperature:-63,pressure:.6,oxygen:.13,co2:95.3,dust:100};
+let climateUiAccumulator=0;
+function climateFactoryBuilt(){return buildings.some(b=>b.userData?.type==='climate')||constructionSites.some(s=>s.data?.type==='climate'&&s.progress>=1)}
+function updateClimateUI(){
+ const factory=climateFactoryBuilt(),status=document.querySelector('#climateFactoryStatus');
+ if(status)status.textContent=!factory?'FACTORY OFFLINE · Build a Climate Control Factory to activate systems':Object.values(climateSystems).some(Boolean)?'FACTORY ONLINE · CLIMATE SYSTEMS ACTIVE (SIMULATION)':'FACTORY ONLINE · SYSTEMS STANDBY';
+ const values={climateTemp:climateTelemetry.temperature.toFixed(1)+' °C',climatePressure:climateTelemetry.pressure.toFixed(3)+' kPa',climateOxygen:climateTelemetry.oxygen.toFixed(3)+'%',climateCO2:climateTelemetry.co2.toFixed(2)+'%',climateDust:Math.max(0,climateTelemetry.dust).toFixed(1)+' / 100'};
+ Object.entries(values).forEach(([id,value])=>{const el=document.getElementById(id);if(el)el.textContent=value});
+ document.querySelectorAll('[data-climate-toggle]').forEach(button=>{const key=button.dataset.climateToggle,active=!!climateSystems[key];button.disabled=!factory;button.textContent=({atmosphere:'🧪 Atmosphere Processing',oxygen:'🫧 Oxygen Generation',thermal:'🌡️ Temperature Regulation',pressure:'📈 Pressure Regulation',dust:'🌪️ Dust Filtration'}[key]||key)+' · '+(active?'ON':'OFF');button.classList.toggle('active',active)});
+ const log=document.querySelector('#climateSystemLog');if(log)log.textContent=factory?'System log: '+Object.entries(climateSystems).filter(([,v])=>v).map(([k])=>k.toUpperCase()).join(', ')+' · '+(Object.values(climateSystems).some(Boolean)?'processing simulated atmospheric conditions':'all systems on standby'):'System log: awaiting factory construction.';
+}
+function updateClimateSimulation(dt){
+ if(!climateFactoryBuilt())return;
+ const rate=Math.min(dt,.1);
+ if(climateSystems.atmosphere)climateTelemetry.co2=Math.max(70,climateTelemetry.co2-.004*rate);
+ if(climateSystems.oxygen)climateTelemetry.oxygen=Math.min(21,climateTelemetry.oxygen+.001*rate);
+ if(climateSystems.thermal)climateTelemetry.temperature=Math.min(15,climateTelemetry.temperature+.018*rate);
+ if(climateSystems.pressure)climateTelemetry.pressure=Math.min(101.3,climateTelemetry.pressure+.0008*rate);
+ if(climateSystems.dust)climateTelemetry.dust=Math.max(0,climateTelemetry.dust-.06*rate);
+ climateUiAccumulator+=rate;if(climateUiAccumulator>=1){climateUiAccumulator=0;updateClimateUI()}
+}
+document.querySelectorAll('[data-climate-toggle]').forEach(button=>button.addEventListener('click',()=>{
+ if(!climateFactoryBuilt()){toast('Build a Climate Control Factory first');return}
+ const key=button.dataset.climateToggle;climateSystems[key]=!climateSystems[key];updateClimateUI();save(false);toast((key.toUpperCase())+' '+(climateSystems[key]?'activated':'paused'));
+}));
 const keys={forward:false,back:false,left:false,right:false};
 function updateHUD(){const energyNode=document.querySelector('#inventoryEnergy');if(energyNode)energyNode.textContent=energy.toLocaleString()+' kWh';const hudBuildCount=document.querySelector('#hudBuildCount');if(hudBuildCount)hudBuildCount.textContent=buildings.length;document.querySelector('#count').textContent=buildings.length;document.querySelector('#credits').textContent=credits.toLocaleString('en-US')+' Simulation Credits';document.querySelector('#position').textContent=Math.round(avatar.position.x)+', '+Math.round(avatar.position.z);document.querySelector('#modeLabel').textContent=roadMode?'Place Road':buildMode?'Build City':'Explore Mode';document.querySelector('#roadCount').textContent=roads.length;const stock=document.querySelector('#resourceStock');if(stock)stock.textContent='Available materials: Metal '+resources.metal+' • Polymer '+resources.polymer+' • Electronics '+resources.electronics+' • Pending jobs '+constructionSites.length}
 function toast(t){const el=document.querySelector('#toast');el.textContent=t;el.style.display='block';clearTimeout(window._toast);window._toast=setTimeout(()=>el.style.display='none',2200)}
@@ -933,7 +980,7 @@ function updateConstructionJobs(elapsed){
   if(site.rover.userData.armPivot)site.rover.userData.armPivot.rotation.z=Math.sin(elapsed*2.2+site.data.x)*.34*workIntensity;
   if(site.rover.userData.hook)site.rover.userData.hook.position.y=.30+Math.sin(elapsed*3+site.data.z)*.035*workIntensity;
   if(p>=1){
-   scene.remove(site.group);const building=makeBuilding(site.data.type,site.data.x,site.data.z,site.data.level);building.userData={...site.data,x:site.data.x,z:site.data.z,type:site.data.type,level:site.data.level};buildings.push(building);constructionSites.splice(i,1);completed=true;toast("Construction completed · "+buildingNames[site.data.type]);if(building.userData.worldParcelId&&building.userData.recordId)publishWorldParcelStructure(building.userData);
+   scene.remove(site.group);const building=makeBuilding(site.data.type,site.data.x,site.data.z,site.data.level);building.userData={...site.data,x:site.data.x,z:site.data.z,type:site.data.type,level:site.data.level};buildings.push(building);constructionSites.splice(i,1);completed=true;updateClimateUI();toast("Construction completed · "+buildingNames[site.data.type]);if(building.userData.worldParcelId&&building.userData.recordId)publishWorldParcelStructure(building.userData);
   }
  }
  if(elapsed-lastConstructionUi>.4){renderConstructionJobs();lastConstructionUi=elapsed}
@@ -947,9 +994,9 @@ document.querySelector('#roadMode').onclick=()=>{roadMode=!roadMode;buildMode=fa
 document.querySelectorAll('[data-m]').forEach(b=>{const k=b.dataset.m;b.addEventListener('pointerdown',e=>{e.preventDefault();if(k==='jump'){avatar.position.y=.6;return}keys[k]=true});['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,()=>keys[k]=false))});
 addEventListener('keydown',e=>{const map={w:'forward',ArrowUp:'forward',s:'back',ArrowDown:'back',a:'left',ArrowLeft:'left',d:'right',ArrowRight:'right'};if(map[e.key])keys[map[e.key]]=true});addEventListener('keyup',e=>{const map={w:'forward',ArrowUp:'forward',s:'back',ArrowDown:'back',a:'left',ArrowLeft:'left',d:'right',ArrowRight:'right'};if(map[e.key])keys[map[e.key]]=false});
 document.querySelector('#reset').onclick=()=>{camYaw=0;camPitch=.32;distance=Math.min(12,Math.max(7,parcelSideMeters*.12));toast('Camera reset')};document.querySelector('#home').onclick=()=>location.href='./index.html';
-function save(showToast=true){const data={currencyVersion:3,credits,resources,buildings:buildings.filter(b=>!b.userData.remote).map(b=>b.userData),roads:roads.filter(b=>!b.userData.remote).map(r=>r.userData),jobs:constructionSites.map(s=>s.data)};localStorage.setItem(citySaveKey,JSON.stringify(data));if(showToast)toast(onlineUser?'Online structures are synchronized. Local scene data saved on this device.':'City saved on this device.')}
+function save(showToast=true){const data={currencyVersion:3,credits,resources,climateSystems,climateTelemetry,buildings:buildings.filter(b=>!b.userData.remote).map(b=>b.userData),roads:roads.filter(b=>!b.userData.remote).map(r=>r.userData),jobs:constructionSites.map(s=>s.data)};localStorage.setItem(citySaveKey,JSON.stringify(data));if(showToast)toast(onlineUser?'Online structures are synchronized. Local scene data saved on this device.':'City saved on this device.')}
 document.querySelector('#save').onclick=()=>save(true);document.querySelector('#cityAccount').onclick=loginCity;updateWorldParcelContext();connectCityOnline().catch(e=>{console.warn(e);toast('Online membership is not ready: '+(e.message||e));});
-try{const data=JSON.parse(localStorage.getItem(citySaveKey)||'null');if(data){if((Number(data.currencyVersion)||1)<3){const savedVersion=Number(data.currencyVersion)||1;data.credits=savedVersion===2?Math.round(Number(data.credits??17500)/3.5*1.8):Math.round(Number(data.credits??5000)*1.8);data.currencyVersion=3;localStorage.setItem(citySaveKey,JSON.stringify(data));}credits=data.credits??credits;Object.assign(resources,data.resources||{});(data.buildings||[]).forEach(b=>{const g=makeBuilding(b.type,b.x,b.z,b.level||0);g.userData={...b,level:b.level||0};buildings.push(g)});(data.roads||[]).forEach(r=>addRoad(r.x,r.z,r.level||0));(data.jobs||[]).forEach(j=>{if(j&&Number.isFinite(j.startedAt)&&Number.isFinite(j.durationMs)&&j.durationMs>0&&buildingNames[j.type])createConstructionSite(j)});updateHUD();renderConstructionJobs()}}catch(e){console.warn('Could not restore local construction save',e)}
+try{const data=JSON.parse(localStorage.getItem(citySaveKey)||'null');if(data){if((Number(data.currencyVersion)||1)<3){const savedVersion=Number(data.currencyVersion)||1;data.credits=savedVersion===2?Math.round(Number(data.credits??17500)/3.5*1.8):Math.round(Number(data.credits??5000)*1.8);data.currencyVersion=3;localStorage.setItem(citySaveKey,JSON.stringify(data));}credits=data.credits??credits;Object.assign(resources,data.resources||{});Object.assign(climateSystems,data.climateSystems||{});Object.assign(climateTelemetry,data.climateTelemetry||{});(data.buildings||[]).forEach(b=>{const g=makeBuilding(b.type,b.x,b.z,b.level||0);g.userData={...b,level:b.level||0};buildings.push(g)});(data.roads||[]).forEach(r=>addRoad(r.x,r.z,r.level||0));(data.jobs||[]).forEach(j=>{if(j&&Number.isFinite(j.startedAt)&&Number.isFinite(j.durationMs)&&j.durationMs>0&&buildingNames[j.type])createConstructionSite(j)});updateHUD();renderConstructionJobs();updateClimateUI()}}catch(e){console.warn('Could not restore local construction save',e)}
 function makeColonist(color,x,z){const p=new THREE.Group();const body=new THREE.Mesh(new THREE.CapsuleGeometry(.12,.3,4,7),new THREE.MeshStandardMaterial({color}));body.position.y=.32;p.add(body);const head=new THREE.Mesh(new THREE.SphereGeometry(.105,10,8),new THREE.MeshStandardMaterial({color:0xd9b89f}));head.position.y=.58;p.add(head);p.position.set(x,.04,z);scene.add(p);return p}
 const colonists=[makeColonist(0x68c9d8,-1,1),makeColonist(0xe7b46d,1,0),makeColonist(0x8bd49b,0,-1)];document.querySelector('#npcCount').textContent=colonists.length;
 function updateConstructionCrew(elapsed,dt){
@@ -964,7 +1011,7 @@ function updateConstructionCrew(elapsed,dt){
   p.rotation.y=Math.atan2(site.data.x-p.position.x,site.data.z-p.position.z);
  });
 }
-const clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04);const forward=new THREE.Vector3(-Math.sin(camYaw),0,-Math.cos(camYaw)),side=new THREE.Vector3(Math.cos(camYaw),0,-Math.sin(camYaw));const move=new THREE.Vector3();if(keys.forward)move.add(forward);if(keys.back)move.sub(forward);if(keys.right)move.add(side);if(keys.left)move.sub(side);if(move.lengthSq()){move.normalize();avatar.position.addScaledVector(move,dt*3.3);yaw=Math.atan2(move.x,move.z);avatar.rotation.y=yaw}avatar.position.y=Math.max(0,avatar.position.y-dt*1.8);const target=new THREE.Vector3(avatar.position.x,avatar.position.y+1.05,avatar.position.z);const horizontal=distance*Math.cos(camPitch);camera.position.set(target.x+Math.sin(camYaw)*horizontal,target.y+distance*Math.sin(camPitch)+1.1,target.z+Math.cos(camYaw)*horizontal);camera.lookAt(target);marker.position.set(avatar.position.x,.04,avatar.position.z);updateConstructionCrew(clock.elapsedTime,dt);updateConstructionJobs(clock.elapsedTime);renderer.render(scene,camera)}animate();
+const clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04);const forward=new THREE.Vector3(-Math.sin(camYaw),0,-Math.cos(camYaw)),side=new THREE.Vector3(Math.cos(camYaw),0,-Math.sin(camYaw));const move=new THREE.Vector3();if(keys.forward)move.add(forward);if(keys.back)move.sub(forward);if(keys.right)move.add(side);if(keys.left)move.sub(side);if(move.lengthSq()){move.normalize();avatar.position.addScaledVector(move,dt*3.3);yaw=Math.atan2(move.x,move.z);avatar.rotation.y=yaw}avatar.position.y=Math.max(0,avatar.position.y-dt*1.8);const target=new THREE.Vector3(avatar.position.x,avatar.position.y+1.05,avatar.position.z);const horizontal=distance*Math.cos(camPitch);camera.position.set(target.x+Math.sin(camYaw)*horizontal,target.y+distance*Math.sin(camPitch)+1.1,target.z+Math.cos(camYaw)*horizontal);camera.lookAt(target);marker.position.set(avatar.position.x,.04,avatar.position.z);updateConstructionCrew(clock.elapsedTime,dt);updateConstructionJobs(clock.elapsedTime);updateClimateSimulation(dt);renderer.render(scene,camera)}animate();
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});updateHUD();
 </script>
 <script>
