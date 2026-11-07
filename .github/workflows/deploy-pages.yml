@@ -109,7 +109,7 @@ jobs:
           assert 'id="lmChatOpen"' in html and '"./chat.js"' in sw, "Chat launcher and offline asset missing"
           assert "getElementById('account')" in chat and "scheduleReconnect" in chat, "Chat login and reconnect handling missing"
           assert 'src="./chat.js"' in html and "mars_chat_messages" in chat and "postgres_changes" in chat and "presence" in chat, "Live chat client integration missing"
-          assert 'data-search-terms="ตลาด ซื้อขายที่ดิน ราคา mlc marketplace land listing"' in html, "Thai and English marketplace search terms missing"
+          assert 'data-search-terms="marketplace land listings prices mlc"' in html and '<b>Land Marketplace</b>' in html, "Land Marketplace entry missing"
           assert ".lm-system-grid{grid-template-columns:minmax(0,1fr)" in html, "mobile More menu must use readable single-column cards"
           assert manifest.get("display") == "standalone", "PWA standalone display missing"
           assert any(icon.get("sizes") == "192x192" for icon in manifest.get("icons", [])), "192px PWA icon declaration missing"
