@@ -2570,4 +2570,72 @@ body:not(.lm-star-view-mode) #lm-satellite-link{
  body:not(.lm-star-view-mode) #lm-satellite-link button{min-height:32px!important;margin-top:5px!important;padding:5px!important;font-size:8px!important}
 }
 </style>
+
+<!-- LOCAL MARS · Honeycomb Orbital Magnetic Network -->
+<style id="lm-honeycomb-orbital-styles">
+#lmHoneycombOpen{position:fixed;z-index:92;right:12px;top:calc(env(safe-area-inset-top,0px) + 164px);width:48px;height:48px;border:1px solid #70dce8;border-radius:15px;background:linear-gradient(145deg,#132a3aee,#08121fee);color:#a8f4ff;font:800 21px system-ui;box-shadow:0 0 22px #54d9e955;cursor:pointer}
+#lmHoneycombOverlay{position:fixed;inset:0;z-index:2147482000;display:none;background:radial-gradient(ellipse at 50% 44%,#172f40 0%,#07111d 56%,#03070d 100%);color:#e9f6ff;font-family:system-ui,sans-serif}
+#lmHoneycombOverlay.open{display:block}
+#lmHoneycombOverlay *{box-sizing:border-box}
+#lmHoneycombOverlay .hc-head{position:absolute;z-index:3;top:env(safe-area-inset-top,10px);left:14px;right:14px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+#lmHoneycombOverlay .hc-title{font-size:12px;font-weight:900;letter-spacing:1.6px;color:#b8f6ff}
+#lmHoneycombOverlay .hc-sub{font-size:9px;color:#8daab9;letter-spacing:1px;margin-top:4px}
+#lmHoneycombClose{border:1px solid #91dce877;background:#102331;color:#d8faff;border-radius:10px;padding:10px 13px;font-weight:800}
+#lmHoneycombCanvas{position:absolute;inset:58px 0 108px;width:100%;height:calc(100% - 166px);touch-action:pan-y}
+#lmHoneycombOverlay .hc-panel{position:absolute;z-index:3;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);left:12px;right:12px;padding:12px;border:1px solid #6bd9e455;border-radius:15px;background:#071521eF;backdrop-filter:blur(14px);box-shadow:0 10px 35px #0009}
+#lmHoneycombOverlay .hc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+#lmHoneycombOverlay .hc-stat{padding:8px;border-radius:9px;background:#102737}
+#lmHoneycombOverlay .hc-stat b{display:block;font-size:16px;color:#a7f5ff}
+#lmHoneycombOverlay .hc-stat span{font-size:8px;letter-spacing:.8px;color:#8ba8b8}
+#lmHoneycombOverlay .hc-controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+#lmHoneycombOverlay .hc-controls button{flex:1;min-width:100px;border:1px solid #4caebc88;border-radius:9px;padding:9px;background:#102b3b;color:#d8faff;font-size:10px;font-weight:800}
+#lmHoneycombOverlay .hc-note{font-size:9px;line-height:1.4;color:#91aab8;margin-top:8px}
+@media(max-width:480px){#lmHoneycombOpen{top:calc(env(safe-area-inset-top,0px) + 164px);right:10px;width:44px;height:44px}#lmHoneycombOverlay .hc-stat b{font-size:14px}}
+</style>
+<button id="lmHoneycombOpen" type="button" aria-label="Open Honeycomb Orbital Network" title="Honeycomb Orbital Network">⌘</button>
+<section id="lmHoneycombOverlay" role="dialog" aria-modal="true" aria-label="Honeycomb Orbital Magnetic Network" aria-hidden="true">
+ <header class="hc-head"><div><div class="hc-title">LOCAL MARS · HONEYCOMB ORBITAL NETWORK</div><div class="hc-sub">PLANET-WIDE SATELLITE MESH · DIGITAL SIMULATION</div></div><button id="lmHoneycombClose" type="button">CLOSE ✕</button></header>
+ <canvas id="lmHoneycombCanvas" aria-label="Animated honeycomb satellite network visualization"></canvas>
+ <div class="hc-panel">
+  <div class="hc-stats">
+   <div class="hc-stat"><b id="lmHcSatellites">61</b><span>SATELLITE NODES</span></div>
+   <div class="hc-stat"><b id="lmHcLinks">156</b><span>MAGNETIC LINKS</span></div>
+   <div class="hc-stat"><b id="lmHcCoverage">100%</b><span>SIMULATED GRID COVERAGE</span></div>
+  </div>
+  <div class="hc-controls"><button id="lmHcLinksToggle" type="button">MAGNETIC LINKS · ON</button><button id="lmHcOrbitToggle" type="button">ORBIT FLOW · ON</button><button id="lmHcReset" type="button">RESET NETWORK</button></div>
+  <div class="hc-note" id="lmHcStatus">NETWORK NOMINAL · Nodes and field lines are illustrative. No physical satellites or planetary magnetic shield are being deployed.</div>
+ </div>
+</section>
+<script id="lm-honeycomb-orbital-controller">
+(()=> {
+ const overlay=document.getElementById('lmHoneycombOverlay'),open=document.getElementById('lmHoneycombOpen'),close=document.getElementById('lmHoneycombClose'),canvas=document.getElementById('lmHoneycombCanvas');
+ if(!overlay||!open||!close||!canvas||window.__lmHoneycombBound)return;window.__lmHoneycombBound=true;
+ const ctx=canvas.getContext('2d');let nodes=[],links=true,flow=true,angle=0,raf=0,last=0,w=0,h=0;
+ const status=document.getElementById('lmHcStatus');
+ function build(){nodes=[];const rows=9,cols=9;for(let r=-4;r<=4;r++)for(let c=-4;c<=4;c++){const x=(c+(r&1)*.5)*1.0,y=r*.866;if(x*x+y*y<20.2)nodes.push({x,y,phase:Math.random()*Math.PI*2})}
+ const map=new Map(nodes.map((p,i)=>[p.x.toFixed(2)+','+p.y.toFixed(2),i]));const dirs=[[1,0],[-1,0],[.5,.866],[-.5,.866],[.5,-.866],[-.5,-.866]];const seen=new Set();nodes.forEach((p,i)=>dirs.forEach(([dx,dy])=>{const j=map.get((p.x+dx).toFixed(2)+','+(p.y+dy).toFixed(2));if(j!==undefined&&j>i){const k=i+':'+j;if(!seen.has(k)){seen.add(k);}}}));window.__lmHcLinkCount=seen.size;document.getElementById('lmHcSatellites').textContent=String(nodes.length);document.getElementById('lmHcLinks').textContent=String(seen.size);nodes.forEach(p=>p.neighbors=dirs.map(([dx,dy])=>map.get((p.x+dx).toFixed(2)+','+(p.y+dy).toFixed(2))).filter(j=>j!==undefined));}
+ function resize(){const dpr=Math.min(devicePixelRatio||1,2),rect=canvas.getBoundingClientRect();w=rect.width;h=rect.height;canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0)}
+ function draw(t){if(!overlay.classList.contains('open'))return;const dt=Math.min((t-last)/1000||0,.05);last=t;if(flow)angle+=dt*.12;ctx.clearRect(0,0,w,h);const cx=w/2,cy=h/2-8,R=Math.min(w*.34,h*.37,230),tilt=.72;
+ const project=p=>{const a=angle+p.x*.09;const x=p.x*R*.205,y=p.y*R*.205;const rx=x*Math.cos(angle)-y*Math.sin(angle);const ry=(x*Math.sin(angle)+y*Math.cos(angle))*tilt;return{x:cx+rx,y:cy+ry,z:Math.cos((x+y)*.004+angle)}};
+ // Mars globe
+ const g=ctx.createRadialGradient(cx-R*.32,cy-R*.35,R*.06,cx,cy,R);g.addColorStop(0,'#e99a69');g.addColorStop(.48,'#a84d37');g.addColorStop(1,'#351923');ctx.beginPath();ctx.arc(cx,cy,R*.62,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();ctx.strokeStyle='#f0a17855';ctx.lineWidth=1.2;ctx.stroke();
+ ctx.save();ctx.beginPath();ctx.arc(cx,cy,R*.62,0,Math.PI*2);ctx.clip();for(let i=0;i<9;i++){ctx.beginPath();ctx.ellipse(cx,cy,R*(.14+i*.052),R*(.09+i*.04),angle*.1,0,Math.PI*2);ctx.strokeStyle='#ffc09a18';ctx.stroke()}ctx.restore();
+ const pts=nodes.map(project);
+ if(links){ctx.lineWidth=1;nodes.forEach((p,i)=>p.neighbors.forEach(j=>{if(j<=i)return;const a=pts[i],b=pts[j];ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle='#69e6ef55';ctx.stroke();const pulse=(t*.00035+i*.17)%1;const px=a.x+(b.x-a.x)*pulse,py=a.y+(b.y-a.y)*pulse;ctx.beginPath();ctx.arc(px,py,1.6,0,Math.PI*2);ctx.fillStyle='#b8fbff';ctx.fill()}))}
+ pts.forEach((p,i)=>{const glow=3+Math.sin(t*.002+nodes[i].phase)*1.1;ctx.beginPath();ctx.arc(p.x,p.y,glow+3,0,Math.PI*2);ctx.fillStyle='#55dce522';ctx.fill();ctx.beginPath();ctx.arc(p.x,p.y,2.2,0,Math.PI*2);ctx.fillStyle='#c7fbff';ctx.fill();ctx.strokeStyle='#6ceaf2';ctx.lineWidth=.8;ctx.stroke()});
+ // Orbital ring and field contour
+ ctx.beginPath();ctx.ellipse(cx,cy,R*.96,R*.33,angle*.08,0,Math.PI*2);ctx.strokeStyle='#66dce544';ctx.setLineDash([4,8]);ctx.stroke();ctx.setLineDash([]);
+ ctx.fillStyle='#d3faff';ctx.font='800 9px system-ui';ctx.textAlign='center';ctx.fillText('MARS · GLOBAL ORBITAL MESH',cx,Math.max(18,cy-R*.78));
+ raf=requestAnimationFrame(draw)
+ }
+ function show(){overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');open.setAttribute('aria-expanded','true');resize();last=0;cancelAnimationFrame(raf);raf=requestAnimationFrame(draw)}
+ function hide(){overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true');open.setAttribute('aria-expanded','false');cancelAnimationFrame(raf)}
+ open.addEventListener('click',show);close.addEventListener('click',hide);overlay.addEventListener('click',e=>{if(e.target===overlay)hide()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('open'))hide()});window.addEventListener('resize',()=>{if(overlay.classList.contains('open'))resize()});
+ document.getElementById('lmHcLinksToggle').addEventListener('click',e=>{links=!links;e.currentTarget.textContent='MAGNETIC LINKS · '+(links?'ON':'OFF');status.textContent=links?'Magnetic field connections are visible in the digital model.':'Magnetic field connections are hidden.'});
+ document.getElementById('lmHcOrbitToggle').addEventListener('click',e=>{flow=!flow;e.currentTarget.textContent='ORBIT FLOW · '+(flow?'ON':'PAUSED');status.textContent=flow?'Orbital flow animation is running.':'Orbital flow animation paused.'});
+ document.getElementById('lmHcReset').addEventListener('click',()=>{angle=0;links=true;flow=true;document.getElementById('lmHcLinksToggle').textContent='MAGNETIC LINKS · ON';document.getElementById('lmHcOrbitToggle').textContent='ORBIT FLOW · ON';status.textContent='NETWORK RESET · Digital simulation nominal.'});
+ build();window.addEventListener('orientationchange',()=>setTimeout(resize,120));
+})();
+</script>
+
 </body></html>
