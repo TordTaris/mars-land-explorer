@@ -8,13 +8,23 @@ const allowedOrigins = new Set([
   Deno.env.get("SITE_ORIGIN") ?? "",
 ].map((value) => value.trim()).filter(Boolean));
 
+function isAllowedOrigin(origin: string | null): boolean {
+  if (!origin) return true;
+  if (allowedOrigins.has(origin)) return true;
+  try {
+    const parsed = new URL(origin);
+    return parsed.protocol === "https:" && parsed.hostname.endsWith("-tordtaris.vercel.app");
+  } catch {
+    return false;
+  }
+}
 function corsHeaders(origin: string | null): Record<string, string> {
   const headers: Record<string, string> = {
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Vary": "Origin",
   };
-  if (origin && allowedOrigins.has(origin)) headers["Access-Control-Allow-Origin"] = origin;
+  if (origin && isAllowedOrigin(origin)) headers["Access-Control-Allow-Origin"] = origin;
   return headers;
 }
 const json = (body: unknown, status = 200, origin: string | null = null) =>
@@ -50,11 +60,11 @@ Deno.serve(async (req) => {
   const origin = req.headers.get("Origin");
   const respond = (body: unknown, status = 200) => json(body, status, origin);
   if (req.method === "OPTIONS") {
-    if (origin && !allowedOrigins.has(origin)) return new Response("Origin not allowed", { status: 403 });
+    if (!isAllowedOrigin(origin)) return new Response("Origin not allowed", { status: 403 });
     return new Response("ok", { headers: corsHeaders(origin) });
   }
   if (req.method !== "POST") return respond({ error: "Method not allowed" }, 405);
-  if (origin && !allowedOrigins.has(origin)) return respond({ error: "Origin not allowed" }, 403);
+  if (!isAllowedOrigin(origin)) return respond({ error: "Origin not allowed" }, 403);
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
