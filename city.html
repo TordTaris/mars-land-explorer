@@ -310,6 +310,15 @@ header{padding:14px 18px;background:linear-gradient(180deg,#060a12ee 0%,#09111bc
 }
 @media(max-width:360px){.brand small{display:none!important}}
 
+
+/* Mobile-safe member authentication dialog */
+.auth-backdrop{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:18px;background:#020813d9;backdrop-filter:blur(9px)}
+.auth-backdrop.open{display:flex}
+.auth-card{width:min(420px,100%);padding:20px;border:1px solid #6a91b2;border-radius:18px;background:linear-gradient(145deg,#142b43,#081525);box-shadow:0 22px 70px #000c}
+.auth-card h2{margin:0 0 6px;font-size:20px}.auth-card p{color:#a9bfd4;font-size:12px;line-height:1.5}
+.auth-card input{display:block;width:100%;margin:10px 0;padding:13px;border:1px solid #456987;border-radius:10px;background:#071321;color:#eef5ff;font:inherit}
+.auth-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+#authFeedback{min-height:22px;color:#ffd18b;font-size:12px}
 </style><style id="local-mars-language-layout-fix">
 #lmLanguage{position:static!important;inset:auto!important;z-index:auto!important;display:inline-flex!important;align-items:center;justify-content:center;flex:0 0 auto;margin:0 0 0 8px;min-height:34px;max-width:44px;white-space:nowrap;box-shadow:none!important;backdrop-filter:none!important}
 #lmLanguage.lm-language-dock{position:static!important}
@@ -589,6 +598,21 @@ header .brand .brand-lockup small{display:block!important;color:#aebdca!importan
 </section>
 <div class="pad"><button data-m="forward">▲</button><button data-m="left">◀</button><button data-m="back">▼</button><button data-m="right">▶</button><button data-m="jump">Jump</button></div><div class="look">Drag to rotate the camera • Pinch with two fingers to zoom</div>
 <nav class="bottom"><button id="home">🌎 Mars</button><button id="reset">Reset Camera</button><button id="save">💾 Save City</button></nav><div class="toast" id="toast"></div>
+<div id="cityAuthModal" class="auth-backdrop" aria-hidden="true">
+ <section class="auth-card" role="dialog" aria-modal="true" aria-labelledby="cityAuthTitle">
+  <h2 id="cityAuthTitle">LOCAL MARS Account</h2>
+  <p id="cityAuthHint">Sign in to synchronize your colony and construct online facilities.</p>
+  <form id="cityAuthForm">
+   <input id="cityAuthEmail" type="email" autocomplete="email" placeholder="Email address" required>
+   <input id="cityAuthPassword" type="password" autocomplete="current-password" minlength="8" placeholder="Password (at least 8 characters)" required>
+   <div id="cityAuthConfirmWrap" style="display:none"><input id="cityAuthConfirm" type="password" autocomplete="new-password" minlength="8" placeholder="Confirm password"></div>
+   <div id="authFeedback" role="status" aria-live="polite"></div>
+   <button id="cityAuthSubmit" class="primary wide" type="submit">Sign In</button>
+  </form>
+  <div class="auth-actions"><button id="cityAuthSwitch" type="button">Create Account</button><button id="cityAuthClose" type="button">Close</button></div>
+ </section>
+</div>
+
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 <script type="module">
 import * as THREE from 'three';
@@ -880,15 +904,61 @@ async function placeNationalFlag(){
   const button=document.querySelector('#placeFlag'),quickButton=document.querySelector('#placeFlagHere');if(button){button.disabled=false;button.textContent='🚩 Place Flag on Selected Tile';}if(quickButton){quickButton.disabled=false;quickButton.textContent='📍 Place Flag at My Position';}
  }
 }
-async function loginCity(){
- if(onlineUser){if(confirm('Do you want to sign out of LOCAL MARS?'))await marsDB.auth.signOut();return;}
- const email=prompt('Enter your LOCAL MARS member email.');if(!email)return;
- const password=prompt('Enter password (at least 8 characters).');if(!password)return;
- const signup=confirm('Select OK to register a new account, or Cancel to sign in.');
- const r=signup?await marsDB.auth.signUp({email:email.trim(),password,options:{emailRedirectTo:new URL('./',location.href).href,data:{display_name:email.split('@')[0]}}}):await marsDB.auth.signInWithPassword({email:email.trim(),password});
- if(r.error){toast(r.error.message);return;}
- if(signup&&!r.data.session)toast('Registration complete. Please verify your email before logging in.');else toast('Successfully signed in to LOCAL MARS.');
+let cityAuthMode='signin';
+function openCityAuth(){
+ const modal=document.querySelector('#cityAuthModal');
+ if(!modal)return;
+ modal.classList.add('open');modal.setAttribute('aria-hidden','false');
+ document.querySelector('#authFeedback').textContent='';
+ document.querySelector('#cityAuthEmail').focus();
 }
+function closeCityAuth(){
+ const modal=document.querySelector('#cityAuthModal');
+ modal?.classList.remove('open');modal?.setAttribute('aria-hidden','true');
+}
+function setCityAuthMode(mode){
+ cityAuthMode=mode;
+ const signup=mode==='signup';
+ document.querySelector('#cityAuthTitle').textContent=signup?'Create LOCAL MARS Account':'LOCAL MARS Account';
+ document.querySelector('#cityAuthHint').textContent=signup?'Create an account to save and synchronize your colony.':'Sign in to synchronize your colony and construct online facilities.';
+ document.querySelector('#cityAuthConfirmWrap').style.display=signup?'block':'none';
+ document.querySelector('#cityAuthPassword').autocomplete=signup?'new-password':'current-password';
+ document.querySelector('#cityAuthSubmit').textContent=signup?'Create Account':'Sign In';
+ document.querySelector('#cityAuthSwitch').textContent=signup?'I already have an account':'Create Account';
+ document.querySelector('#authFeedback').textContent='';
+}
+async function loginCity(){
+ if(onlineUser){
+  const confirmed=window.confirm('Do you want to sign out of LOCAL MARS?');
+  if(confirmed){await marsDB.auth.signOut();toast('Signed out of LOCAL MARS.')}
+  return;
+ }
+ setCityAuthMode('signin');openCityAuth();
+}
+document.querySelector('#cityAuthSwitch').addEventListener('click',()=>setCityAuthMode(cityAuthMode==='signin'?'signup':'signin'));
+document.querySelector('#cityAuthClose').addEventListener('click',closeCityAuth);
+document.querySelector('#cityAuthModal').addEventListener('click',e=>{if(e.target.id==='cityAuthModal')closeCityAuth()});
+document.querySelector('#cityAuthForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const email=document.querySelector('#cityAuthEmail').value.trim();
+ const password=document.querySelector('#cityAuthPassword').value;
+ const feedback=document.querySelector('#authFeedback'),submit=document.querySelector('#cityAuthSubmit');
+ if(cityAuthMode==='signup'&&password!==document.querySelector('#cityAuthConfirm').value){feedback.textContent='Passwords do not match.';return}
+ submit.disabled=true;submit.textContent=cityAuthMode==='signup'?'Creating account…':'Signing in…';feedback.textContent='Connecting securely…';
+ try{
+  const result=cityAuthMode==='signup'
+   ?await marsDB.auth.signUp({email,password,options:{emailRedirectTo:new URL('./',location.href).href,data:{display_name:email.split('@')[0]}}})
+   :await marsDB.auth.signInWithPassword({email,password});
+  if(result.error)throw result.error;
+  if(cityAuthMode==='signup'&&!result.data.session){
+   feedback.textContent='Account created. Check your email and verify it before signing in.';
+   submit.textContent='Account Created';
+  }else{
+   closeCityAuth();toast(cityAuthMode==='signup'?'Account created and signed in.':'Successfully signed in to LOCAL MARS.');
+  }
+ }catch(error){feedback.textContent=error?.message||'Unable to authenticate. Please try again.';submit.disabled=false;submit.textContent=cityAuthMode==='signup'?'Create Account':'Sign In'}
+});
+
 
 const root=document.querySelector('#world'),scene=new THREE.Scene();
 const marsSky=new THREE.Color(0x9b7160);scene.background=marsSky;scene.fog=new THREE.Fog(marsSky,22,65);
