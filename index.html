@@ -1217,6 +1217,8 @@ document.addEventListener('DOMContentLoaded',()=>{
     <a class="lm-system-card" href="./download-ai.html" style="text-decoration:none" data-search-terms="download local mars ai online app html package"><span class="lm-system-art">⬇️</span><b>LOCAL MARS AI · DOWNLOAD CENTER</b><small>Download the LOCAL MARS AI application package.</small><em class="lm-system-state">ONLINE DOWNLOAD</em></a>
     <button class="lm-system-card" data-system-target="account" data-search-terms="member sign in account"><span class="lm-system-art">👤</span><b>Member Account</b><small>Sign in and manage your session</small><em class="lm-system-state">MEMBER ACCESS</em></button>
     <a class="lm-system-card" href="./satellite-network.html" style="text-decoration:none" data-search-terms="satellite network orbital catalog"><span class="lm-system-art">🛰️</span><b>Satellite Network</b><small>Member access · public orbital catalog</small><em class="lm-system-state">MEMBER ACCESS</em></a>
+    
+    <button class="lm-system-card" id="lmOversightOpen" type="button" data-search-terms="systems oversight organization audit monitoring operations quality control security governance"><span class="lm-system-art">🏛️</span><b>Systems Oversight</b><small>Operational monitoring, audits and incident review</small><em class="lm-system-state">CONTROL OFFICE</em></button>
     <button class="lm-system-card" data-system-target="wallet" data-search-terms="wallet balance mlc"><span class="lm-system-art">💠</span><b>MLC Wallet</b><small>View your in-app MLC balance</small><em class="lm-system-state">MEMBER ACCESS</em></button>
     <button class="lm-system-card" id="lmMoreInstallBtn" type="button" data-system-target="install" data-search-terms="install app download updates"><span class="lm-system-art">⬇️</span><b>Install App</b><small>Install LOCAL MARS on this device</small><em class="lm-system-state">APP MODULE</em></button>
    </div>
@@ -2570,4 +2572,87 @@ body:not(.lm-star-view-mode) #lm-satellite-link{
  body:not(.lm-star-view-mode) #lm-satellite-link button{min-height:32px!important;margin-top:5px!important;padding:5px!important;font-size:8px!important}
 }
 </style>
+
+<!-- LOCAL MARS · Systems Oversight Organization -->
+<style id="lm-oversight-styles">
+#lmOversightOverlay{position:fixed;inset:0;z-index:2147482500;display:none;overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 12px) 12px calc(env(safe-area-inset-bottom,0px) + 14px);background:radial-gradient(ellipse at 85% 0%,#273d56 0,transparent 42%),#050b14;color:#edf4fa;font-family:system-ui,sans-serif}
+#lmOversightOverlay.open{display:block}
+#lmOversightOverlay *{box-sizing:border-box}
+#lmOversightCard{max-width:980px;margin:0 auto;padding:clamp(14px,3vw,25px);border:1px solid #b99a6266;border-radius:19px;background:linear-gradient(145deg,#11263a,#081421 70%);box-shadow:0 24px 80px #000a}
+#lmOversightOverlay .ov-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+#lmOversightOverlay .ov-kicker{font-size:9px;font-weight:900;letter-spacing:1.8px;color:#79dce8}
+#lmOversightOverlay h2{margin:5px 0;color:#f0d18e;font-size:clamp(21px,4vw,30px)}
+#lmOversightOverlay .ov-sub{color:#a9bdcf;font-size:11px;line-height:1.5}
+#lmOversightClose,#lmOversightScan{border:1px solid #6e9eb588;border-radius:10px;padding:10px 13px;background:#102b40;color:#e8f7ff;font-size:11px;font-weight:800}
+#lmOversightScan{border-color:#d5b57888;background:linear-gradient(135deg,#5a4729,#19334a);color:#fff0ce}
+#lmOversightOverlay .ov-banner{margin:16px 0;padding:12px;border:1px solid #6bcbd655;border-radius:12px;background:#0b2635;color:#bdebf2;font-size:10px;line-height:1.5}
+#lmOversightOverlay .ov-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+#lmOversightOverlay .ov-check{padding:12px;border:1px solid #4d6d87aa;border-radius:12px;background:#0b1b2b;min-width:0}
+#lmOversightOverlay .ov-check-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+#lmOversightOverlay .ov-check b{font-size:11px;color:#edf5fb}
+#lmOversightOverlay .ov-state{font-size:8px;font-weight:900;letter-spacing:.8px;color:#9ec6d3}
+#lmOversightOverlay .ov-check p{margin:7px 0 0;color:#91a9bc;font-size:9px;line-height:1.45}
+#lmOversightOverlay .ov-section{margin-top:18px}
+#lmOversightOverlay .ov-section h3{margin:0 0 9px;color:#e4c88f;font-size:10px;letter-spacing:1.3px}
+#lmOversightOverlay .ov-roles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#lmOversightOverlay .ov-role{padding:10px;border-left:2px solid #69cbd6;background:#0b1b2b;border-radius:0 9px 9px 0}
+#lmOversightOverlay .ov-role b{display:block;font-size:10px}
+#lmOversightOverlay .ov-role span{display:block;margin-top:4px;color:#91a9bc;font-size:9px;line-height:1.4}
+#lmOversightOverlay .ov-foot{margin-top:15px;padding-top:12px;border-top:1px solid #ffffff1c;color:#8199ad;font-size:8px;line-height:1.5}
+#lmOversightLastScan{color:#9cb8c8;font-size:9px;margin-top:10px}
+@media(max-width:560px){#lmOversightOverlay .ov-grid,#lmOversightOverlay .ov-roles{grid-template-columns:1fr}#lmOversightCard{border-radius:14px;padding:13px}}
+</style>
+<section id="lmOversightOverlay" role="dialog" aria-modal="true" aria-label="LOCAL MARS Systems Oversight Organization" aria-hidden="true">
+ <div id="lmOversightCard">
+  <header class="ov-head"><div><div class="ov-kicker">LOCAL MARS · GOVERNANCE & ASSURANCE</div><h2>Systems Oversight Organization</h2><div class="ov-sub">Independent operational review office · LMSO</div></div><button id="lmOversightClose" type="button">CLOSE ✕</button></header>
+  <div class="ov-banner"><b>MANDATE</b> · Monitor application availability, inspect critical interface components, review orbital simulation controls, and record incidents for follow-up. This dashboard performs browser-side checks only; it does not certify backend, database, satellite, or physical infrastructure health.</div>
+  <div class="ov-head" style="align-items:center;margin:14px 0 9px"><div class="ov-kicker">OPERATIONAL CHECKLIST</div><button id="lmOversightScan" type="button">↻ RUN SYSTEM SCAN</button></div>
+  <div class="ov-grid" id="lmOversightChecks" aria-live="polite">
+   <div class="ov-check"><b>Waiting for scan</b><p>Run the scan to inspect this browser session.</p></div>
+  </div>
+  <div id="lmOversightLastScan">No scan has been run in this session.</div>
+  <div class="ov-section"><h3>ORGANIZATION STRUCTURE</h3><div class="ov-roles">
+   <div class="ov-role"><b>Office of the Director</b><span>Sets audit priorities, reviews risk and approves operational reports.</span></div>
+   <div class="ov-role"><b>Operations & Availability</b><span>Checks key routes, navigation, interface loading and service-worker registration.</span></div>
+   <div class="ov-role"><b>Orbital & Simulation Assurance</b><span>Reviews satellite mesh, orbital visualizations and simulation status labels.</span></div>
+   <div class="ov-role"><b>Data & Security Review</b><span>Defines database, account, access-control and incident checks for verified backend audits.</span></div>
+   <div class="ov-role"><b>Quality & Incident Response</b><span>Reproduces defects, records evidence, tracks fixes and retests releases.</span></div>
+  </div></div>
+  <div class="ov-foot">GOVERNANCE NOTE: These are proposed in-app departments, not staffed or access-controlled accounts. Scan results are temporary browser observations, not a saved audit log. Backend health, Supabase connectivity, authentication security, payment integrity and production route checks require separate authenticated tests.</div>
+ </div>
+</section>
+<script id="lm-oversight-controller">
+(()=> {
+ const overlay=document.getElementById('lmOversightOverlay'),opener=document.getElementById('lmOversightOpen'),closer=document.getElementById('lmOversightClose'),scan=document.getElementById('lmOversightScan'),checks=document.getElementById('lmOversightChecks'),last=document.getElementById('lmOversightLastScan');
+ if(!overlay||!opener||!closer||!scan||window.__lmOversightBound)return;window.__lmOversightBound=true;
+ const item=(name,state,detail)=>'<div class="ov-check"><div class="ov-check-top"><b>'+name+'</b><span class="ov-state">'+state+'</span></div><p>'+detail+'</p></div>';
+ function runScan(){
+  const online=navigator.onLine;
+  const core=!!document.querySelector('.lm-command-dock')&&!!document.getElementById('lmSystemsOverlay');
+  const guide=!!document.getElementById('lmMenuToggle')&&!!document.getElementById('lmMenuDropdown');
+  const orbit=!!document.getElementById('lmSolarOpen')&&!!document.getElementById('lmSolarOverlay');
+  const server=!!window.MarsWorldServer;
+  const session=window.MarsWorldServer?.getState?.()?.user;
+  const routeLinks=['./city.html#construction','./news.html','./underground.html','./civilization.html'].map(h=>({href:h,found:[...document.querySelectorAll('a[href]')].some(a=>a.getAttribute('href')===h)}));
+  const routeCount=routeLinks.filter(x=>x.found).length;
+  let sw='NOT AVAILABLE',swDetail='Service Worker API is unavailable in this browser.';
+  const swPromise=('serviceWorker'in navigator)?navigator.serviceWorker.getRegistration().then(reg=>{sw=reg?'REGISTERED':'NOT REGISTERED';swDetail=reg?'A service-worker registration exists for this origin.':'No service-worker registration was found for this page.';return [sw,swDetail]}).catch(()=>{sw='CHECK FAILED';swDetail='The browser did not allow the registration check.';return [sw,swDetail]}):Promise.resolve([sw,swDetail]);
+  checks.innerHTML=[
+   item('Browser network',online?'ONLINE':'OFFLINE',online?'The browser reports a network connection; this does not prove the app server is reachable.':'The browser reports that it is offline.'),
+   item('Core interface',core?'PRESENT':'MISSING',core?'Main command dock and More systems directory are present in this page.':'One or more expected interface elements were not found.'),
+   item('Guide navigation',guide?'PRESENT':'MISSING',guide?'Guide trigger and menu container are present.':'Guide navigation elements were not found.'),
+   item('Solar System panel',orbit?'PRESENT':'MISSING',orbit?'The 🔭 launcher and solar-system dialog are present.':'Solar System controls were not found in this page.'),
+   item('Cloud client',server?'DETECTED':'NOT DETECTED',server?(session?'Client object detected; a signed-in session is visible.':'Client object detected; no signed-in user is visible.'):'MarsWorldServer client object was not detected.'),
+   item('Key route links',routeCount+'/4 FOUND',routeLinks.map(x=>x.href+': '+(x.found?'linked':'not linked')).join(' · ')),
+   item('Offline service','CHECKING','Checking service-worker registration…')
+  ].join('');
+  swPromise.then(([s,d])=>{const el=[...checks.querySelectorAll('.ov-check')].find(x=>x.querySelector('b')?.textContent==='Offline service');if(el)el.outerHTML=item('Offline service',s,d)});
+  last.textContent='Last browser scan: '+new Date().toLocaleString()+' · Results are not persisted.';
+ }
+ function show(){overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');runScan()}
+ function hide(){overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true')}
+ opener.addEventListener('click',show);closer.addEventListener('click',hide);scan.addEventListener('click',runScan);overlay.addEventListener('click',e=>{if(e.target===overlay)hide()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('open'))hide()});
+})();
+</script>
+
 </body></html>
