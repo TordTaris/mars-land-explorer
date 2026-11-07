@@ -38,17 +38,27 @@ function renderM003Records(records){
   card.append(h,p,s);root.append(card);
  });
 }
+let gateRequest=0;
+function lockM003Gate(message='Sign in to LOCAL MARS with the registered M-003 owner account first.'){
+ gateRequest++;
+ $m('content').hidden=true;$m('gate').hidden=false;$m('secureRecords').replaceChildren();
+ $m('secretPass').value='';$m('secretConfirm').value='';
+ $m('secretUnlock').disabled=true;$m('status').textContent='LOCKED';
+ $m('gateTitle').textContent='SIGN-IN REQUIRED';showM003Message(message);
+}
 async function initializeM003Gate(){
- const s=window.MarsWorldServer?.getState?.();
- if(!s?.user){$m('status').textContent='LOCKED';$m('gateTitle').textContent='SIGN-IN REQUIRED';$m('secretUnlock').disabled=true;showM003Message('Sign in to LOCAL MARS with the registered M-003 owner account first.');return;}
+ const request=++gateRequest,s=window.MarsWorldServer?.getState?.();
+ if(!s?.user){lockM003Gate();return;}
+ $m('content').hidden=true;$m('gate').hidden=false;
  $m('secretUnlock').disabled=true;showM003Message('Checking owner authorization and security setup…');
  try{
   const r=await window.MarsWorldServer.m003Access('status');
+  if(request!==gateRequest)return;
   if(r?.error){showM003Message(r.error.message||'Security service unavailable.');return;}
   setM003Mode(r?.data?.has_password?'verify':'setup');
   showM003Message(r?.data?.has_password?'Owner recognized. Enter the M-003 security password.':'Create the first M-003 security password. It is stored as a salted password hash.');
- }catch(e){showM003Message('Security service unavailable. Please retry.');}
- finally{$m('secretUnlock').disabled=false;}
+ }catch(e){if(request===gateRequest)showM003Message('Security service unavailable. Please retry.');}
+ finally{if(request===gateRequest)$m('secretUnlock').disabled=false;}
 }
 $m('secretUnlock').addEventListener('click',async()=>{
  const s=window.MarsWorldServer?.getState?.(),password=$m('secretPass').value;
@@ -69,7 +79,6 @@ $m('secretUnlock').addEventListener('click',async()=>{
  }catch(e){showM003Message('Security service unavailable. No private data was displayed.');}
  finally{btn.disabled=false;}
 });
-document.addEventListener('mars-auth-state',initializeM003Gate);
-document.addEventListener('mars-world-updated',initializeM003Gate);
+document.addEventListener('mars-auth-state',()=>{lockM003Gate();initializeM003Gate();});
 setTimeout(initializeM003Gate,900);
 </script><script src="./easy-play.js" defer></script><script src="./i18n.js"></script></body></html>
