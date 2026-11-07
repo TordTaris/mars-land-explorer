@@ -66,7 +66,7 @@ function subscribe(){
  .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_national_flags'},scheduleRefresh)
  .on('postgres_changes',{event:'*',schema:'public',table:'mars_cities'},scheduleRefresh)
  .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_buildings'},scheduleRefresh)
- .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_resources'},scheduleRefresh);
+ .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_resources'},scheduleRefresh)
  .on('postgres_changes',{event:'*',schema:'public',table:'mars_countries'},scheduleCountryNetworkRefresh)
  .on('postgres_changes',{event:'*',schema:'public',table:'mars_country_territories'},scheduleCountryNetworkRefresh);
  S.channel=channel;
