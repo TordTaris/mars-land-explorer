@@ -157,7 +157,7 @@ if (!openButton || !overlay || !canvasHost) {
       document.querySelectorAll('[data-solar-planet]').forEach(b=>b.addEventListener('click',()=>selectPlanet(Number(b.dataset.solarPlanet))));
       initialized=true;resize();
       selectPlanet(3);
-      status.textContent='LIVE EPHEMERIS · '+new Date(simulationTimeMs).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'medium'});
+      status.textContent='MODELLED ORBITS · UTC · '+new Date(simulationTimeMs).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'medium'});
     } catch(err) {
       console.error('LOCAL MARS Solar System initialization failed',err);
       status.textContent='3D ENGINE ERROR · '+(err?.message||'Unable to initialize');
@@ -182,13 +182,13 @@ if (!openButton || !overlay || !canvasHost) {
     if(!overlay.classList.contains('open')||!renderer)return;
     const delta=Math.min(clock.getDelta(),.05);
     if(!paused)simulationTimeMs+=delta*1000*speed;
-    const daysSinceJ2000=simulationTimeMs/86400000+10957.5;
+    const daysSinceJ2000=simulationTimeMs/86400000-10957.5;
     orbitPivots.forEach(({mesh,elements,index})=>{
       mesh.position.copy(orbitalPosition(elements,daysSinceJ2000));
       mesh.rotation.y+=delta*(index===0?.8:.34);
       if(mesh.userData.moonPivot)mesh.userData.moonPivot.rotation.y+=delta*1.8;
     });
-    status.textContent=(paused?'PAUSED · ':'LIVE EPHEMERIS · ')+new Date(simulationTimeMs).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'medium'});
+    status.textContent=(paused?'PAUSED · ':'MODELLED ORBITS · UTC · ')+new Date(simulationTimeMs).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'medium'});
     controls.update();renderer.render(scene,camera);
   }
   function openView() {
