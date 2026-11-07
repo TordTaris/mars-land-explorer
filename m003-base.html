@@ -197,15 +197,13 @@ async function renderBase(rows,archive){
   content.insertBefore(section,content.querySelector('.layout'));
  }
  const list=document.querySelector('#floors'),detail=document.querySelector('#detail');
- rows.forEach((r,index)=>{const b=document.createElement('button');b.className='floor';b.innerHTML='<b>LEVEL '+String(r.floor_no).padStart(2,'0')+'</b><span></span><small></small>';b.querySelector('span').textContent=r.room_name;b.querySelector('small').textContent=r.system_status;b.onclick=()=>{list.querySelectorAll('.floor').forEach(x=>x.classList.remove('active'));b.classList.add('active');detail.innerHTML='';const h=document.createElement('h3');h.textContent='LEVEL '+String(r.floor_no).padStart(2,'0')+' · '+r.room_name;const p=document.createElement('p');p.textContent=r.description;const badge=document.createElement('span');badge.className='pill';badge.textContent=r.system_status;detail.append(h,p,badge);if(Number(r.floor_no)===17){const link=document.createElement('a');link.className='action';link.href='./m003-ibm5100.html';link.textContent='OPEN IBM 5100 WORKSTATION →';link.style.display='inline-block';link.style.marginTop='12px';detail.append(link)}};list.appendChild(b);if(index===0)b.click();});
+ rows.forEach((r,index)=>{const b=document.createElement('button');b.className='floor';b.type='button';b.setAttribute('aria-label','Open level '+r.floor_no+' '+r.room_name);b.innerHTML='<b>LEVEL '+String(r.floor_no).padStart(2,'0')+'</b><span></span><small></small>';b.querySelector('span').textContent=r.room_name;b.querySelector('small').textContent=Number(r.floor_no)===17?'TOUCH TO OPEN IBM 5100 →':r.system_status;if(Number(r.floor_no)===17){b.classList.add('level-17');b.style.borderColor='var(--gold)';b.style.background='linear-gradient(120deg,#29364a,#152638)';}b.addEventListener('click',()=>{if(Number(r.floor_no)===17){window.location.assign('./m003-ibm5100.html');return;}list.querySelectorAll('.floor').forEach(x=>x.classList.remove('active'));b.classList.add('active');detail.replaceChildren();const h=document.createElement('h3');h.textContent='LEVEL '+String(r.floor_no).padStart(2,'0')+' · '+r.room_name;const p=document.createElement('p');p.textContent=r.description;const badge=document.createElement('span');badge.className='pill';badge.textContent=r.system_status;detail.append(h,p,badge);});list.appendChild(b);if(index===0&&Number(r.floor_no)!==17)b.click();});
 }
 async function verifyAndLoad(){
  if(loaded)return;
  const world=window.MarsWorldServer?.getState?.(),user=world?.user;
  if(!user){connection.textContent='LOCKED';gateTitle.textContent='SIGN-IN REQUIRED';gateText.textContent='Return to LOCAL MARS and sign in with your member account.';securityForm.hidden=true;return;}
- const owns=(world.claims||[]).some(c=>c.parcel_id==='M-003'&&c.owner_id===user.id);
- if(!owns){connection.textContent='ACCESS DENIED';gateTitle.textContent='M-003 OWNER ACCESS ONLY';gateText.textContent='The signed-in account is not authorized to access the underground facility database.';securityForm.hidden=true;return;}
- connection.textContent='OWNER VERIFIED';
+ connection.textContent='CHECKING SERVER AUTHORIZATION…';
  const result=await window.MarsWorldServer.m003Access('status');
  if(result?.error){gateTitle.textContent='SECURITY SERVICE UNAVAILABLE';gateText.textContent=result.error.message+' Check the connection and try again. If the problem continues, contact LOCAL MARS support.';return;}
  showSecurity(Boolean(result.data?.has_password));
