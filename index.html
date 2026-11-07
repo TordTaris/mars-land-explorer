@@ -301,18 +301,15 @@ body.authenticated.plot-selected .right button:disabled{opacity:.45!important;cu
 #lmMenuDropdown[hidden]{display:none!important}
 #lmMenuDropdown .lm-menu-heading{font-size:10px;font-weight:900;letter-spacing:1.4px;color:#e7c783;margin:0 0 9px}
 #lmMenuDropdown{max-height:min(72dvh,560px);overflow-y:auto}
-#lmMenuDropdown .lm-guide-copy{font-size:11px;line-height:1.45;color:#d5e0eb;margin:0 0 13px}
-#lmMenuDropdown .lm-guide-copy strong{display:block;color:#e7c783;font-size:10px;letter-spacing:.8px;margin-top:7px}
-#lmMenuDropdown .lm-guide-copy p{margin:2px 0 5px}
-#lmMenuDropdown .lm-guide-th{display:none}
-html[data-language="th"] #lmMenuDropdown .lm-guide-en{display:none}
-html[data-language="th"] #lmMenuDropdown .lm-guide-th{display:block}
-#lmMenuDropdown .lm-language-heading{padding-top:10px;border-top:1px solid #ffffff20}
-
-#lmMenuLanguage{display:flex;align-items:center;gap:8px;width:100%}
-#lmMenuLanguage button{flex:1;min-height:42px;padding:8px 10px;border-radius:10px;font-size:13px;font-weight:800;line-height:1;background:#14283d;border:1px solid #526a82;box-shadow:none}
-#lmMenuLanguage button[aria-pressed="true"]{border-color:#e4bd70;background:linear-gradient(145deg,#5b4728,#26364a);box-shadow:inset 0 0 0 1px #e4bd7044}
-#lmMenuLanguage button:focus-visible,#lmMenuToggle:focus-visible{outline:2px solid #72dce9;outline-offset:2px}
+#lmMenuDropdown .lm-guide-intro{font-size:11px;line-height:1.5;color:#d5e0eb;margin:0 0 12px}
+#lmMenuDropdown .lm-guide-actions{display:grid;gap:7px}
+#lmMenuDropdown .lm-guide-actions a,#lmMenuDropdown .lm-guide-actions button{display:block;width:100%;text-align:left;text-decoration:none;padding:10px 11px;border:1px solid #526a82;border-radius:10px;background:#102238;color:#f4e8d0;font:700 11px system-ui;cursor:pointer}
+#lmMenuDropdown .lm-guide-actions a span,#lmMenuDropdown .lm-guide-actions button span{display:block;color:#aebdca;font-size:9px;font-weight:500;margin:3px 0 0 24px}
+#lmMenuDropdown .lm-guide-steps{margin-top:12px;padding-top:10px;border-top:1px solid #ffffff20;color:#d5e0eb;font-size:10px;line-height:1.5}
+#lmMenuDropdown .lm-guide-steps strong{color:#e7c783;letter-spacing:1px}
+#lmMenuDropdown .lm-guide-steps ol{padding-left:18px;margin:7px 0}
+#lmMenuDropdown .lm-guide-steps p{margin:6px 0 0;color:#aebdca;font-size:9px}
+#lmMenuToggle:focus-visible{outline:2px solid #72dce9;outline-offset:2px}
 @media(max-width:760px){#lmMenuDropdown{bottom:70px}}
 </style>
 
@@ -1153,24 +1150,21 @@ document.addEventListener('DOMContentLoaded',()=>{
 </nav>
 <button type="button" id="lmWorkspaceOpen" hidden style="display:none!important" aria-hidden="true"></button>
 <div id="lmMenuDropdown" hidden>
-<div class="lm-menu-heading">LOCAL MARS GUIDE</div>
-<a href="./ownership.html" class="lm-menu-link" style="display:block;margin:10px 0;padding:12px 14px;border:1px solid #397d72;border-radius:10px;color:#8de9c4;text-decoration:none;font-weight:700">OWNERSHIP & TRANSACTION CENTER ↗</a>
-<div class="lm-guide-copy">
-<div class="lm-guide-en">
-<strong>01 · EXPLORE</strong><p>Rotate the planet and select a parcel marker to inspect an area.</p>
-<strong>02 · BUILD</strong><p>Open City Builder to develop your colony and manage structures.</p>
-<strong>03 · MISSION</strong><p>Use Launch Satellite to start a simulated orbital mission.</p>
-<strong>04 · ACCOUNT & MLC</strong><p>Sign in to access member features, wallet and marketplace.</p>
+<div class="lm-menu-heading">LOCAL MARS QUICK GUIDE</div>
+<p class="lm-guide-intro">Use this guide to navigate the explorer, build your colony, and manage your member assets.</p>
+<div class="lm-guide-actions">
+<a href="./index.html">🌎 Explore Mars <span>Inspect the planet and select a parcel</span></a>
+<a href="./city.html#construction">🏗️ Open City Builder <span>Place buildings, roads, and manage construction</span></a>
+<a href="./underground.html">🛰️ Open Underground Base <span>Explore the 24-level subsurface facility</span></a>
+<a href="./ownership.html">🪙 Ownership & Marketplace <span>Review parcel ownership and MLC transactions</span></a>
+<button type="button" id="lmGuideAccount">👤 Member Account <span>Sign in to enable online building and wallet features</span></button>
 </div>
-<div class="lm-guide-th">
-<strong>01 · สำรวจ</strong><p>หมุนดาวเคราะห์และเลือกหมุดพื้นที่เพื่อดูรายละเอียด</p>
-<strong>02 · ก่อสร้าง</strong><p>เปิด City Builder เพื่อพัฒนาอาณานิคมและจัดการสิ่งก่อสร้าง</p>
-<strong>03 · ภารกิจ</strong><p>ใช้ Launch Satellite เพื่อเริ่มภารกิจดาวเทียมจำลอง</p>
-<strong>04 · บัญชีและ MLC</strong><p>เข้าสู่ระบบเพื่อใช้งานสมาชิก กระเป๋าเงิน และตลาดซื้อขาย</p>
+<div class="lm-guide-steps">
+<strong>HOW TO BUILD ON MARS</strong>
+<ol><li>Select a parcel marker on the planet.</li><li>Sign in and verify that you own the parcel.</li><li>Choose a structure and select <b>Place Structure</b>.</li><li>For detailed 3D construction, open <b>City Builder</b>.</li></ol>
+<p>Online construction is saved to the shared database. Offline city projects are saved on this device only.</p>
 </div>
 </div>
-<div class="lm-menu-heading lm-language-heading">LANGUAGE / ภาษา</div>
-<div id="lmMenuLanguage" role="group" aria-label="Select language"><button type="button" data-language="th" aria-label="ภาษาไทย" title="ภาษาไทย" aria-pressed="false">🇹🇭 ไทย</button><button type="button" data-language="en" aria-label="English" title="English" aria-pressed="true">🇺🇸 EN</button></div></div>
  
 
 <section id="lmSystemsOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="lmSystemsTitle">
@@ -2220,11 +2214,12 @@ document.querySelector('#navExplore').onclick=()=>{toast('Select a parcel marker
    toast('Welcome to the New Explorer Zone');
  };
 document.querySelector('#navCity').onclick=()=>location.href='./city.html';
+document.querySelector('#lmGuideAccount')?.addEventListener('click',()=>{document.querySelector('#lmMenuDropdown').hidden=true;openLogin();});
 document.querySelector('#navUnderground').onclick=()=>location.href='./underground.html';
 document.querySelector('#navMarket').onclick=()=>toast('Select a parcel to view market pricing and availability');
 document.querySelector('#rotate').onclick=()=>{auto=!auto;controls.autoRotate=auto;document.querySelector('#rotate').textContent='Auto-Rotate: '+(auto?'ON':'OFF');document.querySelector('#rotate').classList.toggle('active',auto)};
 document.querySelector('#reset').onclick=()=>{camera.position.set(0,0,3.55);controls.target.set(0,0,0);controls.update()};
-document.querySelectorAll('.bottom button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.bottom button').forEach(x=>x.classList.remove('active'));b.classList.add('active');const tab=b.dataset.tab;if(tab==='satellite'){launchSmallSatellite();return}if(tab==='city'){location.href='./city.html';return}if(tab==='underground'){location.href='./underground.html';return}if(tab==='wallet'){document.querySelector('#mlcWalletPanel')?.classList.toggle('is-open');return}if(tab==='market'){toast('MLC Market: Select a parcel to reserve, purchase, or list it for sale')}if(tab==='colony'){toast(`Your colony has ${state.owned.length} parcels and ${Object.keys(state.buildings).length} structures`)}if(tab==='account')openLogin()});
+document.querySelectorAll('.bottom button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.bottom button').forEach(x=>x.classList.remove('active'));b.classList.add('active');const tab=b.dataset.tab;if(tab==='satellite'){launchSmallSatellite();return}if(tab==='city'){location.href='./city.html';return}if(tab==='underground'){location.href='./underground.html';return}if(tab==='wallet'){document.querySelector('#mlcWalletPanel')?.classList.toggle('is-open');return}if(tab==='market'){toast('MLC Market: Select a parcel to reserve, purchase, or list it for sale')}if(tab==='colony'){location.href='./city.html';return}if(tab==='account')openLogin()});
 // Restore locally saved constructions on every app launch, then merge online structures when connected.
 const restoredStructures=Object.entries(state.buildings).map(([parcel_id,building])=>({id:'local-'+parcel_id,parcel_id,structure_type:typeMap[building]||building,owner_id:'local'}));
 renderSharedBuildings(restoredStructures);
