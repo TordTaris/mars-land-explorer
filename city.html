@@ -645,7 +645,7 @@ async function publishWorldParcelStructure(data,force=false){
   const message=cityErrorText(e);
   await persistWorldParcelLinkState(data,'failed',{error:message});
   setWorldParcelStatus('City construction is complete, but parcel linking failed for '+data.worldParcelId+' failed: '+message,'error',data);
-  toast(' buildingsในเมืองเสร็จแล้ว แต่ยังเผยแพร่บนดาวไม่successfully');
+  toast(' buildingsCity construction is complete, but publishing to Mars is still pending.');
  }finally{worldParcelPublishing.delete(publishKey);}
 }
 let flagSubmitting=false;
