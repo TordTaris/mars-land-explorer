@@ -166,7 +166,7 @@ jobs:
           assert 'href="./mission-trainer.html"' in html, "Mission Trainer navigation link missing"
           assert 'href="./news.html"' in html and "LOCAL MARS NEWS" in html, "LOCAL MARS NEWS navigation missing"
           assert "api.gdeltproject.org" in news and "world_events" in news, "Live news and member event sources missing"
-          assert 'href="./country.html"' in Path("civilization.html").read_text(encoding="utf-8"), "Country Network navigation missing"
+          assert 'href="./country.html"' in Path("civilization.html").read_text(encoding="utf-8") and 'href="./country.html"' in html, "Country Network navigation missing"
           assert "mars_country_create" in country and "mars_country_assign_territory" in country and "mars_country_join" in country, "Country Network RPC integration missing"
           assert "world_claims" in country_migration and "auth.uid()" in country_migration and "enable row level security" in country_migration.lower(), "Country territory ownership and RLS safeguards missing"
           country_script = re.search(r'<script>\s*(.*?)</script>', country, re.S)
