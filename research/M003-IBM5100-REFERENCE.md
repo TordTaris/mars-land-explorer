@@ -13,9 +13,9 @@ Record type: historical technical reference + browser educational simulator
 
 ## M-003 implementation
 The browser page is an educational UI simulation, not original IBM firmware or a cycle-accurate hardware emulator.
-Functions: CRT-style terminal, limited BASIC subset (PRINT, LET, REM, END and arithmetic), sample program, calculator, browser-local simulated tape cartridges, documentation links, and owner/security gate.
-APL is listed as historical reference mode only; no APL interpreter is implemented.
-Tape storage uses browser localStorage and is not uploaded to a physical device or remote database.
+Functions: CRT-style terminal, limited BASIC subset (PRINT, LET, REM, END and arithmetic), APL scalar-expression teaching subset (← assignment, variables, + − × ÷), sample programs, calculator, browser-local simulated tape cartridges, owner/security gate, and a cloud program archive.
+The APL subset is educational only and is not a full APL interpreter or original IBM APL implementation.
+Tape storage uses browser localStorage. Cloud program source is stored in Supabase table public.m003_ibm5100_programs, restricted by RLS to the signed-in owner of parcel M-003 and scoped to floor 17.
 
 ## John Titor context
 John Titor was an online persona who claimed to be a time traveler. IBM 5100's real technical history does not substantiate those claims. Any claim that the 5100 had secret time-travel capabilities is unsupported.
