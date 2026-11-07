@@ -758,7 +758,7 @@ async function placeOnline(type,x,z,level,worldParcelId=null){
    const claim=await marsDB.from('world_claims').select('parcel_id').eq('parcel_id',worldParcelId).eq('owner_id',onlineUser.id).maybeSingle();
    if(claim.error)throw claim.error;
    if(!claim.data){setWorldParcelStatus('Cannot start: this account does not own parcel '+worldParcelId,'error');toast('You must own parcel '+worldParcelId+' before starting online construction');return false;}
-   const existing=await marsDB.from('world_structures').select('id,owner_id,structure_type').eq('parcel_id',worldParcelId).limit(1).maybeSingle();
+   const existing=await marsDB.from('world_structures').select('id,owner_id,structure_type').eq('parcel_id',worldParcelId).eq('structure_type',worldType).limit(1).maybeSingle();
    if(existing.error)throw existing.error;
    if(existing.data){setWorldParcelStatus('Parcel '+worldParcelId+' already has a structure on Mars','error');toast('This parcel already has a structure on Mars');return false;}
   }
@@ -803,7 +803,7 @@ async function publishWorldParcelStructure(data,force=false){
  const publishKey=String(data.recordId);if(worldParcelPublishing.has(publishKey))return;worldParcelPublishing.add(publishKey);
  try{
   await persistWorldParcelLinkState(data,'syncing');
-  const existing=await marsDB.from('world_structures').select('id,owner_id,structure_type').eq('parcel_id',data.worldParcelId).limit(1).maybeSingle();
+  const existing=await marsDB.from('world_structures').select('id,owner_id,structure_type').eq('parcel_id',data.worldParcelId).eq('structure_type',data.worldType).limit(1).maybeSingle();
   if(existing.error)throw existing.error;
   let structureId;
   if(existing.data){
