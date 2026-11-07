@@ -58,7 +58,7 @@ jobs:
 
           required = [
               "index.html", "dual-ai.html", "download-ai.html", "install.html", "member-workspace.js", "solar-system.js", "digital-assets.js", "city.html", "underground.html", "mission-trainer.html", "news.html",
-              "m003-base.html", "m003-dimension-gate.html", "top-secret-demo.html",
+              "m003-base.html", "m003-dimension-gate.html", "chronos-time-lab.html", "top-secret-demo.html",
               "civilization.html", "i18n.js", "premium-ui.css",
               "world-server.js", "nasa-data.js", "multiverse.js", "easy-play.js", "chat.js",
               "manifest.webmanifest", "sw.js", "icon.svg",
@@ -147,7 +147,7 @@ jobs:
           assert "from 'three/addons/controls/OrbitControls.js'" in html, "OrbitControls import missing"
           assert "location.href='./city.html'" in html and "location.href='./underground.html'" in html, "main navigation target missing"
           assert 'href="./m003-dimension-gate.html"' in Path("m003-base.html").read_text(encoding="utf-8"), "M-003 Dimension Gate link missing"
-          assert "PROJECT DIMENSION GATE" in dimension_gate, "Dimension Gate page content missing"
+          assert "PROJECT DIMENSION GATE" in dimension_gate, "Dimension Gate page content missing"\n          chronos = Path("chronos-time-lab.html").read_text(encoding="utf-8")\n          assert "CHRONOS TIME RESEARCH LAB" in chronos and "OWNER VERIFIED" in chronos, "M-003 CHRONOS research page missing"\n          assert "chronos-time-lab.html" in Path("m003-base.html").read_text(encoding="utf-8"), "M-003 CHRONOS entry link missing"\n          assert "chronos-time-lab.html" in sw, "CHRONOS offline cache entry missing"
           assert "Build a Resilient Mars Outpost" in mission, "Mission Trainer content missing"
           assert "EDUCATIONAL SIMULATION" in mission and "NASA is not affiliated" in mission, "Mission Trainer scientific boundary missing"
           assert 'href="./mission-trainer.html"' in html, "Mission Trainer navigation link missing"
