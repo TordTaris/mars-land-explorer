@@ -24,6 +24,11 @@ async function refresh(){
  document.dispatchEvent(new CustomEvent('mars-world-updated',{detail:{parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,mlcMarket:S.mlcMarket,user:S.user}}));
  return {data:{parcels:S.parcels,claims:S.claims,structures:S.structures,events:S.events,mlcMarket:S.mlcMarket}};
 }
+let countryNetworkRefreshTimer=null;
+function scheduleCountryNetworkRefresh(){
+ if(countryNetworkRefreshTimer)clearTimeout(countryNetworkRefreshTimer);
+ countryNetworkRefreshTimer=setTimeout(()=>{countryNetworkRefreshTimer=null;document.dispatchEvent(new CustomEvent('mars-country-network-updated'));},180);
+}
 function scheduleRefresh(){
  if(S.refreshTimer)clearTimeout(S.refreshTimer);
  S.refreshTimer=setTimeout(()=>{S.refreshTimer=null;refresh().catch(err=>console.warn('LOCAL MARS refresh failed:',err));},180);
@@ -62,6 +67,8 @@ function subscribe(){
  .on('postgres_changes',{event:'*',schema:'public',table:'mars_cities'},scheduleRefresh)
  .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_buildings'},scheduleRefresh)
  .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_resources'},scheduleRefresh);
+ .on('postgres_changes',{event:'*',schema:'public',table:'mars_countries'},scheduleCountryNetworkRefresh)
+ .on('postgres_changes',{event:'*',schema:'public',table:'mars_country_territories'},scheduleCountryNetworkRefresh);
  S.channel=channel;
  channel.subscribe(st=>{
   if(S.channel!==channel)return;
