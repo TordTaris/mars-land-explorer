@@ -2203,9 +2203,9 @@ document.querySelector('#build').onclick=async()=>{
  }catch(error){toast('Server connection failed: '+(error?.message||'Please try again'));}
  finally{button.disabled=false;button.textContent='🏗️ Place Structure';}
 };
-document.querySelector('#openConstruction3D').onclick=()=>{if(!selected){toast('Select a Mars parcel first');return;}location.href='./parcels/'+encodeURIComponent(selected.id)+'/';};
-document.querySelector('#enterBuiltArea').onclick=()=>{if(!selected){toast('Select a parcel first');return;}const world=window.MarsWorldServer?.getState?.()||{};const hasStructure=(world.structures||[]).some(item=>item.parcel_id===selected.id);if(!hasStructure&&selected.id!=='M-001'&&selected.id!=='M-003'){toast('No built structure is registered on this parcel yet');return;}location.href='./parcels/'+encodeURIComponent(selected.id)+'/';};
- document.querySelector('#openM003Base').onclick=()=>{if(!selected||selected.id!=='M-003'){toast('Select M-003 first');return;}openM003Base();};
+document.querySelector('#openConstruction3D').onclick=()=>{if(!selected){toast('Select a Mars parcel first');return;}if(selected.id==='M-003'){location.href='./m003-base.html';return;}location.href='./parcels/'+encodeURIComponent(selected.id)+'/';};
+document.querySelector('#enterBuiltArea').onclick=()=>{if(!selected){toast('Select a parcel first');return;}if(selected.id==='M-003'){location.href='./m003-base.html';return;}const world=window.MarsWorldServer?.getState?.()||{};const hasStructure=(world.structures||[]).some(item=>item.parcel_id===selected.id);if(!hasStructure&&selected.id!=='M-001'){toast('No built structure is registered on this parcel yet');return;}location.href='./parcels/'+encodeURIComponent(selected.id)+'/';};
+ document.querySelector('#openM003Base').onclick=()=>{if(!selected||selected.id!=='M-003'){toast('Select M-003 first');return;}location.href='./m003-base.html';};
  document.querySelector('#closePlotPanel').onclick=()=>{document.body.classList.remove('plot-selected');selected=null;document.querySelector('#plotActions').style.display='none';document.querySelector('#plotInfo').style.display='block';};
 const loginModal=document.querySelector('#login'),authFeedback=document.querySelector('#authFeedback');
 function authMessage(message,state='info'){authFeedback.textContent=message;authFeedback.dataset.state=state;}
