@@ -907,7 +907,7 @@ function updateClimateUI(){
 function updateSatelliteUI(){
  const factory=climateFactoryBuilt(),status=document.querySelector('#satelliteLinkStatus');
  if(status)status.textContent=!factory?'LINK OFFLINE · Build the Climate Control Factory first':!onlineUser?'LOCAL SIMULATION · Sign in for cloud uplink':!activeWorldParcelId?'LOCAL SIMULATION · Open M-001 for cloud uplink':'ORBITAL LINK READY · CLOUD TELEMETRY ENABLED';
- const packets=document.querySelector('#satellitePackets');if(packets)packets.textContent=String(satelliteNetwork.packets);
+ const packets=document.querySelector('#satellitePackets');if(packets)packets.textContent=String(satelliteNetwork.cloudPackets);
  const latency=document.querySelector('#satelliteLatency');if(latency)latency.textContent=factory?satelliteNetwork.latency.toFixed(1)+' s':'—';
  const signal=document.querySelector('#satelliteSignal');if(signal)signal.textContent=factory?satelliteNetwork.signal.toFixed(1)+'%':'—';
  ['satelliteRelay1','satelliteRelay2','satelliteRelay3'].forEach((id,i)=>{const el=document.getElementById(id);if(el)el.textContent=factory?(i===0?'LINKED':i===1?'STANDBY':'BACKUP'):'STANDBY'});
@@ -919,8 +919,9 @@ function updateSatelliteUI(){
 async function loadClimateTelemetryFeed(){
  const feed=document.querySelector('#satelliteTelemetryFeed');if(!feed)return;
  if(!onlineUser){feed.textContent='Sign in to view telemetry shared by Mars facilities.';updateSatelliteUI();return}
- const result=await marsDB.from('mars_climate_telemetry').select('id,parcel_id,packet_id,relay_id,temperature_c,pressure_kpa,oxygen_pct,co2_pct,dust_index,signal_pct,latency_ms,created_at').order('created_at',{ascending:false}).limit(8);
+ const result=await marsDB.from('mars_climate_telemetry').select('id,parcel_id,packet_id,relay_id,temperature_c,pressure_kpa,oxygen_pct,co2_pct,dust_index,signal_pct,latency_ms,created_at',{count:'exact'}).order('created_at',{ascending:false}).limit(8);
  if(result.error){feed.textContent='Cloud feed unavailable: '+cityErrorText(result.error);return}
+ satelliteNetwork.cloudPackets=result.count??(result.data?.length||0);
  feed.replaceChildren();
  if(!result.data?.length){feed.textContent='No cloud telemetry received yet.';return}
  result.data.forEach(row=>{const item=document.createElement('div');item.style.cssText='padding:7px 8px;margin:5px 0;background:#0b1725;border-radius:7px;border:1px solid rgba(115,160,190,.18)';const head=document.createElement('b');head.style.color='#9ce8c0';head.textContent=row.parcel_id+' · '+row.relay_id;const detail=document.createElement('div');detail.textContent='Temp '+row.temperature_c+' °C · Pressure '+row.pressure_kpa+' kPa · O₂ '+row.oxygen_pct+'% · CO₂ '+row.co2_pct+'%';const meta=document.createElement('small');meta.style.color='#9bb0c9';meta.textContent='Dust '+row.dust_index+' · Signal '+row.signal_pct+'% · '+new Date(row.created_at).toLocaleString();item.append(head,detail,meta);feed.append(item)});
