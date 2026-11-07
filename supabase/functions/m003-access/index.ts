@@ -86,7 +86,7 @@ Deno.serve(async (req) => {
     if (claimError) return respond({ error: "Unable to verify M-003 ownership" }, 503);
     if (!claim || claim.owner_id !== userId) return respond({ error: "M-003 owner authorization required" }, 403);
 
-    const body = await req.respond();
+    const body = await req.json();
     const action = String(body.action ?? "");
     const { data: credential, error: credentialError } = await admin.from("m003_access_credentials")
       .select("user_id,password_salt,password_hash,failed_attempts,locked_until")
