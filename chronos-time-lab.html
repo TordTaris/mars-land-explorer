@@ -4,53 +4,72 @@
 :root{color-scheme:dark;--gold:#e7c783;--cyan:#72e7f3;--muted:#a8bbce;--line:#35536d}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 0,#284b63,#091321 60%,#050b14);color:#f5f0e7;font:14px system-ui,sans-serif}header{padding:12px clamp(12px,4vw,32px);display:flex;justify-content:space-between;gap:10px;background:#071321ed;border-bottom:1px solid #c5a56b66}.brand{font-weight:900;letter-spacing:1.5px}.brand b{color:var(--gold)}.status,.tag{border:1px solid #477b67;color:#8de4bd;border-radius:20px;padding:6px 10px;font-size:9px}main{max-width:1050px;margin:auto;padding:18px 13px 44px}.panel{padding:16px;margin:0 0 13px;border:1px solid var(--line);border-radius:15px;background:linear-gradient(145deg,#14283ded,#091625f2)}.eyebrow{color:var(--gold);font-size:10px;font-weight:800;letter-spacing:2px}h1{font-size:clamp(26px,5vw,42px);margin:6px 0}h2{font-size:14px;color:var(--cyan);letter-spacing:1px;margin:0 0 10px}p{color:var(--muted);line-height:1.6}.notice{border-left:3px solid #e7c783;padding:10px 12px;background:#342c1d66;font-size:11px;line-height:1.6}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.tile{padding:12px;border:1px solid #35536d;border-radius:10px;background:#091827}.tile b{color:var(--gold)}.tile p{font-size:11px;margin:5px 0}.controls{display:grid;grid-template-columns:1fr 1fr;gap:16px}.control{padding:12px;border:1px solid #35536d;border-radius:10px;background:#091827}.control label{display:flex;justify-content:space-between;gap:8px;color:#dce9f3;font-size:12px}.control input{width:100%;margin:12px 0;accent-color:#72e7f3}.readout{font-size:clamp(22px,4vw,34px);font-weight:900;color:var(--gold)}.small{font-size:10px;color:var(--muted)}.bar{height:8px;background:#1b3146;border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#72e7f3,#e7c783)}.action{display:inline-block;padding:10px 13px;border:1px solid #a88d5b;border-radius:9px;background:#1b2c40;color:#f5e8cd;text-decoration:none;margin:4px 5px 0 0}.phase{padding:11px;border:1px solid #35536d;border-radius:10px;background:#091827}.phase b{color:var(--gold)}.phase p{font-size:11px;margin:5px 0}.formula{font-family:ui-monospace,monospace;color:#a7eaf0;background:#071321;padding:10px;border-radius:8px;overflow-wrap:anywhere}#gate{max-width:540px;margin:12vh auto;text-align:center}@media(max-width:650px){.grid,.controls{grid-template-columns:1fr}.panel{padding:12px}}
 </style><link rel="stylesheet" href="./premium-ui.css?v=20261106"></head><body>
 <header><div class="brand">LOCAL <b>MARS</b> / M-003 / CHRONOS</div><div class="status" id="status">VERIFYING OWNER</div></header>
-<main id="content" hidden>
-<section class="panel"><div class="eyebrow">M-003 RESEARCH DIVISION · FILE CHR-001</div><h1>CHRONOS TIME RESEARCH LAB</h1><p>Scientific research archive and interactive relativity demonstrator for the M-003 facility.</p><div class="notice"><b>SCIENCE BOUNDARY:</b> This page demonstrates established relativistic time dilation using idealized equations. It does not create a time machine, open a portal, or enable travel to the past. Wormholes and closed timelike curves remain speculative mathematical ideas without demonstrated engineering methods.</div></section>
-<section class="panel"><h2>01 · RELATIVISTIC TIME DILATION SIMULATOR</h2><p>Adjust the hypothetical travel speed. The calculator compares elapsed time for a traveler moving at constant speed with elapsed time for an observer at rest, using special relativity and ignoring acceleration and gravity.</p>
-<div class="controls"><div class="control"><label for="speed">Travel speed <b id="speedLabel">0.80 c</b></label><input id="speed" type="range" min="0" max="99" value="80"><div class="small">0% to 99% of the speed of light</div></div><div class="control"><label for="duration">Observer elapsed time <b id="durationLabel">10 years</b></label><input id="duration" type="range" min="1" max="100" value="10"><div class="small">Illustrative Earth-frame duration</div></div></div>
-<div class="grid" style="margin-top:10px"><div class="tile"><div class="small">TRAVELER PROPER TIME</div><div class="readout" id="travelerTime">6.00 years</div></div><div class="tile"><div class="small">LORENTZ FACTOR γ</div><div class="readout" id="gamma">1.667</div></div></div>
-<div class="small" style="margin:12px 0 6px">Time difference relative to observer</div><div class="bar"><i id="differenceBar"></i></div><p id="differenceText" class="small">Idealized calculation.</p><div class="formula">τ = t × √(1 − v²/c²) &nbsp; · &nbsp; γ = 1 / √(1 − v²/c²)</div></section>
-<section class="panel"><h2>02 · RESEARCH FILES — FACTUAL STATUS</h2><div class="grid">
-<div class="tile"><b>ESTABLISHED · SPECIAL RELATIVITY</b><p>Moving clocks accumulate less proper time relative to an inertial observer, as measured in the observer's frame. Effects have been measured with precision clocks and particle experiments.</p></div>
-<div class="tile"><b>ESTABLISHED · GRAVITATIONAL TIME DILATION</b><p>Clock rates differ with gravitational potential. This is measured and must be accounted for in satellite navigation systems.</p></div>
-<div class="tile"><b>SPECULATIVE · WORMHOLES</b><p>Allowed as mathematical solutions in some models, but no traversable wormhole has been observed or shown to be physically constructible.</p></div>
-<div class="tile"><b>UNVERIFIED · JOHN TITOR</b><p>Internet persona from 2000–2001 claiming to be from 2036. No independently verified evidence establishes time travel or the identity behind the posts.</p></div>
-</div></section>
-<section class="panel"><h2>03 · CHRONOS MACHINE CONCEPT</h2><p>The M-003 machine is represented as a research demonstrator, not a functioning transport device. Its visual architecture separates measurement, computation, and speculative visualization.</p><div class="grid">
-<div class="phase"><b>A · PRECISION CLOCK ARRAY</b><p>Compare synchronized reference clocks and record drift. Real-world metrology concept.</p></div>
-<div class="phase"><b>B · RELATIVITY COMPUTE CORE</b><p>Calculate Lorentz factor and gravitational clock corrections from declared assumptions.</p></div>
-<div class="phase"><b>C · FIELD VISUALIZATION CHAMBER</b><p>Display simulated electromagnetic field patterns for education; no portal or matter transfer.</p></div>
-<div class="phase"><b>D · SPECULATIVE MODEL ARCHIVE</b><p>Store wormhole and spacetime geometry papers with explicit hypothesis labels.</p></div>
-</div></section>
-<section class="panel"><h2>04 · SOURCE REGISTER</h2>
-<div class="tile"><b>Einstein Online — Time dilation</b><p>Max Planck Institute for Gravitational Physics: accessible background on special and general relativity.</p><a class="action" href="https://www.einstein-online.info/en/spotlight/time_dilation/" target="_blank" rel="noopener">OPEN REFERENCE</a></div>
-<div class="tile" style="margin-top:8px"><b>NIST — Optical clocks and relativity</b><p>National Institute of Standards and Technology research on precision clocks and relativistic effects.</p><a class="action" href="https://www.nist.gov/" target="_blank" rel="noopener">OPEN NIST</a></div>
-<div class="tile" style="margin-top:8px"><b>NASA — Global Positioning System</b><p>Satellite navigation provides a practical application of relativistic clock corrections.</p><a class="action" href="https://www.gps.gov/" target="_blank" rel="noopener">OPEN GPS.GOV</a></div>
-<div class="tile" style="margin-top:8px"><b>IBM 5100 historical archive</b><p>Historical computer context; the existence of the IBM 5100 does not validate the John Titor claims.</p><a class="action" href="https://www.ibm.com/history" target="_blank" rel="noopener">OPEN IBM HISTORY</a></div>
-</section>
-<a class="action" href="./m003-base.html">← RETURN TO M-003 BASE</a><a class="action" href="./m003-dimension-gate.html">OPEN DIMENSION GATE SIMULATION</a>
-</main>
-<section id="gate" class="panel"><div class="eyebrow">M-003 OWNER SECURITY</div><h2 id="gateTitle">VERIFYING AUTHORIZATION</h2><p id="gateText">This research archive is restricted to the registered owner of M-003.</p><div style="max-width:380px;margin:14px auto;text-align:left"><label for="secretPass">M-003 SECURITY PASSWORD</label><input id="secretPass" type="password" minlength="10" maxlength="128" autocomplete="current-password" placeholder="Enter facility password" style="width:100%;padding:12px;background:#071321;color:white;border:1px solid #49627a;border-radius:8px"><button class="action" id="secretUnlock" type="button" style="margin-top:10px;width:100%">VERIFY AND UNSEAL</button><p id="secretHint" class="muted"></p></div><a class="action" href="./index.html">RETURN TO MARS</a></section>
+<main id="content" hidden><section class="panel"><div class="eyebrow">M-003 · PRIVATE ARCHIVE</div><h1 id="archiveTitle">SECURE ARCHIVE</h1><p>Records are requested from the protected server only after owner verification and password validation.</p><div id="secureRecords" aria-live="polite"></div></section><a class="action" href="./m003-base.html">← RETURN TO M-003 BASE</a></main>
+<section id="gate" class="panel"><div class="eyebrow">M-003 OWNER SECURITY</div><h2 id="gateTitle">VERIFYING AUTHORIZATION</h2><p id="gateText">This research archive is restricted to the registered owner of M-003.</p><div style="max-width:380px;margin:14px auto;text-align:left">
+ <label for="secretPass">M-003 SECURITY PASSWORD</label>
+ <input id="secretPass" type="password" minlength="10" maxlength="128" autocomplete="new-password" placeholder="10–128 characters" style="width:100%;padding:12px;background:#071321;color:white;border:1px solid #49627a;border-radius:8px">
+ <label for="secretConfirm" id="confirmLabel" hidden style="display:block;margin-top:10px">CONFIRM PASSWORD</label>
+ <input id="secretConfirm" type="password" minlength="10" maxlength="128" autocomplete="new-password" placeholder="Confirm password" hidden style="width:100%;padding:12px;background:#071321;color:white;border:1px solid #49627a;border-radius:8px;margin-top:6px">
+ <button class="action" id="secretUnlock" type="button" style="margin-top:10px;width:100%">CHECKING SECURITY…</button>
+ <p id="secretHint" class="muted" aria-live="polite"></p></div><a class="action" href="./index.html">RETURN TO EXPLORATION</a></section>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script><script src="./world-server.js"></script><script>
-let secretUnlocked=false;
-async function verifyM003Secret(){
- const s=window.MarsWorldServer?.getState?.(),u=s?.user;
- if(!u){document.querySelector('#status').textContent='LOCKED';document.querySelector('#gateTitle').textContent='SIGN-IN REQUIRED';return}
- const owns=(s.claims||[]).some(c=>c.parcel_id==='M-003'&&c.owner_id===u.id);
- if(!owns){document.querySelector('#status').textContent='DENIED';document.querySelector('#gateTitle').textContent='OWNER ACCESS ONLY';document.querySelector('#gateText').textContent='Only the registered M-003 owner may access this sealed archive.';return}
- document.querySelector('#status').textContent='OWNER VERIFIED · SEALED';
- document.querySelector('#gateTitle').textContent='M-003 SECURITY CHECK';
+let m003Mode='loading';
+const $m=id=>document.getElementById(id);
+function showM003Message(message){$m('secretHint').textContent=message;}
+function setM003Mode(mode){
+ m003Mode=mode;
+ const setup=mode==='setup';
+ $m('confirmLabel').hidden=!setup;$m('secretConfirm').hidden=!setup;
+ $m('secretPass').autocomplete=setup?'new-password':'current-password';
+ $m('secretPass').placeholder=setup?'Create a strong password':'Enter facility password';
+ $m('secretUnlock').textContent=setup?'CREATE PASSWORD & UNLOCK':'VERIFY AND UNSEAL';
+ $m('status').textContent=setup?'PASSWORD SETUP REQUIRED':'OWNER VERIFIED · SEALED';
+ $m('gateTitle').textContent=setup?'SET M-003 SECURITY PASSWORD':'M-003 SECURITY CHECK';
 }
-document.querySelector('#secretUnlock').addEventListener('click',async()=>{
- const s=window.MarsWorldServer?.getState?.(),u=s?.user,p=document.querySelector('#secretPass').value,h=document.querySelector('#secretHint');
- if(!u||p.length<10){h.textContent='Sign in and enter the facility password (10–128 characters).';return}
- if(!(s.claims||[]).some(c=>c.parcel_id==='M-003'&&c.owner_id===u.id)){h.textContent='Owner verification failed.';return}
- const btn=document.querySelector('#secretUnlock');btn.disabled=true;h.textContent='Verifying…';
- try{const r=await window.MarsWorldServer.m003Access('verify',p);if(r?.error||!r?.data?.data){h.textContent=r?.error?.message||'Incorrect password or access denied.';return}
- secretUnlocked=true;document.querySelector('#gate').hidden=true;document.querySelector('#content').hidden=false;document.querySelector('#status').textContent='OWNER VERIFIED · UNSEALED';calculate();
- }catch(e){h.textContent='Security service unavailable.'}finally{btn.disabled=false}
+function renderM003Records(records){
+ const root=$m('secureRecords');root.replaceChildren();
+ const title=$m('archiveTitle');title.textContent="CHRONOS TIME RESEARCH ARCHIVE";
+ if(!Array.isArray(records)||records.length===0){const p=document.createElement('p');p.textContent='No private records have been added to this archive yet.';root.append(p);return;}
+ records.forEach(row=>{
+  const card=document.createElement('section');card.className='panel';
+  const h=document.createElement('h2');h.textContent='LEVEL '+String(row.floor_no??'—')+' · '+String(row.room_name??'PRIVATE RECORD');
+  const p=document.createElement('p');p.textContent=String(row.description??'');
+  const s=document.createElement('div');s.className='status';s.textContent='STATUS: '+String(row.system_status??'RESTRICTED');
+  card.append(h,p,s);root.append(card);
+ });
+}
+async function initializeM003Gate(){
+ const s=window.MarsWorldServer?.getState?.();
+ if(!s?.user){$m('status').textContent='LOCKED';$m('gateTitle').textContent='SIGN-IN REQUIRED';$m('secretUnlock').disabled=true;showM003Message('Sign in to LOCAL MARS with the registered M-003 owner account first.');return;}
+ $m('secretUnlock').disabled=true;showM003Message('Checking owner authorization and security setup…');
+ try{
+  const r=await window.MarsWorldServer.m003Access('status');
+  if(r?.error){showM003Message(r.error.message||'Security service unavailable.');return;}
+  setM003Mode(r?.data?.has_password?'verify':'setup');
+  showM003Message(r?.data?.has_password?'Owner recognized. Enter the M-003 security password.':'Create the first M-003 security password. It is stored as a salted password hash.');
+ }catch(e){showM003Message('Security service unavailable. Please retry.');}
+ finally{$m('secretUnlock').disabled=false;}
+}
+$m('secretUnlock').addEventListener('click',async()=>{
+ const s=window.MarsWorldServer?.getState?.(),password=$m('secretPass').value;
+ if(!s?.user){showM003Message('Sign in is required.');return;}
+ if(password.length<10||password.length>128){showM003Message('Password must be 10–128 characters.');return;}
+ if(m003Mode==='setup'&&password!==$m('secretConfirm').value){showM003Message('The passwords do not match.');return;}
+ const btn=$m('secretUnlock');btn.disabled=true;showM003Message('Verifying securely with the M-003 server…');
+ try{
+  if(m003Mode==='setup'){
+   const created=await window.MarsWorldServer.m003Access('setup',password,$m('secretConfirm').value);
+   if(created?.error){showM003Message(created.error.message||'Password setup failed.');return;}
+  }
+  const result=await window.MarsWorldServer.m003Access('verify',password);
+  if(result?.error){showM003Message(result.error.message||'Access denied.');return;}
+  if(!result?.data?.ok||!Array.isArray(result?.data?.data)){showM003Message('The server did not return a valid private archive response.');return;}
+  renderM003Records(result.data.data);
+  $m('gate').hidden=true;$m('content').hidden=false;$m('status').textContent='OWNER VERIFIED · PRIVATE SESSION';
+ }catch(e){showM003Message('Security service unavailable. No private data was displayed.');}
+ finally{btn.disabled=false;}
 });
-document.addEventListener('mars-auth-state',verifyM003Secret);
-document.addEventListener('mars-world-updated',verifyM003Secret);
-setTimeout(verifyM003Secret,1000);
+document.addEventListener('mars-auth-state',initializeM003Gate);
+document.addEventListener('mars-world-updated',initializeM003Gate);
+setTimeout(initializeM003Gate,900);
 </script><script src="./easy-play.js" defer></script><script src="./i18n.js"></script></body></html>
