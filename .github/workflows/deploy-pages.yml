@@ -181,7 +181,7 @@ jobs:
           assert 'id="place" class="primary wide" disabled' in city and 'id="remove" class="wide" disabled' in city, "construction actions must wait for a selected grid tile"
           assert "document.querySelector('#place').disabled=false" in city, "selecting a grid tile must enable construction"
           assert "mars_city_place_structure" in city, "online construction RPC integration missing"
-          assert not re.search(r'[\\u0E00-\\u0E7F]', city), "City Builder must remain English-only"
+          assert not re.search(r"[\u0E00-\u0E7F]", city), "City Builder must remain English-only"
           assert 'id="constructionList"' in city, "construction progress panel missing"
           assert "function updateConstructionJobs" in city, "construction simulation loop missing"
           assert "function updateConstructionCrew" in city and "rover.userData.armPivot" in city, "active construction crew animation missing"
