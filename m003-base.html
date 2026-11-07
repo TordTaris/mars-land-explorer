@@ -214,8 +214,13 @@ unlockButton.addEventListener('click',async()=>{
  }catch(error){securityHint.textContent='Security check failed. Please try again.';}
  finally{busy=false;if(!loaded){unlockButton.disabled=false;unlockButton.textContent=setupMode?'SET PASSWORD AND OPEN BASE':'VERIFY AND OPEN BASE';}}
 });
-const relayToggle=document.querySelector('#relayToggle');if(relayToggle){let relayActive=false;relayToggle.addEventListener('click',()=>{relayActive=!relayActive;document.querySelector('#relayStatus').textContent=relayActive?'LINK ACTIVE':'STANDBY';document.querySelector('#relayStatus').style.color=relayActive?'#8de4bd':'#dfbd7d';document.querySelector('#relayStrength').textContent=relayActive?'98%':'0%';document.querySelector('#relayMessage').textContent=relayActive?'Simulated orbital relay established. M-003 communications channel is online.':'Relay returned to standby. M-003 communications channel is offline.';relayToggle.textContent=relayActive?'DEACTIVATE RELAY':'ACTIVATE RELAY';});}document.addEventListener('mars-auth-state',()=>{loaded=false;verifyAndLoad()});
-document.addEventListener('mars-world-updated',()=>{loaded=false;verifyAndLoad()});
+const relayToggle=document.querySelector('#relayToggle');if(relayToggle){let relayActive=false;relayToggle.addEventListener('click',()=>{relayActive=!relayActive;document.querySelector('#relayStatus').textContent=relayActive?'LINK ACTIVE':'STANDBY';document.querySelector('#relayStatus').style.color=relayActive?'#8de4bd':'#dfbd7d';document.querySelector('#relayStrength').textContent=relayActive?'98%':'0%';document.querySelector('#relayMessage').textContent=relayActive?'Simulated orbital relay established. M-003 communications channel is online.':'Relay returned to standby. M-003 communications channel is offline.';relayToggle.textContent=relayActive?'DEACTIVATE RELAY':'ACTIVATE RELAY';});}function lockBase(){
+ loaded=false;document.querySelector('#content').hidden=true;document.querySelector('#gate').hidden=false;
+ document.querySelector('#floors').replaceChildren();document.querySelector('#detail').textContent='Private facility data is locked.';
+ passwordInput.value='';confirmInput.value='';securityForm.hidden=true;unlockButton.disabled=true;
+ connection.textContent='LOCKED';gateTitle.textContent='SIGN-IN REQUIRED';gateText.textContent='Return to LOCAL MARS and sign in with the registered M-003 owner account.';
+}
+document.addEventListener('mars-auth-state',()=>{lockBase();verifyAndLoad()});
 setTimeout(verifyAndLoad,900);
 </script> 
 <script src="./easy-play.js" defer></script>
