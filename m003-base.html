@@ -174,7 +174,7 @@ function showSecurity(hasPassword){
  gateTitle.textContent=setupMode?'SET YOUR M-003 SECURITY PASSWORD':'ENTER SECURITY PASSWORD';
  gateText.textContent=setupMode?'Create a separate password to protect access to the M-003 underground base. This password is separate from your LOCAL MARS sign-in.':'Owner verified. Enter your M-003 security password to unlock the underground base.';
  connection.textContent='PASSWORD REQUIRED';
- securityForm.hidden=false;confirmWrap.hidden=!setupMode;
+ securityForm.hidden=false;confirmWrap.hidden=!setupMode;unlockButton.disabled=false;
  passwordInput.value='';confirmInput.value='';
  passwordInput.autocomplete=setupMode?'new-password':'current-password';
  unlockButton.textContent=setupMode?'SET PASSWORD AND OPEN BASE':'VERIFY AND OPEN BASE';
@@ -221,6 +221,7 @@ const relayToggle=document.querySelector('#relayToggle');if(relayToggle){let rel
  connection.textContent='LOCKED';gateTitle.textContent='SIGN-IN REQUIRED';gateText.textContent='Return to LOCAL MARS and sign in with the registered M-003 owner account.';
 }
 document.addEventListener('mars-auth-state',()=>{lockBase();verifyAndLoad()});
+document.addEventListener('mars-world-updated',()=>{if(!loaded)verifyAndLoad()});
 setTimeout(verifyAndLoad,900);
 </script> 
 <script src="./easy-play.js" defer></script>
