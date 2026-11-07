@@ -1170,7 +1170,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 <section id="lmSystemsOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="lmSystemsTitle">
  <div id="lmSystemsCard">
   <div class="lm-systems-head">
-   <div><div class="lm-systems-eyebrow">LOCAL MARS · MORE</div><h2 id="lmSystemsTitle">เมนูระบบทั้งหมด</h2><p>เลือกบริการที่ต้องการ · Explore tools and member services.</p></div>
+   <div><div class="lm-systems-eyebrow">LOCAL MARS · MORE</div><h2 id="lmSystemsTitle">All Systems</h2><p>Choose a service to continue.</p></div>
    <button type="button" id="lmSystemsClose" aria-label="Close system directory">✕</button>
   </div>
   <div class="lm-systems-overview" aria-label="Systems overview">
@@ -1178,41 +1178,41 @@ document.addEventListener('DOMContentLoaded',()=>{
    <div><small>LIVE APP LAYER</small><b>WEB</b><span>LOCAL MARS interface</span></div>
    <div><small>NETWORK MODEL</small><b>HYBRID</b><span>database + simulation</span></div>
   </div>
-  <label class="lm-systems-search"><span>⌕</span><input id="lmSystemsSearch" type="search" placeholder="ค้นหาระบบ เช่น กระเป๋าเงิน ฐาน ภารกิจ / Search…" autocomplete="off"></label>
-  <div id="lmSystemsEmpty" hidden>ไม่พบระบบที่ค้นหา · No matching systems. Try another keyword.</div>
+  <label class="lm-systems-search"><span>⌕</span><input id="lmSystemsSearch" type="search" placeholder="Search systems, e.g. wallet, base, or missions…" autocomplete="off"></label>
+  <div id="lmSystemsEmpty" hidden>No matching systems. Try another keyword.</div>
   <div class="lm-system-group" data-system-group="explore">
-   <h3>01 · สำรวจดาวอังคารและที่ดิน / EXPLORE & LAND</h3>
+   <h3>01 · EXPLORE & LAND</h3>
    <div class="lm-system-grid">
-    <button class="lm-system-card" data-system-target="explore" data-search-terms="mars ดาวอังคาร สำรวจ planet explorer แปลงที่ดิน land"><span class="lm-system-art">🌎</span><b>Planet Explorer</b><small>Rotate Mars and inspect parcels</small><em class="lm-system-state">APP MODULE</em></button>
+    <button class="lm-system-card" data-system-target="explore" data-search-terms="mars explore planet explorer parcels land"><span class="lm-system-art">🌎</span><b>Planet Explorer</b><small>Rotate Mars and inspect parcels</small><em class="lm-system-state">APP MODULE</em></button>
     <button class="lm-system-card" data-system-target="market" data-search-terms="marketplace land listings prices mlc"><span class="lm-system-art">🪙</span><b>Land Marketplace</b><small>Browse land listings and MLC prices</small><em class="lm-system-state">APP MODULE</em></button>
    </div>
   </div>
   <div class="lm-system-group" data-system-group="development">
    <h3>02 · COLONY & ENGINEERING</h3>
    <div class="lm-system-grid">
-    <button class="lm-system-card" data-system-target="city" data-search-terms="เมือง สร้างเมือง 3d city builder colony อาณานิคม"><span class="lm-system-art">🏗️</span><b>3D City Builder</b><small>Build and manage settlements</small><em class="lm-system-state">APP MODULE</em></button>
+    <button class="lm-system-card" data-system-target="city" data-search-terms="city builder colony 3d settlement"><span class="lm-system-art">🏗️</span><b>3D City Builder</b><small>Build and manage settlements</small><em class="lm-system-state">APP MODULE</em></button>
     <button class="lm-system-card" data-system-target="underground" data-search-terms="underground facility base"><span class="lm-system-art">🛰️</span><b>Underground Facility</b><small>Explore protected base systems</small><em class="lm-system-state">APP MODULE</em></button>
-    <a class="lm-system-card" href="./civilization.html" data-search-terms="อารยธรรม เครือข่าย civilization network planet"><span class="lm-system-art">🌐</span><b>Civilization Network</b><small>View the wider planetary network</small><em class="lm-system-state">APP MODULE</em></a>
+    <a class="lm-system-card" href="./civilization.html" data-search-terms="civilization network planet"><span class="lm-system-art">🌐</span><b>Civilization Network</b><small>View the wider planetary network</small><em class="lm-system-state">APP MODULE</em></a>
    </div>
   </div>
   <div class="lm-system-group" data-system-group="operations">
-   <h3>03 · ภารกิจและเครือข่าย / MISSIONS & NETWORK</h3>
+   <h3>03 · MISSIONS & NETWORK</h3>
    <div class="lm-system-grid">
     <button class="lm-system-card" data-system-target="satellite" data-search-terms="satellite orbit orbital operations"><span class="lm-system-art">🛰️</span><b>Orbital Operations</b><small>Open the simulated satellite link</small><em class="lm-system-state">SIMULATION</em></button>
-    <a class="lm-system-card" href="./mission-trainer.html" data-search-terms="ภารกิจ ฝึกอบรม mission trainer rocket"><span class="lm-system-art">🚀</span><b>Mission Trainer</b><small>Learn mission procedures</small><em class="lm-system-state">APP MODULE</em></a>
+    <a class="lm-system-card" href="./mission-trainer.html" data-search-terms="missions training mission trainer rocket"><span class="lm-system-art">🚀</span><b>Mission Trainer</b><small>Learn mission procedures</small><em class="lm-system-state">APP MODULE</em></a>
     <a class="lm-system-card" href="./news.html" data-search-terms="news metaverse virtual land Mars exploration"><span class="lm-system-art">📰</span><b>LOCAL MARS NEWS</b><small>Live external headlines and real member events</small><em class="lm-system-state">LIVE SOURCES</em></a>
    </div>
   </div>
   <div class="lm-system-group" data-system-group="member">
-   <h3>04 · บริการสมาชิก / MEMBER SERVICES</h3>
+   <h3>04 · MEMBER SERVICES</h3>
    <div class="lm-system-grid">
-    <button class="lm-system-card" data-system-target="workspace" data-search-terms="แดชบอร์ด dashboard ภาพรวมสมาชิก ผลงาน กิจกรรม พื้นที่ทำงาน โปรเจกต์ workspace projects"><span class="lm-system-art">📁</span><b>Dashboard</b><small>ภาพรวมสมาชิก ผลงาน และกิจกรรมของคุณ / Member overview & activity</small><em class="lm-system-state">MEMBER ACCESS</em></button>
-    <button class="lm-system-card" data-system-target="chat" data-search-terms="แชต แชท chat สนทนา ข้อความ online realtime ห้องสนทนา"><span class="lm-system-art">💬</span><b>LIVE CHAT</b><small>คุยกับสมาชิก LOCAL MARS แบบเรียลไทม์</small><em class="lm-system-state">MEMBER ACCESS</em></button>
+    <button class="lm-system-card" data-system-target="workspace" data-search-terms="dashboard member overview activity workspace projects"><span class="lm-system-art">📁</span><b>Dashboard</b><small>Member overview and activity</small><em class="lm-system-state">MEMBER ACCESS</em></button>
+    <button class="lm-system-card" data-system-target="chat" data-search-terms="chat conversation messages online realtime room"><span class="lm-system-art">💬</span><b>LIVE CHAT</b><small>คุยกับสมาชิก LOCAL MARS แบบเรียลไทม์</small><em class="lm-system-state">MEMBER ACCESS</em></button>
     <a class="lm-system-card" href="./dual-ai.html" style="text-decoration:none" data-search-terms="Grok GPT dual AI assistant intelligence"><span class="lm-system-art">✧</span><b>GROK × GPT · DUAL AI</b><small>Two AI providers · independent answers</small><em class="lm-system-state">MEMBER ACCESS</em></a>
-    <a class="lm-system-card" href="./download-ai.html" style="text-decoration:none" data-search-terms="ดาวน์โหลด download local mars ai online app html file package"><span class="lm-system-art">⬇️</span><b>LOCAL MARS AI · DOWNLOAD CENTER</b><small>ดาวน์โหลดไฟล์แอป AI ออนไลน์จากภายในระบบ</small><em class="lm-system-state">ONLINE DOWNLOAD</em></a>
-    <button class="lm-system-card" data-system-target="account" data-search-terms="สมาชิก เข้าสู่ระบบ บัญชี account sign in"><span class="lm-system-art">👤</span><b>Member Account</b><small>Sign in and manage your session</small><em class="lm-system-state">MEMBER ACCESS</em></button>
+    <a class="lm-system-card" href="./download-ai.html" style="text-decoration:none" data-search-terms="download local mars ai online app html package"><span class="lm-system-art">⬇️</span><b>LOCAL MARS AI · DOWNLOAD CENTER</b><small>ดาวน์โหลดไฟล์แอป AI ออนไลน์จากภายในระบบ</small><em class="lm-system-state">ONLINE DOWNLOAD</em></a>
+    <button class="lm-system-card" data-system-target="account" data-search-terms="member sign in account"><span class="lm-system-art">👤</span><b>Member Account</b><small>Sign in and manage your session</small><em class="lm-system-state">MEMBER ACCESS</em></button>
     <a class="lm-system-card" href="./satellite-network.html" style="text-decoration:none" data-search-terms="satellite network orbital catalog"><span class="lm-system-art">🛰️</span><b>Satellite Network</b><small>Member access · public orbital catalog</small><em class="lm-system-state">MEMBER ACCESS</em></a>
-    <button class="lm-system-card" data-system-target="wallet" data-search-terms="กระเป๋าเงิน ยอดเงิน mlc wallet balance"><span class="lm-system-art">💠</span><b>MLC Wallet</b><small>View your in-app MLC balance</small><em class="lm-system-state">MEMBER ACCESS</em></button>
+    <button class="lm-system-card" data-system-target="wallet" data-search-terms="wallet balance mlc"><span class="lm-system-art">💠</span><b>MLC Wallet</b><small>View your in-app MLC balance</small><em class="lm-system-state">MEMBER ACCESS</em></button>
     <button class="lm-system-card" id="lmMoreInstallBtn" type="button" data-system-target="install" data-search-terms="install app download updates"><span class="lm-system-art">⬇️</span><b>Install App</b><small>Install LOCAL MARS on this device</small><em class="lm-system-state">APP MODULE</em></button>
    </div>
   </div>
@@ -1221,34 +1221,34 @@ document.addEventListener('DOMContentLoaded',()=>{
 </section>
 <section id="lmWorkspaceOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="lmWorkspaceTitle">
  <div id="lmWorkspaceCard">
-  <header id="lmWorkspaceHeader"><div><div class="lm-ws-eyebrow">LOCAL MARS · MEMBER HUB</div><h2 id="lmWorkspaceTitle" data-lm-en="Dashboard" data-lm-th="แดชบอร์ดสมาชิก">Dashboard</h2><div id="lmWorkspaceIdentity" aria-live="polite">Checking member session…</div></div><button type="button" id="lmWorkspaceClose" aria-label="Close workspace">✕</button></header>
+  <header id="lmWorkspaceHeader"><div><div class="lm-ws-eyebrow">LOCAL MARS · MEMBER HUB</div><h2 id="lmWorkspaceTitle" data-lm-en="Dashboard" data-lm-th="Dashboard">Dashboard</h2><div id="lmWorkspaceIdentity" aria-live="polite">Checking member session…</div></div><button type="button" id="lmWorkspaceClose" aria-label="Close workspace">✕</button></header>
   <div id="lmWorkspaceStatus" role="status" aria-live="polite">Connecting to shared database…</div>
   <div class="lm-ws-metrics">
-   <div class="lm-ws-metric"><small data-lm-en="MY CITIES" data-lm-th="เมืองของฉัน">MY CITIES</small><b id="lmWsCities">—</b></div>
-   <div class="lm-ws-metric"><small data-lm-en="CITY BUILDINGS" data-lm-th="สิ่งปลูกสร้างในเมือง">CITY BUILDINGS</small><b id="lmWsBuildings">—</b></div>
-   <div class="lm-ws-metric"><small data-lm-en="PLANET STRUCTURES" data-lm-th="สิ่งปลูกสร้างบนดาว">PLANET STRUCTURES</small><b id="lmWsStructures">—</b></div>
+   <div class="lm-ws-metric"><small data-lm-en="MY CITIES" data-lm-th="My Cities">MY CITIES</small><b id="lmWsCities">—</b></div>
+   <div class="lm-ws-metric"><small data-lm-en="CITY BUILDINGS" data-lm-th="City Buildings">CITY BUILDINGS</small><b id="lmWsBuildings">—</b></div>
+   <div class="lm-ws-metric"><small data-lm-en="PLANET STRUCTURES" data-lm-th="Planet Structures">PLANET STRUCTURES</small><b id="lmWsStructures">—</b></div>
    <div class="lm-ws-metric"><small data-lm-en="NATIONAL FLAGS" data-lm-th="National flags">NATIONAL FLAGS</small><b id="lmWsFlags">—</b></div>
-   <div class="lm-ws-metric"><small data-lm-en="UNDERGROUND CELLS" data-lm-th="พื้นที่ใต้ดิน">UNDERGROUND CELLS</small><b id="lmWsUnderground">—</b></div>
-   <div class="lm-ws-metric"><small data-lm-en="OWNED PARCELS" data-lm-th="แปลงพื้นที่ของฉัน">OWNED PARCELS</small><b id="lmWsParcels">—</b></div>
+   <div class="lm-ws-metric"><small data-lm-en="UNDERGROUND CELLS" data-lm-th="Underground Cells">UNDERGROUND CELLS</small><b id="lmWsUnderground">—</b></div>
+   <div class="lm-ws-metric"><small data-lm-en="OWNED PARCELS" data-lm-th="Owned Parcels">OWNED PARCELS</small><b id="lmWsParcels">—</b></div>
   </div>
   <h3 data-lm-en="MLC WALLET" data-lm-th="MLC Wallet">MLC WALLET</h3>
   <div class="lm-ws-metric" style="margin:8px 0 12px"><small data-lm-en="AVAILABLE MLC · IN-APP CURRENCY" data-lm-th="Available MLC · in-app currency">AVAILABLE MLC · IN-APP CURRENCY</small><b id="lmWsMlcBalance">—</b><div class="small" data-lm-en="MLC is a simulation currency and has no cash redemption value." data-lm-th="MLC is an in-app simulation currency with no cash redemption value.">MLC is a simulation currency and has no cash redemption value.</div></div>
   <h3 data-lm-en="RECENT WALLET TRANSACTIONS" data-lm-th="Recent wallet transactions">RECENT WALLET TRANSACTIONS</h3>
   <div id="lmWorkspaceLedger" class="lm-ws-activity">Sign in to view wallet transactions.</div>
-  <h3 data-lm-en="CONTINUE BUILDING" data-lm-th="ไปยังระบบสร้างและจัดการ">CONTINUE BUILDING</h3>
+  <h3 data-lm-en="CONTINUE BUILDING" data-lm-th="Continue Building">CONTINUE BUILDING</h3>
   <div class="lm-ws-links">
-   <a href="./city.html"><span>🏙️</span><b data-lm-en="3D City Builder" data-lm-th="สร้างเมือง 3 มิติ">3D City Builder</b><small data-lm-en="Place buildings and manage resources" data-lm-th="วางสิ่งปลูกสร้างและจัดการทรัพยากร">Place buildings and manage resources</small></a>
-   <a href="./underground.html"><span>🏚️</span><b data-lm-en="Underground Network" data-lm-th="ระบบฐานใต้ดิน">Underground Network</b><small data-lm-en="Build and edit your underground rooms" data-lm-th="สร้างและแก้ไขพื้นที่ใต้ดิน">Build and edit your underground rooms</small></a>
-   <a href="./civilization.html"><span>🌐</span><b data-lm-en="Civilization Network" data-lm-th="เครือข่ายอารยธรรม">Civilization Network</b><small data-lm-en="View the shared planetary activity" data-lm-th="View shared planetary activity">View the shared planetary activity</small></a>
-   <a href="./m003-base.html"><span>🔐</span><b data-lm-en="M-003 Secure Base" data-lm-th="ฐานรักษาความปลอดภัย M-003">M-003 Secure Base</b><small data-lm-en="Protected access · member verification" data-lm-th="ต้องยืนยันตัวตนก่อนเข้าใช้งาน">Protected access · member verification</small></a>
-   <a href="./mission-trainer.html"><span>🚀</span><b data-lm-en="Mission Trainer" data-lm-th="ศูนย์ฝึกภารกิจ">Mission Trainer</b><small data-lm-en="Plan and train planetary missions" data-lm-th="วางแผนและฝึกภารกิจดาวเคราะห์">Plan and train planetary missions</small></a>
-   <a href="./"><span>🪐</span><b data-lm-en="Planet Explorer" data-lm-th="สำรวจดาวเคราะห์">Planet Explorer</b><small data-lm-en="Explore parcels and build on owned land" data-lm-th="สำรวจแปลงและก่อสร้างบนพื้นที่ของคุณ">Explore parcels and build on owned land</small></a>
+   <a href="./city.html"><span>🏙️</span><b data-lm-en="3D City Builder" data-lm-th="3D City Builder">3D City Builder</b><small data-lm-en="Place buildings and manage resources" data-lm-th="Place buildings and manage resources">Place buildings and manage resources</small></a>
+   <a href="./underground.html"><span>🏚️</span><b data-lm-en="Underground Network" data-lm-th="Underground Network">Underground Network</b><small data-lm-en="Build and edit your underground rooms" data-lm-th="Build and edit underground rooms">Build and edit your underground rooms</small></a>
+   <a href="./civilization.html"><span>🌐</span><b data-lm-en="Civilization Network" data-lm-th="Civilization Network">Civilization Network</b><small data-lm-en="View the shared planetary activity" data-lm-th="View shared planetary activity">View the shared planetary activity</small></a>
+   <a href="./m003-base.html"><span>🔐</span><b data-lm-en="M-003 Secure Base" data-lm-th="M-003 Secure Base">M-003 Secure Base</b><small data-lm-en="Protected access · member verification" data-lm-th="Member verification required">Protected access · member verification</small></a>
+   <a href="./mission-trainer.html"><span>🚀</span><b data-lm-en="Mission Trainer" data-lm-th="Mission Trainer">Mission Trainer</b><small data-lm-en="Plan and train planetary missions" data-lm-th="Plan and train planetary missions">Plan and train planetary missions</small></a>
+   <a href="./"><span>🪐</span><b data-lm-en="Planet Explorer" data-lm-th="Planet Explorer">Planet Explorer</b><small data-lm-en="Explore parcels and build on owned land" data-lm-th="Explore parcels and build on owned land">Explore parcels and build on owned land</small></a>
   </div>
-  <h3 data-lm-en="MY SAVED CREATIONS" data-lm-th="ผลงานที่บันทึกไว้">MY SAVED CREATIONS</h3>
+  <h3 data-lm-en="MY SAVED CREATIONS" data-lm-th="My Saved Creations">MY SAVED CREATIONS</h3>
   <div id="lmWorkspaceCreations" class="lm-ws-activity">Your saved creations will appear here.</div>
   <h3 data-lm-en="MY ACTIVITY" data-lm-th="My activity">MY ACTIVITY</h3>
   <div id="lmWorkspaceActivity" class="lm-ws-activity">Sign in to view your saved creations and live activity.</div>
-  <div class="lm-ws-footer"><span data-lm-en="Changes sync through the shared LOCAL MARS database." data-lm-th="ข้อมูลซิงก์ผ่านฐานข้อมูล LOCAL MARS ส่วนกลาง">Changes sync through the shared LOCAL MARS database.</span><button type="button" id="lmWorkspaceRefresh">↻ <span data-lm-en="Refresh" data-lm-th="รีเฟรช">Refresh</span></button></div>
+  <div class="lm-ws-footer"><span data-lm-en="Changes sync through the shared LOCAL MARS database." data-lm-th="Changes sync through the shared LOCAL MARS database.">Changes sync through the shared LOCAL MARS database.</span><button type="button" id="lmWorkspaceRefresh">↻ <span data-lm-en="Refresh" data-lm-th="Refresh">Refresh</span></button></div>
  </div>
 </section>
 
@@ -2275,11 +2275,11 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
 <button id="lmChatOpen" type="button" hidden aria-hidden="true">Open LOCAL MARS chat</button>
 <section id="lmChatOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="lmChatTitle">
  <div id="lmChatCard">
-  <header id="lmChatHeader"><div><div class="lm-chat-eyebrow">LOCAL MARS · COMMUNITY</div><h2 id="lmChatTitle">LIVE CHAT</h2><p>ห้องสนทนาสมาชิกกลางของ LOCAL MARS</p></div><button id="lmChatClose" type="button" aria-label="Close chat">✕</button></header>
+  <header id="lmChatHeader"><div><div class="lm-chat-eyebrow">LOCAL MARS · COMMUNITY</div><h2 id="lmChatTitle">LIVE CHAT</h2><p>Shared LOCAL MARS community chat room</p></div><button id="lmChatClose" type="button" aria-label="Close chat">✕</button></header>
   <div id="lmChatBar"><span id="lmChatConnection">○ Connecting...</span><span id="lmChatOnline">0 online</span></div>
-  <div id="lmChatMessages" role="log" aria-live="polite" aria-relevant="additions text"><div class="lm-chat-empty">ยินดีต้อนรับสู่ห้องสนทนา LOCAL MARS</div></div>
-  <div id="lmChatNotice" role="status" aria-live="polite">เข้าสู่ระบบสมาชิกเพื่อเริ่มสนทนา</div>
-  <button id="lmChatSignIn" type="button">เข้าสู่ระบบสมาชิก</button>
+  <div id="lmChatMessages" role="log" aria-live="polite" aria-relevant="additions text"><div class="lm-chat-empty">Welcome to the LOCAL MARS community chat.</div></div>
+  <div id="lmChatNotice" role="status" aria-live="polite">Sign in to start chatting.</div>
+  <button id="lmChatSignIn" type="button">Sign in</button>
   <form id="lmChatForm">
    <label class="lm-chat-compose"><textarea id="lmChatInput" maxlength="1000" rows="2" placeholder="Type your message..." aria-label="Type a message"></textarea><button id="lmChatSend" type="submit">Send ↗</button></label>
    <small>Up to 1,000 characters · Please keep the conversation respectful.</small>
@@ -2496,15 +2496,15 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
   <button class="lm-solar-planet-btn" data-solar-planet="0"><i class="lm-solar-dot" style="background:#aaa49c;color:#aaa49c"></i>Mercury</button>
   <button class="lm-solar-planet-btn" data-solar-planet="1"><i class="lm-solar-dot" style="background:#e5bd82;color:#e5bd82"></i>Venus</button>
   <button class="lm-solar-planet-btn" data-solar-planet="2"><i class="lm-solar-dot" style="background:#3288cf;color:#3288cf"></i>Earth</button>
-  <button class="lm-solar-planet-btn" data-solar-planet="3"><i class="lm-solar-dot" style="background:#c65d3e;color:#c65d3e"></i>Mars · ดาวอังคาร</button>
+  <button class="lm-solar-planet-btn" data-solar-planet="3"><i class="lm-solar-dot" style="background:#c65d3e;color:#c65d3e"></i>Mars</button>
   <button class="lm-solar-planet-btn" data-solar-planet="4"><i class="lm-solar-dot" style="background:#d4a77d;color:#d4a77d"></i>Jupiter</button>
   <button class="lm-solar-planet-btn" data-solar-planet="5"><i class="lm-solar-dot" style="background:#d8c08c;color:#d8c08c"></i>Saturn</button>
   <button class="lm-solar-planet-btn" data-solar-planet="6"><i class="lm-solar-dot" style="background:#85d5d8;color:#85d5d8"></i>Uranus</button>
   <button class="lm-solar-planet-btn" data-solar-planet="7"><i class="lm-solar-dot" style="background:#416fe0;color:#416fe0"></i>Neptune</button>
  </nav>
  <aside class="lm-solar-panel lm-solar-detail">
-  <div class="lm-solar-kicker">PLANETARY INTELLIGENCE</div><h2 id="lmSolarPlanetName">ดาวอังคาร · Mars</h2><div id="lmSolarPlanetType">Terrestrial planet</div>
-  <p id="lmSolarPlanetText">กำลังเตรียมข้อมูลดาวเคราะห์…</p><div id="lmSolarPlanetFacts"></div>
+  <div class="lm-solar-kicker">PLANETARY INTELLIGENCE</div><h2 id="lmSolarPlanetName">Mars</h2><div id="lmSolarPlanetType">Terrestrial planet</div>
+  <p id="lmSolarPlanetText">Preparing planetary data…</p><div id="lmSolarPlanetFacts"></div>
   <div class="lm-solar-actions"><button id="lmSolarPause" type="button">PAUSE</button><button id="lmSolarSpeed" type="button">SPEED · 1×</button><button id="lmSolarReset" type="button">RESET VIEW</button><button id="lmSolarBackMars" type="button">BACK TO MARS</button></div>
   <button id="lmSolarMarsLink" class="lm-solar-mars-link" type="button" hidden>OPEN LOCAL MARS WORLD</button>
  </aside>
