@@ -349,7 +349,7 @@ header .brand .brand-lockup small{display:block!important;color:#aebdca!importan
 <button id="showMenu" type="button" aria-label="Show menu">☰ SHOW MENU</button>
 
 <section class="panel left"><h3>COLONY COMMAND</h3><div class="row"><span>Mode</span><b id="modeLabel">Explore Mode</b></div><div class="row"><span>Coordinates</span><b id="position">0, 0</b></div><div class="row"><span> buildings</span><b id="count">0</b></div><div class="row"><span>Simulation Credits</span><b id="credits">9,000 Simulation Credits</b></div><p class="hint">The camera follows behind your character, showing the explorer and surrounding city. Drag the right side of the screen or an open area to rotate the camera.</p><div class="tools"><button id="walk" class="active">🚶 Explore Mode</button><button id="buildMode">🏗️ Build City</button></div></section>
-<section id="construction" class="panel right"><h3>BUILD MENU</h3><div class="job-card" style="margin:8px 0 12px" role="note"><b>CONSTRUCTION WORKFLOW</b><p style="margin:6px 0 0">1. Select a grid tile. 2. Choose a structure. 3. Press Place Structure. 4. Track progress in Live Construction. Sign in to synchronize buildings across devices.</p><p style="margin:6px 0 0"><a href="./index.html" style="color:#8de4bd">← Open Planet Explorer</a></p></div><div class="row"><span>Selected Plot</span><b id="plot">None Selected</b></div><div class="row"><span>แปลงMars</span><b id="worldParcelLabel">None Selected</b></div><div class="hint" id="worldParcelHint">เลือกแปลงจากแผนที่Marsเพื่อผูกงานConstruction</div><div id="worldParcelStatus" class="job-card" role="status" aria-live="polite">Not selectedTarget Parcel</div><div class="row"><span>Road</span><b id="roadCount">0</b></div><div class="row"><span>NPC</span><b id="npcCount">3</b></div>
+<section id="construction" class="panel right"><h3>BUILD MENU</h3><div class="job-card" style="margin:8px 0 12px" role="note"><b>CONSTRUCTION WORKFLOW</b><p style="margin:6px 0 0">1. Select a grid tile. 2. Choose a structure. 3. Press Place Structure. 4. Track progress in Live Construction. Sign in to synchronize buildings across devices.</p><p style="margin:6px 0 0"><a href="./index.html" style="color:#8de4bd">← Open Planet Explorer</a></p></div><div class="row"><span>Selected Plot</span><b id="plot">None Selected</b></div><div class="row"><span>Mars Parcel</span><b id="worldParcelLabel">None Selected</b></div><div class="hint" id="worldParcelHint">Select a parcel in Planet Explorer to link this construction project.</div><div id="worldParcelStatus" class="job-card" role="status" aria-live="polite">Not selectedTarget Parcel</div><div class="row"><span>Road</span><b id="roadCount">0</b></div><div class="row"><span>NPC</span><b id="npcCount">3</b></div>
 <div style="margin-top:10px;padding:9px;border:1px solid #c9a66e66;border-radius:11px;background:#091a2b">
  <div style="font-size:10px;font-weight:800;letter-spacing:1px;color:#e4c58b;margin-bottom:6px">🏳️ Member National Flag</div>
  <select id="flagCountry" class="wide" style="margin-top:0">
@@ -580,10 +580,10 @@ async function placeOnline(type,x,z,level,worldParcelId=null){
   if(worldParcelId){
    const claim=await marsDB.from('world_claims').select('parcel_id').eq('parcel_id',worldParcelId).eq('owner_id',onlineUser.id).maybeSingle();
    if(claim.error)throw claim.error;
-   if(!claim.data){setWorldParcelStatus('Cannot start: this account does not own parcel '+worldParcelId,'error');toast('You must own parcel '+worldParcelId+' ก่อนConstructionออนไลน์');return false;}
+   if(!claim.data){setWorldParcelStatus('Cannot start: this account does not own parcel '+worldParcelId,'error');toast('You must own parcel '+worldParcelId+' before starting online construction');return false;}
    const existing=await marsDB.from('world_structures').select('id,owner_id,structure_type').eq('parcel_id',worldParcelId).limit(1).maybeSingle();
    if(existing.error)throw existing.error;
-   if(existing.data){setWorldParcelStatus('Parcel '+worldParcelId+' มี buildingsบนดาวอยู่แล้ว','error');toast('แปลงนี้มี buildingson Mars');return false;}
+   if(existing.data){setWorldParcelStatus('Parcel '+worldParcelId+' already has a structure on Mars','error');toast('This parcel already has a structure on Mars');return false;}
   }
   const r=await marsDB.rpc('mars_city_place_structure',{p_type:type,p_x:x,p_z:z,p_level:level});
   if(r.error)throw r.error;
@@ -595,15 +595,15 @@ async function placeOnline(type,x,z,level,worldParcelId=null){
    const saved=await marsDB.from('mars_city_buildings').update({position}).eq('id',building.id).eq('owner_id',onlineUser.id).select('id').maybeSingle();
    if(saved.error||!saved.data){
     console.warn('Could not persist world parcel link metadata:',saved.error||'no owned row returned');
-    setWorldParcelStatus('งานConstructionถูกSaveในเมืองแล้ว แต่dataผูกแปลงเก็บในEquipmentนี้ก่อน','warning');
-   }else setWorldParcelStatus('Under Constructionบนเมืองจำลอง • เมื่อเสร็จจะเผยแพร่ไปยัง '+worldParcelId);
+    setWorldParcelStatus('Construction was saved to the city, but parcel-link details are temporarily stored on this device.','warning');
+   }else setWorldParcelStatus('Under ConstructionConstruction in progress • It will be published to parcel '+worldParcelId);
   }
   toast('Save '+(buildingNames[type]||'Road')+' to the online city');
   await loadOnlineCity();
   return true;
  }catch(e){
   console.error('LOCAL MARS construction error:',{message:e?.message,code:e?.code,details:e?.details,hint:e?.hint});
-  toast('Constructionออนไลน์ไม่สำเร็จ: '+cityErrorText(e));
+  toast('ConstructionOnline construction failed: '+cityErrorText(e));
   return false;
  }
 }
@@ -630,22 +630,22 @@ async function publishWorldParcelStructure(data,force=false){
   if(existing.error)throw existing.error;
   let structureId;
   if(existing.data){
-   if(existing.data.owner_id!==onlineUser.id||existing.data.structure_type!==data.worldType)throw new Error('แปลงนี้มี buildingsชนิดอื่นอยู่แล้ว จึงไม่เขียนทับ');
+   if(existing.data.owner_id!==onlineUser.id||existing.data.structure_type!==data.worldType)throw new Error('This parcel already contains a different structure. It will not be overwritten.');
    structureId=existing.data.id;
   }else{
    const result=await marsDB.rpc('build_world_structure',{p_parcel_id:data.worldParcelId,p_type:data.worldType});
    if(result.error)throw result.error;
-   if(!result.data?.ok||!result.data?.structure_id)throw new Error('ฐานdataยังไม่Confirm buildingsบนแปลง');
+   if(!result.data?.ok||!result.data?.structure_id)throw new Error('The database has not confirmed a structure on this parcel.');
    structureId=result.data.structure_id;
   }
   await persistWorldParcelLinkState(data,'synced',{structureId});
-  setWorldParcelStatus('เผยแพร่ buildings '+buildingNames[data.type]+' to parcel '+data.worldParcelId+' on Mars','success');
-  toast(' buildingsLinked to parcel '+data.worldParcelId+' สำเร็จ');
+  setWorldParcelStatus('Published structure '+buildingNames[data.type]+' to parcel '+data.worldParcelId+' on Mars','success');
+  toast(' buildingsLinked to parcel '+data.worldParcelId+' successfully');
  }catch(e){
   const message=cityErrorText(e);
   await persistWorldParcelLinkState(data,'failed',{error:message});
-  setWorldParcelStatus('City construction is complete, but parcel linking failed for '+data.worldParcelId+' ไม่สำเร็จ: '+message,'error',data);
-  toast(' buildingsในเมืองเสร็จแล้ว แต่ยังเผยแพร่บนดาวไม่สำเร็จ');
+  setWorldParcelStatus('City construction is complete, but parcel linking failed for '+data.worldParcelId+' failed: '+message,'error',data);
+  toast(' buildingsในเมืองเสร็จแล้ว แต่ยังเผยแพร่บนดาวไม่successfully');
  }finally{worldParcelPublishing.delete(publishKey);}
 }
 let flagSubmitting=false;
@@ -853,7 +853,7 @@ function updateConstructionJobs(elapsed){
  if(completed){updateHUD();save(false)}
 }
 
-document.querySelector('#place').onclick=async()=>{if(!selected){toast('Select a grid tile first');return}const x=selected.userData.x,z=selected.userData.z,occupied=buildings.some(b=>b.userData.x===x&&b.userData.z===z&&(b.userData.level||0)===currentLevel)||constructionSites.some(s=>s.data.x===x&&s.data.z===z&&s.data.level===currentLevel);if(occupied){toast('This tile already contains a structure or active construction');return}const type=document.querySelector('#building').value;if(activeWorldParcelId&&!worldParcelBuildingTypes[type]){toast('Mars parcels support Habitat, Greenhouse, Lab, and Solar only.');return}if(onlineUser){await placeOnline(type,x,z,currentLevel,activeWorldParcelId);return}const recipe=recipes[type];if(!recipe){toast('No material recipe found for this structure');return}if(credits<recipe.credit){toast('Insufficient simulation credits');return}for(const key of ['metal','polymer','electronics'])if(resources[key]<recipe[key]){toast('Insufficient materials: '+key);return}credits-=recipe.credit;for(const key of ['metal','polymer','electronics'])resources[key]-=recipe[key];const data={id:type+'-'+Date.now(),x,z,type,level:currentLevel,startedAt:Date.now(),durationMs:60000,worldParcelId:activeWorldParcelId,worldType:activeWorldParcelId?worldParcelBuildingTypes[type]:null,worldLinkStatus:activeWorldParcelId?'local-only':null};createConstructionSite(data);updateHUD();save(false);renderConstructionJobs();if(activeWorldParcelId)setWorldParcelStatus('LOCAL ONLY •  buildingsนี้อยู่ในเครื่องและยังไม่เผยแพร่บนดาว ต้องLog Inและเป็นOwnerแปลง');toast('Construction started: '+buildingNames[type]+' · Simulated duration: 60 seconds.')};
+document.querySelector('#place').onclick=async()=>{if(!selected){toast('Select a grid tile first');return}const x=selected.userData.x,z=selected.userData.z,occupied=buildings.some(b=>b.userData.x===x&&b.userData.z===z&&(b.userData.level||0)===currentLevel)||constructionSites.some(s=>s.data.x===x&&s.data.z===z&&s.data.level===currentLevel);if(occupied){toast('This tile already contains a structure or active construction');return}const type=document.querySelector('#building').value;if(activeWorldParcelId&&!worldParcelBuildingTypes[type]){toast('Mars parcels support Habitat, Greenhouse, Lab, and Solar only.');return}if(onlineUser){await placeOnline(type,x,z,currentLevel,activeWorldParcelId);return}const recipe=recipes[type];if(!recipe){toast('No material recipe found for this structure');return}if(credits<recipe.credit){toast('Insufficient simulation credits');return}for(const key of ['metal','polymer','electronics'])if(resources[key]<recipe[key]){toast('Insufficient materials: '+key);return}credits-=recipe.credit;for(const key of ['metal','polymer','electronics'])resources[key]-=recipe[key];const data={id:type+'-'+Date.now(),x,z,type,level:currentLevel,startedAt:Date.now(),durationMs:60000,worldParcelId:activeWorldParcelId,worldType:activeWorldParcelId?worldParcelBuildingTypes[type]:null,worldLinkStatus:activeWorldParcelId?'local-only':null};createConstructionSite(data);updateHUD();save(false);renderConstructionJobs();if(activeWorldParcelId)setWorldParcelStatus('LOCAL ONLY •  buildingsThis project is stored on this device and has not been published to Mars. Sign in and own the parcel to publish it.');toast('Construction started: '+buildingNames[type]+' · Simulated duration: 60 seconds.')};
 document.querySelector('#remove').onclick=async()=>{if(!selected)return;const x=selected.userData.x,z=selected.userData.z;const item=buildings.find(b=>b.userData.x===x&&b.userData.z===z&&b.userData.level===currentLevel)||roads.find(b=>b.userData.x===x&&b.userData.z===z&&b.userData.level===currentLevel);if(item?.userData?.recordId&&onlineUser){if(item.userData.ownerId!==onlineUser.id){toast('Only the member who owns a structure can demolish it.');return}const r=await marsDB.rpc('mars_city_remove_structure',{p_building_id:item.userData.recordId});if(r.error){toast(r.error.message);return}await loadOnlineCity();toast('Structure demolished and synchronized with the online world.');return}const i=buildings.indexOf(item);if(i>=0){scene.remove(item);buildings.splice(i,1);updateHUD();toast('Structure demolished');return}const ri=roads.indexOf(item);if(ri>=0){scene.remove(item);roads.splice(ri,1);updateHUD();toast('Road demolished');return}toast('No structure on this tile')};
 function setMode(v){buildMode=v;roadMode=false;document.querySelector('#walk').classList.toggle('active',!v);document.querySelector('#buildMode').classList.toggle('active',v);document.querySelector('#place').disabled=!selected;document.querySelector('#remove').disabled=!selected;cells.forEach(c=>c.material.opacity=v?.12:0);updateHUD()}
 document.querySelector('#roadMode').onclick=()=>{roadMode=!roadMode;buildMode=false;cells.forEach(c=>c.material.opacity=roadMode?.12:0);toast(roadMode?'Tap a tile to place a road':'Road mode disabled')};document.querySelector('#level').onchange=e=>{currentLevel=Number(e.target.value);toast('Selected level L'+currentLevel)};document.querySelector('#walk').onclick=()=>setMode(false);document.querySelector('#buildMode').onclick=()=>setMode(true);document.querySelector('#placeFlag').onclick=placeNationalFlag;document.querySelector('#placeFlagHere').onclick=()=>{selected=null;placeNationalFlag();};
