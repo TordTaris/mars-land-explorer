@@ -644,7 +644,7 @@ const parcelSideMeters=Math.sqrt(activeParcelAreaSqm);
 const buildCellSize=parcelSideMeters/21;
 const workspaceHalfSide=parcelSideMeters/2;
 window.LOCAL_MARS_PARCEL_METRICS={parcelId:activeWorldParcelId,areaSquareMeters:activeParcelAreaSqm,sideMeters:parcelSideMeters,cellSizeMeters:buildCellSize,planetMeanRadiusMeters:3389500};
-const worldParcelBuildingTypes={hab:'Habitat Dome',green:'Hydroponics',lab:'Laboratory',solar:'Solar Farm',climate:'โรงงานปรับสภาพอากาศ'};
+const worldParcelBuildingTypes={hab:'Habitat Dome',green:'Hydroponics',lab:'Laboratory',solar:'Solar Farm',climate:'Atmosphere Processing Plant'};
 const parcelLinkCacheKey='mars-city-world-parcel-links-v1';
 const worldParcelPublishing=new Set();
 function readParcelLinkCache(){try{return JSON.parse(localStorage.getItem(parcelLinkCacheKey)||'{}')||{}}catch(e){return {}}}
