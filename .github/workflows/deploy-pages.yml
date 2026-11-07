@@ -57,7 +57,7 @@ jobs:
           from pathlib import Path
 
           required = [
-              "index.html", "dual-ai.html", "download-ai.html", "install.html", "member-workspace.js", "city.html", "underground.html", "mission-trainer.html", "news.html",
+              "index.html", "dual-ai.html", "download-ai.html", "install.html", "member-workspace.js", "solar-system.js", "digital-assets.js", "city.html", "underground.html", "mission-trainer.html", "news.html",
               "m003-base.html", "m003-dimension-gate.html", "top-secret-demo.html",
               "civilization.html", "i18n.js", "premium-ui.css",
               "world-server.js", "nasa-data.js", "multiverse.js", "easy-play.js", "chat.js",
@@ -193,6 +193,8 @@ jobs:
           print("LOCAL MARS: app routes, all 19 parcel routes, M-003, TOP SECRET demo, premium assets, TH/EN dictionaries and PWA assets validated.")
           PY
           node --check /tmp/local-mars-dual-ai.js
+          node --check solar-system.js
+          node --check digital-assets.js
           node --check /tmp/mars-main.mjs
           node --check /tmp/mars-city.mjs
           node --check /tmp/mars-underground.js
@@ -211,7 +213,7 @@ jobs:
       - name: Prepare complete static site
         run: |
           mkdir -p _site
-          cp index.html dual-ai.html download-ai.html install.html city.html underground.html mission-trainer.html news.html m003-base.html m003-dimension-gate.html top-secret-demo.html civilization.html i18n.js premium-ui.css world-server.js nasa-data.js member-workspace.js multiverse.js easy-play.js chat.js update-manager.js manifest.webmanifest sw.js icon.svg _site/
+          cp index.html dual-ai.html download-ai.html install.html city.html underground.html mission-trainer.html news.html m003-base.html m003-dimension-gate.html top-secret-demo.html civilization.html i18n.js premium-ui.css world-server.js nasa-data.js member-workspace.js multiverse.js easy-play.js chat.js digital-assets.js solar-system.js update-manager.js manifest.webmanifest sw.js icon.svg _site/
           cp -R locales _site/locales
           cp -R parcels _site/parcels
           touch _site/.nojekyll
