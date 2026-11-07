@@ -179,9 +179,23 @@ function showSecurity(hasPassword){
  passwordInput.autocomplete=setupMode?'new-password':'current-password';
  unlockButton.textContent=setupMode?'SET PASSWORD AND OPEN BASE':'VERIFY AND OPEN BASE';
 }
-async function renderBase(rows){
- if(!rows.length){gateTitle.textContent='NO FACILITY DATA';gateText.textContent='No underground level records were found in the database.';return;}
- loaded=true;document.querySelector('#gate').hidden=true;document.querySelector('#content').hidden=false;connection.textContent='M-003 UNLOCKED';
+async function renderBase(rows,archive){
+ if(!rows.length&&!archive){gateTitle.textContent='FACILITY DATA UNAVAILABLE';gateText.textContent='No underground level records or confidential archive were returned. Check the secure connection and retry.';return;}
+ loaded=true;document.querySelector('#gate').hidden=true;document.querySelector('#content').hidden=false;connection.textContent=archive?'M-003 UNLOCKED · CONFIDENTIAL ARCHIVE AUTHORIZED':'M-003 UNLOCKED · ARCHIVE NOT FOUND';
+ const content=document.querySelector('#content');const prior=document.querySelector('#m003ConfidentialArchive');prior?.remove();
+ if(archive){
+  const section=document.createElement('section');section.id='m003ConfidentialArchive';section.className='card';section.style.cssText='margin-top:12px;border-color:#c5a56b;background:linear-gradient(145deg,#18283a,#091523)';
+  const eyebrow=document.createElement('div');eyebrow.className='eyebrow';eyebrow.textContent=`${archive.classification||"CONFIDENTIAL"} · ${archive.parcel_id||"M-003"} / LEVEL ${String(archive.floor_no||17).padStart(2,"0")}`;
+  const heading=document.createElement('h2');heading.style.cssText='margin:7px 0;color:#e7c783';heading.textContent=archive.title||'LMSO CONFIDENTIAL ARCHIVE';
+  const intro=document.createElement('p');intro.style.fontSize='11px';intro.textContent='Owner-only archive. This record is delivered by the secured M-003 server function only after account ownership and security-password verification.';
+  section.append(eyebrow,heading,intro);
+  const data=archive.content||{};
+  const addList=(title,items)=>{if(!Array.isArray(items)||!items.length)return;const h=document.createElement('h2');h.style.cssText='margin:14px 0 7px;color:#72e7f3';h.textContent=title;const ul=document.createElement('ul');ul.style.cssText='margin:0;padding-left:20px;color:#b9c9d7;font-size:11px;line-height:1.7';items.forEach(item=>{const li=document.createElement('li');li.textContent=typeof item==='string'?item:((item.id?item.id+' · ':'')+(item.role||''));ul.append(li)});section.append(h,ul)};
+  const org=document.createElement('p');org.style.cssText='font-size:11px;color:#d9e5ed';org.textContent=data.organization||'LOCAL MARS Systems Oversight Organization';section.append(org);
+  addList('AI AGENT DIRECTORY',data.agent_roles);addList('CONFIDENTIALITY RULES',data.confidentiality_rules);addList('VERIFICATION BOUNDARIES',data.verification_boundaries);
+  if(data.agent_implementation_note){const note=document.createElement('p');note.style.cssText='margin-top:12px;padding:10px;border:1px solid #45627a;border-radius:9px;font-size:10px';note.textContent=data.agent_implementation_note;section.append(note)}
+  content.insertBefore(section,content.querySelector('.layout'));
+ }
  const list=document.querySelector('#floors'),detail=document.querySelector('#detail');
  rows.forEach((r,index)=>{const b=document.createElement('button');b.className='floor';b.innerHTML='<b>LEVEL '+String(r.floor_no).padStart(2,'0')+'</b><span></span><small></small>';b.querySelector('span').textContent=r.room_name;b.querySelector('small').textContent=r.system_status;b.onclick=()=>{list.querySelectorAll('.floor').forEach(x=>x.classList.remove('active'));b.classList.add('active');detail.innerHTML='';const h=document.createElement('h3');h.textContent='LEVEL '+String(r.floor_no).padStart(2,'0')+' · '+r.room_name;const p=document.createElement('p');p.textContent=r.description;const badge=document.createElement('span');badge.className='pill';badge.textContent=r.system_status;detail.append(h,p,badge);if(Number(r.floor_no)===17){const link=document.createElement('a');link.className='action';link.href='./m003-ibm5100.html';link.textContent='OPEN IBM 5100 WORKSTATION →';link.style.display='inline-block';link.style.marginTop='12px';detail.append(link)}};list.appendChild(b);if(index===0)b.click();});
 }
@@ -193,7 +207,7 @@ async function verifyAndLoad(){
  if(!owns){connection.textContent='ACCESS DENIED';gateTitle.textContent='M-003 OWNER ACCESS ONLY';gateText.textContent='The signed-in account is not authorized to access the underground facility database.';securityForm.hidden=true;return;}
  connection.textContent='OWNER VERIFIED';
  const result=await window.MarsWorldServer.m003Access('status');
- if(result?.error){gateTitle.textContent='SECURITY SERVICE UNAVAILABLE';gateText.textContent=result.error.message+' Apply Supabase migration 022 and deploy the m003-access Edge Function.';return;}
+ if(result?.error){gateTitle.textContent='SECURITY SERVICE UNAVAILABLE';gateText.textContent=result.error.message+' Check the connection and try again. If the problem continues, contact LOCAL MARS support.';return;}
  showSecurity(Boolean(result.data?.has_password));
 }
 unlockButton.addEventListener('click',async()=>{
@@ -210,7 +224,7 @@ unlockButton.addEventListener('click',async()=>{
   const result=await window.MarsWorldServer.m003Access('verify',password);
   if(result?.error){securityHint.textContent=result.error.message;return;}
   if(result.data?.needs_setup){showSecurity(false);securityHint.textContent='Set your security password to continue.';return;}
-  await renderBase(result.data?.data||[]);
+  await renderBase(result.data?.data||[],result.data?.confidential_archive||null);
  }catch(error){securityHint.textContent='Security check failed. Please try again.';}
  finally{busy=false;if(!loaded){unlockButton.disabled=false;unlockButton.textContent=setupMode?'SET PASSWORD AND OPEN BASE':'VERIFY AND OPEN BASE';}}
 });
