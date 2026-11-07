@@ -61,7 +61,7 @@ jobs:
           required = [
               "index.html", "dual-ai.html", "download-ai.html", "install.html", "member-workspace.js", "solar-system.js", "digital-assets.js", "city.html", "underground.html", "mission-trainer.html", "news.html",
               "m003-base.html", "m003-dimension-gate.html", "chronos-time-lab.html", "m003-ibm5100.html", "top-secret-demo.html",
-              "civilization.html", "i18n.js", "premium-ui.css",
+              "civilization.html", "country.html", "i18n.js", "premium-ui.css",
               "world-server.js", "nasa-data.js", "multiverse.js", "easy-play.js", "chat.js",
               "manifest.webmanifest", "sw.js", "icon.svg",
               "locales/th.json", "locales/en.json",
@@ -80,6 +80,8 @@ jobs:
           underground = Path("underground.html").read_text(encoding="utf-8")
           mission = Path("mission-trainer.html").read_text(encoding="utf-8")
           news = Path("news.html").read_text(encoding="utf-8")
+          country = Path("country.html").read_text(encoding="utf-8")
+          country_migration = Path("supabase/migrations/20261107210000_create_country_system.sql").read_text(encoding="utf-8")
           workspace = Path("member-workspace.js").read_text(encoding="utf-8")
           chat = Path("chat.js").read_text(encoding="utf-8")
           dual_ai = Path("dual-ai.html").read_text(encoding="utf-8")
@@ -115,7 +117,8 @@ jobs:
           assert any(icon.get("sizes") == "192x192" for icon in manifest.get("icons", [])), "192px PWA icon declaration missing"
           assert any(icon.get("sizes") == "512x512" for icon in manifest.get("icons", [])), "512px PWA icon declaration missing"
           cache_match = re.search(r'const CACHE = "local-mars-v4-(\d+)"', sw)
-          assert cache_match and int(cache_match.group(1)) >= 98, "service worker cache version must be v4-98 or newer"
+          assert cache_match and int(cache_match.group(1)) >= 123, "service worker cache version must be v4-123 or newer"
+          assert '"./country.html"' in sw, "Country Network offline cache entry missing"
           for page in ("dual-ai.html", "download-ai.html"):
               source = Path(page).read_text(encoding="utf-8")
               assert not re.search(r"[\u0E00-\u0E7F]", source), f"{page} must contain English-only UI text"
@@ -163,6 +166,12 @@ jobs:
           assert 'href="./mission-trainer.html"' in html, "Mission Trainer navigation link missing"
           assert 'href="./news.html"' in html and "LOCAL MARS NEWS" in html, "LOCAL MARS NEWS navigation missing"
           assert "api.gdeltproject.org" in news and "world_events" in news, "Live news and member event sources missing"
+          assert 'href="./country.html"' in Path("civilization.html").read_text(encoding="utf-8"), "Country Network navigation missing"
+          assert "mars_country_create" in country and "mars_country_assign_territory" in country and "mars_country_join" in country, "Country Network RPC integration missing"
+          assert "world_claims" in country_migration and "auth.uid()" in country_migration and "enable row level security" in country_migration.lower(), "Country territory ownership and RLS safeguards missing"
+          country_script = re.search(r'<script>\s*(.*?)</script>', country, re.S)
+          assert country_script, "Country Network client script missing"
+          Path("/tmp/mars-country.js").write_text(country_script.group(1), encoding="utf-8")
           news_script = re.search(r"<script>(.*?)</script>", news, re.S)
           assert news_script, "LOCAL MARS NEWS script missing"
           Path("/tmp/mars-news.js").write_text(news_script.group(1), encoding="utf-8")
@@ -217,6 +226,7 @@ jobs:
           node --check /tmp/mars-underground.js
           node --check /tmp/mars-mission.js
           node --check /tmp/mars-news.js
+          node --check /tmp/mars-country.js
           node --check sw.js
           node --check update-manager.js
           node --check world-server.js
@@ -230,7 +240,7 @@ jobs:
       - name: Prepare complete static site
         run: |
           mkdir -p _site
-          cp index.html dual-ai.html download-ai.html install.html city.html underground.html mission-trainer.html news.html m003-base.html m003-dimension-gate.html top-secret-demo.html civilization.html i18n.js premium-ui.css world-server.js nasa-data.js member-workspace.js multiverse.js easy-play.js chat.js digital-assets.js solar-system.js update-manager.js manifest.webmanifest sw.js icon.svg _site/
+          cp index.html dual-ai.html download-ai.html install.html city.html country.html underground.html mission-trainer.html news.html m003-base.html m003-dimension-gate.html top-secret-demo.html civilization.html i18n.js premium-ui.css world-server.js nasa-data.js member-workspace.js multiverse.js easy-play.js chat.js digital-assets.js solar-system.js update-manager.js manifest.webmanifest sw.js icon.svg _site/
           cp -R locales _site/locales
           cp -R parcels _site/parcels
           touch _site/.nojekyll
@@ -242,6 +252,7 @@ jobs:
           test -s _site/update-manager.js
           test -s _site/locales/th.json
           test -s _site/locales/en.json
+          test -s _site/country.html
           test -s _site/mission-trainer.html
           test -s _site/m003-base.html
           test -s _site/m003-dimension-gate.html
