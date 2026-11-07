@@ -23,33 +23,33 @@ h1{font-size:clamp(24px,5vw,38px);margin:7px 0}.sub{color:var(--muted);line-heig
 </style><link rel="stylesheet" href="./premium-ui.css?v=20261106">
 </head>
 <body>
-<header><div class="brand">LOCAL <b>MARS</b> <span style="font-size:10px;color:#9eb1c5">/ CIVILIZATION NETWORK</span></div><div class="status" id="worldServerStatus" aria-live="polite">กำลังเชื่อมต่อโลกออนไลน์…</div></header>
+<header><div class="brand">LOCAL <b>MARS</b> <span style="font-size:10px;color:#9eb1c5">/ CIVILIZATION NETWORK</span></div><div class="status" id="worldServerStatus" aria-live="polite">Connecting to the online world…</div></header>
 <main>
 <div class="eyebrow">PLANETARY CIVILIZATION NETWORK · LIVE WORLD</div>
-<h1>ศูนย์บัญชาการอารยธรรมดาวอังคาร</h1>
-<p class="sub">ภาพรวมข้อมูลพื้นที่และสิ่งปลูกสร้างจากฐานข้อมูลส่วนกลาง สมาชิกที่ออนไลน์สามารถติดตามความเปลี่ยนแปลงของโลกเดียวกันได้</p>
+<h1>Mars Civilization Command Center</h1>
+<p class="sub">A shared overview of parcels and structures. Online members can follow changes across the same world.</p>
 <section class="grid">
-<div class="card"><small>REGISTERED PARCELS</small><div class="value" id="parcels">—</div><span class="unit">แปลงพื้นที่ในระบบ</span></div>
-<div class="card"><small>CLAIMED PARCELS</small><div class="value" id="claims">—</div><span class="unit">พื้นที่มีเจ้าของ</span></div>
-<div class="card"><small>GLOBAL STRUCTURES</small><div class="value" id="structures">—</div><span class="unit">สิ่งปลูกสร้างทั้งหมด</span></div>
-<div class="card"><small>MY STRUCTURES</small><div class="value" id="mine">—</div><span class="unit">สิ่งปลูกสร้างของบัญชีนี้</span></div>
+<div class="card"><small>REGISTERED PARCELS</small><div class="value" id="parcels">—</div><span class="unit">Parcels in the system</span></div>
+<div class="card"><small>CLAIMED PARCELS</small><div class="value" id="claims">—</div><span class="unit">Claimed parcels</span></div>
+<div class="card"><small>GLOBAL STRUCTURES</small><div class="value" id="structures">—</div><span class="unit">Total structures</span></div>
+<div class="card"><small>MY STRUCTURES</small><div class="value" id="mine">—</div><span class="unit">Structures owned by this account</span></div>
 </section>
 <section class="layout">
-<div class="card"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><h2 class="section-title" style="margin:0">GLOBAL ACTIVITY FEED</h2><button id="refreshWorld" type="button" style="border:1px solid var(--line);background:#14283d;color:var(--text);border-radius:8px;padding:7px 10px;font:inherit;font-size:11px">↻ รีเฟรช</button></div><div id="feed" class="empty" style="margin-top:12px">กำลังโหลดกิจกรรมจากโลกออนไลน์…</div></div>
+<div class="card"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><h2 class="section-title" style="margin:0">GLOBAL ACTIVITY FEED</h2><button id="refreshWorld" type="button" style="border:1px solid var(--line);background:#14283d;color:var(--text);border-radius:8px;padding:7px 10px;font:inherit;font-size:11px">↻ Refresh</button></div><div id="feed" class="empty" style="margin-top:12px">Loading activity from the online world…</div></div>
 <div class="card"><h2 class="section-title">M-003 OWNER STATUS</h2>
-<div class="item"><span>พื้นที่</span><b>M-003</b></div>
-<div class="item"><span>เจ้าของ</span><b id="owner">กำลังตรวจสอบ</b></div>
-<div class="item"><span>โรงไฟฟ้านิวเคลียร์</span><b id="nuclear">กำลังตรวจสอบ</b></div>
-<div class="item"><span>สิทธิ์ศูนย์ควบคุม</span><b id="access">กำลังตรวจสอบ</b></div>
-<p class="notice">ข้อมูลสิทธิ์อ้างอิงจากบัญชีสมาชิกที่เข้าสู่ระบบเท่านั้น รายละเอียดฐานใต้ดินยังคงสงวนไว้สำหรับเจ้าของพื้นที่</p>
+<div class="item"><span>Parcel</span><b>M-003</b></div>
+<div class="item"><span>Owner</span><b id="owner">Checking…</b></div>
+<div class="item"><span>Nuclear Power Plant</span><b id="nuclear">Checking…</b></div>
+<div class="item"><span>Control Center Access</span><b id="access">Checking…</b></div>
+<p class="notice">Access information is based on the signed-in member account. Underground base details remain restricted to the parcel owner.</p>
 </div>
 </section>
 <section class="card" style="margin-top:14px"><h2 class="section-title">ASSET & NETWORK ROADMAP</h2>
-<div class="item"><span>หน่วยแสดงมูลค่าเป้าหมาย</span><b>THB · หน่วยแสดงมูลค่าอ้างอิง</b></div>
-<div class="item"><span>การชำระเงินจริง</span><b>PromptPay · แยกจากมูลค่าจำลอง</b></div>
-<div class="item"><span>ข้อมูลอาคาร</span><b>Supabase Realtime</b></div>
-<p class="notice">มูลค่า THB ในหน้าสำรวจเป็นราคาอ้างอิงของระบบ ส่วนการชำระเงินจริงต้องผ่าน PromptPay และตรวจสอบสถานะจากผู้ให้บริการ</p>
-<div class="actions"><a class="btn primary" href="./index.html">กลับสู่ดาวอังคาร</a><a class="btn" href="./m003-base.html">ศูนย์ฐานใต้ดิน M-003</a><a class="btn" href="./city.html">เข้าสู่เมืองจำลอง</a></div>
+<div class="item"><span>Reference value unit</span><b>THB · หน่วยแสดงมูลค่าอ้างอิง</b></div>
+<div class="item"><span>Real payment</span><b>PromptPay · Separate from simulation values</b></div>
+<div class="item"><span>Building data</span><b>Supabase Realtime</b></div>
+<p class="notice">มูลค่า THB ในหน้าสำรวจเป็นราคาอ้างอิงของระบบ ส่วนReal paymentต้องผ่าน PromptPay และตรวจสอบสถานะจากผู้ให้บริการ</p>
+<div class="actions"><a class="btn primary" href="./index.html">Back to Mars</a><a class="btn" href="./m003-base.html">M-003 Underground Base</a><a class="btn" href="./city.html">Open City Builder</a></div>
 </section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -59,8 +59,8 @@ const $=id=>document.getElementById(id);
 const eventLabel=(e)=>{
  const type=e.event_type||'world_update';
  const payload=e.payload||{};
- if(type==='structure_built') return 'ก่อสร้าง '+(payload.type||'สิ่งปลูกสร้าง');
- if(type==='parcel_claimed') return 'จับจองพื้นที่';
+ if(type==='structure_built'){const labels={'ฐานที่อยู่อาศัย':'Habitat Dome','ห้องปฏิบัติการ':'Science Laboratory','โรงเรือนปลูกพืช':'Greenhouse','แผงพลังงานแสงอาทิตย์':'Solar Farm','โรงไฟฟ้านิวเคลียร์ขนาดใหญ่':'Nuclear Power Plant','ศูนย์จัดเก็บข้อมูล':'Data Center'};return 'Built '+(labels[payload.type]||'a structure');}
+ if(type==='parcel_claimed') return 'Parcel claimed';
  return type.replaceAll('_',' ');
 };
 function render(e){
@@ -71,13 +71,13 @@ function render(e){
  $('structures').textContent=structures.length;
  $('mine').textContent=user?structures.filter(x=>x.owner_id===user.id).length:'—';
  const own=claims.find(x=>x.parcel_id==='M-003');
- $('owner').textContent=own?(user&&own.owner_id===user.id?'บัญชีของคุณ':'มีเจ้าของแล้ว'):'ยังไม่มีเจ้าของ';
+ $('owner').textContent=own?(user&&own.owner_id===user.id?'Your account':'Owned'):'Unclaimed';
  const plant=structures.find(x=>x.parcel_id==='M-003'&&x.structure_type==='โรงไฟฟ้านิวเคลียร์ขนาดใหญ่');
- $('nuclear').textContent=plant?'ติดตั้งแล้ว':'ยังไม่พบในฐานข้อมูล';
- $('access').textContent=user&&own&&own.owner_id===user.id?'OWNER VERIFIED':'จำกัดสิทธิ์';
+ $('nuclear').textContent=plant?'Installed':'Not found in the database';
+ $('access').textContent=user&&own&&own.owner_id===user.id?'OWNER VERIFIED':'Restricted access';
  const feed=$('feed');feed.replaceChildren();
  const rows=events.length?events.slice().sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)).slice(0,12):structures.slice().sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)).slice(0,12).map(s=>({event_type:'structure_built',parcel_id:s.parcel_id,payload:{type:s.structure_type},created_at:s.created_at}));
- if(!rows.length){feed.textContent='ยังไม่มีกิจกรรมในระบบ';feed.className='empty';return;}
+ if(!rows.length){feed.textContent='No activity recorded yet.';feed.className='empty';return;}
  feed.className='';
  rows.forEach(item=>{
   const row=document.createElement('div');row.className='item';
@@ -90,8 +90,8 @@ function render(e){
 document.addEventListener('mars-world-updated',e=>{render(e);$('worldServerStatus').textContent='● ONLINE · REALTIME';});
 document.addEventListener('mars-auth-state',()=>render());
 $('refreshWorld').addEventListener('click',async()=>{
- const btn=$('refreshWorld');btn.disabled=true;btn.textContent='กำลังรีเฟรช…';
- try{await window.MarsWorldServer?.refresh?.();render();}finally{btn.disabled=false;btn.textContent='↻ รีเฟรช';}
+ const btn=$('refreshWorld');btn.disabled=true;btn.textContent='Refreshing…';
+ try{await window.MarsWorldServer?.refresh?.();render();}finally{btn.disabled=false;btn.textContent='↻ Refresh';}
 });
 setTimeout(()=>{render();const s=window.MarsWorldServer?.getState?.();if(s?.db)$('worldServerStatus').textContent='● CONNECTED · SYNCING';},1200);
 </script> <script src="./i18n.js"></script>
