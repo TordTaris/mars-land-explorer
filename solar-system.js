@@ -3,6 +3,26 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const $ = (id) => document.getElementById(id);
 const openButton = $('lmSolarOpen');
+// Keep the Solar System launcher in its own clear corner, outside the header and dock.
+const launcherLayout = document.createElement('style');
+launcherLayout.id = 'lm-solar-launcher-layout-fix';
+launcherLayout.textContent = `
+  #lmSolarOpen{
+    position:fixed!important;top:68px!important;right:18px!important;left:auto!important;
+    transform:none!important;z-index:95!important;width:46px!important;height:46px!important;
+    min-width:46px!important;padding:0!important;display:grid!important;place-items:center!important;
+    font-size:23px!important;line-height:1!important;border-radius:14px!important;
+  }
+  #lmSolarOpen:active{transform:scale(.96)!important}
+  @media(max-width:760px){
+    #lmSolarOpen{
+      top:calc(env(safe-area-inset-top,0px) + 58px)!important;right:12px!important;
+      width:42px!important;height:42px!important;min-width:42px!important;
+      border-radius:13px!important;font-size:21px!important;
+    }
+  }
+`;
+document.head.appendChild(launcherLayout);
 const overlay = $('lmSolarOverlay');
 const closeButton = $('lmSolarClose');
 const canvasHost = $('lmSolarCanvas');
