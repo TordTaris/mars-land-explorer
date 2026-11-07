@@ -198,6 +198,33 @@ header{
 }
 
 
+/* Satellite command center */
+.lm-satellite-modal{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;padding:16px}
+.lm-satellite-modal.open{display:flex}
+.lm-satellite-backdrop{position:absolute;inset:0;background:#020812df;backdrop-filter:blur(9px)}
+.lm-satellite-window{position:relative;width:min(920px,100%);max-height:calc(100dvh - 32px);overflow:auto;padding:20px;border:1px solid #c9a66e99;border-radius:20px;background:linear-gradient(145deg,#142a40fa,#071321fc);box-shadow:0 25px 90px #000c}
+.lm-satellite-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:16px}
+.lm-satellite-head h2{margin:5px 0;font-size:22px;color:#f2dfbd}.lm-satellite-head p{margin:0;color:#9bb0c9;font-size:12px}
+.lm-satellite-kicker{font-size:9px;letter-spacing:2px;color:#d8b477;font-weight:900}
+.lm-satellite-head button,.lm-satellite-section button{border:1px solid #587895;background:#142a40;color:#eaf5ff;border-radius:9px;padding:8px 11px}
+.lm-satellite-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:14px 0 20px}
+.lm-satellite-stats>div{padding:12px;border:1px solid #45698788;border-radius:12px;background:#0b1b2c}
+.lm-satellite-stats small{display:block;color:#9bb0c9;font-size:10px}.lm-satellite-stats strong{display:block;color:#fff;font-size:21px;margin-top:5px}
+.lm-satellite-section{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:16px 0 9px;color:#e2c184;font-size:11px;letter-spacing:.8px}
+.lm-satellite-section small{display:block;color:#91a9c1;font-size:10px;letter-spacing:0;margin-top:3px;font-weight:400}
+.lm-satellite-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.lm-satellite-facility,.lm-satellite-packet{padding:11px;border:1px solid #38546d;border-radius:11px;background:#0b1b2c}
+.lm-satellite-facility header{position:static!important;height:auto!important;min-height:0!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;pointer-events:auto!important}
+.lm-satellite-facility .lm-facility-top{display:flex;justify-content:space-between;gap:8px;align-items:center;font-weight:800;color:#eaf5ff}
+.lm-satellite-facility .lm-facility-values{font-size:11px;color:#c0d0df;line-height:1.7;margin-top:7px}
+.lm-satellite-facility small,.lm-satellite-packet small{color:#8fa8c1;font-size:10px}
+.lm-satellite-history{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.lm-satellite-packet b{color:#9ce8c0;font-size:11px}.lm-satellite-packet div{font-size:11px;color:#d3dfeb;margin:4px 0}
+.lm-satellite-empty{padding:18px;border:1px dashed #456987;border-radius:11px;color:#9bb0c9;text-align:center;font-size:12px;grid-column:1/-1}
+.lm-satellite-disclaimer{margin:16px 0 0;color:#8198af;font-size:10px;line-height:1.5}
+@media(max-width:620px){.lm-satellite-window{padding:13px;border-radius:15px}.lm-satellite-head h2{font-size:18px}.lm-satellite-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.lm-satellite-stats>div{padding:9px}.lm-satellite-stats strong{font-size:18px}.lm-satellite-list,.lm-satellite-history{grid-template-columns:1fr}.lm-satellite-section{align-items:flex-start}}
+@media(min-width:761px){.view-toolbar{grid-template-columns:repeat(5,auto)!important}}
+@media(max-width:760px){.view-toolbar{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
 /* Inventory modal replaces always-visible resource HUD */
 .resourcebar{display:none!important}
 .view-toolbar{grid-template-columns:repeat(4,auto)!important}
@@ -432,6 +459,7 @@ header .brand .brand-lockup small{display:block!important;color:#aebdca!importan
  <button id="toggleBuild" class="view-btn" aria-expanded="false">＋ Build</button>
  <button id="hidePanels" class="view-btn subtle">Hide Menu</button>
  <button id="openInventory" class="view-btn">🎒 Resource Inventory</button>
+ <button id="openSatelliteCenter" class="view-btn">🛰 Satellite Center</button>
 </nav>
 <button id="showMenu" type="button" aria-label="Show menu">☰ SHOW MENU</button>
 
@@ -519,6 +547,24 @@ header .brand .brand-lockup small{display:block!important;color:#aebdca!importan
   <p class="hint" style="margin-bottom:0">Orbital relays are simulated. Authenticated uploads are stored in LOCAL MARS Supabase. No real satellite or spacecraft connection is established.</p>
  </section>
 </section></section>
+
+<section id="satelliteCenterModal" class="lm-satellite-modal" aria-hidden="true">
+ <div class="lm-satellite-backdrop" id="satelliteCenterBackdrop"></div>
+ <div class="lm-satellite-window" role="dialog" aria-modal="true" aria-labelledby="satelliteCenterTitle">
+  <div class="lm-satellite-head"><div><div class="lm-satellite-kicker">LOCAL MARS · NETWORK OPERATIONS</div><h2 id="satelliteCenterTitle">Orbital Telemetry Center</h2><p>Cloud-received climate telemetry from registered parcel workspaces</p></div><button id="closeSatelliteCenter" aria-label="Close satellite center">✕</button></div>
+  <div class="lm-satellite-stats">
+   <div><small>Total packets</small><strong id="centerPacketCount">0</strong></div>
+   <div><small>Reporting parcels</small><strong id="centerParcelCount">0</strong></div>
+   <div><small>Active relay IDs</small><strong id="centerRelayCount">0</strong></div>
+   <div><small>Latest signal</small><strong id="centerSignal">—</strong></div>
+  </div>
+  <div class="lm-satellite-section"><div><b>FACILITY NETWORK</b><small>Parcels with received packets · newest first</small></div><button id="refreshSatelliteCenter">↻ Refresh</button></div>
+  <div id="centerFacilityList" class="lm-satellite-list"><div class="lm-satellite-empty">Sign in to load the shared telemetry network.</div></div>
+  <div class="lm-satellite-section"><div><b>PACKET HISTORY</b><small>Latest 50 received packets</small></div></div>
+  <div id="centerPacketHistory" class="lm-satellite-history"><div class="lm-satellite-empty">No telemetry loaded.</div></div>
+  <p class="lm-satellite-disclaimer">Telemetry is simulated by LOCAL MARS software. A parcel appears here only after a packet is successfully stored in Supabase. This is not a real satellite network or live Martian environmental measurement.</p>
+ </div>
+</section>
 
 <section id="inventoryModal" class="inventory-modal" aria-hidden="true">
  <div class="inventory-backdrop" id="inventoryBackdrop"></div>
@@ -695,7 +741,7 @@ async function connectCityOnline(){
  onlineChannel=marsDB.channel('local-mars-city-shared')
   .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_buildings'},()=>scheduleOnlineCitySync())
   .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_resources'},()=>scheduleOnlineCitySync())
-  .on('postgres_changes',{event:'INSERT',schema:'public',table:'mars_climate_telemetry'},()=>loadClimateTelemetryFeed())
+  .on('postgres_changes',{event:'INSERT',schema:'public',table:'mars_climate_telemetry'},()=>{loadClimateTelemetryFeed();if(document.querySelector('#satelliteCenterModal')?.classList.contains('open'))loadSatelliteCommandCenter()})
   .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_national_flags'},async()=>{if(!onlineUser)return;const f=await marsDB.from('mars_city_national_flags').select('id,owner_id,country_code,country_name,flag_emoji,x,z,level,created_at').order('created_at',{ascending:true});if(!f.error&&Array.isArray(f.data))syncOnlineFlags(f.data);else console.warn('LOCAL MARS flags realtime sync:',f.error);})
   .subscribe((state,error)=>{const label=document.querySelector('header .status');if(!label)return;if(state==='SUBSCRIBED'){if(onlineReady)label.textContent='● ONLINE · SHARED COLONY';}else if(state==='CHANNEL_ERROR'||state==='TIMED_OUT'){console.warn('LOCAL MARS realtime:',state,error);label.textContent=onlineReady?'● ONLINE · REALTIME RETRY':'● SYNC RETRY';}});
  marsDB.auth.onAuthStateChange((_event,session)=>{onlineUser=session?.user||null;const b=document.querySelector('#cityAccount');if(b)b.textContent=onlineUser?'👤 '+(onlineUser.email||'Account').split('@')[0]:'👤 Sign in';if(onlineUser){const label=document.querySelector('header .status');if(label)label.textContent='● CONNECTING · SYNCING';setTimeout(()=>{if(onlineUser){loadOnlineCity();loadClimateTelemetryFeed()}},0);}else{onlineReady=false;onlineCityId=null;const s=document.querySelector('header .status');if(s)s.textContent='● THIRD-PERSON MODE · LOCAL';}});
@@ -916,6 +962,38 @@ function updateSatelliteUI(){
  const auto=document.querySelector('#satelliteAutoButton');if(auto){auto.disabled=!factory||!onlineUser||!activeWorldParcelId;auto.textContent='AUTO UPLINK · '+(satelliteNetwork.auto?'ON':'OFF');auto.classList.toggle('active',satelliteNetwork.auto)}
  const transfer=document.querySelector('#satelliteTransferLog');if(transfer)transfer.textContent=satelliteNetwork.lastSent?'Last transfer: '+new Date(satelliteNetwork.lastSent).toLocaleString()+' · Packet '+satelliteNetwork.packets+' · '+(satelliteNetwork.lastPacket?.bytes||0)+' bytes':'Transfer log: no telemetry sent yet.';
 }
+async function loadSatelliteCommandCenter(){
+ const modal=document.querySelector('#satelliteCenterModal');
+ const facilityList=document.querySelector('#centerFacilityList');
+ const history=document.querySelector('#centerPacketHistory');
+ if(!facilityList||!history)return;
+ if(!onlineUser){facilityList.innerHTML='<div class="lm-satellite-empty">Sign in to view shared cloud telemetry.</div>';history.innerHTML='<div class="lm-satellite-empty">Sign in required.</div>';return}
+ facilityList.innerHTML='<div class="lm-satellite-empty">Loading facility network…</div>';
+ history.innerHTML='<div class="lm-satellite-empty">Loading packet history…</div>';
+ const result=await marsDB.from('mars_climate_telemetry').select('parcel_id,packet_id,relay_id,temperature_c,pressure_kpa,oxygen_pct,co2_pct,dust_index,signal_pct,latency_ms,created_at',{count:'exact'}).order('created_at',{ascending:false}).limit(50);
+ if(result.error){facilityList.textContent='Network query failed: '+cityErrorText(result.error);history.textContent='Packet history unavailable.';return}
+ const rows=result.data||[],latestByParcel=new Map(),relays=new Set();
+ rows.forEach(row=>{relays.add(row.relay_id);if(!latestByParcel.has(row.parcel_id))latestByParcel.set(row.parcel_id,row)});
+ const packetCount=result.count??rows.length;
+ document.querySelector('#centerPacketCount').textContent=String(packetCount);
+ document.querySelector('#centerParcelCount').textContent=String(latestByParcel.size);
+ document.querySelector('#centerRelayCount').textContent=String(relays.size);
+ document.querySelector('#centerSignal').textContent=rows.length?Number(rows[0].signal_pct).toFixed(1)+'%':'—';
+ facilityList.replaceChildren();
+ if(!latestByParcel.size){const empty=document.createElement('div');empty.className='lm-satellite-empty';empty.textContent='No parcel has reported telemetry yet. A parcel will appear after its first successful cloud uplink.';facilityList.append(empty)}
+ latestByParcel.forEach((row,parcel)=>{const card=document.createElement('article');card.className='lm-satellite-facility';const top=document.createElement('div');top.className='lm-facility-top';const name=document.createElement('span');name.textContent='📍 '+parcel;const badge=document.createElement('small');badge.textContent='REPORTING';badge.style.color='#9ce8c0';top.append(name,badge);const values=document.createElement('div');values.className='lm-facility-values';values.textContent='Relay '+row.relay_id+' · Signal '+Number(row.signal_pct).toFixed(1)+'% · Latency '+row.latency_ms+' ms';const climate=document.createElement('div');climate.className='lm-facility-values';climate.textContent='Temp '+row.temperature_c+' °C · Pressure '+row.pressure_kpa+' kPa · O₂ '+row.oxygen_pct+'% · CO₂ '+row.co2_pct+'% · Dust '+row.dust_index;const time=document.createElement('small');time.textContent='Last packet: '+new Date(row.created_at).toLocaleString();card.append(top,values,climate,time);facilityList.append(card)});
+ history.replaceChildren();
+ if(!rows.length){const empty=document.createElement('div');empty.className='lm-satellite-empty';empty.textContent='No telemetry packets stored in the cloud database.';history.append(empty)}
+ rows.forEach(row=>{const card=document.createElement('article');card.className='lm-satellite-packet';const title=document.createElement('b');title.textContent=row.packet_id+' · '+row.parcel_id;const details=document.createElement('div');details.textContent=row.relay_id+' · Signal '+row.signal_pct+'% · '+row.latency_ms+' ms';const climate=document.createElement('div');climate.textContent='Temp '+row.temperature_c+' °C · O₂ '+row.oxygen_pct+'% · CO₂ '+row.co2_pct+'% · Dust '+row.dust_index;const time=document.createElement('small');time.textContent=new Date(row.created_at).toLocaleString();card.append(title,details,climate,time);history.append(card)});
+}
+function openSatelliteCommandCenter(){const modal=document.querySelector('#satelliteCenterModal');modal?.classList.add('open');modal?.setAttribute('aria-hidden','false');loadSatelliteCommandCenter()}
+function closeSatelliteCommandCenter(){const modal=document.querySelector('#satelliteCenterModal');modal?.classList.remove('open');modal?.setAttribute('aria-hidden','true')}
+document.querySelector('#openSatelliteCenter')?.addEventListener('click',openSatelliteCommandCenter);
+document.querySelector('#closeSatelliteCenter')?.addEventListener('click',closeSatelliteCommandCenter);
+document.querySelector('#satelliteCenterBackdrop')?.addEventListener('click',closeSatelliteCommandCenter);
+document.querySelector('#refreshSatelliteCenter')?.addEventListener('click',loadSatelliteCommandCenter);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSatelliteCommandCenter()});
+
 async function loadClimateTelemetryFeed(){
  const feed=document.querySelector('#satelliteTelemetryFeed');if(!feed)return;
  if(!onlineUser){feed.textContent='Sign in to view telemetry shared by Mars facilities.';updateSatelliteUI();return}
