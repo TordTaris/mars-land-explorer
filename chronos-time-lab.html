@@ -30,9 +30,27 @@
 </section>
 <a class="action" href="./m003-base.html">← RETURN TO M-003 BASE</a><a class="action" href="./m003-dimension-gate.html">OPEN DIMENSION GATE SIMULATION</a>
 </main>
-<section id="gate" class="panel"><div class="eyebrow">M-003 OWNER SECURITY</div><h2 id="gateTitle">VERIFYING AUTHORIZATION</h2><p id="gateText">This research archive is restricted to the registered owner of M-003.</p><a class="action" href="./index.html">RETURN TO MARS</a></section>
+<section id="gate" class="panel"><div class="eyebrow">M-003 OWNER SECURITY</div><h2 id="gateTitle">VERIFYING AUTHORIZATION</h2><p id="gateText">This research archive is restricted to the registered owner of M-003.</p><div style="max-width:380px;margin:14px auto;text-align:left"><label for="secretPass">M-003 SECURITY PASSWORD</label><input id="secretPass" type="password" minlength="10" maxlength="128" autocomplete="current-password" placeholder="Enter facility password" style="width:100%;padding:12px;background:#071321;color:white;border:1px solid #49627a;border-radius:8px"><button class="action" id="secretUnlock" type="button" style="margin-top:10px;width:100%">VERIFY AND UNSEAL</button><p id="secretHint" class="muted"></p></div><a class="action" href="./index.html">RETURN TO MARS</a></section>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script><script src="./world-server.js"></script><script>
-let verified=false;function verifyM003(){if(verified)return;const s=window.MarsWorldServer?.getState?.();if(!s?.user){document.querySelector('#status').textContent='SIGN IN REQUIRED';return}const owns=(s.claims||[]).some(c=>c.parcel_id==='M-003'&&c.owner_id===s.user.id);if(!owns){document.querySelector('#status').textContent='ACCESS DENIED';document.querySelector('#gateTitle').textContent='OWNER VERIFICATION FAILED';document.querySelector('#gateText').textContent='Only the registered owner of M-003 can view this research archive.';return}verified=true;document.querySelector('#status').textContent='OWNER VERIFIED';document.querySelector('#gate').hidden=true;document.querySelector('#content').hidden=false;calculate()}
-document.addEventListener('mars-auth-state',verifyM003);document.addEventListener('mars-world-updated',verifyM003);setTimeout(verifyM003,1000);
-const speed=document.querySelector('#speed'),duration=document.querySelector('#duration');function calculate(){const beta=Number(speed.value)/100,t=Number(duration.value),root=Math.sqrt(1-beta*beta),gamma=1/root,tau=t*root,diff=t-tau;document.querySelector('#speedLabel').textContent=beta.toFixed(2)+' c';document.querySelector('#durationLabel').textContent=t+' years';document.querySelector('#travelerTime').textContent=tau.toFixed(2)+' years';document.querySelector('#gamma').textContent=gamma.toFixed(3);document.querySelector('#differenceText').textContent='Idealized time difference: '+diff.toFixed(2)+' years. No propulsion, acceleration, shielding, or engineering feasibility is implied.';document.querySelector('#differenceBar').style.width=(diff/t*100).toFixed(1)+'%'}speed.addEventListener('input',calculate);duration.addEventListener('input',calculate);
+let secretUnlocked=false;
+async function verifyM003Secret(){
+ const s=window.MarsWorldServer?.getState?.(),u=s?.user;
+ if(!u){document.querySelector('#status').textContent='LOCKED';document.querySelector('#gateTitle').textContent='SIGN-IN REQUIRED';return}
+ const owns=(s.claims||[]).some(c=>c.parcel_id==='M-003'&&c.owner_id===u.id);
+ if(!owns){document.querySelector('#status').textContent='DENIED';document.querySelector('#gateTitle').textContent='OWNER ACCESS ONLY';document.querySelector('#gateText').textContent='Only the registered M-003 owner may access this sealed archive.';return}
+ document.querySelector('#status').textContent='OWNER VERIFIED · SEALED';
+ document.querySelector('#gateTitle').textContent='M-003 SECURITY CHECK';
+}
+document.querySelector('#secretUnlock').addEventListener('click',async()=>{
+ const s=window.MarsWorldServer?.getState?.(),u=s?.user,p=document.querySelector('#secretPass').value,h=document.querySelector('#secretHint');
+ if(!u||p.length<10){h.textContent='Sign in and enter the facility password (10–128 characters).';return}
+ if(!(s.claims||[]).some(c=>c.parcel_id==='M-003'&&c.owner_id===u.id)){h.textContent='Owner verification failed.';return}
+ const btn=document.querySelector('#secretUnlock');btn.disabled=true;h.textContent='Verifying…';
+ try{const r=await window.MarsWorldServer.m003Access('verify',p);if(r?.error||!r?.data?.data){h.textContent=r?.error?.message||'Incorrect password or access denied.';return}
+ secretUnlocked=true;document.querySelector('#gate').hidden=true;document.querySelector('#content').hidden=false;document.querySelector('#status').textContent='OWNER VERIFIED · UNSEALED';calculate();
+ }catch(e){h.textContent='Security service unavailable.'}finally{btn.disabled=false}
+});
+document.addEventListener('mars-auth-state',verifyM003Secret);
+document.addEventListener('mars-world-updated',verifyM003Secret);
+setTimeout(verifyM003Secret,1000);
 </script><script src="./easy-play.js" defer></script><script src="./i18n.js"></script></body></html>
