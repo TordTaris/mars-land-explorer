@@ -26,7 +26,7 @@ header{position:fixed;z-index:2;top:0;left:0;right:0;padding:14px 16px;display:f
 <div class="metric"><span>04 · Time dimension</span><b id="clock">Sol 001 · 06:00</b></div>
 <div class="metric"><span>05 · Simulation layer</span><b id="simState">Running</b></div>
 <h2>TIME SIMULATION</h2>
-<input id="timeRange" type="range" min="0" max="24" step=".25" value="6" aria-label="Local Mars time">
+<input id="timeRange" type="range" min="0" max="24.6597" step=".01" value="6" aria-label="Local Mars time">
 <div class="metric"><span>Local solar time</span><b id="timeLabel">06:00</b></div>
 <div class="controls"><button id="pauseTime">Pause time</button><button id="resetView">Reset view</button></div>
 <div class="hint">One simulated Sol = 24h 39m 35s. Simulation runs locally; this is not live Mars telemetry.</div>
@@ -71,8 +71,8 @@ const stars=new THREE.BufferGeometry(),starPos=[];for(let i=0;i<1300;i++){const 
 const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.06;controls.minDistance=1.35;controls.maxDistance=8;controls.enablePan=false;controls.autoRotate=true;controls.autoRotateSpeed=.32;
 const MARS_SOL_HOURS=24.6597;let hours=6,sol=1,playing=true,showPanels=true,last=performance.now();
 const timeRange=document.querySelector('#timeRange'),timeLabel=document.querySelector('#timeLabel'),clock=document.querySelector('#clock');
-function updateTime(){const dayMinutes=Math.floor((hours/MARS_SOL_HOURS)*1440);const h=Math.floor(dayMinutes/60)%24,m=dayMinutes%60;const label=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');timeLabel.textContent=label;clock.textContent='Sol '+String(sol).padStart(3,'0')+' · '+label;timeRange.value=String(Math.min(hours,24));sun.position.set(Math.cos(hours/MARS_SOL_HOURS*Math.PI*2)*5,Math.sin((hours/MARS_SOL_HOURS-.25)*Math.PI*2)*2.5,5);document.querySelector('#simState').textContent=playing?'Running':'Paused';}
-timeRange.max='24';timeRange.addEventListener('input',e=>{hours=Number(e.target.value);updateTime()});
+function updateTime(){const dayMinutes=Math.floor((hours/MARS_SOL_HOURS)*1440);const h=Math.floor(dayMinutes/60)%24,m=dayMinutes%60;const label=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');timeLabel.textContent=label;clock.textContent='Sol '+String(sol).padStart(3,'0')+' · '+label;timeRange.value=String(hours);sun.position.set(Math.cos(hours/MARS_SOL_HOURS*Math.PI*2)*5,Math.sin((hours/MARS_SOL_HOURS-.25)*Math.PI*2)*2.5,5);document.querySelector('#simState').textContent=playing?'Running':'Paused';}
+timeRange.max=String(MARS_SOL_HOURS);timeRange.step='0.01';timeRange.addEventListener('input',e=>{hours=Number(e.target.value);updateTime()});
 document.querySelector('#pauseTime').addEventListener('click',e=>{playing=!playing;e.currentTarget.textContent=playing?'Pause time':'Resume time';updateTime()});
 document.querySelector('#resetView').addEventListener('click',()=>{controls.reset();camera.position.set(0,0,3.5);planetGroup.rotation.set(0,0,0)});
 document.querySelector('#atmosphereToggle').addEventListener('change',e=>atmosphere.visible=e.target.checked);
