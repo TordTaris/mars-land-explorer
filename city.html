@@ -1030,6 +1030,38 @@ regolithTexture.colorSpace=THREE.SRGBColorSpace;regolithTexture.wrapS=regolithTe
 const regolithMaterial=new THREE.MeshStandardMaterial({color:0xffffff,map:regolithTexture,bumpMap:regolithTexture,bumpScale:.025,roughness:1});
 const terrain=new THREE.Mesh(new THREE.PlaneGeometry(parcelSideMeters,parcelSideMeters,1,1),regolithMaterial);terrain.rotation.x=-Math.PI/2;terrain.receiveShadow=true;scene.add(terrain);
 const grid=new THREE.GridHelper(parcelSideMeters,21,0x79cbd0,0x5c7180);grid.position.y=.025;grid.material.transparent=true;grid.material.opacity=.28;scene.add(grid);
+
+/* CYBORG FUTURE — permanent 3D landmark, rendered only in parcel M-001. */
+if(activeWorldParcelId==='M-001'){
+ const cyborgSign=new THREE.Group();
+ const blackPanel=new THREE.Mesh(new THREE.BoxGeometry(11.5,1.85,.42),new THREE.MeshStandardMaterial({color:0x050a12,metalness:.82,roughness:.28,emissive:0x061522,emissiveIntensity:.65}));
+ blackPanel.position.y=3.25;cyborgSign.add(blackPanel);
+ const signCanvas=document.createElement('canvas');signCanvas.width=1536;signCanvas.height=256;
+ const signCtx=signCanvas.getContext('2d');
+ if(signCtx){
+  signCtx.fillStyle='#050a12';signCtx.fillRect(0,0,1536,256);
+  signCtx.strokeStyle='#d8b477';signCtx.lineWidth=8;signCtx.strokeRect(8,8,1520,240);
+  signCtx.shadowColor='#58eaff';signCtx.shadowBlur=30;
+  signCtx.fillStyle='#a8f6ff';signCtx.textAlign='center';signCtx.textBaseline='middle';
+  signCtx.font='900 132px system-ui, sans-serif';signCtx.fillText('CYBORG FUTURE',768,132);
+ }
+ const signTexture=new THREE.CanvasTexture(signCanvas);signTexture.colorSpace=THREE.SRGBColorSpace;
+ const signFace=new THREE.Mesh(new THREE.PlaneGeometry(11.15,1.62),new THREE.MeshBasicMaterial({map:signTexture,side:THREE.DoubleSide}));
+ signFace.position.set(0,3.25,.216);cyborgSign.add(signFace);
+ const trimMat=new THREE.MeshStandardMaterial({color:0x59e9ff,emissive:0x27bddd,emissiveIntensity:1.4,metalness:.55,roughness:.25});
+ for(const x of [-5.35,5.35]){
+  const post=new THREE.Mesh(new THREE.BoxGeometry(.22,3.15,.24),new THREE.MeshStandardMaterial({color:0x28384a,metalness:.8,roughness:.3}));
+  post.position.set(x,1.58,0);cyborgSign.add(post);
+  const foot=new THREE.Mesh(new THREE.BoxGeometry(.9,.16,.8),new THREE.MeshStandardMaterial({color:0x35475a,metalness:.65,roughness:.45}));
+  foot.position.set(x,.08,0);cyborgSign.add(foot);
+  const beacon=new THREE.Mesh(new THREE.SphereGeometry(.11,12,8),trimMat);beacon.position.set(x,3.25,.16);cyborgSign.add(beacon);
+ }
+ const topGlow=new THREE.Mesh(new THREE.BoxGeometry(11.7,.045,.5),trimMat);topGlow.position.set(0,4.2,0);cyborgSign.add(topGlow);
+ cyborgSign.position.set(0,0,-Math.min(12,workspaceHalfSide*.35));
+ cyborgSign.userData={landmark:'CYBORG FUTURE',parcelId:'M-001',decorative:true};
+ scene.add(cyborgSign);
+}
+
 // Explicit surveyed parcel boundary: the terrain footprint equals the parcel's real square-equivalent area.
 let seed=1984;const rand=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
 for(let i=0;i<160;i++){const rock=new THREE.Mesh(new THREE.DodecahedronGeometry(.15+rand()*.65,0),new THREE.MeshStandardMaterial({color:new THREE.Color().setHSL(.04+rand()*.04,.35,.22+rand()*.2),roughness:1}));rock.position.set((rand()-.5)*parcelSideMeters,.05,(rand()-.5)*parcelSideMeters);rock.scale.y=.3+rand()*.5;rock.castShadow=true;scene.add(rock)}
