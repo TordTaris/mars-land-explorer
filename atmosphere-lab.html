@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#071321"><title>LOCAL MARS | Planetary Life Support</title>
+<style>
+:root{color-scheme:dark;--gold:#dfbd7d;--cyan:#70e1ef;--muted:#9eb1c5;--line:#35536d;--green:#8de4bd;--amber:#f3cb83;--red:#ff8989}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -10%,#284b63,#10243a 43%,#050b14 82%);color:#f5f0e7;font:14px system-ui,sans-serif}
+header{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px clamp(12px,4vw,30px);background:#071321ed;border-bottom:1px solid #c5a56b66;backdrop-filter:blur(16px)}
+.brand{font-weight:900;letter-spacing:1.4px}.brand b{color:var(--gold)}.status{font-size:9px;border:1px solid #477b67;border-radius:20px;padding:6px 9px;color:var(--green)}
+main{max-width:1120px;margin:auto;padding:18px clamp(12px,3vw,26px) 48px}.eyebrow{font-size:9px;font-weight:900;letter-spacing:1.7px;color:var(--gold)}
+h1{font-size:clamp(24px,4vw,38px);margin:5px 0}h2{font-size:12px;letter-spacing:1px;color:var(--cyan);margin:0 0 10px}p{color:var(--muted);line-height:1.55}
+.hero,.card{border:1px solid var(--line);border-radius:15px;background:linear-gradient(145deg,#142a40ed,#081522f5);box-shadow:0 14px 38px #0005}
+.hero{padding:18px;border-color:#c5a56b77}.hero p{font-size:11px;margin:5px 0 0}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:12px}
+.metric{padding:12px;border:1px solid #35536d;border-radius:11px;background:#071523}.metric small{display:block;color:var(--muted);font-size:9px;letter-spacing:.8px}.metric b{display:block;font-size:clamp(17px,3vw,24px);margin-top:5px}.unit{font-size:10px;color:var(--muted);font-weight:500}
+.layout{display:grid;grid-template-columns:1.15fr .85fr;gap:12px;margin-top:12px}.card{padding:14px;min-width:0}
+.dome{height:205px;border:1px solid #376078;border-radius:12px;overflow:hidden;background:radial-gradient(ellipse at 50% 100%,#9a5d3d,#182f45 60%,#061321)}
+.dome svg{width:100%;height:100%;display:block}.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.control{padding:10px;border:1px solid #35536d;border-radius:10px;background:#0a1b2b}.control b{display:block;font-size:10px}.control small{display:block;color:var(--muted);font-size:9px;margin-top:4px;line-height:1.4}
+button{font:800 10px system-ui;border:1px solid #9b8054;border-radius:9px;background:#182d42;color:#f4e8d1;padding:10px 12px;cursor:pointer}button.primary{background:linear-gradient(120deg,#e4bd70,#a87c3d);color:#1a1510;border-color:#f3d89d}button:disabled{opacity:.5;cursor:not-allowed}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.bar{height:7px;border-radius:8px;background:#1a2b3d;overflow:hidden;margin-top:8px}.bar i{display:block;height:100%;width:50%;background:linear-gradient(90deg,#56b7c8,#8de4bd);transition:width .25s}
+.readout{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid #ffffff15;font-size:10px;color:var(--muted)}.readout b{color:#f5e9d1;text-align:right}
+.notice{margin-top:12px;padding:12px;border:1px solid #c69d5b66;border-radius:10px;background:#251f16;color:#e8d4a9;font-size:10px;line-height:1.55}
+#log{max-height:155px;overflow:auto;font:10px/1.6 ui-monospace,monospace;color:#9fc2d1;white-space:pre-wrap}
+footer{margin-top:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:9px;color:#8099ad}a{color:var(--cyan);text-decoration:none}
+@media(max-width:720px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.layout{grid-template-columns:1fr}.dome{height:180px}.hero{padding:13px}.card{padding:11px}}
+</style></head><body>
+<header><div class="brand">LOCAL <b>MARS</b> <span style="color:#9eb1c5;font-size:10px">/ PLANETARY LIFE SUPPORT</span></div><div class="status" id="systemStatus">SIMULATION · STANDBY</div></header>
+<main>
+<section class="hero"><div class="eyebrow">M-003 · ATMOSPHERIC ENGINEERING DIVISION</div><h1>LIFE SUPPORT HABITAT SIMULATOR</h1><p>Closed-loop habitat concept: collect Martian CO₂, generate oxygen, remove excess CO₂, buffer pressure, regulate heat and humidity, and protect the crew with independent monitoring.</p>
+<div class="grid">
+<div class="metric"><small>HABITAT PRESSURE</small><b id="pressure">101.3 <span class="unit">kPa</span></b></div>
+<div class="metric"><small>OXYGEN (O₂)</small><b id="oxygen">21.0 <span class="unit">%</span></b></div>
+<div class="metric"><small>CARBON DIOXIDE</small><b id="co2">0.08 <span class="unit">%</span></b></div>
+<div class="metric"><small>HABITAT TEMPERATURE</small><b id="temperature">21.0 <span class="unit">°C</span></b></div>
+</div></section>
+<div class="layout">
+<section class="card"><h2>SEALED HABITAT · M-003 DOME A</h2>
+<div class="dome"><svg viewBox="0 0 620 260" role="img" aria-label="Cutaway illustration of a sealed Mars habitat dome"><defs><linearGradient id="glass" x2="0" y2="1"><stop stop-color="#7bd9eb" stop-opacity=".12"/><stop offset="1" stop-color="#9ee8ef" stop-opacity=".02"/></linearGradient><linearGradient id="soil" x2="0" y2="1"><stop stop-color="#b56b48"/><stop offset="1" stop-color="#432b30"/></linearGradient></defs><path d="M0 210Q120 178 230 202T450 198T620 206V260H0Z" fill="url(#soil)"/><path d="M90 208A220 180 0 0 1 530 208Z" fill="url(#glass)" stroke="#81d9e9" stroke-width="4"/><path d="M112 207A198 158 0 0 1 508 207" fill="none" stroke="#d8c38f" stroke-width="2" stroke-dasharray="5 8"/><path d="M310 28V205M150 205H470" stroke="#6cc8dc" stroke-width="2" opacity=".65"/><g fill="#d8c38f"><rect x="180" y="166" width="72" height="36" rx="4"/><rect x="270" y="150" width="80" height="52" rx="4"/><rect x="370" y="172" width="55" height="30" rx="4"/></g><g fill="#6de0c1"><circle cx="205" cy="155" r="10"/><circle cx="224" cy="149" r="8"/><circle cx="400" cy="160" r="10"/></g><g stroke="#8ce6ef" stroke-width="2" fill="none"><path d="M310 28L310 5M300 5H320M90 208H530"/></g><text x="310" y="238" fill="#f0d9ae" text-anchor="middle" font-size="12" letter-spacing="2">PRESSURIZED HABITAT · CONCEPT</text></svg></div>
+<div class="actions"><button class="primary" id="start">START LIFE SUPPORT</button><button id="stop" disabled>SAFE STANDBY</button><button id="reset">RESET SCENARIO</button></div>
+<div class="notice">The dome is a sealed, pressurized habitat simulation—not a method for making Mars' outdoor atmosphere breathable. Never use these displayed values to design, build, or operate real life-support equipment.</div>
+</section>
+<section class="card"><h2>SYSTEM CONTROL</h2><div class="controls">
+<div class="control"><b>O₂ GENERATOR · CO₂ PROCESSOR</b><small>Simulates oxygen extraction from collected Martian carbon dioxide.</small><div class="bar"><i id="o2bar"></i></div></div>
+<div class="control"><b>CO₂ SCRUBBER</b><small>Removes excess carbon dioxide from cabin air.</small><div class="bar"><i id="co2bar"></i></div></div>
+<div class="control"><b>PRESSURE REGULATOR</b><small>Maintains habitat pressure using stored buffer gas.</small><div class="bar"><i id="pressurebar"></i></div></div>
+<div class="control"><b>THERMAL & HUMIDITY</b><small>Controls cabin temperature and moisture balance.</small><div class="bar"><i id="thermalbar"></i></div></div>
+</div>
+<div style="margin-top:14px"><div class="readout"><span>RELATIVE HUMIDITY</span><b id="humidity">45%</b></div><div class="readout"><span>NITROGEN BUFFER</span><b id="nitrogen">78.0%</b></div><div class="readout"><span>POWER RESERVE</span><b id="power">100%</b></div><div class="readout"><span>O₂ PRODUCTION RATE</span><b id="rate">0.0 g/h</b></div><div class="readout"><span>CREW SAFETY STATUS</span><b id="safety">STANDBY</b></div></div>
+</section></div>
+<div class="layout">
+<section class="card"><h2>HABITAT NETWORK</h2><div class="readout"><span>DOME A · M-003 CENTRAL HABITAT</span><b id="domeA">STANDBY</b></div><div class="readout"><span>DOME B · AGRICULTURE MODULE</span><b>ISOLATED</b></div><div class="readout"><span>DOME C · EMERGENCY SHELTER</span><b>ISOLATED</b></div><p style="font-size:10px;margin-bottom:0">Independent pressure zones are represented for scenario planning. No real dome valves or equipment are connected.</p></section>
+<section class="card"><h2>MISSION TELEMETRY</h2><div id="log" aria-live="polite">[SYSTEM] Simulation loaded. All readings are illustrative starting conditions.\n[SAFETY] Verify all independent life-support barriers before crew entry.</div></section>
+</div>
+<footer><span>LOCAL MARS · M-003 ATMOSPHERIC LAB · SIMULATION BUILD 1.0</span><a href="./m003-base.html">← RETURN TO M-003 BASE</a></footer>
+</main>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id);
+const base={pressure:101.3,oxygen:21,co2:.08,temperature:21,humidity:45,nitrogen:78,power:100,active:false,elapsed:0};
+let s={...base},timer=null;
+const fmt=(n,d=1)=>Number(n).toFixed(d);
+function log(message){const box=$('log');const t=new Date().toLocaleTimeString();box.textContent+='\n['+t+'] '+message;box.scrollTop=box.scrollHeight;}
+function safety(){if(s.pressure<95||s.pressure>105||s.oxygen<19.5||s.oxygen>23.5||s.co2>.5||s.temperature<18||s.temperature>27||s.power<10)return 'ALERT';if(!s.active)return 'STANDBY';return 'NOMINAL';}
+function paint(){
+ $('pressure').innerHTML=fmt(s.pressure)+' <span class="unit">kPa</span>';$('oxygen').innerHTML=fmt(s.oxygen)+' <span class="unit">%</span>';$('co2').innerHTML=fmt(s.co2,2)+' <span class="unit">%</span>';$('temperature').innerHTML=fmt(s.temperature)+' <span class="unit">°C</span>';
+ $('humidity').textContent=fmt(s.humidity,0)+'%';$('nitrogen').textContent=fmt(s.nitrogen)+'%';$('power').textContent=fmt(s.power,0)+'%';$('rate').textContent=s.active?'12.0 g/h':'0.0 g/h';
+ const safe=safety();$('safety').textContent=safe;$('safety').style.color=safe==='ALERT'?'#ff8989':safe==='NOMINAL'?'#8de4bd':'#f3cb83';
+ $('systemStatus').textContent=s.active?(safe==='ALERT'?'SIMULATION · SAFETY ALERT':'SIMULATION · RUNNING'):'SIMULATION · STANDBY';
+ $('domeA').textContent=s.active?'PRESSURIZED · SIMULATED':'STANDBY';
+ $('o2bar').style.width=Math.max(0,Math.min(100,s.oxygen/25*100))+'%';$('co2bar').style.width=Math.max(0,Math.min(100,(1-s.co2)*100))+'%';$('pressurebar').style.width=Math.max(0,Math.min(100,s.pressure/110*100))+'%';$('thermalbar').style.width=Math.max(0,Math.min(100,s.humidity/100*100))+'%';
+ $('start').disabled=s.active;$('stop').disabled=!s.active;
+}
+function tick(){
+ if(!s.active)return;s.elapsed++;
+ s.oxygen=Math.min(21.4,s.oxygen+.018);s.co2=Math.max(.04,s.co2-.0018);s.pressure=Math.max(100.8,Math.min(101.5,s.pressure+(101.3-s.pressure)*.08));s.temperature+=(21-s.temperature)*.06;s.humidity+=(45-s.humidity)*.05;s.nitrogen+=(78-s.nitrogen)*.04;s.power=Math.max(0,s.power-.045);
+ if(s.elapsed%10===0)log('Telemetry stable · O₂ '+fmt(s.oxygen)+'% · CO₂ '+fmt(s.co2,2)+'% · power '+fmt(s.power,0)+'%.');
+ if(safety()==='ALERT'){log('SAFETY ALERT: simulated cabin reading outside target band. Life-support run paused.');pause();return;}
+ if(s.power<=0){log('POWER RESERVE DEPLETED: entering safe standby.');pause();return;}
+ paint();
+}
+function pause(){s.active=false;if(timer){clearInterval(timer);timer=null;}paint();}
+$('start').addEventListener('click',()=>{if(s.active)return;s.active=true;log('Life-support simulation started. O₂ processor, CO₂ scrubber, pressure and thermal loops engaged.');timer=setInterval(tick,1000);paint();});
+$('stop').addEventListener('click',()=>{pause();log('Systems placed in simulated safe standby.');});
+$('reset').addEventListener('click',()=>{pause();s={...base};log('Scenario reset to baseline conditions.');paint();});
+paint();
+})();
+</script></body></html>
