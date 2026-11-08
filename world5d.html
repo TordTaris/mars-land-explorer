@@ -16,7 +16,7 @@ header{position:fixed;z-index:2;top:0;left:0;right:0;padding:14px 16px;display:f
 </head>
 <body>
 <div id="world" aria-label="Interactive three-dimensional Mars globe"></div><div id="runtimeNotice" role="status" aria-live="polite" hidden style="position:fixed;z-index:5;left:50%;top:50%;transform:translate(-50%,-50%);max-width:min(420px,calc(100vw - 32px));padding:16px 18px;border:1px solid #a66b4c;border-radius:14px;background:#17131a;color:#fff0e6;text-align:center;box-shadow:0 12px 40px #0009">3D rendering could not start. Check your browser’s WebGL support and internet connection, then reload this page.</div>
-<header><div class="brand">LOCAL <span>MARS</span> <small style="font-size:10px;color:#d8b879">5D WORLD</small></div><div class="status" id="engineStatus">● PLANET ENGINE ONLINE</div></header>
+<header><div class="brand">LOCAL <span>MARS</span> <small style="font-size:10px;color:#d8b879">5D WORLD</small></div><div class="status" id="engineStatus">● INITIALIZING ENGINE</div></header>
 <section class="panel left">
 <h1>Full Planetary World</h1><div class="sub">Explore the Mars globe. Drag to rotate · pinch or scroll to zoom.</div>
 <h2>WORLD DIMENSIONS</h2>
@@ -43,17 +43,17 @@ header{position:fixed;z-index:2;top:0;left:0;right:0;padding:14px 16px;display:f
 <div class="metric"><span>Scene quality</span><b>Adaptive</b></div>
 <h2>PROJECT ZONE</h2>
 <div class="sub">M-001 / A’ARU remains a bounded project area in the existing LOCAL MARS world. This globe view does not alter parcel coordinates or construction records.</div>
-<div class="controls"><button id="openCity">Open 3D workspace</button></div>
+<div class="controls"><button id="openCity">Open general 3D workspace</button><button id="openM001">Open M-001 / A’ARU</button></div>
 </section>
 <nav class="bottom" aria-label="World navigation"><button id="home">← Planet Explorer</button><button id="toggleSpin" class="active">Auto rotate: ON</button><button id="togglePanel">Panels</button></nav>
-<script>addEventListener("error",e=>{const n=document.querySelector("#runtimeNotice");if(n){n.hidden=false;n.textContent="The 3D world could not load. Check WebGL support and your internet connection, then reload. "+(e.message||"");}});addEventListener("unhandledrejection",()=>{const n=document.querySelector("#runtimeNotice");if(n)n.hidden=false;});</script>
+<script>function showEngineError(message){const n=document.querySelector("#runtimeNotice"),status=document.querySelector("#engineStatus");if(n){n.hidden=false;n.textContent=message||"The 3D world could not load. Check WebGL support and your internet connection, then reload.";}if(status){status.textContent="● ENGINE UNAVAILABLE";status.style.color="#ffb09a";status.style.borderColor="#855243";}}addEventListener("error",e=>showEngineError("The 3D world could not load. Check WebGL support and your internet connection, then reload. "+(e.message||"")));addEventListener("unhandledrejection",()=>showEngineError("The 3D world failed to initialize. Check your connection and WebGL support, then reload."));</script>
 <script type="module">
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 const root=document.querySelector('#world');
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x080d17);
 const camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,.1,100);camera.position.set(0,0,3.5);
-const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'low-power'});
+let renderer;try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'low-power'});}catch(error){showEngineError("WebGL is unavailable on this browser or device. Enable hardware acceleration or use a supported browser.");throw error;}
 renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.6));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;root.appendChild(renderer.domElement);
 scene.add(new THREE.AmbientLight(0x9baec8,1.05));
 const sun=new THREE.DirectionalLight(0xffd5ad,2.35);sun.position.set(4,2.4,5);scene.add(sun);
@@ -81,9 +81,9 @@ document.querySelector('#markerToggle').addEventListener('change',e=>markers.vis
 document.querySelector('#toggleSpin').addEventListener('click',e=>{controls.autoRotate=!controls.autoRotate;e.currentTarget.classList.toggle('active',controls.autoRotate);e.currentTarget.textContent='Auto rotate: '+(controls.autoRotate?'ON':'OFF');document.querySelector('#rotationState').textContent=controls.autoRotate?'Auto + interactive':'Interactive'});
 document.querySelector('#togglePanel').addEventListener('click',()=>{showPanels=!showPanels;document.querySelectorAll('.panel').forEach(p=>p.hidden=!showPanels)});
 document.querySelector('#home').addEventListener('click',()=>location.href='./index.html');
-document.querySelector('#openCity').addEventListener('click',()=>location.href='./city.html');
+document.querySelector('#openCity').addEventListener('click',()=>location.href='./city.html');document.querySelector('#openM001').addEventListener('click',()=>location.href='./city.html?parcel=M-001');
 function animate(now){requestAnimationFrame(animate);const dt=Math.min((now-last)/1000,.1);last=now;if(playing){hours+=dt*.08;if(hours>=MARS_SOL_HOURS){hours-=MARS_SOL_HOURS;sol++;}updateTime();}controls.update();renderer.render(scene,camera)}
-updateTime();requestAnimationFrame(animate);
+updateTime();renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();showEngineError("The graphics context was lost. Reload this page to restore the 3D world.");});const engineStatus=document.querySelector('#engineStatus');if(engineStatus)engineStatus.textContent="● PLANET ENGINE READY";requestAnimationFrame(animate);
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.6))});
 addEventListener('pagehide',()=>{renderer.dispose();mars.geometry.dispose();mars.material.dispose()},{once:true});
 </script>
