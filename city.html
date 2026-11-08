@@ -1256,7 +1256,8 @@ if(type==='aaru'){
  }
  const mast=new THREE.Mesh(new THREE.CylinderGeometry(.055,.08,1.15,10),goldA);mast.position.set(0,2.95,0);colony.add(mast);
  const beacon=new THREE.Mesh(new THREE.SphereGeometry(.13,12,8),new THREE.MeshStandardMaterial({color:0x62e3f1,emissive:0x168a9b,emissiveIntensity:1.6}));beacon.position.y=3.55;colony.add(beacon);
- colony.scale.setScalar(.9);g.add(colony);
+ /* Physical-scale concept: 1 city unit = 1 metre; 90x geometry gives a 639 m base envelope, within M-001's 640 m reserved zone. */
+ colony.scale.setScalar(90);g.add(colony);
 }
 if(type==='tower'){
  const tower=new THREE.Group();
