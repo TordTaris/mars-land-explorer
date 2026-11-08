@@ -463,6 +463,20 @@ header .brand .brand-lockup small{display:block!important;color:#aebdca!importan
 }
 </style>
 </head><body><div id="world"></div>
+<div id="worldBoot" role="status" aria-live="polite"><div class="world-boot-card"><span class="world-boot-spinner"></span><b>INITIALIZING MARS CONSTRUCTION WORLD</b><small>Preparing terrain, controls and colony systems…</small></div></div>
+<style>
+#worldBoot{position:fixed;inset:0;z-index:25;display:grid;place-items:center;padding:20px;background:radial-gradient(ellipse at 50% 35%,#3b2b25,#111c2a 58%,#070d16);color:#f2e8d5;font:12px system-ui,sans-serif}
+.world-boot-card,.world-failure-card{width:min(420px,92vw);padding:22px;border:1px solid #c9a66e88;border-radius:16px;background:linear-gradient(145deg,#172b40,#091523);text-align:center;box-shadow:0 20px 60px #0009}
+.world-boot-card b,.world-failure-card b{display:block;color:#e4c58b;letter-spacing:1px}
+.world-boot-card small{display:block;margin-top:9px;color:#a9bdd2}
+.world-boot-spinner{display:block;width:30px;height:30px;margin:0 auto 14px;border:3px solid #49647b;border-top-color:#e4c58b;border-radius:50%;animation:lmspin .9s linear infinite}
+.world-failure-card p{color:#a9bdd2;line-height:1.6}
+.world-failure-card a{display:inline-block;margin-top:8px;padding:10px 13px;border:1px solid #c9a66e;border-radius:9px;color:#f4e5c7;text-decoration:none}
+@keyframes lmspin{to{transform:rotate(360deg)}}
+</style>
+<script>
+(()=>{const show=(message)=>{const boot=document.getElementById('worldBoot');if(!boot)return;boot.hidden=false;boot.innerHTML='<div class="world-failure-card"><b>CONSTRUCTION WORLD ERROR</b><p></p><a href="./index.html">← RETURN TO PLANET EXPLORER</a></div>';boot.querySelector('p').textContent=message;};window.addEventListener('error',event=>{if(!document.querySelector('#world canvas'))show('The 3D world failed to load: '+(event.message||'graphics or script error')+'. Please reload this area.');});window.addEventListener('unhandledrejection',event=>{if(!document.querySelector('#world canvas'))show('The world is still waiting for a required service: '+String(event.reason?.message||event.reason||'connection error')+'. Please check your connection and reload.');});setTimeout(()=>{if(!document.querySelector('#world canvas'))show('The 3D world is taking too long to start. Check your connection, then reload this area.');},12000);})();
+</script>
 <header><div class="brand"><span class="brand-insignia" aria-hidden="true">LM</span><span class="brand-lockup"><strong>LOCAL <b>MARS</b></strong><small>PLANETARY CIVILIZATION NETWORK</small></span></div><div style="display:flex;align-items:center;gap:7px"><button id="cityAccount" type="button" style="pointer-events:auto;font-size:10px;padding:7px 9px">👤 Sign in</button><div class="status">● THIRD-PERSON MODE · LOCAL</div></div></header>
 <nav class="view-toolbar" aria-label="Screen Controls">
  <button id="toggleInfo" class="view-btn" aria-expanded="false">◉ Colony Data</button>
@@ -971,7 +985,28 @@ document.querySelector('#cityAuthForm').addEventListener('submit',async e=>{
 
 const root=document.querySelector('#world'),scene=new THREE.Scene();
 const marsSky=new THREE.Color(0x9b7160);scene.background=marsSky;scene.fog=new THREE.Fog(marsSky,22,65);
-const camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,120);const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;root.appendChild(renderer.domElement);
+const camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,120);
+let renderer;
+try{
+ renderer=new THREE.WebGLRenderer({antialias:false,alpha:false,powerPreference:'low-power',failIfMajorPerformanceCaveat:false,preserveDrawingBuffer:false});
+ renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,window.matchMedia('(max-width:760px)').matches?1:1.25));
+ renderer.setSize(window.innerWidth,window.innerHeight);
+ renderer.shadowMap.enabled=false;
+ renderer.outputColorSpace=THREE.SRGBColorSpace;
+ root.appendChild(renderer.domElement);
+ root.dataset.worldReady='true';
+ const boot=document.getElementById('worldBoot');if(boot)boot.remove();
+ renderer.domElement.addEventListener('webglcontextlost',event=>{
+  event.preventDefault();
+  const fallback=document.getElementById('worldFailure');
+  if(fallback){fallback.hidden=false;fallback.querySelector('[data-error]').textContent='The mobile graphics context was interrupted. Reload this area to restore the 3D world.';}
+ });
+}catch(error){
+ console.error('LOCAL MARS 3D renderer initialization failed:',error);
+ const boot=document.getElementById('worldBoot');
+ if(boot){boot.innerHTML='<div class="world-failure-card"><b>3D WORLD COULD NOT START</b><p>Your browser could not initialize the graphics engine. Return to Mars and reopen this area, or reload after closing other tabs.</p><a href="./index.html">← RETURN TO PLANET EXPLORER</a></div>';boot.hidden=false;}
+ throw error;
+}
 scene.add(new THREE.HemisphereLight(0xffd8c4,0x563326,1.8));const sun=new THREE.DirectionalLight(0xffc18f,2.1);sun.position.set(-12,22,10);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);scene.add(sun);
 // Procedural Martian regolith: fine iron-rich dust, mineral flecks and shallow dune bands.
 const regolithCanvas=document.createElement('canvas');regolithCanvas.width=512;regolithCanvas.height=512;
