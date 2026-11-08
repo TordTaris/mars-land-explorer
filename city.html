@@ -671,8 +671,8 @@ function setWorldParcelStatus(message,state='info',retryData=null){
 function updateWorldParcelContext(){
  const label=document.querySelector('#worldParcelLabel'),hint=document.querySelector('#worldParcelHint');
  if(label)label.textContent=activeWorldParcelId||'No parcel selected';
- if(hint)hint.textContent=activeWorldParcelId?'REAL PARCEL SCALE · '+activeWorldParcelId+' · '+activeParcelAreaSqm.toLocaleString('en-US')+' m² · '+parcelSideMeters.toFixed(2)+' m × '+parcelSideMeters.toFixed(2)+' m':'Open a parcel from Planet Explorer to start building';
- if(activeWorldParcelId){document.title='LOCAL MARS | '+activeWorldParcelId+' Construction';setWorldParcelStatus('SURVEYED PARCEL: '+activeWorldParcelId+' · '+activeParcelAreaSqm.toLocaleString('en-US')+' m² · square-equivalent side '+parcelSideMeters.toFixed(2)+' m · 21 × 21 build cells at '+buildCellSize.toFixed(2)+' m each');}
+ if(hint)hint.textContent=activeWorldParcelId?'PRIVATE OWNER WORKSPACE · '+activeWorldParcelId+' · '+activeParcelAreaSqm.toLocaleString('en-US')+' m² · '+parcelSideMeters.toFixed(2)+' m × '+parcelSideMeters.toFixed(2)+' m':'Open a parcel from Planet Explorer to start building';
+ if(activeWorldParcelId){document.title='LOCAL MARS | '+activeWorldParcelId+' Private Construction';setWorldParcelStatus('PRIVATE WORKSPACE · '+activeWorldParcelId+' · Owner-only construction data · '+activeParcelAreaSqm.toLocaleString('en-US')+' m² · 21 × 21 build cells');}
 }
 function cityOffset(owner){if(owner===onlineUser?.id)return {x:0,z:0};let n=0;for(const ch of String(owner||''))n=(n+ch.charCodeAt(0))%997;return {x:((n%3)-1)*23,z:((Math.floor(n/3)%3)-1)*23};}
 function clearCityVisuals(){buildings.forEach(o=>scene.remove(o));roads.forEach(o=>scene.remove(o));nationalFlags.forEach(o=>scene.remove(o));constructionSites.forEach(o=>scene.remove(o.group));buildings.length=0;roads.length=0;nationalFlags.length=0;constructionSites.length=0;}
@@ -757,16 +757,16 @@ async function loadOnlineCity(){
  if(remoteLoading){remoteReloadQueued=true;return;}
  remoteLoading=true;const userId=onlineUser.id;
  try{
-  const init=await marsDB.rpc('mars_city_ensure');
+  const init=activeWorldParcelId?await marsDB.rpc('mars_parcel_city_ensure',{p_parcel_id:activeWorldParcelId}):await marsDB.rpc('mars_city_ensure');
   if(init.error)throw Object.assign(new Error('City initialization (mars_city_ensure): '+cityErrorText(init.error)),init.error);
   if(!init.data||!init.data.city_id)throw new Error('City initialization: the RPC did not return a city_id. Check migration 005.');
   if(!onlineUser||onlineUser.id!==userId)return;
   onlineCityId=init.data.city_id;const res=init.data.resources;
   if(res){credits=Number(res.credits??credits);energy=Number(res.energy??energy);resources.metal=Number(res.metal??resources.metal);resources.polymer=Number(res.polymer??resources.polymer);resources.electronics=Number(res.electronics??resources.electronics);}
-  const q=await marsDB.from('mars_city_buildings').select('id,city_id,owner_id,building_type,name,position').order('created_at',{ascending:true});
+  const q=await marsDB.from('mars_city_buildings').select('id,city_id,owner_id,building_type,name,position').eq('city_id',onlineCityId).order('created_at',{ascending:true});
   if(q.error)throw Object.assign(new Error('Structure loading (mars_city_buildings): '+cityErrorText(q.error)),q.error);
   if(!onlineUser||onlineUser.id!==userId)return;
-  const allRows=Array.isArray(q.data)?q.data:[];const rows=activeWorldParcelId?allRows.filter(row=>{const position=row.position||{};const cached=readParcelLinkCache()[String(row.id)]||{};return position.worldParcelId===activeWorldParcelId||cached.parcelId===activeWorldParcelId;}):allRows;syncOnlineStructures(rows);onlineRows=rows;onlineReady=true;remoteRetryCount=0;
+  const rows=Array.isArray(q.data)?q.data:[];syncOnlineStructures(rows);onlineRows=rows;onlineReady=true;remoteRetryCount=0;
   if(remoteRetryTimer){clearTimeout(remoteRetryTimer);remoteRetryTimer=null;}
   updateHUD();renderConstructionJobs();
   const label=document.querySelector('header .status');if(label)label.textContent='● ONLINE · SHARED COLONY';
@@ -809,7 +809,7 @@ async function placeOnline(type,x,z,level,worldParcelId=null){
    if(existing.error)throw existing.error;
    if(existing.data){setWorldParcelStatus('Parcel '+worldParcelId+' already has a structure on Mars','error');toast('This parcel already has a structure on Mars');return false;}
   }
-  const r=await marsDB.rpc('mars_city_place_structure',{p_type:type,p_x:x,p_z:z,p_level:level});
+  const r=worldParcelId?await marsDB.rpc('mars_parcel_city_place_structure',{p_parcel_id:worldParcelId,p_type:type,p_x:x,p_z:z,p_level:level}):await marsDB.rpc('mars_city_place_structure',{p_type:type,p_x:x,p_z:z,p_level:level});
   if(r.error)throw r.error;
   const building=r.data?.building;
   if(worldParcelId&&building?.id){
