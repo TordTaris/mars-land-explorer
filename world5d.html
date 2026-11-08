@@ -15,7 +15,7 @@ header{position:fixed;z-index:2;top:0;left:0;right:0;padding:14px 16px;display:f
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 </head>
 <body>
-<div id="world" aria-label="Interactive three-dimensional Mars globe"></div>
+<div id="world" aria-label="Interactive three-dimensional Mars globe"></div><div id="runtimeNotice" role="status" aria-live="polite" hidden style="position:fixed;z-index:5;left:50%;top:50%;transform:translate(-50%,-50%);max-width:min(420px,calc(100vw - 32px));padding:16px 18px;border:1px solid #a66b4c;border-radius:14px;background:#17131a;color:#fff0e6;text-align:center;box-shadow:0 12px 40px #0009">3D rendering could not start. Check your browser’s WebGL support and internet connection, then reload this page.</div>
 <header><div class="brand">LOCAL <span>MARS</span> <small style="font-size:10px;color:#d8b879">5D WORLD</small></div><div class="status" id="engineStatus">● PLANET ENGINE ONLINE</div></header>
 <section class="panel left">
 <h1>Full Planetary World</h1><div class="sub">Explore the Mars globe. Drag to rotate · pinch or scroll to zoom.</div>
@@ -29,13 +29,13 @@ header{position:fixed;z-index:2;top:0;left:0;right:0;padding:14px 16px;display:f
 <input id="timeRange" type="range" min="0" max="24" step=".25" value="6" aria-label="Local Mars time">
 <div class="metric"><span>Local solar time</span><b id="timeLabel">06:00</b></div>
 <div class="controls"><button id="pauseTime">Pause time</button><button id="resetView">Reset view</button></div>
-<div class="hint">Time and lighting are simulated locally; not live Mars telemetry.</div>
+<div class="hint">One simulated Sol = 24h 39m 35s. Simulation runs locally; this is not live Mars telemetry.</div>
 </section>
 <section class="panel right">
 <h2>WORLD LAYERS</h2>
 <label class="toggle">Atmosphere glow <input id="atmosphereToggle" type="checkbox" checked></label>
 <label class="toggle">Coordinate grid <input id="gridToggle" type="checkbox"></label>
-<label class="toggle">Surface markers <input id="markerToggle" type="checkbox" checked></label>
+<label class="toggle">Illustrative markers (not mapped data) <input id="markerToggle" type="checkbox" checked></label>
 <h2>SIMULATION TELEMETRY</h2>
 <div class="metric"><span>Planet</span><b>Mars</b></div>
 <div class="metric"><span>Mean radius</span><b>3,389.5 km</b></div>
@@ -46,6 +46,7 @@ header{position:fixed;z-index:2;top:0;left:0;right:0;padding:14px 16px;display:f
 <div class="controls"><button id="openCity">Open 3D workspace</button></div>
 </section>
 <nav class="bottom" aria-label="World navigation"><button id="home">← Planet Explorer</button><button id="toggleSpin" class="active">Auto rotate: ON</button><button id="togglePanel">Panels</button></nav>
+<script>addEventListener("error",e=>{const n=document.querySelector("#runtimeNotice");if(n){n.hidden=false;n.textContent="The 3D world could not load. Check WebGL support and your internet connection, then reload. "+(e.message||"");}});addEventListener("unhandledrejection",()=>{const n=document.querySelector("#runtimeNotice");if(n)n.hidden=false;});</script>
 <script type="module">
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
@@ -68,10 +69,10 @@ for(let lon=0;lon<180;lon+=15){const a=THREE.MathUtils.degToRad(lon),pts=[];for(
 const markers=new THREE.Group();const markerMat=new THREE.MeshBasicMaterial({color:0x6de5ed});for(let k=0;k<18;k++){const a=k*2.399,b=Math.asin(-1+2*(k+.5)/18);const p=new THREE.Vector3(Math.cos(b)*Math.cos(a),Math.sin(b),Math.cos(b)*Math.sin(a)).multiplyScalar(1.008);const m=new THREE.Mesh(new THREE.SphereGeometry(.008,8,8),markerMat);m.position.copy(p);markers.add(m);}planetGroup.add(markers);
 const stars=new THREE.BufferGeometry(),starPos=[];for(let i=0;i<1300;i++){const r=12+Math.random()*28,a=Math.random()*Math.PI*2,b=Math.acos(2*Math.random()-1);starPos.push(r*Math.sin(b)*Math.cos(a),r*Math.cos(b),r*Math.sin(b)*Math.sin(a));}stars.setAttribute('position',new THREE.Float32BufferAttribute(starPos,3));scene.add(new THREE.Points(stars,new THREE.PointsMaterial({color:0xd8e4f4,size:.035,transparent:true,opacity:.8})));
 const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.06;controls.minDistance=1.35;controls.maxDistance=8;controls.enablePan=false;controls.autoRotate=true;controls.autoRotateSpeed=.32;
-let hours=6,sol=1,playing=true,showPanels=true,last=performance.now();
+const MARS_SOL_HOURS=24.6597;let hours=6,sol=1,playing=true,showPanels=true,last=performance.now();
 const timeRange=document.querySelector('#timeRange'),timeLabel=document.querySelector('#timeLabel'),clock=document.querySelector('#clock');
-function updateTime(){const h=Math.floor(hours),m=Math.round((hours-h)*60);const label=String(h).padStart(2,'0')+':'+String(m%60).padStart(2,'0');timeLabel.textContent=label;clock.textContent='Sol '+String(sol).padStart(3,'0')+' · '+label;timeRange.value=String(hours);sun.position.set(Math.cos(hours/24*Math.PI*2)*5,Math.sin((hours-6)/24*Math.PI*2)*2.5,5);document.querySelector('#simState').textContent=playing?'Running':'Paused';}
-timeRange.addEventListener('input',e=>{hours=Number(e.target.value);updateTime()});
+function updateTime(){const dayMinutes=Math.floor((hours/MARS_SOL_HOURS)*1440);const h=Math.floor(dayMinutes/60)%24,m=dayMinutes%60;const label=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');timeLabel.textContent=label;clock.textContent='Sol '+String(sol).padStart(3,'0')+' · '+label;timeRange.value=String(Math.min(hours,24));sun.position.set(Math.cos(hours/MARS_SOL_HOURS*Math.PI*2)*5,Math.sin((hours/MARS_SOL_HOURS-.25)*Math.PI*2)*2.5,5);document.querySelector('#simState').textContent=playing?'Running':'Paused';}
+timeRange.max='24';timeRange.addEventListener('input',e=>{hours=Number(e.target.value);updateTime()});
 document.querySelector('#pauseTime').addEventListener('click',e=>{playing=!playing;e.currentTarget.textContent=playing?'Pause time':'Resume time';updateTime()});
 document.querySelector('#resetView').addEventListener('click',()=>{controls.reset();camera.position.set(0,0,3.5);planetGroup.rotation.set(0,0,0)});
 document.querySelector('#atmosphereToggle').addEventListener('change',e=>atmosphere.visible=e.target.checked);
@@ -81,7 +82,7 @@ document.querySelector('#toggleSpin').addEventListener('click',e=>{controls.auto
 document.querySelector('#togglePanel').addEventListener('click',()=>{showPanels=!showPanels;document.querySelectorAll('.panel').forEach(p=>p.hidden=!showPanels)});
 document.querySelector('#home').addEventListener('click',()=>location.href='./index.html');
 document.querySelector('#openCity').addEventListener('click',()=>location.href='./city.html');
-function animate(now){requestAnimationFrame(animate);const dt=Math.min((now-last)/1000,.1);last=now;if(playing){hours+=dt*.08;if(hours>=24){hours-=24;sol++;}updateTime();}controls.update();renderer.render(scene,camera)}
+function animate(now){requestAnimationFrame(animate);const dt=Math.min((now-last)/1000,.1);last=now;if(playing){hours+=dt*.08;if(hours>=MARS_SOL_HOURS){hours-=MARS_SOL_HOURS;sol++;}updateTime();}controls.update();renderer.render(scene,camera)}
 updateTime();requestAnimationFrame(animate);
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.6))});
 addEventListener('pagehide',()=>{renderer.dispose();mars.geometry.dispose();mars.material.dispose()},{once:true});
