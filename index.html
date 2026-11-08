@@ -1124,7 +1124,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  <strong>MEMBER CONSTRUCTION</strong>
  <div class="small" style="margin:5px 0 9px">Create a 3D asset on this parcel. Other online members will see it automatically.</div>
  <select id="building" class="full" style="padding:9px;background:#101d30;color:white;border:1px solid #38506d;border-radius:9px">
-  <option value="Habitat">Habitat Dome</option><option value="Lab">Science Lab</option><option value="Solar">Solar Farm</option><option value="Greenhouse">Greenhouse</option><option value="NuclearPlant">☢️ M-003 Mega Nuclear Energy Complex</option><option value="DataCenter">🗄️ M-001 Data Storage Center</option>
+  <option value="Habitat">Habitat Dome</option><option value="Lab">Science Lab</option><option value="Solar">Solar Farm</option><option value="Greenhouse">Greenhouse</option><option value="AARUColony">🪐 A’ARU 1.1 Colony (M-001 only)</option><option value="NuclearPlant">☢️ M-003 Mega Nuclear Energy Complex</option><option value="DataCenter">🗄️ M-001 Data Storage Center</option>
  </select>
  <button class="primary full" id="build">🏗️ Place Structure</button>
  <button class="full" id="openConstruction3D">🏗️ Open 3D Construction</button>
@@ -2184,11 +2184,13 @@ document.querySelector('#mlcTransfer').onclick=async()=>{
  catch(error){toast('MLC transfer failed: '+(error.message||'Check the details and try again'));}
  finally{button.disabled=false;button.textContent='↔ Transfer MLC';}
 };
-const typeMap={Habitat:'ฐานที่อยู่อาศัย',Lab:'ห้องปฏิบัติการ',Greenhouse:'โรงเรือนปลูกพืช',Solar:'แผงพลังงานแสงอาทิตย์',NuclearPlant:'โรงไฟฟ้านิวเคลียร์ขนาดใหญ่',DataCenter:'ศูนย์จัดเก็บข้อมูล'};
+const typeMap={Habitat:'ฐานที่อยู่อาศัย',Lab:'ห้องปฏิบัติการ',Greenhouse:'โรงเรือนปลูกพืช',Solar:'แผงพลังงานแสงอาทิตย์',AARUColony:'A’ARU 1.1 Colony',NuclearPlant:'โรงไฟฟ้านิวเคลียร์ขนาดใหญ่',DataCenter:'ศูนย์จัดเก็บข้อมูล'};
 document.querySelector('#build').onclick=async()=>{
  if(!selected){toast('Select a parcel first');return;}
  const choice=document.querySelector('#building').value;
  if(choice==='NuclearPlant'&&selected.id!=='M-003'){toast('The Nuclear Energy Complex can only be built on parcel M-003');return;}
+ if(choice==='AARUColony'&&selected.id!=='M-001'){toast('A’ARU 1.1 is restricted to parcel M-001 only. Construction rejected.');return;}
+ if(choice==='AARUColony'){const footprint={left:18,top:18,right:82,bottom:82};if(footprint.left<0||footprint.top<0||footprint.right>100||footprint.bottom>100){toast('A’ARU footprint rejected: outside M-001 boundary');return;}}
  if(choice==='DataCenter'&&selected.id!=='M-001'){toast('The Data Storage Center can only be built on parcel M-001');return;}
  const world=window.MarsWorldServer?.getState?.();
  if(!world?.user){toast('Sign in to build structures');openLogin();return;}
