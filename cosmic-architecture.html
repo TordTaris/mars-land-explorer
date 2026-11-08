@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080d17">
+<title>LOCAL MARS · Cosmic Architecture 12</title>
+<style>
+:root{color-scheme:dark;--bg:#070c16;--panel:#0d1b2b;--line:#38516b;--gold:#dfbd7d;--cyan:#72dce9;--muted:#9eb0c4;--text:#f4f0e7}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 38%,#26394d 0,#0c1726 48%,#050811 100%);color:var(--text);font:14px system-ui,sans-serif;min-height:100vh}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid #dfbd7d55;background:#07111ddd;position:sticky;top:0;z-index:5;backdrop-filter:blur(14px)}
+.brand{font-weight:900;letter-spacing:2px}.brand span{color:var(--gold)}a,button{color:inherit}a{color:var(--gold);text-decoration:none}button{border:1px solid #8d7956;background:#14283b;border-radius:10px;padding:9px 12px;font-weight:700;cursor:pointer}button:hover,button:focus{border-color:var(--cyan);outline:none}
+main{width:min(1180px,100%);margin:auto;padding:22px 16px 42px}.eyebrow{font-size:10px;letter-spacing:2px;color:var(--gold);font-weight:900}.intro{display:flex;justify-content:space-between;gap:20px;align-items:end;margin:4px 0 18px}.intro h1{font-size:clamp(25px,5vw,42px);margin:7px 0}.intro p{max-width:680px;color:var(--muted);line-height:1.6;margin:0}.pill{border:1px solid #b8955b88;border-radius:99px;padding:7px 10px;color:#e6ca92;font-size:10px;white-space:nowrap}
+.layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(260px,.8fr);gap:14px}.panel{border:1px solid #a98c5d66;border-radius:18px;background:linear-gradient(145deg,#10243aee,#081525f5);box-shadow:0 18px 48px #0007;padding:16px;min-width:0}.panel h2{font-size:12px;letter-spacing:1.7px;color:var(--gold);margin:0 0 12px}
+.diagram{position:relative;min-height:510px;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle,#23425a66 0,#0a1a2b66 50%,transparent 74%);border-radius:14px}
+svg{width:min(100%,650px);height:auto;overflow:visible}.links line{stroke:#65c9dc;stroke-opacity:.38;stroke-width:1.35}.links line.active{stroke:#f1cc81;stroke-opacity:.95;stroke-width:2.6;filter:drop-shadow(0 0 5px #e6bf74)}
+.node{cursor:pointer}.node circle{fill:#112b43;stroke:#8cb5c4;stroke-width:1.5;transition:.2s}.node text{fill:#f1eadb;font:700 10px system-ui;text-anchor:middle;pointer-events:none}.node .num{fill:#dfbd7d;font-size:9px}.node.selected circle{fill:#765b31;stroke:#f5d89c;stroke-width:2.5;filter:drop-shadow(0 0 10px #e2bd79)}.node:focus{outline:none}.node:focus circle{stroke:#72dce9;stroke-width:3}
+.core circle{fill:#1d3e51;stroke:#dfbd7d;stroke-width:2}.core text{font-size:12px;fill:#f4dfb4}
+.detail{display:flex;flex-direction:column;gap:12px}.detail h3{font-size:21px;margin:0}.detail p{color:var(--muted);line-height:1.6;margin:0}.detail .stat{padding:12px;border:1px solid #ffffff1c;background:#0a1929;border-radius:12px}.stat small{display:block;color:var(--muted);font-size:9px;letter-spacing:1px}.stat b{display:block;margin-top:5px;font-size:13px}.tag{display:inline-flex;border:1px solid #69cbd655;border-radius:99px;padding:5px 8px;color:#8ce4e8;font-size:9px;font-weight:800;letter-spacing:1px}
+.node-list{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px}.node-list button{font-size:10px;padding:8px 5px;text-align:left;border-color:#536b7f}.node-list button[aria-pressed=true]{border-color:var(--gold);background:#493a25}
+.notice{margin-top:14px;padding:12px;border:1px solid #7b6b4c88;border-radius:12px;background:#211d16;color:#e6d7b8;font-size:11px;line-height:1.6}.footer{color:#8194a8;font-size:10px;line-height:1.6;margin-top:14px}
+@media(max-width:780px){.intro{align-items:start;flex-direction:column}.layout{grid-template-columns:1fr}.diagram{min-height:370px}.node-list{grid-template-columns:repeat(2,1fr)}header{padding:10px 12px}}
+</style>
+</head>
+<body>
+<header><div class="brand">LOCAL <span>MARS</span> <small style="font-size:9px;color:#a9b9c9;letter-spacing:1px"> / COSMIC ARCHITECTURE 12</small></div><a href="./index.html">← RETURN TO PLANET</a></header>
+<main>
+ <div class="intro"><div><div class="eyebrow">PLANETARY SYSTEMS MAP · CONCEPTUAL DIGITAL TWIN</div><h1>Cosmic Architecture 12</h1><p>A navigable systems map for LOCAL MARS. Twelve operational domains connect to a central coordination layer. Select any node to inspect its purpose and proposed data signals.</p></div><div class="pill">VISUAL PROTOTYPE · NOT LIVE TELEMETRY</div></div>
+ <div class="layout">
+  <section class="panel"><h2>12 CONNECTED DOMAINS</h2><div class="diagram">
+   <svg viewBox="0 0 640 540" role="img" aria-label="Twelve connected planetary system nodes around a central coordination hub">
+    <defs><radialGradient id="halo"><stop stop-color="#4b8294" stop-opacity=".28"/><stop offset="1" stop-color="#4b8294" stop-opacity="0"/></radialGradient></defs>
+    <circle cx="320" cy="270" r="205" fill="url(#halo)"/><circle cx="320" cy="270" r="155" fill="none" stroke="#b99a62" stroke-opacity=".18" stroke-dasharray="3 7"/><circle cx="320" cy="270" r="95" fill="none" stroke="#6bc7d7" stroke-opacity=".2"/>
+    <g class="links" id="links"></g><g class="core"><circle cx="320" cy="270" r="54"/><text x="320" y="265" text-anchor="middle">LOCAL MARS</text><text x="320" y="283" text-anchor="middle" style="font-size:9px;fill:#dfbd7d">COORDINATION</text></g>
+    <g id="nodes"></g>
+   </svg>
+  </div><div class="node-list" id="nodeList"></div></section>
+  <aside class="panel detail" aria-live="polite"><h2>SELECTED DOMAIN</h2><span class="tag" id="nodeTag">01 · COMMAND</span><h3 id="nodeTitle">Command & Governance</h3><p id="nodeDesc">Coordinates operational priorities, system status and authorized decisions across the planetary model.</p><div class="stat"><small>PROPOSED DATA SIGNALS</small><b id="nodeSignals">Service health · alerts · approved actions</b></div><div class="stat"><small>INTEGRATION STATE</small><b>Concept only — no backend connection verified</b></div><button id="nextNode" type="button">NEXT DOMAIN →</button><div class="notice"><b>Evidence boundary</b><br>Node links and status are explanatory UI, not measured energy, consciousness, or proof of a physical cosmic grid. Real integrations must be connected to validated engineering data sources.</div><div class="footer">Inspired by systems-thinking diagrams and symbolic cosmologies. This interface does not reproduce or claim equivalence with Kathara or Kabbalah doctrine.</div></aside>
+ </div>
+</main>
+<script>
+(()=>{'use strict';
+const domains=[
+['COMMAND','Command & Governance','Coordinates operational priorities, system status and authorized decisions across the planetary model.','Service health · alerts · approved actions'],
+['ENERGY','Energy Systems','Models generation, storage, distribution and demand for settlement power.','kW generation · kWh storage · load · faults'],
+['ATMOSPHERE','Atmosphere & Climate','Tracks environmental parameters and life-support simulation boundaries.','Pressure · temperature · gas composition · dust'],
+['WATER','Water Cycle','Represents extraction, recycling, storage and distribution of water resources.','Litres · recovery rate · reserve · quality'],
+['ECOLOGY','Ecology & Agriculture','Models controlled ecosystems, crops, biomass and habitat-support dependencies.','Crop yield · biomass · nutrient balance'],
+['HABITAT','Habitat & Construction','Maps buildings, occupancy, structural assets and construction progress.','Building IDs · occupancy · status · inspection'],
+['POPULATION','Population Services','Represents resident capacity, health-service demand and community needs.','Population count · capacity · service demand'],
+['INDUSTRY','Industry & Manufacturing','Tracks production chains, materials, maintenance and industrial capacity.','Throughput · inventory · uptime · maintenance'],
+['TRANSPORT','Transport & Logistics','Maps routes, vehicles, cargo movements and surface mobility.','Route status · vehicle count · cargo · ETA'],
+['COMMUNICATION','Communications','Represents network coverage, links, latency and service availability.','Uptime · latency · coverage · link quality'],
+['SECURITY','Safety & Resilience','Organizes incident reporting, hazard monitoring and recovery procedures.','Risk register · incident state · response time'],
+['PLANETARY AI','Planetary Intelligence','Coordinates validated analytics and decision support across connected domains.','Data freshness · model confidence · audit trail']
+];
+const ns=document.getElementById('nodes'),ls=document.getElementById('links'),list=document.getElementById('nodeList');
+const cx=320,cy=270,rx=235,ry=210,positions=[];
+domains.forEach((d,i)=>{const a=(-Math.PI/2)+(i*Math.PI*2/12),x=cx+Math.cos(a)*rx,y=cy+Math.sin(a)*ry;positions.push([x,y]);});
+positions.forEach(([x,y],i)=>{const line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1',cx);line.setAttribute('y1',cy);line.setAttribute('x2',x);line.setAttribute('y2',y);line.dataset.index=i;ls.appendChild(line);
+ const g=document.createElementNS('http://www.w3.org/2000/svg','g');g.setAttribute('class','node');g.setAttribute('tabindex','0');g.setAttribute('role','button');g.setAttribute('aria-label',domains[i][1]);g.dataset.index=i;g.setAttribute('transform',`translate(${x} ${y})`);
+ const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('r','30');g.appendChild(c);
+ const n=document.createElementNS('http://www.w3.org/2000/svg','text');n.setAttribute('y','-4');n.setAttribute('class','num');n.textContent=String(i+1).padStart(2,'0');g.appendChild(n);
+ const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('y','10');t.textContent=d[0].length>12?d[0].slice(0,11)+'…':d[0];g.appendChild(t);
+ g.addEventListener('click',()=>select(i));g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select(i)}});ns.appendChild(g);
+ const b=document.createElement('button');b.type='button';b.textContent=String(i+1).padStart(2,'0')+' · '+d[0];b.addEventListener('click',()=>select(i));list.appendChild(b);
+});
+let selected=0;
+function select(i){selected=(i+12)%12;const d=domains[selected];document.getElementById('nodeTag').textContent=String(selected+1).padStart(2,'0')+' · '+d[0];document.getElementById('nodeTitle').textContent=d[1];document.getElementById('nodeDesc').textContent=d[2];document.getElementById('nodeSignals').textContent=d[3];ns.querySelectorAll('.node').forEach((n,j)=>{n.classList.toggle('selected',j===selected);n.setAttribute('aria-pressed',j===selected?'true':'false')});ls.querySelectorAll('line').forEach((l,j)=>l.classList.toggle('active',j===selected));list.querySelectorAll('button').forEach((b,j)=>b.setAttribute('aria-pressed',j===selected?'true':'false'));}
+document.getElementById('nextNode').addEventListener('click',()=>select(selected+1));select(0);
+})();
+</script>
+</body></html>
