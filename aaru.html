@@ -13,11 +13,69 @@ h2{font-size:17px;color:var(--gold);letter-spacing:1.4px;margin:28px 0 12px}.gri
 .notice{margin-top:18px;border-left:3px solid var(--cyan);padding:12px 14px;background:#0a1b2b;color:#aebdcb;font-size:10px}.notice strong{color:#d7eff5}
 footer{padding:20px 0;color:#7e91a4;font-size:10px;text-align:center}
 @media(max-width:700px){.hero{min-height:370px}.hero:after{width:110vw;height:40vw;border-width:14px;top:65%}.hero:before{width:110vw;height:110vw;top:66%}.hero-content{padding:24px}.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:repeat(2,1fr)}.overview{grid-template-columns:1fr}.shell{padding:10px 12px 24px}}
+
+.boundary-panel{margin:24px 0;border:1px solid #d6b36b88;border-radius:18px;padding:16px;background:linear-gradient(145deg,#14243a,#07111e)}
+.boundary-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.boundary-head h2{margin:0}.boundary-tag{font-size:10px;color:#9ef0c6;border:1px solid #438b70;border-radius:18px;padding:5px 9px}
+.boundary-layout{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(220px,.7fr);gap:14px;margin-top:14px}
+.plot-frame{position:relative;aspect-ratio:1.25/1;min-height:240px;border:2px solid #e5c47d;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,#1c2d3b,#0b1724);background-image:linear-gradient(#ffffff0d 1px,transparent 1px),linear-gradient(90deg,#ffffff0d 1px,transparent 1px),radial-gradient(ellipse at center,#704638,#172638 75%);background-size:10% 10%,10% 10%,cover}
+.plot-frame:before{content:"M-001 · EXCLUSIVE PARCEL BOUNDARY";position:absolute;top:8px;left:10px;font-size:9px;letter-spacing:1px;color:#f3d99e;z-index:3}
+.plot-frame:after{content:"100% PLOT LIMIT";position:absolute;bottom:7px;right:9px;font-size:8px;color:#d8c18f;z-index:3}
+.plot-ring{position:absolute;left:50%;top:50%;width:64%;height:64%;transform:translate(-50%,-50%);border:9px solid #d5ad68;border-radius:50%;background:repeating-conic-gradient(from 0deg,#1a5368 0deg 8deg,#d3ad70 8deg 10deg,#204458 10deg 17deg);box-shadow:0 0 0 4px #5abbd0,0 0 28px #55c5db88;display:grid;place-items:center;z-index:1}
+.plot-ring:before{content:"";position:absolute;width:25%;height:25%;border-radius:50%;background:radial-gradient(circle,#e5d2a1,#506d7b 60%,#0d1c2a);border:3px solid #e8c47c;box-shadow:0 0 14px #71d9ef}
+.plot-ring:after{content:"A’ARU";position:absolute;bottom:-25px;color:#f6e5bd;font-size:10px;font-weight:900;letter-spacing:2px;text-shadow:0 2px 4px #000}
+.plot-label{position:absolute;z-index:2;color:#e9d9b4;font-size:9px;text-shadow:0 1px 4px #000}.plot-label.n{top:18%;left:50%;transform:translateX(-50%)}.plot-label.s{bottom:17%;left:50%;transform:translateX(-50%)}
+.boundary-controls{background:#07111e;border:1px solid #ffffff1c;border-radius:12px;padding:13px}.boundary-controls h3{margin:0 0 10px;color:#f0d7a5;font-size:12px}.boundary-controls label{display:flex;justify-content:space-between;gap:8px;margin:12px 0 5px;color:#b8c7d4;font-size:11px}.boundary-controls output{color:#f0ce8c;font-weight:800}.boundary-controls input{width:100%;accent-color:#dfbd77}
+.boundary-status{margin-top:12px;padding:10px;border-radius:9px;background:#10382e;border:1px solid #438b70;color:#aaf0ce;font-size:11px}.boundary-status.reject{background:#3a1b20;border-color:#a85b5b;color:#ffc1b8}
+.boundary-foot{font-size:10px;color:#91a5b8;line-height:1.6;margin:12px 0 0}
+@media(max-width:700px){.boundary-layout{grid-template-columns:1fr}.plot-frame{min-height:230px}.boundary-panel{padding:12px}}
 </style></head><body><main class="shell">
 <header><div><div class="brand">LOCAL <span>MARS</span></div><div class="tag">BUILD · LIVE · THRIVE</div></div><a class="back" href="./index.html">← RETURN TO PLANET</a></header>
-<section class="hero"><div class="hero-content"><div class="eyebrow">NEXT GENERATION SPACE COLONY · PROJECT A’ARU</div><h1>A’ARU <span>1.0</span></h1><div class="eyebrow">A NEW HOME FOR HUMANITY ON MARS</div><p>A rotating-ring settlement concept combining habitat sectors, controlled agriculture, research facilities and resilient energy systems.</p><a class="cta" href="#systems">EXPLORE COLONY SYSTEMS　↓</a></div></section>
-<section class="stats" aria-label="Concept overview"><div class="stat"><small>PROJECT STATUS</small><b>CONCEPT</b></div><div class="stat"><small>LOCATION</small><b>MARS · M-003</b></div><div class="stat"><small>DESIGN CLASS</small><b>RING HABITAT</b></div><div class="stat"><small>POWER CONCEPT</small><b>SOLAR + STORAGE</b></div></section>
-<h2 id="systems">COLONY SYSTEMS</h2><section class="grid">
+<section class="hero"><div class="hero-content"><div class="eyebrow">NEXT GENERATION SPACE COLONY · PROJECT A’ARU · M-001</div><h1>A’ARU <span>1.1</span></h1><div class="eyebrow">A NEW HOME FOR HUMANITY ON MARS</div><p>A rotating-ring settlement concept combining habitat sectors, controlled agriculture, research facilities and resilient energy systems.</p><a class="cta" href="#systems">EXPLORE COLONY SYSTEMS　↓</a></div></section>
+<section class="stats" aria-label="Concept overview"><div class="stat"><small>PROJECT STATUS</small><b>CONCEPT</b></div><div class="stat"><small>LOCATION</small><b>MARS · M-001</b></div><div class="stat"><small>DESIGN CLASS</small><b>RING HABITAT</b></div><div class="stat"><small>POWER CONCEPT</small><b>SOLAR + STORAGE</b></div></section>
+
+<section class="boundary-panel" id="m001Boundary">
+ <div class="boundary-head"><div><div class="eyebrow">SITE CONTROL · M-001 ONLY</div><h2>LAND BOUNDARY CONTROL</h2></div><span class="boundary-tag">● SINGLE-PARCEL MODE</span></div>
+ <div class="boundary-layout">
+  <div class="plot-frame" id="plotFrame" aria-label="Top-down schematic of the M-001 parcel boundary">
+   <span class="plot-label n">NORTH LIMIT</span><span class="plot-label s">SOUTH LIMIT</span>
+   <div class="plot-ring" id="plotRing"></div>
+  </div>
+  <div class="boundary-controls">
+   <h3>A’ARU SITE PLACEMENT</h3>
+   <label for="footprintSize">Colony footprint <output id="footprintValue">64%</output></label>
+   <input id="footprintSize" type="range" min="20" max="76" step="1" value="64">
+   <label for="siteX">Horizontal position <output id="siteXValue">50%</output></label>
+   <input id="siteX" type="range" min="0" max="100" step="1" value="50">
+   <label for="siteY">Vertical position <output id="siteYValue">50%</output></label>
+   <input id="siteY" type="range" min="0" max="100" step="1" value="50">
+   <div class="boundary-status" id="boundaryStatus" role="status" aria-live="polite">WITHIN BOUNDARY · M-001</div>
+   <p class="boundary-foot">Placement is checked against a normalized 0–100% parcel grid. The parcel's surveyed dimensions and geographic coordinates have not yet been supplied, so this is a relative site plan—not a cadastral or surveyed map.</p>
+  </div>
+ </div>
+ <p class="boundary-foot"><strong>Enforced rule:</strong> the entire A’ARU footprint must remain inside M-001. No part of the colony may occupy another parcel. If a proposed position crosses the boundary, the model rejects it.</p>
+</section>
+<script>
+(()=> {
+ const size=document.getElementById('footprintSize'), x=document.getElementById('siteX'), y=document.getElementById('siteY');
+ if(!size||size.dataset.boundaryReady)return;size.dataset.boundaryReady='1';
+ const ring=document.getElementById('plotRing'),status=document.getElementById('boundaryStatus');
+ function update(){
+  const s=Number(size.value),px=Number(x.value),py=Number(y.value),half=s/2;
+  document.getElementById('footprintValue').textContent=s+'%';
+  document.getElementById('siteXValue').textContent=px+'%';
+  document.getElementById('siteYValue').textContent=py+'%';
+  ring.style.width=s+'%';ring.style.height=s+'%';ring.style.left=px+'%';ring.style.top=py+'%';
+  const inside=px-half>=0&&px+half<=100&&py-half>=0&&py+half<=100;
+  status.classList.toggle('reject',!inside);
+  status.textContent=inside?'WITHIN BOUNDARY · M-001':'REJECTED · OUTSIDE M-001 — MOVE THE SITE INWARD';
+  ring.style.opacity=inside?'1':'.38';
+  ring.style.filter=inside?'none':'grayscale(1)';
+  ring.setAttribute('aria-label',inside?'A’ARU footprint inside M-001':'Proposed footprint outside M-001');
+ }
+ [size,x,y].forEach(el=>el.addEventListener('input',update));update();
+})();
+</script>
+\n<h2 id="systems">COLONY SYSTEMS</h2><section class="grid">
 <article class="tile"><div class="symbol">🏡</div><b>Habitable Environment</b><p>Pressurized living sectors, environmental monitoring and protected green spaces.</p></article>
 <article class="tile"><div class="symbol">🌱</div><b>Food Production</b><p>Hydroponics, controlled-environment agriculture and water recycling concepts.</p></article>
 <article class="tile"><div class="symbol">🧪</div><b>Research & Health</b><p>Medical support, materials science, life-support testing and crew wellbeing.</p></article>
@@ -102,5 +160,5 @@ footer{padding:20px 0;color:#7e91a4;font-size:10px;text-align:center}
 </script>
 
 <div class="notice"><strong>SIMULATION / CONCEPT NOTICE</strong> — A’ARU 1.1 is a fictional colony operations simulation within LOCAL MARS. This page does not connect to real satellites, atmospheric engineering equipment, spacecraft, or a physical colony. Displayed project labels are design information, not live telemetry.</div>
-<footer>LOCAL MARS · A’ARU 1.1 · COLONY OPERATIONS SIMULATION</footer>
+<footer>LOCAL MARS · A’ARU 1.1 · M-001 BOUNDARY-LOCKED COLONY SIMULATION</footer>
 </main></body></html>
