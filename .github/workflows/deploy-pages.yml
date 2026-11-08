@@ -60,7 +60,7 @@ jobs:
 
           required = [
               "index.html", "dual-ai.html", "download-ai.html", "install.html", "member-workspace.js", "solar-system.js", "digital-assets.js", "city.html", "underground.html", "mission-trainer.html", "news.html",
-              "m003-base.html", "m003-dimension-gate.html", "chronos-time-lab.html", "m003-ibm5100.html", "top-secret-demo.html",
+              "m003-base.html", "atmosphere-lab.html", "m003-dimension-gate.html", "chronos-time-lab.html", "m003-ibm5100.html", "top-secret-demo.html",
               "civilization.html", "country.html", "i18n.js", "premium-ui.css",
               "world-server.js", "nasa-data.js", "multiverse.js", "easy-play.js", "chat.js",
               "manifest.webmanifest", "sw.js", "icon.svg",
@@ -90,6 +90,13 @@ jobs:
           assert dual_ai_scripts and "functions.invoke" in dual_ai_code, "Dual AI client integration missing"
           assert "XAI_API_KEY" not in dual_ai and "OPENAI_API_KEY" not in dual_ai, "Provider API keys must never appear in browser code"
           Path("/tmp/local-mars-dual-ai.js").write_text(dual_ai_code, encoding="utf-8")
+          atmosphere = Path("atmosphere-lab.html").read_text(encoding="utf-8")
+          assert "LIFE SUPPORT HABITAT SIMULATOR" in atmosphere and "SIMULATION BUILD 1.0" in atmosphere, "M-003 atmosphere simulator page missing"
+          assert "START LIFE SUPPORT" in atmosphere and "CO₂ SCRUBBER" in atmosphere and "SAFETY ALERT" in atmosphere, "life-support controls or safety telemetry missing"
+          assert "SIMULATION ONLY" in atmosphere and "not a method for making Mars" in atmosphere, "scientific safety boundary missing"
+          atmosphere_script = re.search(r"<script>(.*?)</script>", atmosphere, re.S)
+          assert atmosphere_script, "atmosphere simulator script missing"
+          Path("/tmp/mars-atmosphere.js").write_text(atmosphere_script.group(1), encoding="utf-8")
           dimension_gate = Path("m003-dimension-gate.html").read_text(encoding="utf-8")
           manifest = json.loads(Path("manifest.webmanifest").read_text(encoding="utf-8"))
           sw = Path("sw.js").read_text(encoding="utf-8")
@@ -151,6 +158,7 @@ jobs:
           assert "from 'three/addons/controls/OrbitControls.js'" in html, "OrbitControls import missing"
           assert "location.href='./city.html'" in html and "location.href='./underground.html'" in html, "main navigation target missing"
           assert 'href="./m003-dimension-gate.html"' in Path("m003-base.html").read_text(encoding="utf-8"), "M-003 Dimension Gate link missing"
+          assert 'href="./atmosphere-lab.html"' in Path("m003-base.html").read_text(encoding="utf-8"), "M-003 atmosphere lab entry missing"
           assert "PROJECT DIMENSION GATE" in dimension_gate, "Dimension Gate page content missing"
           chronos = Path("chronos-time-lab.html").read_text(encoding="utf-8")
           assert "CHRONOS Time Research Lab" in chronos and "OWNER VERIFIED" in chronos, "M-003 CHRONOS research page missing"
@@ -161,6 +169,7 @@ jobs:
           assert "runAPL" in ibm5100 and "SAVE TO CLOUD" in ibm5100 and "m003_ibm5100_programs" in ibm5100, "IBM 5100 APL/cloud archive features missing"
           assert "m003-ibm5100.html" in sw, "IBM 5100 offline cache entry missing"
           assert "chronos-time-lab.html" in sw, "CHRONOS offline cache entry missing"
+          assert "atmosphere-lab.html" in sw, "M-003 atmosphere lab offline cache entry missing"
           assert "Build a Resilient Mars Outpost" in mission, "Mission Trainer content missing"
           assert "EDUCATIONAL SIMULATION" in mission and "NASA is not affiliated" in mission, "Mission Trainer scientific boundary missing"
           assert 'href="./mission-trainer.html"' in html, "Mission Trainer navigation link missing"
@@ -225,6 +234,7 @@ jobs:
           node --check /tmp/mars-city.mjs
           node --check /tmp/mars-underground.js
           node --check /tmp/mars-mission.js
+          node --check /tmp/mars-atmosphere.js
           node --check /tmp/mars-news.js
           node --check /tmp/mars-country.js
           node --check sw.js
@@ -240,7 +250,7 @@ jobs:
       - name: Prepare complete static site
         run: |
           mkdir -p _site
-          cp index.html dual-ai.html download-ai.html install.html city.html country.html underground.html mission-trainer.html news.html m003-base.html m003-dimension-gate.html top-secret-demo.html civilization.html i18n.js premium-ui.css world-server.js nasa-data.js member-workspace.js multiverse.js easy-play.js chat.js digital-assets.js solar-system.js update-manager.js manifest.webmanifest sw.js icon.svg _site/
+          cp index.html dual-ai.html download-ai.html install.html city.html country.html underground.html mission-trainer.html news.html m003-base.html atmosphere-lab.html m003-dimension-gate.html top-secret-demo.html civilization.html i18n.js premium-ui.css world-server.js nasa-data.js member-workspace.js multiverse.js easy-play.js chat.js digital-assets.js solar-system.js update-manager.js manifest.webmanifest sw.js icon.svg _site/
           cp -R locales _site/locales
           cp -R parcels _site/parcels
           touch _site/.nojekyll
@@ -255,6 +265,7 @@ jobs:
           test -s _site/country.html
           test -s _site/mission-trainer.html
           test -s _site/m003-base.html
+          test -s _site/atmosphere-lab.html
           test -s _site/m003-dimension-gate.html
           test -s _site/top-secret-demo.html
           test -s _site/premium-ui.css
