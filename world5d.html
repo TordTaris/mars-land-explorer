@@ -71,10 +71,10 @@ const stars=new THREE.BufferGeometry(),starPos=[];for(let i=0;i<1300;i++){const 
 const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.06;controls.minDistance=1.35;controls.maxDistance=8;controls.enablePan=false;controls.autoRotate=true;controls.autoRotateSpeed=.32;
 const MARS_SOL_HOURS=24.6597;let hours=6,sol=1,playing=true,showPanels=true,last=performance.now();
 const timeRange=document.querySelector('#timeRange'),timeLabel=document.querySelector('#timeLabel'),clock=document.querySelector('#clock');
-function updateTime(){const dayMinutes=Math.floor((hours/MARS_SOL_HOURS)*1440);const h=Math.floor(dayMinutes/60)%24,m=dayMinutes%60;const label=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');timeLabel.textContent=label;clock.textContent='Sol '+String(sol).padStart(3,'0')+' · '+label;timeRange.value=String(hours);sun.position.set(Math.cos(hours/MARS_SOL_HOURS*Math.PI*2)*5,Math.sin((hours/MARS_SOL_HOURS-.25)*Math.PI*2)*2.5,5);document.querySelector('#simState').textContent=playing?'Running':'Paused';}
+function updateTime(){const dayMinutes=Math.floor((hours/MARS_SOL_HOURS)*1440);const h=Math.floor(dayMinutes/60)%24,m=dayMinutes%60;const label=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');timeLabel.textContent=label;clock.textContent='Sol '+String(sol).padStart(3,'0')+' · '+label;timeRange.value=String(hours);planetGroup.rotation.y=hours/MARS_SOL_HOURS*Math.PI*2;document.querySelector('#simState').textContent=playing?'Running':'Paused';}
 timeRange.max=String(MARS_SOL_HOURS);timeRange.step='0.01';timeRange.addEventListener('input',e=>{hours=Number(e.target.value);updateTime()});
 document.querySelector('#pauseTime').addEventListener('click',e=>{playing=!playing;e.currentTarget.textContent=playing?'Pause time':'Resume time';updateTime()});
-document.querySelector('#resetView').addEventListener('click',()=>{controls.reset();camera.position.set(0,0,3.5);planetGroup.rotation.set(0,0,0)});
+document.querySelector('#resetView').addEventListener('click',()=>{controls.reset();camera.position.set(0,0,3.5);updateTime()});
 document.querySelector('#atmosphereToggle').addEventListener('change',e=>atmosphere.visible=e.target.checked);
 document.querySelector('#gridToggle').addEventListener('change',e=>grid.visible=e.target.checked);
 document.querySelector('#markerToggle').addEventListener('change',e=>markers.visible=e.target.checked);
