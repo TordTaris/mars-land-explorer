@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090d13"><title>Mars Data Observatory | LOCAL MARS</title>
+<style>
+:root{color-scheme:dark;--bg:#090d13;--panel:#111923;--line:#263442;--muted:#9aabba;--gold:#e7b85c;--red:#d96b51;--green:#72c69a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0%,#40251c 0,transparent 34%),var(--bg);color:#f2f4f6;font:15px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}
+main{width:min(1040px,100% - 28px);margin:0 auto;padding:24px 0 60px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:26px}.brand{font-weight:800;letter-spacing:.14em;color:var(--gold);font-size:13px}.back{color:#f0c979;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:8px 13px}
+.hero{padding:28px 0 24px;border-bottom:1px solid var(--line)}.eyebrow{color:var(--gold);letter-spacing:.16em;font-size:11px;font-weight:800}.hero h1{font-size:clamp(30px,6vw,48px);line-height:1.06;margin:10px 0}.hero p{color:var(--muted);max-width:720px;margin:0}
+.status{display:inline-flex;align-items:center;gap:8px;margin-top:16px;color:var(--green);font-size:12px;font-weight:700}.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 12px #72c69a}
+.section{margin-top:26px}.section h2{font-size:18px;margin:0 0 12px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}.card{background:linear-gradient(145deg,#151f2a,#0e151e);border:1px solid var(--line);border-radius:15px;padding:16px;min-width:0}.card h3{margin:0 0 6px;font-size:16px}.card p{color:var(--muted);font-size:13px;margin:0 0 12px}.meta{font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:.08em}.card a,.result a{color:#f0c979;text-decoration:none}.card a:hover,.result a:hover{text-decoration:underline}
+.search{display:flex;gap:8px;flex-wrap:wrap}.search input{flex:1;min-width:190px;background:#080d13;border:1px solid #344352;border-radius:10px;padding:12px;color:#fff;font:inherit}.search button{background:var(--gold);color:#17130b;border:0;border-radius:10px;padding:0 18px;font-weight:800;min-height:44px}.hint,.foot{color:var(--muted);font-size:12px}.results{display:grid;gap:10px;margin-top:14px}.result{border:1px solid var(--line);border-radius:12px;padding:13px;background:#0e151e;overflow-wrap:anywhere}.result strong{display:block;margin-bottom:5px}.result pre{white-space:pre-wrap;overflow-wrap:anywhere;color:#b9c6d2;font-size:11px;max-height:190px;overflow:auto;margin:10px 0 0}.pill{display:inline-block;border:1px solid #345044;color:var(--green);border-radius:999px;padding:2px 8px;font-size:10px;margin-bottom:7px}.warning{border-left:3px solid var(--gold);padding:10px 13px;background:#17170f;color:#d5c9a8;font-size:12px;margin-top:14px}
+@media(max-width:560px){main{width:calc(100% - 22px);padding-top:15px}.top{margin-bottom:16px}.hero{padding-top:18px}.search button{width:100%}}
+</style></head>
+<body><main>
+<div class="top"><div class="brand">LOCAL MARS / SCIENCE NETWORK</div><a class="back" href="./index.html">← Planet Explorer</a></div>
+<header class="hero"><div class="eyebrow">PLANETARY DATA INTEGRATION</div><h1>Mars Data Observatory</h1><p>Connect LOCAL MARS to published planetary-science archives. Discover original products, inspect provenance and open authoritative data repositories. Archive observations are not live spacecraft telemetry.</p><div class="status"><span class="dot"></span> PUBLIC ARCHIVE CONNECTOR READY</div></header>
+<section class="section"><h2>Verified source catalog</h2><div class="grid">
+<article class="card"><div class="meta">Global topography</div><h3>MGS / MOLA MEGDR</h3><p>Planet-wide elevation, radius, areoid and observation-count grids. Global products at 4, 16, 32 and 64/128 pixels per degree (higher resolutions are tiled).</p><a href="https://pds-geosciences.wustl.edu/missions/mgs/megdr.html" target="_blank" rel="noopener">Open PDS archive ↗</a></article>
+<article class="card"><div class="meta">Thermal imaging</div><h3>Mars Odyssey / THEMIS</h3><p>Day and night infrared global mosaics, including listed 100 m and 230 m products. Useful for surface context, not proof of water or habitability.</p><a href="https://www.mars.asu.edu/data/" target="_blank" rel="noopener">Open ASU data catalog ↗</a></article>
+<article class="card"><div class="meta">Stereo imaging</div><h3>Mars Express / HRSC</h3><p>Radiometrically calibrated and map-projected image products, with footprints and geometry metadata. Coverage varies by orbit and mission phase.</p><a href="https://pds-geosciences.wustl.edu/missions/mars_express/hrsc.htm" target="_blank" rel="noopener">Open PDS archive ↗</a></article>
+<article class="card"><div class="meta">High-resolution & subsurface</div><h3>MRO / CTX · HiRISE · SHARAD</h3><p>Search targeted orbital image, radar and spectral products by region. Never treat inferred subsurface ice as confirmed without product-level evidence.</p><a href="https://pds-geosciences.wustl.edu/missions/mro/" target="_blank" rel="noopener">Open MRO archive ↗</a></article>
+</div></section>
+<section class="section"><h2>Search NASA Planetary Data System</h2><p class="hint">This search requests product metadata from the official PDS Search API. Results depend on archive indexing and network/CORS availability. Try MOLA, HRSC, THEMIS, CTX or SHARAD.</p>
+<form class="search" id="searchForm"><input id="query" value="MOLA" maxlength="80" aria-label="Archive keyword" placeholder="Instrument, mission or keyword"><button id="searchBtn" type="submit">Search archive</button></form>
+<div id="searchState" class="hint" role="status" aria-live="polite">No query sent yet.</div><div id="results" class="results"></div>
+<div class="warning">Data integrity rule: every result must retain its original product identifier, mission/instrument, acquisition time, coordinate reference, processing level and uncertainty where supplied. This page currently discovers metadata; it does not copy large raster files into LOCAL MARS or alter the production database.</div>
+</section>
+<section class="section"><h2>LOCAL MARS integration pipeline</h2><div class="grid">
+<article class="card"><div class="meta">Stage 01</div><h3>Discover</h3><p>Search PDS and mission archives; record product identifiers and archive links.</p></article>
+<article class="card"><div class="meta">Stage 02</div><h3>Validate</h3><p>Check labels, coordinate systems, map projection, units, processing level, quality flags and license.</p></article>
+<article class="card"><div class="meta">Stage 03</div><h3>Normalize</h3><p>Convert supported footprints to a common Mars GIS reference while preserving original metadata and provenance.</p></article>
+<article class="card"><div class="meta">Stage 04</div><h3>Publish</h3><p>Serve approved derived layers to the LOCAL MARS map with source citations and uncertainty overlays.</p></article>
+</div></section>
+<p class="foot">Sources: NASA Planetary Data System (PDS), PDS Geosciences Node, Arizona State University THEMIS. Archive records may be historical; timestamps and product versions must be shown per item.</p>
+</main><script src="./mars-data.js" defer></script></body></html>
