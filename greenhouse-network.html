@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#071321"><meta name="description" content="LOCAL MARS Global Greenhouse Network — authenticated live registry and simulation archive.">
+<title>LOCAL MARS | Global Greenhouse Network</title>
+<style>
+:root{color-scheme:dark;--bg:#050b14;--panel:#0d1b2b;--panel2:#12263b;--line:#49627a;--gold:#dfbd7d;--cyan:#72dce9;--muted:#9eb1c5;--green:#8de4bd;--orange:#e7b66e}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#51372c 0,#14283d 44%,#050b14 85%);color:#f5f0e7;font:14px system-ui,sans-serif;min-height:100vh}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px clamp(14px,4vw,36px);border-bottom:1px solid #c5a56b66;background:#071321e8;position:sticky;top:0;z-index:5;backdrop-filter:blur(14px)}
+.brand{font-weight:900;letter-spacing:1.6px}.brand b{color:var(--gold)}a{color:var(--cyan);text-decoration:none}button,input,select{font:inherit}
+button{cursor:pointer;border:1px solid #b99a6370;background:linear-gradient(145deg,#172d43,#0b1929);color:#f4e8d1;border-radius:10px;padding:9px 12px}button.primary{background:linear-gradient(120deg,#e4bd70,#a87c3d);color:#1a1510;font-weight:850}
+main{max-width:1240px;margin:auto;padding:22px clamp(12px,3vw,28px) 48px}
+.eyebrow{color:var(--gold);font-size:10px;letter-spacing:2px;font-weight:900}
+h1{font-size:clamp(26px,4vw,42px);margin:5px 0 8px}.lead{color:var(--muted);line-height:1.6;max-width:780px;margin:0}
+.banner{margin:16px 0;padding:11px 13px;border:1px solid #b88e4e66;border-radius:12px;background:#251f18;color:#f0d8a8;font-size:11px;line-height:1.55}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:15px 0}
+.metric,.card{border:1px solid var(--line);border-radius:14px;background:linear-gradient(145deg,#12263bed,#081625f5);box-shadow:0 12px 30px #0004}
+.metric{padding:13px}.metric small{display:block;color:var(--muted);font-size:9px;letter-spacing:1px}.metric b{display:block;font-size:25px;margin-top:3px;color:#f5e9d1}.metric span{font-size:9px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(280px,.8fr);gap:12px}
+.card{padding:15px}.card h2{margin:0 0 11px;color:var(--gold);font-size:12px;letter-spacing:1.4px}
+.network-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.node{padding:11px 8px;text-align:left;border:1px solid #45627b;border-radius:11px;background:#0a1929;min-width:0}
+.node strong{display:block;font-size:12px}.node small{display:block;color:var(--muted);font-size:9px;margin-top:4px}.node em{display:block;font-style:normal;color:var(--orange);font-size:8px;letter-spacing:.8px;margin-top:7px}
+.node.selected{border-color:var(--gold);box-shadow:inset 0 0 0 1px #dfbd7d66;background:#1b2d41}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.toolbar input,.toolbar select{background:#071321;border:1px solid #49627a;color:#f5f0e7;border-radius:9px;padding:9px 10px;min-width:130px}
+.detail{background:#071523;border:1px solid #405a72;border-radius:11px;padding:13px;min-height:140px}
+.detail h3{margin:0 0 6px;color:var(--gold);font-size:18px}.detail p{color:var(--muted);font-size:11px;line-height:1.6}
+.tag{display:inline-block;padding:5px 8px;border:1px solid #607b91;border-radius:30px;color:var(--cyan);font-size:9px;letter-spacing:.7px}
+.history{display:grid;gap:8px}.run{padding:10px;border:1px solid #344d64;border-radius:10px;background:#091827}.run b{font-size:11px}.run small{display:block;color:var(--muted);font-size:9px;margin-top:4px}
+.status{font-size:10px;color:var(--muted)}.online{color:var(--green)}.error{color:#ffae91}.empty{padding:16px;border:1px dashed #526c83;border-radius:10px;color:var(--muted);font-size:11px;line-height:1.6}
+@media(max-width:760px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.metric{padding:10px}.metric b{font-size:21px}.layout{grid-template-columns:1fr}.network-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.card{padding:12px}}
+@media(max-width:390px){.network-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.brand{font-size:12px}}
+</style>
+</head>
+<body>
+<header><div class="brand">LOCAL <b>MARS</b> <span style="color:#9eb1c5;font-weight:500">/ GREENHOUSE NETWORK</span></div><div style="display:flex;gap:8px;align-items:center"><span id="connection" class="status">CONNECTING</span><a href="./index.html">← Explorer</a></div></header>
+<main>
+<div class="eyebrow">PLANETARY CLIMATE & HABITABILITY DIRECTORATE</div>
+<h1>Global Greenhouse Control Center</h1>
+<p class="lead">A shared, authenticated registry for planned greenhouse nodes and their saved simulation history across LOCAL MARS. The grid below is a registry view, not a geographic map.</p>
+<div class="banner"><b>SIMULATION DATA ONLY.</b> Node registrations are planning records. No greenhouse hardware, environmental sensors, satellite uplink, oxygen production, or planetary climate-control system is connected through this dashboard.</div>
+<section class="metrics">
+<div class="metric"><small>REGISTERED NODES</small><b id="nodeCount">—</b><span>From Supabase registry</span></div>
+<div class="metric"><small>PLANNED</small><b id="plannedCount">—</b><span>Not installed</span></div>
+<div class="metric"><small>SIMULATION RUNS</small><b id="runCount">—</b><span>Saved history records</span></div>
+<div class="metric"><small>REALTIME</small><b id="realtimeState">—</b><span>Database change stream</span></div>
+</section>
+<div class="layout">
+<section class="card">
+<h2>GLOBAL NODE REGISTRY <span class="status" id="registryStatus">Waiting for member session</span></h2>
+<div class="toolbar"><input id="search" type="search" placeholder="Search parcel or region"><select id="statusFilter"><option value="all">All statuses</option><option value="planned">Planned</option><option value="standby">Standby</option><option value="simulating">Simulating</option><option value="maintenance">Maintenance</option><option value="offline">Offline</option></select><button id="refresh" type="button">Refresh</button></div>
+<div id="nodeGrid" class="network-grid"><div class="empty">Sign in to LOCAL MARS in another tab, then return here and refresh.</div></div>
+</section>
+<aside class="card">
+<h2>SELECTED NODE</h2><div id="nodeDetail" class="detail"><span class="tag">NO NODE SELECTED</span><p>Select a registry tile to inspect its saved metadata.</p></div>
+<h2 style="margin-top:16px">LATEST SIMULATION HISTORY</h2><div id="history" class="history"><div class="empty">No simulation records loaded.</div></div>
+</aside>
+</div>
+<p class="status" id="footStatus" style="margin-top:14px">Waiting for Supabase authentication…</p>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(()=>{'use strict';
+const URL='https://tppgfxsdeuujidcjnfdl.supabase.co';
+const KEY='sb_publishable_xQ0_NkSu2TMeIyJnAE94kw_WWQT2T3E';
+const $=id=>document.getElementById(id);
+const db=window.supabase?.createClient(URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+let nodes=[],runs=[],selected=null,channel=null,user=null;
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const date=v=>v?new Intl.DateTimeFormat(undefined,{dateStyle:'medium',timeStyle:'short'}).format(new Date(v)):'—';
+function connection(text,ok=false){$('connection').textContent=text;$('connection').className='status '+(ok?'online':'');}
+function render(){
+ const q=$('search').value.trim().toLowerCase(),f=$('statusFilter').value;
+ const visible=nodes.filter(n=>(f==='all'||n.node_status===f)&&[n.parcel_id,n.node_name,n.region_code].join(' ').toLowerCase().includes(q));
+ $('nodeCount').textContent=nodes.length;$('plannedCount').textContent=nodes.filter(n=>n.node_status==='planned').length;$('runCount').textContent=runs.length;
+ $('nodeGrid').innerHTML=visible.length?visible.map(n=>'<button type="button" class="node '+(selected===n.parcel_id?'selected':'')+'" data-node="'+esc(n.parcel_id)+'"><strong>'+esc(n.parcel_id)+'</strong><small>'+esc(n.node_name)+'</small><em>'+esc(n.node_status.toUpperCase())+'</em></button>').join(''):'<div class="empty" style="grid-column:1/-1">No registry entries match this filter.</div>';
+ $('nodeGrid').querySelectorAll('[data-node]').forEach(b=>b.addEventListener('click',()=>{selected=b.dataset.node;render();}));
+ const n=nodes.find(x=>x.parcel_id===selected);
+ $('nodeDetail').innerHTML=n?'<span class="tag">SIMULATED REGISTRY</span><h3>'+esc(n.parcel_id)+' · '+esc(n.node_name)+'</h3><p><b>Region:</b> '+esc(n.region_code)+'<br><b>Status:</b> '+esc(n.node_status)+'<br><b>Classification:</b> '+esc(n.data_classification)+'<br><b>Created:</b> '+esc(date(n.created_at))+'<br><b>Updated:</b> '+esc(date(n.updated_at))+'</p><p>Configuration metadata: <code>'+esc(JSON.stringify(n.configuration||{}))+'</code></p>':'<span class="tag">NO NODE SELECTED</span><p>Select a registry tile to inspect its saved metadata.</p>';
+ $('history').innerHTML=runs.length?runs.slice(0,8).map(r=>'<div class="run"><b>'+esc(r.run_key)+'</b><small>'+esc(r.parcel_id)+' · '+esc(r.model_version)+' · '+esc(date(r.created_at))+'</small><small>Classification: '+esc(r.data_classification)+'</small></div>').join(''):'<div class="empty">No simulation runs have been saved yet. This is an empty archive, not missing live telemetry.</div>';
+}
+async function load(){
+ if(!db){connection('CLIENT UNAVAILABLE');$('footStatus').textContent='Supabase client failed to load.';return;}
+ const session=await db.auth.getSession();user=session.data.session?.user||null;
+ if(!user){connection('SIGN-IN REQUIRED');$('registryStatus').textContent='Member session required';$('footStatus').innerHTML='Sign in at <a href="./index.html">LOCAL MARS Explorer</a> using the same browser, then return and press Refresh.';return;}
+ connection('AUTHENTICATED · SYNCING',true);$('registryStatus').textContent='Authenticated member session';
+ const [nr,rr]=await Promise.all([
+  db.from('mars_greenhouse_nodes').select('parcel_id,node_name,region_code,node_status,data_classification,configuration,created_at,updated_at').order('parcel_id'),
+  db.from('mars_greenhouse_simulation_runs').select('id,parcel_id,run_key,model_version,data_classification,created_at').order('created_at',{ascending:false}).limit(100)
+ ]);
+ if(nr.error||rr.error){const e=nr.error||rr.error;connection('DATABASE ERROR');$('footStatus').textContent='Could not load greenhouse data: '+e.message+' · Check Data API grants and RLS policies.';return;}
+ nodes=nr.data||[];runs=rr.data||[];if(!selected&&nodes.length)selected=nodes[0].parcel_id;render();
+ $('realtimeState').textContent='READY';$('footStatus').textContent='Supabase database connected · '+nodes.length+' registry rows · '+runs.length+' saved runs · '+new Date().toLocaleString();
+ if(channel)await db.removeChannel(channel);
+ channel=db.channel('global-greenhouse-dashboard')
+ .on('postgres_changes',{event:'*',schema:'public',table:'mars_greenhouse_nodes'},()=>load())
+ .on('postgres_changes',{event:'*',schema:'public',table:'mars_greenhouse_simulation_runs'},()=>load())
+ .subscribe(state=>{if(state==='SUBSCRIBED'){$('realtimeState').textContent='LIVE';connection('REALTIME LIVE',true);}else if(state==='CHANNEL_ERROR'||state==='TIMED_OUT'){$('realtimeState').textContent='RETRYING';}});
+}
+$('refresh').addEventListener('click',load);$('search').addEventListener('input',render);$('statusFilter').addEventListener('change',render);
+db?.auth.onAuthStateChange((_event,session)=>{user=session?.user||null;setTimeout(()=>load(),0);});
+load().catch(e=>{connection('ERROR');$('footStatus').textContent=e.message||String(e);});
+})();
+</script>
+</body></html>
