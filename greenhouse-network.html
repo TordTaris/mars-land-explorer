@@ -99,7 +99,7 @@ async function load(){
  .subscribe(state=>{if(state==='SUBSCRIBED'){$('realtimeState').textContent='LIVE';connection('REALTIME LIVE',true);}else if(state==='CHANNEL_ERROR'||state==='TIMED_OUT'){$('realtimeState').textContent='RETRYING';}});
 }
 $('refresh').addEventListener('click',load);$('search').addEventListener('input',render);$('statusFilter').addEventListener('change',render);
-db?.auth.onAuthStateChange((_event,session)=>{user=session?.user||null;load();});
+db?.auth.onAuthStateChange((_event,session)=>{user=session?.user||null;setTimeout(()=>load(),0);});
 load().catch(e=>{connection('ERROR');$('footStatus').textContent=e.message||String(e);});
 })();
 </script>
