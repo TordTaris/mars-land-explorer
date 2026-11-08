@@ -1057,7 +1057,7 @@ if(activeWorldParcelId==='M-001'){
   const beacon=new THREE.Mesh(new THREE.SphereGeometry(.11,12,8),trimMat);beacon.position.set(x,3.25,.16);cyborgSign.add(beacon);
  }
  const topGlow=new THREE.Mesh(new THREE.BoxGeometry(11.7,.045,.5),trimMat);topGlow.position.set(0,4.2,0);cyborgSign.add(topGlow);
- cyborgSign.position.set(0,0,-Math.min(12,workspaceHalfSide*.35));
+ cyborgSign.position.set(0,0,activeWorldParcelId==='M-001'?Math.min(465,workspaceHalfSide-25):-Math.min(12,workspaceHalfSide*.35));
  cyborgSign.userData={landmark:'CYBORG FUTURE',parcelId:'M-001',decorative:true};
  scene.add(cyborgSign);
 }
@@ -1077,7 +1077,7 @@ for(const x of [-.13,.13]){part(new THREE.CapsuleGeometry(.085,.36,4,8),suit,x,.
 for(const x of [-.34,.34])part(new THREE.CapsuleGeometry(.075,.35,4,8),suit,x,1.02,0);
 const marker=new THREE.Mesh(new THREE.RingGeometry(.42,.52,32),new THREE.MeshBasicMaterial({color:0x62e2e8,side:THREE.DoubleSide}));marker.rotation.x=-Math.PI/2;marker.position.y=.04;scene.add(marker);
 const cells=[],buildings=[],roads=[],nationalFlags=[];for(let ix=0;ix<21;ix++)for(let iz=0;iz<21;iz++){const x=-workspaceHalfSide+(ix+.5)*buildCellSize,z=-workspaceHalfSide+(iz+.5)*buildCellSize;const mesh=new THREE.Mesh(new THREE.PlaneGeometry(buildCellSize*.94,buildCellSize*.94),new THREE.MeshBasicMaterial({color:0x4fc6d0,transparent:true,opacity:0,side:THREE.DoubleSide}));mesh.rotation.x=-Math.PI/2;mesh.position.set(x,.035,z);mesh.userData={x,z,cellX:ix,cellZ:iz,cellSizeMeters:buildCellSize};scene.add(mesh);cells.push(mesh)}
-let selected=null,buildMode=false,roadMode=false,currentLevel=0,yaw=0,camYaw=0,camPitch=.32,distance=activeWorldParcelId==='M-001'?Math.max(700,parcelSideMeters*.78):Math.min(12,Math.max(7,parcelSideMeters*.12)),credits=9000,energy=850;
+let selected=null,buildMode=false,roadMode=false,currentLevel=0,yaw=0,camYaw=0,camPitch=.32,distance=activeWorldParcelId==='M-001'?Math.max(900,parcelSideMeters*.95):Math.min(12,Math.max(7,parcelSideMeters*.12)),credits=9000,energy=850;
 const resources={metal:120,polymer:90,electronics:45};
 const recipes={hab:{credit:1440,metal:24,polymer:18,electronics:4},green:{credit:1170,metal:16,polymer:24,electronics:5},lab:{credit:1710,metal:28,polymer:12,electronics:12},solar:{credit:900,metal:18,polymer:6,electronics:8},hub:{credit:2160,metal:36,polymer:20,electronics:16},tower:{credit:720,metal:14,polymer:4,electronics:10},climate:{credit:1800,metal:32,polymer:28,electronics:24}};
 const buildingNames={hab:"Habitat Dome",green:"Greenhouse",lab:"Research Lab",solar:"Solar Panel",hub:"Command Hub",tower:"Communications Tower",climate:"Climate Control Factory"};
@@ -1359,16 +1359,21 @@ function setMode(v){buildMode=v;roadMode=false;document.querySelector('#walk').c
 document.querySelector('#roadMode').onclick=()=>{roadMode=!roadMode;buildMode=false;cells.forEach(c=>c.material.opacity=roadMode?.12:0);toast(roadMode?'Tap a tile to place a road':'Road mode disabled')};document.querySelector('#level').onchange=e=>{currentLevel=Number(e.target.value);toast('Selected level L'+currentLevel)};document.querySelector('#walk').onclick=()=>setMode(false);document.querySelector('#buildMode').onclick=()=>setMode(true);document.querySelector('#placeFlag').onclick=placeNationalFlag;document.querySelector('#placeFlagHere').onclick=()=>{selected=null;placeNationalFlag();};
 document.querySelectorAll('[data-m]').forEach(b=>{const k=b.dataset.m;b.addEventListener('pointerdown',e=>{e.preventDefault();if(k==='jump'){avatar.position.y=.6;return}keys[k]=true});['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,()=>keys[k]=false))});
 addEventListener('keydown',e=>{const map={w:'forward',ArrowUp:'forward',s:'back',ArrowDown:'back',a:'left',ArrowLeft:'left',d:'right',ArrowRight:'right'};if(map[e.key])keys[map[e.key]]=true});addEventListener('keyup',e=>{const map={w:'forward',ArrowUp:'forward',s:'back',ArrowDown:'back',a:'left',ArrowLeft:'left',d:'right',ArrowRight:'right'};if(map[e.key])keys[map[e.key]]=false});
-document.querySelector('#reset').onclick=()=>{camYaw=0;camPitch=.32;distance=Math.min(12,Math.max(7,parcelSideMeters*.12));toast('Camera reset')};document.querySelector('#home').onclick=()=>location.href='./index.html';
+document.querySelector('#reset').onclick=()=>{camYaw=0;camPitch=.32;distance=activeWorldParcelId==='M-001'?Math.max(900,parcelSideMeters*.95):Math.min(12,Math.max(7,parcelSideMeters*.12));toast('Camera reset')};document.querySelector('#home').onclick=()=>location.href='./index.html';
 function save(showToast=true){const data={currencyVersion:3,credits,resources,climateSystems,climateTelemetry,satelliteNetwork,buildings:buildings.filter(b=>!b.userData.remote&&!b.userData.previewOnly).map(b=>b.userData),roads:roads.filter(b=>!b.userData.remote).map(r=>r.userData),jobs:constructionSites.map(s=>s.data)};localStorage.setItem(citySaveKey,JSON.stringify(data));if(showToast)toast(onlineUser?'Online structures are synchronized. Local scene data saved on this device.':'City saved on this device.')}
 document.querySelector('#save').onclick=()=>save(true);updateWorldParcelContext();connectCityOnline().catch(e=>{console.warn(e);toast('Online membership is not ready: '+(e.message||e));});
 try{const data=JSON.parse(localStorage.getItem(citySaveKey)||'null');if(data){if((Number(data.currencyVersion)||1)<3){const savedVersion=Number(data.currencyVersion)||1;data.credits=savedVersion===2?Math.round(Number(data.credits??17500)/3.5*1.8):Math.round(Number(data.credits??5000)*1.8);data.currencyVersion=3;localStorage.setItem(citySaveKey,JSON.stringify(data));}credits=data.credits??credits;Object.assign(resources,data.resources||{});Object.assign(climateSystems,data.climateSystems||{});Object.assign(climateTelemetry,data.climateTelemetry||{});Object.assign(satelliteNetwork,data.satelliteNetwork||{});(data.buildings||[]).forEach(b=>{const g=makeBuilding(b.type,b.x,b.z,b.level||0);g.userData={...b,level:b.level||0};buildings.push(g)});(data.roads||[]).forEach(r=>addRoad(r.x,r.z,r.level||0));(data.jobs||[]).forEach(j=>{if(j&&Number.isFinite(j.startedAt)&&Number.isFinite(j.durationMs)&&j.durationMs>0&&buildingNames[j.type])createConstructionSite(j)});updateHUD();renderConstructionJobs();updateClimateUI();updateSatelliteUI()}}catch(e){console.warn('Could not restore local construction save',e)}
-// M-001 reserved A’ARU colony preview: visible in the 3D parcel even before a saved build record exists.
-if(activeWorldParcelId==='M-001'&&!buildings.some(b=>b.userData?.type==='aaru')){
- const previewColony=makeBuilding('aaru',0,-4.5,0);
- previewColony.userData={id:'aaru-m001-preview',type:'aaru',x:0,z:-4.5,level:0,worldParcelId:'M-001',previewOnly:true};
- buildings.push(previewColony);
- updateHUD();
+// M-001 A’ARU campus: place the full 639 m concept footprint on the planetary surface, behind the CYBORG FUTURE entry sign.
+if(activeWorldParcelId==='M-001'){
+ const aaruCenterZ=-130,aaruRadius=3.55*90;
+ if(Math.abs(aaruCenterZ)+aaruRadius>workspaceHalfSide){console.warn('A’ARU placement exceeds M-001 boundary; model not moved.');}
+ else{
+  let campus=buildings.find(b=>b.userData?.type==='aaru');
+  if(!campus){campus=makeBuilding('aaru',0,aaruCenterZ,0);buildings.push(campus);}
+  campus.position.set(0,0,aaruCenterZ);
+  campus.userData={...(campus.userData||{}),id:campus.userData?.id||'aaru-m001-campus',type:'aaru',x:0,z:aaruCenterZ,level:0,worldParcelId:'M-001',installedOnSurface:true,previewOnly:false};
+  updateHUD();
+ }
 }
 function makeColonist(color,x,z){const p=new THREE.Group();const body=new THREE.Mesh(new THREE.CapsuleGeometry(.12,.3,4,7),new THREE.MeshStandardMaterial({color}));body.position.y=.32;p.add(body);const head=new THREE.Mesh(new THREE.SphereGeometry(.105,10,8),new THREE.MeshStandardMaterial({color:0xd9b89f}));head.position.y=.58;p.add(head);p.position.set(x,.04,z);scene.add(p);return p}
 const colonists=[makeColonist(0x68c9d8,-1,1),makeColonist(0xe7b46d,1,0),makeColonist(0x8bd49b,0,-1)];document.querySelector('#npcCount').textContent=colonists.length;
