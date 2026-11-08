@@ -14,9 +14,16 @@ async function refresh(){
  if(!S.db)return;
  const [p,a,b,c]=await Promise.all([
   S.db.from('world_parcels').select('id,latitude,longitude,area_sqm,terrain,resource,base_price,sale_price_usd,is_for_sale'),
-  S.db.from('world_claims').select('parcel_id,owner_id,claimed_at'),
-  S.db.from('world_structures').select('id,parcel_id,owner_id,structure_type,level,created_at'),
-  S.db.from('world_events').select('id,event_type,parcel_id,payload,created_at').order('created_at',{ascending:false}).limit(30)
+  (S.user
+   ? S.db.from('world_claims').select('parcel_id,owner_id,claimed_at')
+   : S.db.from('world_claims_public').select('parcel_id,claimed_at')
+      .then(r=>({...r,data:(r.data||[]).map(row=>({...row,owner_id:'__public_claimed__'}))}))),
+  (S.user
+   ? S.db.from('world_structures').select('id,parcel_id,owner_id,structure_type,level,created_at')
+   : S.db.from('world_structures_public').select('id,parcel_id,structure_type,level,created_at')),
+  (S.user
+   ? S.db.from('world_events').select('id,event_type,parcel_id,payload,created_at').order('created_at',{ascending:false}).limit(30)
+   : S.db.from('world_events_public').select('id,event_type,parcel_id,created_at').order('created_at',{ascending:false}).limit(30))
  ]);
  if(p.error && /sale_price_usd|is_for_sale|column/i.test(p.error.message||'')){const legacy=await S.db.from('world_parcels').select('id,latitude,longitude,area_sqm,terrain,resource,base_price');if(!legacy.error)p={data:(legacy.data||[]).map(row=>({...row,sale_price_usd:null,is_for_sale:false})),error:null};}
  const err=p.error||a.error||b.error||c.error;if(err){status(err.message);return {error:err};}
