@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#070b12"><meta name="description" content="A’ARU 1.2 — LOCAL MARS integrated colony masterplan and operations simulation."><title>A’ARU 1.2 | LOCAL MARS</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#070b12"><meta name="description" content="A’ARU 1.3 — LOCAL MARS spatial colony masterplan and utility network simulation."><title>A’ARU 1.3 | LOCAL MARS</title>
 <style>
 :root{color-scheme:dark;--gold:#e6bf72;--gold2:#9b7137;--cyan:#69d9ec;--muted:#9cabbc;--panel:#0b1727;--line:#b58b4c66}
 *{box-sizing:border-box}body{margin:0;background:#050912;color:#f6f0e5;font:14px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}a,button{font:inherit}button,a{touch-action:manipulation}.shell{max-width:1440px;margin:auto;padding:18px clamp(12px,3vw,36px) 30px}
@@ -75,7 +75,132 @@ footer{padding:20px 0;color:#7e91a4;font-size:10px;text-align:center}
  [size,x,y].forEach(el=>el.addEventListener('input',update));update();
 })();
 </script>
-\n<h2 id="systems">COLONY SYSTEMS</h2><section class="grid">
+\n
+<style>
+.a13{margin:28px 0;padding:16px;border:1px solid #c6a36b88;border-radius:18px;background:linear-gradient(145deg,#14243a,#07111e)}
+.a13-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.a13-head h2{margin:2px 0 6px}.a13-sub{font-size:10px;color:#9fb1c2;max-width:780px}
+.a13-layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(230px,.8fr);gap:12px;margin-top:14px}
+.a13-viewport{background:radial-gradient(ellipse at center,#203b50,#07111d 72%);border:1px solid #ffffff20;border-radius:14px;padding:8px;min-width:0}
+.a13-viewport svg{width:100%;height:auto;display:block}
+.a13-zone{cursor:pointer;outline:none}.a13-zone .roof{stroke:#e6c98c;stroke-width:1.4;fill:#a76f49}.a13-zone .wall{stroke:#d7b67d;stroke-width:1;fill:#674b40}.a13-zone:hover .roof,.a13-zone:focus .roof,.a13-zone.active .roof{fill:#56b8c4;stroke:#e4fbff;stroke-width:3}
+.a13-side{display:flex;flex-direction:column;gap:10px}
+.a13-panel{padding:13px;background:#07111e;border:1px solid #ffffff1b;border-radius:12px}
+.a13-panel h3{margin:0 0 8px;color:#f0d7a5;font-size:12px;letter-spacing:1px}
+.a13-panel p{font-size:10px;color:#aebdcb;line-height:1.6;margin:6px 0}
+.a13-zone-list{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.a13-zone-btn,.a13-net-btn{border:1px solid #ffffff22;background:#102338;color:#d8e1e9;border-radius:8px;padding:8px 7px;font-size:10px;text-align:left}
+.a13-zone-btn[aria-pressed=true],.a13-net-btn[aria-pressed=true]{border-color:#67d8e9;background:#123d4b;color:#e4fbff}
+.a13-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:9px;font-size:9px;color:#aebdcb}
+.a13-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;background:#64d6e6}
+.a13-net{fill:none;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;opacity:.85;stroke-dasharray:8 7;animation:a13flow 2.5s linear infinite}
+.a13-net.air{stroke:#67d8e9}.a13-net.water{stroke:#4b9bff}.a13-net.power{stroke:#e8bd62}.a13-net.data{stroke:#b28bfa}
+.a13-net.hidden{display:none}@keyframes a13flow{to{stroke-dashoffset:-30}}
+.a13-key{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.a13-key .a13-net-btn{display:flex;align-items:center;justify-content:space-between}
+.a13-state{font-size:9px;color:#9ee6c4;padding:8px;border:1px solid #438b70;border-radius:8px;background:#10382e}
+.a13-foot{font-size:9px;color:#8ea2b4;line-height:1.6;margin-top:10px}
+@media(max-width:760px){.a13-layout{grid-template-columns:1fr}.a13{padding:12px}.a13-zone-list{grid-template-columns:1fr 1fr}}
+</style>
+<section class="a13" id="aaru13">
+ <div class="a13-head"><div><div class="eyebrow">A’ARU 1.3 · SPATIAL SYSTEMS DESIGN</div><h2>INTERNAL CITY · ISOMETRIC SITE MODEL</h2><p class="a13-sub">Interactive axonometric concept map of the A’ARU campus inside the M-001 boundary. Select a building zone and switch utility overlays to inspect the proposed connections.</p></div><span class="sim-badge">● CONCEPT MODEL</span></div>
+ <div class="a13-layout">
+  <div class="a13-viewport">
+   <svg viewBox="0 0 820 590" role="img" aria-label="Isometric concept model of A’ARU city buildings and utility routes within the M-001 square parcel">
+    <defs><linearGradient id="a13ground" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#28475a"/><stop offset="1" stop-color="#101e30"/></linearGradient><linearGradient id="a13roof" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#e1b979"/><stop offset="1" stop-color="#956344"/></linearGradient></defs>
+    <path d="M410 34 735 205 410 382 85 205Z" fill="url(#a13ground)" stroke="#d6b578" stroke-width="3"/>
+    <path d="M85 205V450L410 574V382Z" fill="#172b3a" stroke="#8e714e" stroke-width="2"/>
+    <path d="M735 205V450L410 574V382Z" fill="#0e1d2b" stroke="#8e714e" stroke-width="2"/>
+    <path d="M410 34V382M85 205 410 382 735 205" stroke="#66899a" stroke-dasharray="5 7" fill="none" opacity=".6"/>
+    <text x="410" y="20" fill="#e6c98c" font-size="12" text-anchor="middle">NORTH · M-001 CONCEPT PARCEL</text>
+    <path d="M410 83 638 205 410 327 182 205Z" fill="#132b3d" stroke="#d5b779" stroke-width="2" stroke-dasharray="7 6"/>
+    <path d="M410 100 602 205 410 310 218 205Z" fill="none" stroke="#d5b779" stroke-width="13" opacity=".22"/>
+    <path d="M410 100 602 205 410 310 218 205Z" fill="none" stroke="#e1b979" stroke-width="2"/>
+    <g id="a13routes">
+     <path class="a13-net air" data-net="air" d="M410 218 410 148 270 205 410 280 550 205 410 148"/>
+     <path class="a13-net water" data-net="water" d="M410 218 340 180 250 225 410 315 570 225 480 180 410 218"/>
+     <path class="a13-net power" data-net="power" d="M410 218 410 118 320 165 500 270 590 220 410 118"/>
+     <path class="a13-net data" data-net="data" d="M410 218 300 160 520 280 300 280 520 160 410 218"/>
+    </g>
+    <g class="a13-zone active" data-zone="hub" tabindex="0" role="button" aria-label="Central command and transport hub">
+     <path class="wall" d="M382 196 410 181 438 196 438 235 410 251 382 235Z"/><path class="roof" d="M382 196 410 180 438 196 410 213Z"/><text x="410" y="267" fill="#f5dfb0" font-size="11" text-anchor="middle">CENTRAL HUB</text>
+    </g>
+    <g class="a13-zone" data-zone="habitat" tabindex="0" role="button" aria-label="Residential habitat district">
+     <path class="wall" d="M270 159 304 141 338 159 338 197 304 216 270 197Z"/><path class="roof" d="M270 159 304 140 338 159 304 178Z"/>
+     <path class="wall" d="M291 215 321 199 351 215 351 246 321 263 291 246Z"/><path class="roof" d="M291 215 321 198 351 215 321 232Z"/>
+     <path class="wall" d="M225 203 250 190 275 203 275 232 250 246 225 232Z"/><path class="roof" d="M225 203 250 189 275 203 250 217Z"/>
+     <text x="286" y="284" fill="#f5dfb0" font-size="11" text-anchor="middle">HABITAT DISTRICT</text>
+    </g>
+    <g class="a13-zone" data-zone="agri" tabindex="0" role="button" aria-label="Agriculture and greenhouse district">
+     <path class="wall" d="M480 153 515 134 550 153 550 190 515 209 480 190Z"/><path class="roof" d="M480 153 515 134 550 153 515 172Z"/>
+     <path class="wall" d="M530 207 562 190 594 207 594 239 562 256 530 239Z"/><path class="roof" d="M530 207 562 189 594 207 562 225Z"/>
+     <path class="wall" d="M458 218 484 204 510 218 510 247 484 261 458 247Z"/><path class="roof" d="M458 218 484 203 510 218 484 233Z"/>
+     <text x="526" y="282" fill="#f5dfb0" font-size="11" text-anchor="middle">GREENHOUSE ZONE</text>
+    </g>
+    <g class="a13-zone" data-zone="medical" tabindex="0" role="button" aria-label="Medical and civic district">
+     <path class="wall" d="M337 93 362 80 387 93 387 122 362 136 337 122Z"/><path class="roof" d="M337 93 362 79 387 93 362 107Z"/>
+     <path class="wall" d="M393 119 416 107 439 119 439 146 416 159 393 146Z"/><path class="roof" d="M393 119 416 106 439 119 416 132Z"/>
+     <text x="388" y="68" fill="#f5dfb0" font-size="10" text-anchor="middle">MEDICAL / CIVIC</text>
+    </g>
+    <g class="a13-zone" data-zone="energy" tabindex="0" role="button" aria-label="Energy generation and storage district">
+     <path class="wall" d="M586 291 614 276 642 291 642 323 614 338 586 323Z"/><path class="roof" d="M586 291 614 275 642 291 614 307Z"/>
+     <path d="M642 278 687 254 712 268 667 293Z" fill="#4c7792" stroke="#a8c5d5"/><path d="M652 299 697 275 722 289 677 314Z" fill="#4c7792" stroke="#a8c5d5"/>
+     <text x="638" y="356" fill="#f5dfb0" font-size="11" text-anchor="middle">ENERGY + STORAGE</text>
+    </g>
+    <g class="a13-zone" data-zone="water" tabindex="0" role="button" aria-label="Water treatment and life support district">
+     <path class="wall" d="M165 292 194 276 223 292 223 324 194 340 165 324Z"/><path class="roof" d="M165 292 194 275 223 292 194 309Z"/>
+     <path class="wall" d="M226 324 249 312 272 324 272 351 249 364 226 351Z"/><path class="roof" d="M226 324 249 311 272 324 249 337Z"/>
+     <text x="220" y="390" fill="#f5dfb0" font-size="10" text-anchor="middle">WATER / LIFE SUPPORT</text>
+    </g>
+    <g class="a13-zone" data-zone="logistics" tabindex="0" role="button" aria-label="Logistics and industrial district">
+     <path class="wall" d="M470 359 501 342 532 359 532 394 501 411 470 394Z"/><path class="roof" d="M470 359 501 341 532 359 501 377Z"/>
+     <path class="wall" d="M535 397 561 383 587 397 587 426 561 440 535 426Z"/><path class="roof" d="M535 397 561 382 587 397 561 412Z"/>
+     <text x="529" y="462" fill="#f5dfb0" font-size="10" text-anchor="middle">LOGISTICS / INDUSTRY</text>
+    </g>
+    <g class="a13-zone" data-zone="shelter" tabindex="0" role="button" aria-label="Emergency shelter district">
+     <path class="wall" d="M290 386 317 371 344 386 344 416 317 431 290 416Z"/><path class="roof" d="M290 386 317 370 344 386 317 402Z"/>
+     <text x="317" y="454" fill="#f5dfb0" font-size="10" text-anchor="middle">EMERGENCY SHELTER</text>
+    </g>
+    <path d="M410 382 410 574M85 450 410 574 735 450" stroke="#d5b779" stroke-width="1" fill="none" opacity=".4"/>
+    <text x="410" y="554" fill="#a8bdca" font-size="10" text-anchor="middle">SOUTH · 1,000 m × 1,000 m SITE ENVELOPE</text>
+   </svg>
+   <div class="a13-legend"><span><i class="a13-dot"></i>Selected district</span><span>Dashed animated lines = conceptual utility routes</span><span>All buildings are schematic placeholders</span></div>
+  </div>
+  <div class="a13-side">
+   <div class="a13-panel"><h3>SELECT A DISTRICT</h3><div class="a13-zone-list" id="a13ZoneList">
+    <button class="a13-zone-btn" data-pick="hub" aria-pressed="true">Central hub</button><button class="a13-zone-btn" data-pick="habitat" aria-pressed="false">Habitat</button><button class="a13-zone-btn" data-pick="agri" aria-pressed="false">Greenhouses</button><button class="a13-zone-btn" data-pick="medical" aria-pressed="false">Medical / civic</button><button class="a13-zone-btn" data-pick="energy" aria-pressed="false">Energy</button><button class="a13-zone-btn" data-pick="water" aria-pressed="false">Water / life support</button><button class="a13-zone-btn" data-pick="logistics" aria-pressed="false">Logistics</button><button class="a13-zone-btn" data-pick="shelter" aria-pressed="false">Emergency</button>
+   </div></div>
+   <div class="a13-panel"><h3 id="a13Title">CENTRAL COMMAND HUB</h3><p id="a13Description">Command, communications, docking coordination and pedestrian transfer links. Designed as the main junction for the settlement's utility and data networks.</p><div class="a13-state" id="a13State">DISTRICT SELECTED · M-001 INTERNAL ZONE</div></div>
+   <div class="a13-panel"><h3>UTILITY NETWORK OVERLAYS</h3><div class="a13-key">
+    <button class="a13-net-btn" data-toggle-net="air" aria-pressed="true">Air loop <span style="color:#67d8e9">●</span></button>
+    <button class="a13-net-btn" data-toggle-net="water" aria-pressed="true">Water loop <span style="color:#4b9bff">●</span></button>
+    <button class="a13-net-btn" data-toggle-net="power" aria-pressed="true">Power grid <span style="color:#e8bd62">●</span></button>
+    <button class="a13-net-btn" data-toggle-net="data" aria-pressed="true">Data / control <span style="color:#b28bfa">●</span></button>
+   </div><p>Overlay visibility only. The routes are conceptual and do not represent installed or pressure-tested infrastructure.</p></div>
+  </div>
+ </div>
+ <p class="a13-foot">Schematic only · not a surveyed engineering drawing. Building positions, footprints, pipe diameters, pressure zones, cable sizing, fire compartments, radiation shielding and accessible evacuation routes require detailed design and validation. Every illustrated district is intended to remain within M-001.</p>
+</section>
+<script>
+(()=>{const root=document.getElementById('aaru13');if(!root||root.dataset.ready)return;root.dataset.ready='1';
+const info={
+hub:['CENTRAL COMMAND HUB','Command, communications, docking coordination and pedestrian transfer links. Designed as the main junction for the settlement’s utility and data networks.'],
+habitat:['RESIDENTIAL HABITAT DISTRICT','Modular residential blocks, shared kitchens, recreation, education and community rooms. Occupancy, privacy, accessibility and pressurized compartment sizing remain to be engineered.'],
+agri:['CONTROLLED AGRICULTURE','Greenhouse modules, hydroponic production, seed storage and nutrient recovery. Crop yield, lighting energy and water demand need a validated mass balance.'],
+medical:['MEDICAL & CIVIC DISTRICT','Clinic, emergency triage, isolation capability, pharmacy and civic services. Clinical equipment and staffing capacity are not yet sized.'],
+energy:['ENERGY GENERATION & STORAGE','Conceptual solar collection, battery storage, power conversion and isolated critical-load distribution. Generation capacity and reserve duration are not yet calculated.'],
+water:['WATER & LIFE-SUPPORT PLANT','Water recovery, purification, quality monitoring, oxygen processing and carbon-dioxide removal. Redundancy and consumables require detailed sizing.'],
+logistics:['LOGISTICS & INDUSTRY','Cargo receiving, maintenance workshops, spares inventory, fabrication and waste sorting. Hazardous processes would need separation and dedicated controls.'],
+shelter:['EMERGENCY REFUGE DISTRICT','Distributed protected refuge, emergency supplies, medical stabilization and independent communications. Shielding and evacuation performance require specialist analysis.']
+};
+function choose(id){if(!info[id])return;root.querySelectorAll('[data-zone]').forEach(n=>n.classList.toggle('active',n.dataset.zone===id));root.querySelectorAll('[data-pick]').forEach(n=>n.setAttribute('aria-pressed',String(n.dataset.pick===id)));document.getElementById('a13Title').textContent=info[id][0];document.getElementById('a13Description').textContent=info[id][1];document.getElementById('a13State').textContent='DISTRICT SELECTED · '+id.toUpperCase()+' · M-001 INTERNAL ZONE';}
+root.querySelectorAll('[data-pick]').forEach(n=>n.addEventListener('click',()=>choose(n.dataset.pick)));
+root.querySelectorAll('[data-zone]').forEach(n=>{n.addEventListener('click',()=>choose(n.dataset.zone));n.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose(n.dataset.zone);}});});
+root.querySelectorAll('[data-toggle-net]').forEach(n=>n.addEventListener('click',()=>{const key=n.dataset.toggleNet,on=n.getAttribute('aria-pressed')!=='true';n.setAttribute('aria-pressed',String(on));root.querySelectorAll('[data-net="'+key+'"]').forEach(p=>p.classList.toggle('hidden',!on));}));
+})();
+</script>
+
+<h2 id="systems">COLONY SYSTEMS</h2><section class="grid">
 <article class="tile"><div class="symbol">🏡</div><b>Habitable Environment</b><p>Pressurized living sectors, environmental monitoring and protected green spaces.</p></article>
 <article class="tile"><div class="symbol">🌱</div><b>Food Production</b><p>Hydroponics, controlled-environment agriculture and water recycling concepts.</p></article>
 <article class="tile"><div class="symbol">🧪</div><b>Research & Health</b><p>Medical support, materials science, life-support testing and crew wellbeing.</p></article>
@@ -96,7 +221,7 @@ footer{padding:20px 0;color:#7e91a4;font-size:10px;text-align:center}
 @media(max-width:700px){.ops-grid{grid-template-columns:1fr}.ops{padding:12px}}
 </style>
 <section class="ops" id="operations">
- <div class="ops-head"><div><div class="eyebrow">A’ARU 1.2 · CONTROL ROOM</div><h2>COLONY OPERATIONS</h2></div><span class="sim-badge">● LOCAL SIMULATION</span></div>
+ <div class="ops-head"><div><div class="eyebrow">A’ARU 1.3 · CONTROL ROOM</div><h2>COLONY OPERATIONS</h2></div><span class="sim-badge">● LOCAL SIMULATION</span></div>
  <div class="ops-grid">
   <div class="control-card">
    <h3>ROTATING HABITAT MODEL</h3>
@@ -246,6 +371,6 @@ footer{padding:20px 0;color:#7e91a4;font-size:10px;text-align:center}
 (()=>{const el=document.getElementById('mpPopulation');if(!el||el.dataset.ready)return;el.dataset.ready='1';const fmt=n=>Math.round(n).toLocaleString('en-US');function render(){const p=Number(el.value);document.getElementById('mpPopulationValue').textContent=fmt(p)+' people';document.getElementById('mpHomes').textContent=fmt(Math.ceil(p/4));document.getElementById('mpLandPerPerson').textContent=fmt(1000000/p)+' m²';document.getElementById('mpHabitatPerPerson').textContent=fmt(260000/p)+' m²';document.getElementById('mpStatus').textContent='SITE ALLOCATION CHECK · 100% OF M-001 ASSIGNED · '+fmt(p)+' PLANNED RESIDENTS';}el.addEventListener('input',render);render();})();
 </script>
 
-<div class="notice"><strong>SIMULATION / CONCEPT NOTICE</strong> — A’ARU 1.2 is a fictional colony masterplan and operations simulation within LOCAL MARS. This page does not connect to real satellites, atmospheric engineering equipment, spacecraft, or a physical colony. Displayed project labels are design information, not live telemetry.</div>
-<footer>LOCAL MARS · A’ARU 1.2 · M-001 BOUNDARY-LOCKED MASTERPLAN SIMULATION</footer>
+<div class="notice"><strong>SIMULATION / CONCEPT NOTICE</strong> — A’ARU 1.3 is a fictional colony spatial masterplan and operations simulation within LOCAL MARS. This page does not connect to real satellites, atmospheric engineering equipment, spacecraft, or a physical colony. Displayed project labels are design information, not live telemetry.</div>
+<footer>LOCAL MARS · A’ARU 1.3 · M-001 BOUNDARY-LOCKED SPATIAL SYSTEMS SIMULATION</footer>
 </main></body></html>
