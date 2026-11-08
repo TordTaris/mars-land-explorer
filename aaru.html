@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#070b12"><meta name="description" content="A’ARU 1.0 — LOCAL MARS orbital colony concept and interactive systems dashboard."><title>A’ARU 1.0 | LOCAL MARS</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#070b12"><meta name="description" content="A’ARU 1.0 — LOCAL MARS orbital colony concept and interactive systems dashboard."><title>A’ARU 1.1 | LOCAL MARS</title>
 <style>
 :root{color-scheme:dark;--gold:#e6bf72;--gold2:#9b7137;--cyan:#69d9ec;--muted:#9cabbc;--panel:#0b1727;--line:#b58b4c66}
 *{box-sizing:border-box}body{margin:0;background:#050912;color:#f6f0e5;font:14px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}a,button{font:inherit}button,a{touch-action:manipulation}.shell{max-width:1440px;margin:auto;padding:18px clamp(12px,3vw,36px) 30px}
@@ -29,7 +29,78 @@ footer{padding:20px 0;color:#7e91a4;font-size:10px;text-align:center}
 <article class="tile"><div class="symbol">🏙️</div><b>Living Sectors</b><p>Modular residential, recreation and community spaces.</p></article>
 <article class="tile"><div class="symbol">🌾</div><b>Agriculture Zone</b><p>Indoor farms designed around crop cycles, water and nutrient loops.</p></article>
 </section>
-<h2>PROJECT PARAMETERS</h2><section class="overview"><div><b style="color:#f4dfb2">A’ARU 1.0 · Initial design brief</b><p>The first release is a navigable LOCAL MARS project page and systems concept. Dimensions, population capacity, rotation rate, radiation shielding and power budgets remain to be engineered and validated before they can be treated as specifications.</p><p>Next engineering work: define ring radius and rpm, estimate floor area, calculate shielding mass, model life-support closure rates, and size the power/storage system.</p></div><div class="specs"><div class="spec"><small>HABITAT FORM</small><b>Rotating torus</b></div><div class="spec"><small>CORE</small><b>Central hub</b></div><div class="spec"><small>FOOD</small><b>Controlled agriculture</b></div><div class="spec"><small>POWER</small><b>Solar + batteries</b></div><div class="spec"><small>SAFETY</small><b>Shielding required</b></div><div class="spec"><small>VALIDATION</small><b>Engineering pending</b></div></div></section>
+<h2>PROJECT PARAMETERS</h2><section class="overview"><div><b style="color:#f4dfb2">A’ARU 1.1 · Initial design brief</b><p>The first release is a navigable LOCAL MARS project page and systems concept. Dimensions, population capacity, rotation rate, radiation shielding and power budgets remain to be engineered and validated before they can be treated as specifications.</p><p>Next engineering work: define ring radius and rpm, estimate floor area, calculate shielding mass, model life-support closure rates, and size the power/storage system.</p></div><div class="specs"><div class="spec"><small>HABITAT FORM</small><b>Rotating torus</b></div><div class="spec"><small>CORE</small><b>Central hub</b></div><div class="spec"><small>FOOD</small><b>Controlled agriculture</b></div><div class="spec"><small>POWER</small><b>Solar + batteries</b></div><div class="spec"><small>SAFETY</small><b>Shielding required</b></div><div class="spec"><small>VALIDATION</small><b>Engineering pending</b></div></div></section>
+
+<style>
+.ops{margin:26px 0;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#10243a,#07111e);padding:16px}
+.ops-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.ops-head h2{margin:0}.sim-badge{font-size:9px;letter-spacing:1px;color:#8de3bd;border:1px solid #3c9c7a88;border-radius:20px;padding:5px 9px}
+.ops-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:12px;margin-top:14px}.control-card{background:#07111e;border:1px solid #ffffff18;border-radius:13px;padding:13px}.control-card h3{font-size:12px;letter-spacing:1px;color:#e9d3a4;margin:0 0 12px}.metric-row{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #ffffff12;font-size:11px}.metric-row:last-child{border:0}.metric-row span{color:#9cabbc}.metric-row b{color:#f5e6c8;text-align:right}.range-line{display:flex;justify-content:space-between;font-size:11px;margin:12px 0 6px}.range-line b{color:var(--gold)}input[type=range]{width:100%;accent-color:#d9b46e}.toggle-list{display:grid;gap:8px}.toggle{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px;background:#0c1b2a;border:1px solid #ffffff12;border-radius:9px;font-size:11px}.toggle button{min-width:76px;border:1px solid #4d8d78;border-radius:20px;background:#123c34;color:#a6f0ce;padding:6px 10px;font-weight:800;font-size:10px}.toggle button.off{border-color:#865e5e;background:#321b20;color:#ffc2b7}.ops-foot{color:#8fa2b4;font-size:10px;margin:12px 0 0}.ops-reset{border:1px solid var(--line);background:#17283a;color:#f1d9a8;border-radius:9px;padding:8px 11px;font-size:10px}
+@media(max-width:700px){.ops-grid{grid-template-columns:1fr}.ops{padding:12px}}
+</style>
+<section class="ops" id="operations">
+ <div class="ops-head"><div><div class="eyebrow">A’ARU 1.1 · CONTROL ROOM</div><h2>COLONY OPERATIONS</h2></div><span class="sim-badge">● LOCAL SIMULATION</span></div>
+ <div class="ops-grid">
+  <div class="control-card">
+   <h3>ROTATING HABITAT MODEL</h3>
+   <div class="range-line"><label for="spinRate">Ring rotation speed</label><b><output id="spinValue">1.0</output> RPM</b></div>
+   <input id="spinRate" type="range" min="0" max="2" step="0.1" value="1" aria-label="Ring rotation speed in revolutions per minute">
+   <div class="metric-row"><span>Assumed ring radius</span><b>120 m (model)</b></div>
+   <div class="metric-row"><span>Estimated artificial gravity</span><b id="gravityValue">0.13 g</b></div>
+   <div class="metric-row"><span>Rotation status</span><b id="rotationStatus">RUNNING · MODEL</b></div>
+   <p class="ops-foot">Gravity estimate uses a simplified centripetal-acceleration model and an assumed 120 m radius. This is not a validated engineering design.</p>
+  </div>
+  <div class="control-card">
+   <h3>SUBSYSTEM CONTROLS</h3>
+   <div class="toggle-list">
+    <div class="toggle"><span>Life-support simulation</span><button type="button" data-system="life" aria-pressed="true">ENABLED</button></div>
+    <div class="toggle"><span>Hydroponics lighting</span><button type="button" data-system="farm" aria-pressed="true">ENABLED</button></div>
+    <div class="toggle"><span>Water recycling model</span><button type="button" data-system="water" aria-pressed="true">ENABLED</button></div>
+    <div class="toggle"><span>Solar array model</span><button type="button" data-system="solar" aria-pressed="true">ENABLED</button></div>
+   </div>
+  </div>
+  <div class="control-card">
+   <h3>SIMULATED SYSTEM SUMMARY</h3>
+   <div class="metric-row"><span>Life support</span><b id="lifeState">NOMINAL · SIMULATED</b></div>
+   <div class="metric-row"><span>Food production</span><b id="farmState">ACTIVE · SIMULATED</b></div>
+   <div class="metric-row"><span>Water loop</span><b id="waterState">ACTIVE · SIMULATED</b></div>
+   <div class="metric-row"><span>Solar contribution</span><b id="solarState">AVAILABLE · SIMULATED</b></div>
+   <div class="metric-row"><span>Model power index</span><b id="powerIndex">100 / 100</b></div>
+  </div>
+  <div class="control-card">
+   <h3>SESSION</h3>
+   <div class="metric-row"><span>Control profile</span><b>DEMO · LOCAL DEVICE</b></div>
+   <div class="metric-row"><span>Data persistence</span><b>SESSION ONLY</b></div>
+   <button type="button" class="ops-reset" id="resetOps">RESET SIMULATION</button>
+   <p class="ops-foot">Controls change this page's demonstration model only. They do not operate real equipment or send commands to spacecraft.</p>
+  </div>
+ </div>
+</section>
+<script>
+(()=> {
+ const radius=120, spin=document.getElementById('spinRate');
+ if(!spin || spin.dataset.ready) return; spin.dataset.ready='1';
+ const defaults={life:true,farm:true,water:true,solar:true}; const state={...defaults};
+ const setText=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value};
+ function render(){
+  const rpm=Number(spin.value),g=radius*Math.pow((2*Math.PI*rpm/60),2)/9.80665;
+  setText('spinValue',rpm.toFixed(1));setText('gravityValue',g.toFixed(2)+' g');
+  setText('rotationStatus',rpm===0?'STOPPED · MODEL':'RUNNING · MODEL');
+  const labels={life:['NOMINAL · SIMULATED','STANDBY · SIMULATED'],farm:['ACTIVE · SIMULATED','PAUSED · SIMULATED'],water:['ACTIVE · SIMULATED','PAUSED · SIMULATED'],solar:['AVAILABLE · SIMULATED','OFFLINE · SIMULATED']};
+  Object.keys(state).forEach(key=>{
+   const button=document.querySelector('[data-system="'+key+'"]');
+   if(button){button.textContent=state[key]?'ENABLED':'DISABLED';button.classList.toggle('off',!state[key]);button.setAttribute('aria-pressed',String(state[key]));}
+   setText(key+'State',labels[key][state[key]?0:1]);
+  });
+  const power=(state.solar?60:0)+(state.life?20:0)+(state.farm?12:0)+(state.water?8:0);
+  setText('powerIndex',power+' / 100');
+ }
+ spin.addEventListener('input',render);
+ document.querySelectorAll('[data-system]').forEach(button=>button.addEventListener('click',()=>{const key=button.dataset.system;state[key]=!state[key];render()}));
+ document.getElementById('resetOps').addEventListener('click',()=>{spin.value='1';Object.assign(state,defaults);render()});
+ render();
+})();
+</script>
+
 <div class="notice"><strong>SIMULATION / CONCEPT NOTICE</strong> — A’ARU 1.0 is a fictional design concept within LOCAL MARS. This page does not connect to real satellites, atmospheric engineering equipment, spacecraft, or a physical colony. Displayed project labels are design information, not live telemetry.</div>
-<footer>LOCAL MARS · A’ARU 1.0 · CONCEPT SYSTEMS PAGE</footer>
+<footer>LOCAL MARS · A’ARU 1.1 · COLONY OPERATIONS SIMULATION</footer>
 </main></body></html>
