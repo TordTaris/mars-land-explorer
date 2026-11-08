@@ -42,8 +42,8 @@ header{position:fixed;z-index:2;top:0;left:0;right:0;padding:14px 16px;display:f
 <div class="metric"><span>Rotation mode</span><b id="rotationState">Interactive</b></div>
 <div class="metric"><span>Scene quality</span><b>Adaptive</b></div>
 <h2>PROJECT ZONE</h2>
-<div class="metric"><span>Parcel</span><b>M-001</b></div><div class="metric"><span>Registered location</span><b>55°S · 160°W</b></div><div class="metric"><span>Recorded structures</span><b>1 · Data Center L1</b></div>
-<div class="sub">The highlighted A’ARU campus is a visual 3D schematic anchored to the registered M-001 parcel coordinates. Its model is illustrative, not a surveyed-scale building model. The database currently confirms one structure record: Data Storage Center, Level 1.</div>
+<div class="metric"><span>Parcel</span><b>M-001</b></div><div class="metric"><span>Registered location</span><b>55°S · 160°W</b></div><div class="metric"><span>Recorded structures</span><b>5 · 3 parcels</b></div>
+<div class="sub">The highlighted A’ARU campus is a visual 3D schematic anchored to the registered M-001 parcel coordinates. Its model is illustrative, not a surveyed-scale building model. All five visible structure markers are based on current database records across M-001, M-003 and M-005. Parcel coordinates are used as anchors; structures sharing a parcel are offset slightly for visibility.</div>
 <div class="controls"><button id="focusM001">Locate M-001 on globe</button><button id="openCity">Open general 3D workspace</button><button id="openM001">Open M-001 / A’ARU</button></div>
 </section>
 <nav class="bottom" aria-label="World navigation"><button id="home">← Planet Explorer</button><button id="toggleSpin" class="active">Auto rotate: ON</button><button id="togglePanel" aria-expanded="false">Show panels</button></nav>
@@ -87,7 +87,43 @@ const markers=new THREE.Group();const markerMat=new THREE.MeshBasicMaterial({col
  const beacon=new THREE.Mesh(new THREE.SphereGeometry(.075,12,8),new THREE.MeshBasicMaterial({color:0x62e9f4}));beacon.position.set(.15,.72,.05);site.add(beacon);
  const halo=new THREE.Mesh(new THREE.TorusGeometry(.34,.025,8,40),new THREE.MeshBasicMaterial({color:0xffc66d}));halo.rotation.x=Math.PI/2;halo.position.y=.015;m001Site.add(halo);
  const labelCanvas=document.createElement('canvas');labelCanvas.width=512;labelCanvas.height=112;const labelCtx=labelCanvas.getContext('2d');labelCtx.fillStyle='rgba(7,15,26,.9)';labelCtx.strokeStyle='#d8b477';labelCtx.lineWidth=5;labelCtx.beginPath();labelCtx.roundRect(5,5,502,102,18);labelCtx.fill();labelCtx.stroke();labelCtx.fillStyle='#f2d59c';labelCtx.font='bold 42px system-ui';labelCtx.textAlign='center';labelCtx.textBaseline='middle';labelCtx.fillText('A’ARU 1.0 · M-001',256,56);const labelTexture=new THREE.CanvasTexture(labelCanvas);labelTexture.colorSpace=THREE.SRGBColorSpace;const siteLabel=new THREE.Sprite(new THREE.SpriteMaterial({map:labelTexture,transparent:true,depthTest:false}));siteLabel.position.set(0,siteScale*2.1,0);siteLabel.scale.set(.19,.042,1);m001Site.add(siteLabel);
+
  planetGroup.add(m001Site);
+
+ // Render every structure currently recorded in public.world_structures.
+ // Coordinates are parcel centers; small local offsets separate co-located records visually.
+ function makeStructureMarker(lat,lon,type,label,index){
+   const normal=new THREE.Vector3(Math.cos(THREE.MathUtils.degToRad(lat))*Math.cos(THREE.MathUtils.degToRad(lon)),Math.sin(THREE.MathUtils.degToRad(lat)),Math.cos(THREE.MathUtils.degToRad(lat))*Math.sin(THREE.MathUtils.degToRad(lon))).normalize();
+   const anchor=new THREE.Group();anchor.position.copy(normal.clone().multiplyScalar(1.014));anchor.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),normal);
+   const local=new THREE.Group();local.scale.setScalar(.009);anchor.add(local);
+   const base=new THREE.Mesh(new THREE.CylinderGeometry(.72,.8,.09,20),new THREE.MeshStandardMaterial({color:0x263c50,metalness:.55,roughness:.4}));base.position.y=.04;local.add(base);
+   const bodyMat=new THREE.MeshStandardMaterial({color:0x6d8295,metalness:.35,roughness:.42});
+   if(type==='ฐานที่อยู่อาศัย'){
+     const hub=new THREE.Mesh(new THREE.CylinderGeometry(.28,.34,.52,16),glassMat);hub.position.y=.34;local.add(hub);
+     for(let i=0;i<3;i++){const pod=new THREE.Mesh(new THREE.SphereGeometry(.2,12,8),bodyMat);pod.scale.set(1,.65,1);pod.position.set(Math.cos(i*2.094)*.55,.19,Math.sin(i*2.094)*.55);local.add(pod);}
+   }else if(type==='ห้องปฏิบัติการ'){
+     const lab=new THREE.Mesh(new THREE.BoxGeometry(.85,.42,.62),bodyMat);lab.position.y=.27;local.add(lab);
+     const roof=new THREE.Mesh(new THREE.BoxGeometry(.48,.12,.42),goldMat);roof.position.set(0,.54,0);local.add(roof);
+   }else if(type==='แผงพลังงานแสงอาทิตย์'){
+     for(let i=0;i<3;i++){const panel=new THREE.Mesh(new THREE.BoxGeometry(.42,.035,.24),new THREE.MeshStandardMaterial({color:0x246d91,metalness:.5,roughness:.25,emissive:0x12364d}));panel.position.set((i-1)*.48,.23,0);panel.rotation.z=-.18;local.add(panel);}
+   }else if(type==='โรงเรือนปลูกพืช'){
+     const greenhouse=new THREE.Mesh(new THREE.BoxGeometry(.9,.35,.7),new THREE.MeshStandardMaterial({color:0x65cbd7,transparent:true,opacity:.72,metalness:.1,roughness:.2}));greenhouse.position.y=.23;local.add(greenhouse);
+     const roof=new THREE.Mesh(new THREE.CylinderGeometry(.49,.49,.9,16,1,true,0,Math.PI),glassMat);roof.rotation.z=Math.PI/2;roof.scale.set(1,.45,1);roof.position.y=.43;local.add(roof);
+   }else{
+     const block=new THREE.Mesh(new THREE.BoxGeometry(.65,.45,.55),bodyMat);block.position.y=.27;local.add(block);
+   }
+   const ring=new THREE.Mesh(new THREE.TorusGeometry(.78,.025,6,32),new THREE.MeshBasicMaterial({color:0x62d9e8}));ring.rotation.x=Math.PI/2;ring.position.y=.10;local.add(ring);
+   const cv=document.createElement('canvas');cv.width=512;cv.height=96;const cx=cv.getContext('2d');cx.fillStyle='rgba(7,15,26,.92)';cx.strokeStyle='#62d9e8';cx.lineWidth=4;cx.beginPath();cx.roundRect(4,4,504,88,14);cx.fill();cx.stroke();cx.fillStyle='#f2f6fb';cx.font='bold 32px system-ui';cx.textAlign='center';cx.textBaseline='middle';cx.fillText(label,256,48);const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;
+   const tag=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false}));tag.position.set(0,.94,0);tag.scale.set(.17,.032,1);anchor.add(tag);
+   // Keep structures on the same parcel visually distinct without changing stored coordinates.
+   const tangent=new THREE.Vector3().crossVectors(normal,new THREE.Vector3(0,1,0)).normalize();if(tangent.lengthSq()>.1)anchor.position.add(tangent.multiplyScalar((index-1)*.0008));
+   planetGroup.add(anchor);
+ }
+ makeStructureMarker(3,-26,'ห้องปฏิบัติการ','M-003 · LAB',0);
+ makeStructureMarker(3,-26,'ฐานที่อยู่อาศัย','M-003 · HABITAT',1);
+ makeStructureMarker(3,-26,'แผงพลังงานแสงอาทิตย์','M-003 · SOLAR',2);
+ makeStructureMarker(-49,108,'โรงเรือนปลูกพืช','M-005 · GREENHOUSE',0);
+
 
 const stars=new THREE.BufferGeometry(),starPos=[];for(let i=0;i<1300;i++){const r=12+Math.random()*28,a=Math.random()*Math.PI*2,b=Math.acos(2*Math.random()-1);starPos.push(r*Math.sin(b)*Math.cos(a),r*Math.cos(b),r*Math.sin(b)*Math.sin(a));}stars.setAttribute('position',new THREE.Float32BufferAttribute(starPos,3));scene.add(new THREE.Points(stars,new THREE.PointsMaterial({color:0xd8e4f4,size:.035,transparent:true,opacity:.8})));
 const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.06;controls.minDistance=1.35;controls.maxDistance=8;controls.enablePan=false;controls.autoRotate=true;controls.autoRotateSpeed=.32;
