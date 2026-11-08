@@ -31,7 +31,7 @@ footer{padding:20px 0;color:#7e91a4;font-size:10px;text-align:center}
 </style></head><body><main class="shell">
 <header><div><div class="brand">LOCAL <span>MARS</span></div><div class="tag">BUILD · LIVE · THRIVE</div></div><a class="back" href="./index.html">← RETURN TO PLANET</a></header>
 <section class="hero"><div class="hero-content"><div class="eyebrow">NEXT GENERATION SPACE COLONY · PROJECT A’ARU · M-001</div><h1>A’ARU <span>1.1</span></h1><div class="eyebrow">A NEW HOME FOR HUMANITY ON MARS</div><p>A rotating-ring settlement concept combining habitat sectors, controlled agriculture, research facilities and resilient energy systems.</p><a class="cta" href="#systems">EXPLORE COLONY SYSTEMS　↓</a></div></section>
-<section class="stats" aria-label="Concept overview"><div class="stat"><small>PROJECT STATUS</small><b>CONCEPT</b></div><div class="stat"><small>LOCATION</small><b>MARS · M-001</b></div><div class="stat"><small>DESIGN CLASS</small><b>RING HABITAT</b></div><div class="stat"><small>POWER CONCEPT</small><b>SOLAR + STORAGE</b></div></section>
+<section class="stats" aria-label="Concept overview"><div class="stat"><small>POPULATION TARGET</small><b>10,000</b></div><div class="stat"><small>M-001 SITE</small><b>1 km²</b></div><div class="stat"><small>RING RADIUS</small><b>245 m</b></div><div class="stat"><small>DESIGN STATUS</small><b>CONCEPT</b></div></section>
 
 <section class="boundary-panel" id="m001Boundary">
  <div class="boundary-head"><div><div class="eyebrow">SITE CONTROL · M-001 ONLY</div><h2>LAND BOUNDARY CONTROL</h2></div><span class="boundary-tag">● SINGLE-PARCEL MODE</span></div>
@@ -49,7 +49,7 @@ footer{padding:20px 0;color:#7e91a4;font-size:10px;text-align:center}
    <label for="siteY">Vertical position <output id="siteYValue">50%</output></label>
    <input id="siteY" type="range" min="0" max="100" step="1" value="50">
    <div class="boundary-status" id="boundaryStatus" role="status" aria-live="polite">WITHIN BOUNDARY · M-001</div>
-   <p class="boundary-foot">Placement is checked against a normalized 0–100% parcel grid. The parcel's surveyed dimensions and geographic coordinates have not yet been supplied, so this is a relative site plan—not a cadastral or surveyed map.</p>
+   <p class="boundary-foot">Placement is checked against a normalized 0–100% parcel grid. The parcel's surveyed dimensions and geographic coordinates have not yet been supplied, so this is a relative site plan—not a cadastral or surveyed map. M-001 is currently configured as a 1,000 m × 1,000 m concept parcel; the 64% reserved footprint represents a 640 m × 640 m placement zone.</p>
   </div>
  </div>
  <p class="boundary-foot"><strong>Enforced rule:</strong> the entire A’ARU footprint must remain inside M-001. No part of the colony may occupy another parcel. If a proposed position crosses the boundary, the model rejects it.</p>
@@ -87,7 +87,7 @@ footer{padding:20px 0;color:#7e91a4;font-size:10px;text-align:center}
 <article class="tile"><div class="symbol">🏙️</div><b>Living Sectors</b><p>Modular residential, recreation and community spaces.</p></article>
 <article class="tile"><div class="symbol">🌾</div><b>Agriculture Zone</b><p>Indoor farms designed around crop cycles, water and nutrient loops.</p></article>
 </section>
-<h2>PROJECT PARAMETERS</h2><section class="overview"><div><b style="color:#f4dfb2">A’ARU 1.1 · Initial design brief</b><p>The first release is a navigable LOCAL MARS project page and systems concept. Dimensions, population capacity, rotation rate, radiation shielding and power budgets remain to be engineered and validated before they can be treated as specifications.</p><p>Next engineering work: define ring radius and rpm, estimate floor area, calculate shielding mass, model life-support closure rates, and size the power/storage system.</p></div><div class="specs"><div class="spec"><small>HABITAT FORM</small><b>Rotating torus</b></div><div class="spec"><small>CORE</small><b>Central hub</b></div><div class="spec"><small>FOOD</small><b>Controlled agriculture</b></div><div class="spec"><small>POWER</small><b>Solar + batteries</b></div><div class="spec"><small>SAFETY</small><b>Shielding required</b></div><div class="spec"><small>VALIDATION</small><b>Engineering pending</b></div></div></section>
+<h2>PROJECT PARAMETERS</h2><section class="overview"><div><b style="color:#f4dfb2">A’ARU 1.1 · Initial design brief</b><p>A’ARU 1.1 is being resized around a 10,000-person planning target on the expanded 1 km × 1 km M-001 site. The 245 m ring radius and 639 m visual base envelope are concept dimensions; habitable floor area, evacuation, shielding, structural loads, life-support closure and power budgets still require detailed engineering and independent validation.</p><p>Next engineering work: calculate usable residential and agricultural floor area, validate rotation comfort and structural loads, calculate shielding mass, model life-support closure rates, and size redundant power and emergency systems.</p></div><div class="specs"><div class="spec"><small>POPULATION TARGET</small><b>10,000 people</b></div><div class="spec"><small>M-001 PARCEL</small><b>1,000 m × 1,000 m</b></div><div class="spec"><small>RING RADIUS</small><b>245 m · concept</b></div><div class="spec"><small>BASE ENVELOPE</small><b>639 m diameter</b></div><div class="spec"><small>HABITAT FORM</small><b>Rotating torus</b></div><div class="spec"><small>CORE</small><b>Central hub</b></div><div class="spec"><small>FOOD</small><b>Controlled agriculture</b></div><div class="spec"><small>POWER</small><b>Solar + batteries</b></div><div class="spec"><small>SAFETY</small><b>Shielding required</b></div><div class="spec"><small>VALIDATION</small><b>Engineering pending</b></div></div></section>
 
 <style>
 .ops{margin:26px 0;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#10243a,#07111e);padding:16px}
@@ -102,10 +102,10 @@ footer{padding:20px 0;color:#7e91a4;font-size:10px;text-align:center}
    <h3>ROTATING HABITAT MODEL</h3>
    <div class="range-line"><label for="spinRate">Ring rotation speed</label><b><output id="spinValue">1.0</output> RPM</b></div>
    <input id="spinRate" type="range" min="0" max="2" step="0.1" value="1" aria-label="Ring rotation speed in revolutions per minute">
-   <div class="metric-row"><span>Assumed ring radius</span><b>120 m (model)</b></div>
+   <div class="metric-row"><span>Assumed ring radius</span><b>245 m (concept)</b></div>
    <div class="metric-row"><span>Estimated artificial gravity</span><b id="gravityValue">0.13 g</b></div>
    <div class="metric-row"><span>Rotation status</span><b id="rotationStatus">RUNNING · MODEL</b></div>
-   <p class="ops-foot">Gravity estimate uses a simplified centripetal-acceleration model and an assumed 120 m radius. This is not a validated engineering design.</p>
+   <p class="ops-foot">Gravity estimate uses a simplified centripetal-acceleration model and a 245 m concept radius. This is not a validated engineering design or a demonstrated safe rotation profile.</p>
   </div>
   <div class="control-card">
    <h3>SUBSYSTEM CONTROLS</h3>
@@ -135,7 +135,7 @@ footer{padding:20px 0;color:#7e91a4;font-size:10px;text-align:center}
 </section>
 <script>
 (()=> {
- const radius=120, spin=document.getElementById('spinRate');
+ const radius=245, spin=document.getElementById('spinRate');
  if(!spin || spin.dataset.ready) return; spin.dataset.ready='1';
  const defaults={life:true,farm:true,water:true,solar:true}; const state={...defaults};
  const setText=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value};
