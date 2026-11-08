@@ -76,7 +76,6 @@ const markers=new THREE.Group();const markerMat=new THREE.MeshBasicMaterial({col
  const siteScale=.018,site=new THREE.Group();site.scale.setScalar(siteScale);m001Site.add(site);
  const goldMat=new THREE.MeshStandardMaterial({color:0xd8b477,metalness:.72,roughness:.28}),glassMat=new THREE.MeshStandardMaterial({color:0x65cbd7,metalness:.2,roughness:.2,transparent:true,opacity:.82});
  const plinth=new THREE.Mesh(new THREE.CylinderGeometry(1.15,1.22,.10,32),new THREE.MeshStandardMaterial({color:0x263c50,metalness:.65,roughness:.35}));plinth.position.y=.04;site.add(plinth);
- const siteRing=new THREE.Mesh(new THREE.TorusGeometry(1.02,.035,8,48),new THREE.MeshBasicMaterial({color:0x62d9e8}));siteRing.rotation.x=Math.PI/2;siteRing.position.y=.105;site.add(siteRing);
  const core=new THREE.Mesh(new THREE.CylinderGeometry(.28,.34,.72,20),new THREE.MeshStandardMaterial({color:0xdce5e8,metalness:.35,roughness:.35}));core.position.y=.48;site.add(core);
  const coreDome=new THREE.Mesh(new THREE.SphereGeometry(.42,20,14,0,Math.PI*2,0,Math.PI/2),glassMat);coreDome.position.y=.83;site.add(coreDome);
  for(let i=0;i<6;i++){const a=i*Math.PI/3,x=Math.cos(a)*.78,z=Math.sin(a)*.78,pod=new THREE.Group();pod.position.set(x,.12,z);const foot=new THREE.Mesh(new THREE.CylinderGeometry(.20,.23,.12,14),goldMat);foot.position.y=.06;pod.add(foot);const dome=new THREE.Mesh(new THREE.SphereGeometry(.19,14,10,0,Math.PI*2,0,Math.PI/2),glassMat);dome.position.y=.12;pod.add(dome);site.add(pod);}
@@ -85,7 +84,6 @@ const markers=new THREE.Group();const markerMat=new THREE.MeshBasicMaterial({col
  for(let i=0;i<3;i++){const rack=new THREE.Mesh(new THREE.BoxGeometry(.035,.22,.25),glassMat);rack.position.set(-.65+i*.16,.25,-.35);site.add(rack);}
  const mast=new THREE.Mesh(new THREE.CylinderGeometry(.025,.04,.62,10),goldMat);mast.position.set(.15,.38,.05);site.add(mast);
  const beacon=new THREE.Mesh(new THREE.SphereGeometry(.075,12,8),new THREE.MeshBasicMaterial({color:0x62e9f4}));beacon.position.set(.15,.72,.05);site.add(beacon);
- const halo=new THREE.Mesh(new THREE.TorusGeometry(.34,.025,8,40),new THREE.MeshBasicMaterial({color:0xffc66d}));halo.rotation.x=Math.PI/2;halo.position.y=.015;m001Site.add(halo);
  const labelCanvas=document.createElement('canvas');labelCanvas.width=512;labelCanvas.height=112;const labelCtx=labelCanvas.getContext('2d');labelCtx.fillStyle='rgba(7,15,26,.9)';labelCtx.strokeStyle='#d8b477';labelCtx.lineWidth=5;labelCtx.beginPath();labelCtx.roundRect(5,5,502,102,18);labelCtx.fill();labelCtx.stroke();labelCtx.fillStyle='#f2d59c';labelCtx.font='bold 42px system-ui';labelCtx.textAlign='center';labelCtx.textBaseline='middle';labelCtx.fillText('A’ARU 1.0 · M-001',256,56);const labelTexture=new THREE.CanvasTexture(labelCanvas);labelTexture.colorSpace=THREE.SRGBColorSpace;const siteLabel=new THREE.Sprite(new THREE.SpriteMaterial({map:labelTexture,transparent:true,depthTest:false}));siteLabel.position.set(0,siteScale*2.1,0);siteLabel.scale.set(.19,.042,1);m001Site.add(siteLabel);
 
  planetGroup.add(m001Site);
@@ -112,7 +110,6 @@ const markers=new THREE.Group();const markerMat=new THREE.MeshBasicMaterial({col
    }else{
      const block=new THREE.Mesh(new THREE.BoxGeometry(.65,.45,.55),bodyMat);block.position.y=.27;local.add(block);
    }
-   const ring=new THREE.Mesh(new THREE.TorusGeometry(.78,.025,6,32),new THREE.MeshBasicMaterial({color:0x62d9e8}));ring.rotation.x=Math.PI/2;ring.position.y=.10;local.add(ring);
    const cv=document.createElement('canvas');cv.width=512;cv.height=96;const cx=cv.getContext('2d');cx.fillStyle='rgba(7,15,26,.92)';cx.strokeStyle='#62d9e8';cx.lineWidth=4;cx.beginPath();cx.roundRect(4,4,504,88,14);cx.fill();cx.stroke();cx.fillStyle='#f2f6fb';cx.font='bold 32px system-ui';cx.textAlign='center';cx.textBaseline='middle';cx.fillText(label,256,48);const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;
    const tag=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false}));tag.position.set(0,.94,0);tag.scale.set(.17,.032,1);anchor.add(tag);
    // Keep structures on the same parcel visually distinct without changing stored coordinates.
