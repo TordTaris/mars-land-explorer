@@ -46,9 +46,9 @@ jobs:
           for token in required:
               assert token in html, f"5D feature or safety boundary missing: {token}"
 
-          scripts = re.findall(r"<script(?:\\s[^>]*)?>(.*?)</script>", html, re.S)
+          scripts = re.findall(r"<script(?:\s[^>]*)?>(.*?)</script>", html, re.S)
           assert scripts, "5D page script missing"
-          Path("/tmp/local-mars-5d.js").write_text("\\n".join(scripts), encoding="utf-8")
+          Path("/tmp/local-mars-5d.js").write_text("\n".join(scripts), encoding="utf-8")
 
           index = Path("index.html").read_text(encoding="utf-8")
           assert "lm5DLaunch" in index and "./5d.html" in index, "5D launcher missing from main app"
