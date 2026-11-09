@@ -29,7 +29,7 @@ input[type=range]{width:100%;accent-color:var(--gold)}.controls{display:grid;gri
 </section>
 <aside class="side">
 <section class="card"><h2>5D FIELD STATUS</h2>
-<div class="metric"><span>Spatial layer</span><b>3D surface</b></div><div class="metric"><span>Temporal layer</span><b id="timeLabel">Sol 001</b></div><div class="metric"><span>Operational layer</span><b id="stateLabel">Nominal</b></div><div class="metric"><span>Active overlays</span><b id="activeCount">5 / 5</b></div><div class="metric"><span>Selected site</span><b id="selectedSite">M-001</b></div>
+<div class="metric"><span>Spatial layer</span><b>3D surface</b></div><div class="metric"><span>Temporal layer</span><b id="timeLabel">Sol 001</b></div><div class="metric"><span>Operational layer</span><b id="stateLabel">Nominal</b></div><div class="metric"><span>Active overlays</span><b id="activeCount">5 / 5</b></div><div class="metric"><span>Selected site</span><b id="selectedSite">M-001</b></div><div class="metric"><span>View memory</span><b id="viewMemory">Device only</b></div>
 </section>
 <section class="card"><h2>DIMENSIONAL LAYERS</h2><div class="layers">
 <label class="layer"><input type="checkbox" data-layer="surface" checked> Surface geometry <span>D1–D3</span></label>
@@ -47,7 +47,10 @@ input[type=range]{width:100%;accent-color:var(--gold)}.controls{display:grid;gri
 (()=> {
 const canvas=document.getElementById('world'),ctx=canvas.getContext('2d'),sol=document.getElementById('sol');
 const sites=[{id:'M-001',name:'A’ARU Development Zone',lat:12,lon:28,desc:'Primary development parcel with planned data-storage, civic and utility infrastructure. Project visualization only.'},{id:'M-003',name:'Research & Energy Facility',lat:-24,lon:104,desc:'Research and energy facility concept. Access and operational status are not verified by this visualization.'},{id:'M-019',name:'Virtual Commerce District',lat:38,lon:-72,desc:'Virtual commerce district placeholder for the LOCAL MARS world model.'},{id:'M-013',name:'Settlement Expansion Site',lat:-8,lon:-128,desc:'Future settlement expansion placeholder.'}];
-const layer={surface:true,time:true,state:true,infra:true,grid:true};let rot=0,tilt=-.12,zoom=1,drag=null,selected=sites[0],playing=false,timer=null;
+const layer={surface:true,time:true,state:true,infra:true,grid:true};let rot=0,tilt=-.12,zoom=1,drag=null,selected=sites[0],playing=false,timer=null,pinching=false,lastPinch=0;
+const STORAGE_KEY='localmars.5d.view.v1';
+function saveView(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({rot,tilt,zoom,sol:+sol.value,selected:selected.id,layers:layer}));const el=document.getElementById('viewMemory');if(el)el.textContent='Saved on device'}catch(e){const el=document.getElementById('viewMemory');if(el)el.textContent='Session only'}}
+function restoreView(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return;const d=JSON.parse(raw);if(!d||typeof d!=='object')return;rot=Number.isFinite(d.rot)?d.rot:rot;tilt=Number.isFinite(d.tilt)?Math.max(-1.1,Math.min(1.1,d.tilt)):tilt;zoom=Number.isFinite(d.zoom)?Math.max(.7,Math.min(1.65,d.zoom)):zoom;if(Number.isFinite(d.sol))sol.value=Math.max(1,Math.min(365,d.sol));selected=sites.find(s=>s.id===d.selected)||sites[0];if(d.layers&&typeof d.layers==='object')Object.keys(layer).forEach(k=>{if(typeof d.layers[k]==='boolean')layer[k]=d.layers[k]});document.querySelectorAll('[data-layer]').forEach(el=>el.checked=layer[el.dataset.layer]);document.getElementById('selectedSite').textContent=selected.id;document.getElementById('siteDetails').textContent=selected.id+' · '+selected.name+'. '+selected.desc;document.getElementById('activeCount').textContent=Object.values(layer).filter(Boolean).length+' / 5';const el=document.getElementById('viewMemory');if(el)el.textContent='Restored from device'}catch(e){const el=document.getElementById('viewMemory');if(el)el.textContent='Session only'}}
 function size(){const r=canvas.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(r.width*d);canvas.height=Math.round(r.height*d);ctx.setTransform(d,0,0,d,0,0);draw()}
 function project(lat,lon,cx,cy,R){const a=(lon+rot)*Math.PI/180,b=lat*Math.PI/180,xx=Math.cos(b)*Math.sin(a),yy=Math.sin(b)*Math.cos(tilt)-Math.cos(b)*Math.cos(a)*Math.sin(tilt),zz=Math.sin(b)*Math.sin(tilt)+Math.cos(b)*Math.cos(a)*Math.cos(tilt);return {x:cx+R*xx,y:cy-R*yy,z:zz,visible:zz>-.03}}
 function draw(){const w=canvas.clientWidth,h=canvas.clientHeight,cx=w/2,cy=h*.52,R=Math.min(w*.34,h*.39)*zoom;ctx.clearRect(0,0,w,h);
@@ -61,17 +64,21 @@ ctx.restore();
 if(layer.infra){sites.forEach(site=>{const p=project(site.lat,site.lon,cx,cy,R);if(!p.visible)return;const rr=selected.id===site.id?7:5;ctx.beginPath();ctx.arc(p.x,p.y,rr,0,Math.PI*2);ctx.fillStyle=site.id==='M-001'?'#f0c879':'#69d9ed';ctx.shadowColor=ctx.fillStyle;ctx.shadowBlur=14;ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#07111c';ctx.lineWidth=2;ctx.stroke();if(p.z>.22){ctx.font='11px system-ui';ctx.fillStyle='#f4f5f7';ctx.fillText(site.id,p.x+9,p.y-8)}})}
 if(layer.state){ctx.fillStyle='#83e3ae';ctx.font='10px system-ui';ctx.fillText('SIMULATED FIELD · SOL '+String(sol.value).padStart(3,'0'),14,h-16)}
 }
-function setSol(v){sol.value=Math.max(1,Math.min(365,v));document.getElementById('solValue').textContent=sol.value+' / 365';document.getElementById('timeLabel').textContent='Sol '+String(sol.value).padStart(3,'0');document.getElementById('stateLabel').textContent=sol.value<90?'Nominal':sol.value<240?'Scenario shift':'Long-range';draw()}
-function select(site){selected=site;document.getElementById('selectedSite').textContent=site.id;document.getElementById('siteDetails').textContent=site.id+' · '+site.name+'. '+site.desc;draw()}
+function setSol(v){sol.value=Math.max(1,Math.min(365,v));document.getElementById('solValue').textContent=sol.value+' / 365';document.getElementById('timeLabel').textContent='Sol '+String(sol.value).padStart(3,'0');document.getElementById('stateLabel').textContent=sol.value<90?'Nominal':sol.value<240?'Scenario shift':'Long-range';draw();saveView()}
+function select(site){selected=site;document.getElementById('selectedSite').textContent=site.id;document.getElementById('siteDetails').textContent=site.id+' · '+site.name+'. '+site.desc;draw();saveView()}
 canvas.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,moved:false};canvas.setPointerCapture(e.pointerId)});
 canvas.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)>2)drag.moved=true;rot+=dx*.42;tilt=Math.max(-1.1,Math.min(1.1,tilt+dy*.003));drag.x=e.clientX;drag.y=e.clientY;draw()});
-canvas.addEventListener('pointerup',e=>{if(drag&&!drag.moved){const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,cx=r.width/2,cy=r.height*.52,R=Math.min(r.width*.34,r.height*.39)*zoom;let best=null,dist=18;sites.forEach(s=>{const p=project(s.lat,s.lon,cx,cy,R),d=Math.hypot(p.x-x,p.y-y);if(p.visible&&d<dist){dist=d;best=s}});if(best)select(best)}drag=null});
-canvas.addEventListener('wheel',e=>{e.preventDefault();zoom=Math.max(.7,Math.min(1.65,zoom*(e.deltaY<0?1.08:.92)));draw()},{passive:false});
-document.querySelectorAll('[data-layer]').forEach(el=>el.addEventListener('change',()=>{layer[el.dataset.layer]=el.checked;document.getElementById('activeCount').textContent=Object.values(layer).filter(Boolean).length+' / 5';draw()}));
+canvas.addEventListener('pointerup',e=>{if(drag&&!drag.moved&&!pinching){const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,cx=r.width/2,cy=r.height*.52,R=Math.min(r.width*.34,r.height*.39)*zoom;let best=null,dist=18;sites.forEach(s=>{const p=project(s.lat,s.lon,cx,cy,R),d=Math.hypot(p.x-x,p.y-y);if(p.visible&&d<dist){dist=d;best=s}});if(best)select(best)}drag=null;saveView()});
+canvas.addEventListener('wheel',e=>{e.preventDefault();zoom=Math.max(.7,Math.min(1.65,zoom*(e.deltaY<0?1.08:.92)));draw();saveView()},{passive:false});
+function pinchDistance(t){return Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY)}
+canvas.addEventListener('touchstart',e=>{if(e.touches.length===2){pinching=true;drag=null;lastPinch=pinchDistance(e.touches)}},{passive:true});
+canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){e.preventDefault();pinching=true;const d=pinchDistance(e.touches);if(lastPinch>0)zoom=Math.max(.7,Math.min(1.65,zoom*d/lastPinch));lastPinch=d;draw()}},{passive:false});
+canvas.addEventListener('touchend',e=>{if(e.touches.length<2&&pinching){pinching=false;lastPinch=0;saveView()}},{passive:true});
+document.querySelectorAll('[data-layer]').forEach(el=>el.addEventListener('change',()=>{layer[el.dataset.layer]=el.checked;document.getElementById('activeCount').textContent=Object.values(layer).filter(Boolean).length+' / 5';draw();saveView()}));
 sol.addEventListener('input',()=>setSol(+sol.value));document.getElementById('stepBack').onclick=()=>setSol(+sol.value-1);document.getElementById('stepNext').onclick=()=>setSol(+sol.value+1);
 document.getElementById('play').onclick=()=>{playing=!playing;document.getElementById('play').textContent=playing?'Ⅱ Pause timeline':'▶ Play timeline';if(playing){timer=setInterval(()=>{if(+sol.value>=365){setSol(1)}else setSol(+sol.value+1)},500)}else clearInterval(timer)};
-document.getElementById('reset').onclick=()=>{rot=0;tilt=-.12;zoom=1;setSol(1);select(sites[0])};
-new ResizeObserver(size).observe(canvas);size();setSol(1);
+document.getElementById('reset').onclick=()=>{rot=0;tilt=-.12;zoom=1;Object.keys(layer).forEach(k=>layer[k]=true);document.querySelectorAll('[data-layer]').forEach(el=>el.checked=true);setSol(1);select(sites[0]);saveView()};
+restoreView();new ResizeObserver(size).observe(canvas);size();setSol(+sol.value);
 })();
 </script>
 </body></html>
