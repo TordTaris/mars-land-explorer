@@ -59,7 +59,7 @@ jobs:
           from pathlib import Path
 
           required = [
-              "index.html", "dual-ai.html", "download-ai.html", "install.html", "member-workspace.js", "solar-system.js", "digital-assets.js", "city.html", "underground.html", "mission-trainer.html", "news.html",
+              "index.html", "5d.html", "dual-ai.html", "download-ai.html", "install.html", "member-workspace.js", "solar-system.js", "digital-assets.js", "city.html", "underground.html", "mission-trainer.html", "news.html",
               "m003-base.html", "atmosphere-lab.html", "m003-dimension-gate.html", "chronos-time-lab.html", "m003-ibm5100.html", "top-secret-demo.html",
               "civilization.html", "country.html", "i18n.js", "premium-ui.css",
               "world-server.js", "nasa-data.js", "multiverse.js", "easy-play.js", "chat.js",
@@ -124,8 +124,9 @@ jobs:
           assert any(icon.get("sizes") == "192x192" for icon in manifest.get("icons", [])), "192px PWA icon declaration missing"
           assert any(icon.get("sizes") == "512x512" for icon in manifest.get("icons", [])), "512px PWA icon declaration missing"
           cache_match = re.search(r'const CACHE = "local-mars-v4-(\d+)"', sw)
-          assert cache_match and int(cache_match.group(1)) >= 123, "service worker cache version must be v4-123 or newer"
+          assert cache_match and int(cache_match.group(1)) >= 132, "service worker cache version must be v4-123 or newer"
           assert '"./country.html"' in sw, "Country Network offline cache entry missing"
+          assert '"./5d.html"' in sw, "LOCAL MARS 5D offline cache entry missing"
           for page in ("dual-ai.html", "download-ai.html"):
               source = Path(page).read_text(encoding="utf-8")
               assert not re.search(r"[\u0E00-\u0E7F]", source), f"{page} must contain English-only UI text"
@@ -250,10 +251,11 @@ jobs:
       - name: Prepare complete static site
         run: |
           mkdir -p _site
-          cp index.html dual-ai.html download-ai.html install.html city.html country.html underground.html mission-trainer.html news.html m003-base.html atmosphere-lab.html m003-dimension-gate.html top-secret-demo.html civilization.html i18n.js premium-ui.css world-server.js nasa-data.js member-workspace.js multiverse.js easy-play.js chat.js digital-assets.js solar-system.js update-manager.js manifest.webmanifest sw.js icon.svg _site/
+          cp index.html 5d.html dual-ai.html download-ai.html install.html city.html country.html underground.html mission-trainer.html news.html m003-base.html atmosphere-lab.html m003-dimension-gate.html top-secret-demo.html civilization.html i18n.js premium-ui.css world-server.js nasa-data.js member-workspace.js multiverse.js easy-play.js chat.js digital-assets.js solar-system.js update-manager.js manifest.webmanifest sw.js icon.svg _site/
           cp -R locales _site/locales
           cp -R parcels _site/parcels
           touch _site/.nojekyll
+          test -s _site/5d.html
           test -s _site/dual-ai.html
           test -s _site/download-ai.html
           test -s _site/install.html
