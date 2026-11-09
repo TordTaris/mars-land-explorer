@@ -5,6 +5,8 @@ on:
     paths:
       - "5d.html"
       - "index.html"
+      - "sw.js"
+      - ".github/workflows/deploy-pages.yml"
       - ".github/workflows/validate-5d-world.yml"
   push:
     branches:
@@ -52,6 +54,16 @@ jobs:
 
           index = Path("index.html").read_text(encoding="utf-8")
           assert "lm5DLaunch" in index and "./5d.html" in index, "5D launcher missing from main app"
+
+          sw = Path("sw.js").read_text(encoding="utf-8")
+          assert '"./5d.html"' in sw, "5D page missing from offline cache"
+          cache_version = re.search(r'const CACHE = "local-mars-v4-(\\d+)"', sw)
+          assert cache_version and int(cache_version.group(1)) >= 132, "service worker cache version was not bumped"
+
+          pages_workflow = Path(".github/workflows/deploy-pages.yml").read_text(encoding="utf-8")
+          assert '"index.html", "5d.html"' in pages_workflow, "5D page missing from deployment validation"
+          assert "cp index.html 5d.html dual-ai.html" in pages_workflow, "5D page missing from Pages artifact"
+          assert "test -s _site/5d.html" in pages_workflow, "Pages artifact does not verify 5D page"
           print("LOCAL MARS 5D structural checks passed")
           PY
 
