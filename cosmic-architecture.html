@@ -53,9 +53,10 @@ button,select{font:inherit;color:var(--white);background:#142238;border:1px soli
 <section id="detail" aria-live="polite"><h3 id="detailTitle">Node</h3><p id="detailText">Select a sphere to inspect its conceptual label.</p></section>
 <div id="hint">Drag to rotate · Pinch or scroll to zoom · Tap a node for details</div>
 <nav class="bottom"><button id="reset">Reset view</button><button id="spin" class="active">Auto rotate</button><button id="labels">Node labels</button></nav>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
-import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 const host=document.querySelector('#view');
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x070a12);scene.fog=new THREE.FogExp2(0x070a12,.018);
 const camera=new THREE.PerspectiveCamera(48,innerWidth/innerHeight,.1,100);camera.position.set(0,2.4,10.8);
