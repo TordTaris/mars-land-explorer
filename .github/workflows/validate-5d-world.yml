@@ -1,0 +1,59 @@
+name: Validate LOCAL MARS 5D workspace
+
+on:
+  pull_request:
+    paths:
+      - "5d.html"
+      - "index.html"
+      - ".github/workflows/validate-5d-world.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "5d.html"
+      - "index.html"
+      - ".github/workflows/validate-5d-world.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate-5d:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate 5D page structure and interactions
+        run: |
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+
+          page = Path("5d.html")
+          assert page.is_file(), "5d.html is missing"
+          html = page.read_text(encoding="utf-8")
+          required = [
+              'id="world"', 'id="sol"', 'id="play"', 'id="reset"',
+              'data-layer="surface"', 'data-layer="time"',
+              'data-layer="state"', 'data-layer="infra"', 'data-layer="grid"',
+              "M-001", "M-003", "M-013", "M-019",
+              "pointerdown", "pointermove", "pointerup",
+              "touchstart", "touchmove", "touchend",
+              "localStorage", "localmars.5d.view.v1",
+              "SIMULATION NOTICE", "not evidence of a physical fifth dimension",
+          ]
+          for token in required:
+              assert token in html, f"5D feature or safety boundary missing: {token}"
+
+          scripts = re.findall(r"<script(?:\\s[^>]*)?>(.*?)</script>", html, re.S)
+          assert scripts, "5D page script missing"
+          Path("/tmp/local-mars-5d.js").write_text("\\n".join(scripts), encoding="utf-8")
+
+          index = Path("index.html").read_text(encoding="utf-8")
+          assert "lm5DLaunch" in index and "./5d.html" in index, "5D launcher missing from main app"
+          print("LOCAL MARS 5D structural checks passed")
+          PY
+
+      - name: Check 5D JavaScript syntax
+        run: node --check /tmp/local-mars-5d.js
