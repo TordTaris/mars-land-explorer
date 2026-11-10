@@ -1883,6 +1883,39 @@ function renderSharedBuildings(structures){
 renderSharedBuildings([]);
 function pos(lon,lat,r=1.014){const a=THREE.MathUtils.degToRad(90-lat),b=THREE.MathUtils.degToRad(lon+90);return new THREE.Vector3(-r*Math.sin(a)*Math.cos(b),r*Math.cos(a),r*Math.sin(a)*Math.sin(b))}
 
+/* LOCAL MARS · GPT OFFICIAL IDENTITY FLAG · M-001
+   Surface placement uses the canonical M-001 parcel coordinates from the project dataset.
+   This is a visual in-world marker; it does not assert physical deployment. */
+(()=>{
+ const gptFlag=new THREE.Group();
+ const normal=pos(226.20,18.65,1.0025);
+ gptFlag.position.copy(normal);
+ gptFlag.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),normal.clone().normalize());
+ const poleMat=new THREE.MeshStandardMaterial({color:0xd7dce2,metalness:.82,roughness:.24});
+ const baseMat=new THREE.MeshStandardMaterial({color:0x8c7658,metalness:.62,roughness:.38});
+ const pole=new THREE.Mesh(new THREE.CylinderGeometry(.0018,.0025,.105,10),poleMat);
+ pole.position.set(0,.0525,0);gptFlag.add(pole);
+ const foot=new THREE.Mesh(new THREE.CylinderGeometry(.009,.012,.006,18),baseMat);
+ foot.position.y=.003;gptFlag.add(foot);
+ const canvas=document.createElement('canvas');canvas.width=512;canvas.height=320;
+ const ctx=canvas.getContext('2d');
+ ctx.fillStyle='#f7f8fa';ctx.fillRect(0,0,512,320);
+ ctx.strokeStyle='#d6dce3';ctx.lineWidth=5;ctx.strokeRect(3,3,506,314);
+ // Six-fold interlocking knot mark, rendered directly into the flag texture.
+ ctx.save();ctx.translate(256,158);ctx.strokeStyle='#101820';ctx.lineWidth=17;ctx.lineCap='round';ctx.lineJoin='round';
+ for(let i=0;i<6;i++){ctx.save();ctx.rotate(i*Math.PI/3);ctx.beginPath();ctx.arc(0,0,61,-Math.PI/3,Math.PI/3);ctx.stroke();ctx.restore();}
+ ctx.beginPath();ctx.moveTo(0,-26);ctx.lineTo(23,-13);ctx.lineTo(23,13);ctx.lineTo(0,26);ctx.lineTo(-23,13);ctx.lineTo(-23,-13);ctx.closePath();ctx.lineWidth=8;ctx.stroke();
+ ctx.restore();
+ const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=4;
+ const cloth=new THREE.Mesh(new THREE.PlaneGeometry(.092,.057),new THREE.MeshStandardMaterial({map:tex,side:THREE.DoubleSide,roughness:.82,metalness:0}));
+ cloth.position.set(.046,.083,0);gptFlag.add(cloth);
+ const finial=new THREE.Mesh(new THREE.SphereGeometry(.0045,10,8),new THREE.MeshStandardMaterial({color:0xe6c27d,metalness:.75,roughness:.22}));
+ finial.position.y=.109;gptFlag.add(finial);
+ gptFlag.userData={marker:'GPT_OFFICIAL_IDENTITY',parcelId:'M-001',latitude:18.65,longitude:226.20};
+ group.add(gptFlag);
+ window.LOCAL_MARS_GPT_FLAG=gptFlag;
+})();
+
 /* MARS LAND 3.0 — living settlement landmark */
 const colonyRoot=new THREE.Group();group.add(colonyRoot);
 colonyRoot.scale.setScalar(.30); // Planetary display scale: compact habitat footprint against Mars.
