@@ -1888,9 +1888,10 @@ function pos(lon,lat,r=1.014){const a=THREE.MathUtils.degToRad(90-lat),b=THREE.M
    This is a visual in-world marker; it does not assert physical deployment. */
 (()=>{
  const gptFlag=new THREE.Group();
- const normal=pos(226.20,18.65,1.0025);
+ const normal=pos(0,16,1.0025); // A’ARU colony landmark coordinates on M-001
  gptFlag.position.copy(normal);
  gptFlag.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),normal.clone().normalize());
+ gptFlag.translateX(.18); // Place beside the A’ARU entrance, not at the parcel centroid.
  const poleMat=new THREE.MeshStandardMaterial({color:0xd7dce2,metalness:.82,roughness:.24});
  const baseMat=new THREE.MeshStandardMaterial({color:0x8c7658,metalness:.62,roughness:.38});
  const pole=new THREE.Mesh(new THREE.CylinderGeometry(.0018,.0025,.105,10),poleMat);
@@ -1911,7 +1912,7 @@ function pos(lon,lat,r=1.014){const a=THREE.MathUtils.degToRad(90-lat),b=THREE.M
  cloth.position.set(.046,.083,0);gptFlag.add(cloth);
  const finial=new THREE.Mesh(new THREE.SphereGeometry(.0045,10,8),new THREE.MeshStandardMaterial({color:0xe6c27d,metalness:.75,roughness:.22}));
  finial.position.y=.109;gptFlag.add(finial);
- gptFlag.userData={marker:'GPT_OFFICIAL_IDENTITY',parcelId:'M-001',latitude:18.65,longitude:226.20};
+ gptFlag.userData={marker:'GPT_OFFICIAL_IDENTITY',parcelId:'M-001',latitude:16,longitude:0};
  group.add(gptFlag);
  window.LOCAL_MARS_GPT_FLAG=gptFlag;
 })();
