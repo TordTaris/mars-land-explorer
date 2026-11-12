@@ -1900,26 +1900,28 @@ function pos(lon,lat,r=1.014){const a=THREE.MathUtils.degToRad(90-lat),b=THREE.M
  foot.position.y=.003;gptFlag.add(foot);
  const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=640;
  const ctx=canvas.getContext('2d');
- // High-contrast GPT identity flag: clean white field, complete knot emblem and readable wordmark.
+ // Universal OpenAI identity mark on a clean flag field.
  ctx.fillStyle='#fbfcfe';ctx.fillRect(0,0,1024,640);
  ctx.strokeStyle='#c9d1dc';ctx.lineWidth=8;ctx.strokeRect(5,5,1014,630);
- ctx.save();ctx.translate(512,275);ctx.strokeStyle='#101820';ctx.lineWidth=31;ctx.lineCap='round';ctx.lineJoin='round';
- // Six interwoven rounded loops arranged as a balanced GPT-style knot.
+ // Six interlocking rounded bands form the OpenAI-inspired woven knot.
+ ctx.save();ctx.translate(512,270);ctx.strokeStyle='#101820';ctx.lineWidth=25;ctx.lineCap='round';ctx.lineJoin='round';
  for(let i=0;i<6;i++){
    ctx.save();ctx.rotate(i*Math.PI/3);
    ctx.beginPath();
-   ctx.moveTo(0,-126);
-   ctx.bezierCurveTo(72,-126,111,-74,78,-18);
-   ctx.bezierCurveTo(59,14,25,29,0,53);
-   ctx.bezierCurveTo(-25,29,-59,14,-78,-18);
-   ctx.bezierCurveTo(-111,-74,-72,-126,0,-126);
+   ctx.moveTo(0,-132);
+   ctx.bezierCurveTo(47,-132,91,-104,91,-61);
+   ctx.bezierCurveTo(91,-25,62,-7,31,11);
+   ctx.bezierCurveTo(17,19,9,31,0,43);
+   ctx.bezierCurveTo(-9,31,-17,19,-31,11);
+   ctx.bezierCurveTo(-62,-7,-91,-25,-91,-61);
+   ctx.bezierCurveTo(-91,-104,-47,-132,0,-132);
    ctx.stroke();
    ctx.restore();
  }
  ctx.restore();
  ctx.fillStyle='#101820';ctx.textAlign='center';ctx.textBaseline='middle';
- ctx.font='700 86px Arial, sans-serif';ctx.letterSpacing='18px';ctx.fillText('GPT',512,535);
- ctx.font='600 24px Arial, sans-serif';ctx.letterSpacing='7px';ctx.fillStyle='#596575';ctx.fillText('LOCAL MARS',512,590);
+ ctx.font='700 68px Arial, sans-serif';ctx.letterSpacing='9px';ctx.fillText('OpenAI',512,505);
+ ctx.font='600 23px Arial, sans-serif';ctx.letterSpacing='6px';ctx.fillStyle='#596575';ctx.fillText('LOCAL MARS',512,570);
  const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=4;
  const cloth=new THREE.Mesh(new THREE.PlaneGeometry(.092,.057),new THREE.MeshStandardMaterial({map:tex,side:THREE.DoubleSide,roughness:.82,metalness:0}));
  cloth.position.set(.046,.083,0);gptFlag.add(cloth);
