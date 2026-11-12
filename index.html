@@ -2717,4 +2717,29 @@ body:not(.lm-star-view-mode) #lm-satellite-link{
 (()=>{function add(){const dock=document.querySelector('.lm-command-dock')||document.querySelector('.bottom');if(!dock||document.getElementById('lmAaruLaunch'))return;const b=document.createElement('button');b.id='lmAaruLaunch';b.type='button';b.textContent='🪐 A’ARU';b.setAttribute('aria-label','Open A’ARU 1.0 space colony');b.addEventListener('click',()=>{location.href='./aaru.html'});dock.appendChild(b)}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',add,{once:true});else add();const observer=new MutationObserver(add);observer.observe(document.documentElement,{childList:true,subtree:true});setTimeout(()=>observer.disconnect(),12000)})();
 </script>
 <script id="lm-5d-world-launcher">(()=>{function add(){const dock=document.querySelector('.lm-command-dock')||document.querySelector('.bottom');if(!dock||document.getElementById('lm5DWorldLaunch'))return;const b=document.createElement('button');b.id='lm5DWorldLaunch';b.type='button';b.textContent='🌐 5D WORLD';b.setAttribute('aria-label','Open LOCAL MARS 5D Full Planetary World');b.addEventListener('click',()=>{location.href='./world5d.html'});dock.appendChild(b)}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',add,{once:true});else add();const observer=new MutationObserver(add);observer.observe(document.documentElement,{childList:true,subtree:true});setTimeout(()=>observer.disconnect(),12000)})();</script>
+
+<style id="lm-clean-interface-2026">
+/* Quiet luxury refresh: preserve features, reduce visual noise and obstruction. */
+:root{--gold:#d9bb82;--cyan:#a9c7d2;--line:rgba(217,187,130,.24)}
+body{background:#05080d;color:#eee9df}
+#scene{background:radial-gradient(ellipse at 50% 48%,#342723 0,#141820 46%,#05080d 84%)}
+#scene:after{background:radial-gradient(ellipse at center,transparent 48%,rgba(2,5,9,.62) 100%)}
+header{height:52px!important;min-height:52px!important;padding:0 16px!important;border:0!important;border-bottom:1px solid rgba(217,187,130,.16)!important;border-radius:0!important;background:linear-gradient(180deg,rgba(4,8,14,.82),rgba(4,8,14,.18))!important;box-shadow:none!important;backdrop-filter:blur(8px)!important}
+header .brand{font-size:17px!important;letter-spacing:1.8px!important;text-shadow:none!important}
+header .status{min-height:25px!important;padding:4px 8px!important;border-radius:7px!important;font-size:9px!important;background:rgba(14,35,29,.72)!important;box-shadow:none!important}
+.panel{border:1px solid rgba(217,187,130,.2)!important;border-radius:12px!important;background:rgba(8,17,27,.86)!important;box-shadow:0 10px 28px rgba(0,0,0,.24)!important;backdrop-filter:blur(12px)!important}
+.panel h3{color:#d9bb82!important;letter-spacing:1.2px!important;text-shadow:none!important}
+.metric{border-color:rgba(255,255,255,.08)!important}
+button{box-shadow:none!important;border-color:rgba(217,187,130,.28)!important;background:#132131!important;border-radius:8px!important}
+button:hover{border-color:rgba(217,187,130,.65)!important}
+button.primary{background:#c39b5d!important;border-color:#d9bb82!important;color:#17120b!important}
+.bottom,.lm-command-dock{border:1px solid rgba(217,187,130,.2)!important;border-radius:12px!important;background:rgba(5,12,21,.82)!important;box-shadow:0 8px 24px rgba(0,0,0,.24)!important;backdrop-filter:blur(14px)!important}
+.bottom button,.lm-command-dock button{background:transparent!important;border-color:transparent!important;box-shadow:none!important}
+.bottom button.active,.lm-command-dock button.active{background:rgba(195,155,93,.18)!important;color:#f1d9ad!important;border-color:rgba(217,187,130,.24)!important}
+.resource-chip{background:rgba(7,16,27,.72)!important;border-color:rgba(217,187,130,.18)!important;box-shadow:none!important;border-radius:9px!important}
+#lm-satellite-link{opacity:.0!important;pointer-events:none!important}
+#lmSolarOpen{box-shadow:none!important;border:1px solid rgba(217,187,130,.28)!important;background:rgba(7,16,27,.78)!important;border-radius:10px!important}
+#toast{box-shadow:none!important;border-color:rgba(217,187,130,.3)!important}
+@media(max-width:650px){header{height:46px!important;min-height:46px!important;padding:0 10px!important}.brand{font-size:14px!important;letter-spacing:1px!important}.status{font-size:8px!important}.bottom,.lm-command-dock{border-radius:10px!important}.resource-chip{padding:4px 2px!important}}
+</style>
 </body></html>
