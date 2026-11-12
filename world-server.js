@@ -12,11 +12,13 @@ function presenceKey(){if(S.presenceKey)return S.presenceKey;try{S.presenceKey=s
 async function trackPresence(channel){try{await channel.track({client_type:S.user?'member':'guest',last_seen_at:new Date().toISOString()});}catch(error){console.warn('LOCAL MARS presence tracking:',error);}}
 async function refresh(){
  if(!S.db)return;
+ const isMember=!!S.user;
  const [p,a,b,c]=await Promise.all([
   S.db.from('world_parcels').select('id,latitude,longitude,area_sqm,terrain,resource,base_price,sale_price_usd,is_for_sale'),
-  S.db.from('world_claims').select('parcel_id,owner_id,claimed_at'),
-  S.db.from('world_structures').select('id,parcel_id,owner_id,structure_type,level,created_at'),
-  S.db.from('world_events').select('id,event_type,parcel_id,payload,created_at').order('created_at',{ascending:false}).limit(30)
+  // Anonymous visitors receive only public world fields; member UUIDs stay behind authenticated access.
+  S.db.from('world_claims').select(isMember?'parcel_id,owner_id,claimed_at':'parcel_id,claimed_at'),
+  S.db.from('world_structures').select(isMember?'id,parcel_id,owner_id,structure_type,level,created_at':'id,parcel_id,structure_type,level,created_at'),
+  S.db.from('world_events').select(isMember?'id,event_type,parcel_id,payload,created_at':'id,event_type,parcel_id,created_at').order('created_at',{ascending:false}).limit(30)
  ]);
  if(p.error && /sale_price_usd|is_for_sale|column/i.test(p.error.message||'')){const legacy=await S.db.from('world_parcels').select('id,latitude,longitude,area_sqm,terrain,resource,base_price');if(!legacy.error)p={data:(legacy.data||[]).map(row=>({...row,sale_price_usd:null,is_for_sale:false})),error:null};}
  const err=p.error||a.error||b.error||c.error;if(err){status(err.message);return {error:err};}
@@ -55,12 +57,17 @@ function subscribe(){
  if(S.reconnectTimer){clearTimeout(S.reconnectTimer);S.reconnectTimer=null;}
  const previous=S.channel;S.channel=null;
  if(previous)S.db.removeChannel(previous).catch(err=>console.warn('LOCAL MARS channel cleanup:',err));
- const channel=S.db.channel('mars-land-global',{config:{presence:{key:presenceKey()}}})
+ let channel=S.db.channel('mars-land-global',{config:{presence:{key:presenceKey()}}})
  .on('presence',{event:'sync'},()=>{if(S.channel!==channel)return;S.onlineCount=Object.keys(channel.presenceState()).length;counts();})
- .on('postgres_changes',{event:'*',schema:'public',table:'world_parcels'},scheduleRefresh)
- .on('postgres_changes',{event:'*',schema:'public',table:'world_claims'},scheduleRefresh)
- .on('postgres_changes',{event:'*',schema:'public',table:'world_structures'},scheduleRefresh)
- .on('postgres_changes',{event:'*',schema:'public',table:'world_events'},scheduleRefresh)
+ .on('postgres_changes',{event:'*',schema:'public',table:'world_parcels'},scheduleRefresh);
+ // Private ownership identifiers are readable only to signed-in members. Subscribe to those tables only after auth.
+ if(S.user){
+  channel=channel
+   .on('postgres_changes',{event:'*',schema:'public',table:'world_claims'},scheduleRefresh)
+   .on('postgres_changes',{event:'*',schema:'public',table:'world_structures'},scheduleRefresh)
+   .on('postgres_changes',{event:'*',schema:'public',table:'world_events'},scheduleRefresh);
+ }
+ channel=channel
  .on('postgres_changes',{event:'*',schema:'public',table:'mars_mlc_parcel_market'},scheduleRefresh)
  .on('postgres_changes',{event:'INSERT',schema:'public',table:'mars_wallet_ledger',filter:S.user?'user_id=eq.'+S.user.id:undefined},()=>{if(S.user)walletBalances();})
  .on('postgres_changes',{event:'*',schema:'public',table:'mars_city_national_flags'},scheduleRefresh)
