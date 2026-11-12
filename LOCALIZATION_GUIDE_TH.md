@@ -1,44 +1,40 @@
 # LOCAL MARS — Thai / English Localization
 
-The application uses one shared localization runtime across all main pages.
+## Current interface mode
+
+LOCAL MARS currently ships with an **English-only interface**. The language runtime in `i18n.js` initializes English, rejects attempts to switch to another language, and hides non-English language controls. This is intentional and matches the current product direction.
+
+The Thai dictionary is retained in the repository for future localization work, but it is not currently selectable in the live interface. Do not describe Thai switching, browser-language detection, or persistent language preferences as active behavior until that feature is deliberately re-enabled and tested.
 
 ## Architecture
 
-- `i18n.js`: language selection, DOM translation, dynamic-content observation, and formatting helpers.
-- `locales/th.json`: Thai source strings.
-- `locales/en.json`: matching English strings.
-- `sw.js`: caches the runtime and both locale files for offline use.
+- `i18n.js`: English-only runtime, DOM translation helpers, dynamic-content observation, and date formatting.
+- `locales/th.json`: retained Thai translation dictionary.
+- `locales/en.json`: English dictionary.
+- `sw.js`: caches the runtime and locale files for offline use.
 
-The locale files use matching IDs (for example, `LM0001`). The current dictionary contains 718 matched entries. Never renumber or reuse an existing ID. Every ID must exist in both locale files.
+Both locale files currently contain **751 matching translation IDs**. Every ID must exist in both files. Never renumber or reuse an existing ID.
 
-## Language behavior
+## Add or update translations
 
-1. On the first visit, the app detects the browser language (Thai browsers start in Thai; others start in English).
-2. The member can switch language with the header button.
-3. The selection is saved in `localStorage` as `localMarsLanguage` and is shared across all LOCAL MARS pages on the same site.
-4. Text nodes, placeholders, titles, accessible labels, and dynamically inserted interface content are translated.
-5. Language changes do not modify member records, world data, construction data, or payment data.
-
-## Add a translation
-
-Add a new matching ID to both locale files:
+When adding a translation, add the same new ID to both locale files:
 
 ```json
 // locales/th.json
-{ "LM0372": "ข้อความภาษาไทย" }
+{ "LM0752": "ข้อความภาษาไทย" }
 ```
 
 ```json
 // locales/en.json
-{ "LM0372": "English text" }
+{ "LM0752": "English text" }
 ```
 
-Keep the same ID in both files. Then update the service-worker cache version in `sw.js` when changing application assets.
+Keep existing IDs unchanged. Update the service-worker cache version in `sw.js` when changing application assets.
 
 For JavaScript-generated content, prefer the shared helper:
 
 ```js
-const label = window.LOCAL_MARS_I18N?.t("ภาษาไทย", "English");
+const label = window.LOCAL_MARS_I18N?.t("ข้อความภาษาไทย", "English");
 ```
 
 For date formatting:
@@ -46,6 +42,8 @@ For date formatting:
 ```js
 window.LOCAL_MARS_I18N?.formatDate(timestamp);
 ```
+
+The helper currently returns English text because English is the only enabled interface language.
 
 ## Scope
 
