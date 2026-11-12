@@ -126,6 +126,7 @@ const markers=new THREE.Group();const markerMat=new THREE.MeshBasicMaterial({col
  function syncRecordedStructures(detail){
    const parcels=new Map((detail?.parcels||[]).map(p=>[p.id,p]));
    const rows=detail?.structures||[];
+   structuresLayer.traverse(object=>{if(object.geometry)object.geometry.dispose();if(object.material){const materials=Array.isArray(object.material)?object.material:[object.material];materials.forEach(material=>{if(material.map)material.map.dispose();material.dispose();});}});
    structuresLayer.clear();
    const counts=new Map();
    rows.forEach(row=>{
