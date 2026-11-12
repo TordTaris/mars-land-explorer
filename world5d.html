@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#080d17">
+<title>LOCAL MARS 5D | Full Planetary World</title>
+<style>
+:root{color-scheme:dark;--bg:#080d17;--panel:#0d1726eF;--line:#34465d;--gold:#d8b879;--cyan:#62d9e8;--muted:#9eb0c5}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:#edf4ff;font:14px system-ui,sans-serif}#world{position:fixed;inset:0}canvas{display:block;width:100%;height:100%;touch-action:none}
+header{position:fixed;z-index:2;top:0;left:0;right:0;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(#070b13e8,transparent);pointer-events:none}.brand{font-weight:950;letter-spacing:2px}.brand span{color:#ff9368}.status{font-size:10px;color:#83e2b4;border:1px solid #315b50;background:#10251f;padding:6px 9px;border-radius:30px}
+.panel{position:fixed;z-index:2;background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:13px;backdrop-filter:blur(14px);box-shadow:0 14px 40px #0007}.left{top:70px;left:12px;width:min(265px,calc(100vw - 24px));max-height:calc(100dvh - 160px);overflow:auto}.right{top:70px;right:12px;width:min(230px,calc(100vw - 24px));max-height:calc(100dvh - 160px);overflow:auto}h1{font-size:16px;margin:0 0 5px}h2{font-size:11px;letter-spacing:1.3px;color:var(--gold);margin:14px 0 8px}.sub{color:var(--muted);font-size:11px;line-height:1.5}.metric{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid #ffffff12;font-size:11px}.metric b{color:#f2d59c;font-variant-numeric:tabular-nums}.controls{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}button{border:1px solid #5b6b80;border-radius:9px;background:#17283b;color:#edf4ff;padding:9px 11px;font:inherit;font-size:11px;cursor:pointer}button.active{border-color:var(--gold);background:#4a3923;color:#ffe4ad}button:focus-visible,input:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}input[type=range]{width:100%;accent-color:var(--gold)}.toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 0;font-size:11px}.toggle input{accent-color:var(--cyan)}.bottom{position:fixed;z-index:2;left:50%;bottom:14px;transform:translateX(-50%);display:flex;gap:8px;align-items:center;padding:8px;background:#0a1422dc;border:1px solid #34465d;border-radius:13px;max-width:calc(100vw - 20px)}.bottom button{white-space:nowrap}.hint{font-size:10px;color:var(--muted);text-align:center;margin-top:8px}.pill{display:inline-block;border:1px solid #6d5a38;color:#f1d59d;border-radius:30px;padding:4px 7px;font-size:9px;letter-spacing:.6px}
+@media(max-width:700px){header{padding:10px 12px}.panel{background:#0b1420d9;backdrop-filter:blur(8px)}.right{top:auto;bottom:68px;right:9px;width:min(190px,calc(100vw - 18px));padding:10px}.left{top:58px;left:9px;width:min(205px,calc(100vw - 18px));padding:10px}.panel h2{margin-top:10px}.bottom{bottom:8px;gap:5px;padding:6px}.bottom button{padding:8px;font-size:10px}.brand{font-size:13px}.status{font-size:9px}.metric{font-size:10px}.panel.mobile-hidden{display:none!important}}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<div id="world" aria-label="Interactive three-dimensional Mars globe"></div><div id="runtimeNotice" role="status" aria-live="polite" hidden style="position:fixed;z-index:5;left:50%;top:50%;transform:translate(-50%,-50%);max-width:min(420px,calc(100vw - 32px));padding:16px 18px;border:1px solid #a66b4c;border-radius:14px;background:#17131a;color:#fff0e6;text-align:center;box-shadow:0 12px 40px #0009">3D rendering could not start. Check your browser’s WebGL support and internet connection, then reload this page.</div>
+<header><div class="brand">LOCAL <span>MARS</span> <small style="font-size:10px;color:#d8b879">5D WORLD</small></div><div class="status" id="engineStatus">● INITIALIZING ENGINE</div></header>
+<section class="panel left mobile-hidden">
+<h1>Full Planetary World</h1><div class="sub">Explore the Mars globe. Drag to rotate · pinch or scroll to zoom.</div>
+<h2>WORLD DIMENSIONS</h2>
+<div class="metric"><span>01 · Spatial reference</span><b>Planet scale</b></div>
+<div class="metric"><span>02 · Surface layer</span><b id="surfaceState">Visible</b></div>
+<div class="metric"><span>03 · 3D world</span><b>Globe active</b></div>
+<div class="metric"><span>04 · Time dimension</span><b id="clock">Sol 001 · 06:00</b></div>
+<div class="metric"><span>05 · Simulation layer</span><b id="simState">Running</b></div>
+<h2>TIME SIMULATION</h2>
+<input id="timeRange" type="range" min="0" max="24.6597" step=".01" value="6" aria-label="Local Mars time">
+<div class="metric"><span>Local solar time</span><b id="timeLabel">06:00</b></div>
+<div class="controls"><button id="pauseTime">Pause time</button><button id="resetView">Reset view</button></div>
+<div class="hint">One simulated Sol = 24h 39m 35s. Simulation runs locally; this is not live Mars telemetry.</div>
+</section>
+<section class="panel right mobile-hidden">
+<h2>WORLD LAYERS</h2>
+<label class="toggle">Atmosphere glow <input id="atmosphereToggle" type="checkbox" checked></label>
+<label class="toggle">Coordinate grid <input id="gridToggle" type="checkbox"></label>
+<label class="toggle">Illustrative markers (not mapped data) <input id="markerToggle" type="checkbox" checked></label>
+<h2>SIMULATION TELEMETRY</h2>
+<div class="metric"><span>Planet</span><b>Mars</b></div>
+<div class="metric"><span>Mean radius</span><b>3,389.5 km</b></div>
+<div class="metric"><span>Rotation mode</span><b id="rotationState">Interactive</b></div>
+<div class="metric"><span>Scene quality</span><b>Adaptive</b></div>
+<h2>PROJECT ZONE</h2>
+<div class="metric"><span>Parcel</span><b>M-001</b></div><div class="metric"><span>Registered location</span><b>55°S · 160°W</b></div><div class="metric"><span>Recorded structures</span><b>5 · 3 parcels</b></div>
+<div class="sub">The highlighted A’ARU campus is a visual 3D schematic anchored to the registered M-001 parcel coordinates. Its model is illustrative, not a surveyed-scale building model. All five visible structure markers are based on current database records across M-001, M-003 and M-005. Parcel coordinates are used as anchors; structures sharing a parcel are offset slightly for visibility.</div>
+<div class="controls"><button id="focusM001">Locate M-001 on globe</button><button id="openCity">Open general 3D workspace</button><button id="openM001">Open M-001 / A’ARU</button></div>
+</section>
+<nav class="bottom" aria-label="World navigation"><button id="home">← Planet Explorer</button><button id="toggleSpin" class="active">Auto rotate: ON</button><button id="togglePanel" aria-expanded="false">Show panels</button></nav>
+<script>function showEngineError(message){const n=document.querySelector("#runtimeNotice"),status=document.querySelector("#engineStatus");if(n){n.hidden=false;n.textContent=message||"The 3D world could not load. Check WebGL support and your internet connection, then reload.";}if(status){status.textContent="● ENGINE UNAVAILABLE";status.style.color="#ffb09a";status.style.borderColor="#855243";}}addEventListener("error",e=>showEngineError("The 3D world could not load. Check WebGL support and your internet connection, then reload. "+(e.message||"")));addEventListener("unhandledrejection",()=>showEngineError("The 3D world failed to initialize. Check your connection and WebGL support, then reload."));</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+const root=document.querySelector('#world');
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x080d17);
+const camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,.1,100);camera.position.set(0,0,3.5);
+let renderer;try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'low-power'});}catch(error){showEngineError("WebGL is unavailable on this browser or device. Enable hardware acceleration or use a supported browser.");throw error;}
+renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.6));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;root.appendChild(renderer.domElement);
+scene.add(new THREE.AmbientLight(0x9baec8,1.05));
+const sun=new THREE.DirectionalLight(0xffd5ad,2.35);sun.position.set(4,2.4,5);scene.add(sun);
+const planetGroup=new THREE.Group();scene.add(planetGroup);
+function makeAlbedo(){const c=document.createElement('canvas');c.width=1024;c.height=512;const x=c.getContext('2d'),im=x.createImageData(c.width,c.height);for(let y=0;y<c.height;y++)for(let z=0;z<c.width;z++){const i=(y*c.width+z)*4;const n=Math.sin(z*.012+Math.sin(y*.017)*2.3)*.42+Math.sin(y*.037+z*.004)*.27+Math.sin(z*.073-y*.051)*.12+Math.sin(z*.21+y*.13)*.045;const polar=Math.max(0,(Math.abs(y/c.height-.5)*2-.82)/.18);im.data[i]=Math.max(0,Math.min(255,150+n*43-polar*35));im.data[i+1]=Math.max(0,Math.min(255, seventy(88+n*27-polar*30)));im.data[i+2]=Math.max(0,Math.min(255, seventy(65+n*22-polar*22)));im.data[i+3]=255;}x.putImageData(im,0,0);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=renderer.capabilities.getMaxAnisotropy();return t}
+function seventy(v){return Math.round(v)}
+const mars=new THREE.Mesh(new THREE.SphereGeometry(1,96,64),new THREE.MeshStandardMaterial({map:makeAlbedo(),roughness:1,metalness:0}));
+planetGroup.add(mars);
+const atmosphere=new THREE.Mesh(new THREE.SphereGeometry(1.035,64,48),new THREE.MeshBasicMaterial({color:0xd76c48,transparent:true,opacity:.105,side:THREE.BackSide,blending:THREE.AdditiveBlending,depthWrite:false}));planetGroup.add(atmosphere);
+const grid=new THREE.Group();const gridMat=new THREE.LineBasicMaterial({color:0x80cbd5,transparent:true,opacity:.28});
+for(let lat=-75;lat<=75;lat+=15){const pts=[];const r=Math.cos(THREE.MathUtils.degToRad(lat)),yy=Math.sin(THREE.MathUtils.degToRad(lat));for(let j=0;j<=180;j++){const a=j/180*Math.PI*2;pts.push(new THREE.Vector3(r*Math.cos(a)*1.002,yy*1.002,r*Math.sin(a)*1.002));}grid.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),gridMat));}
+for(let lon=0;lon<180;lon+=15){const a=THREE.MathUtils.degToRad(lon),pts=[];for(let j=0;j<=180;j++){const p=-Math.PI/2+j/180*Math.PI;pts.push(new THREE.Vector3(Math.cos(p)*Math.cos(a)*1.002,Math.sin(p)*1.002,Math.cos(p)*Math.sin(a)*1.002));}grid.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),gridMat));}planetGroup.add(grid);grid.visible=false;
+const markers=new THREE.Group();const markerMat=new THREE.MeshBasicMaterial({color:0x6de5ed});for(let k=0;k<18;k++){const a=k*2.399,b=Math.asin(-1+2*(k+.5)/18);const p=new THREE.Vector3(Math.cos(b)*Math.cos(a),Math.sin(b),Math.cos(b)*Math.sin(a)).multiplyScalar(1.008);const m=new THREE.Mesh(new THREE.SphereGeometry(.008,8,8),markerMat);m.position.copy(p);markers.add(m);}planetGroup.add(markers);
+ // M-001 uses the registered parcel center from public.world_parcels.
+ // The visible campus is a schematic locator, not a surveyed-scale construction model.
+ const M001_LAT=-55,M001_LON=-160;
+ const m001Normal=new THREE.Vector3(Math.cos(THREE.MathUtils.degToRad(M001_LAT))*Math.cos(THREE.MathUtils.degToRad(M001_LON)),Math.sin(THREE.MathUtils.degToRad(M001_LAT)),Math.cos(THREE.MathUtils.degToRad(M001_LAT))*Math.sin(THREE.MathUtils.degToRad(M001_LON))).normalize();
+ const m001Site=new THREE.Group();m001Site.position.copy(m001Normal.clone().multiplyScalar(1.012));m001Site.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),m001Normal);
+ const siteScale=.018,site=new THREE.Group();site.scale.setScalar(siteScale);m001Site.add(site);
+ const goldMat=new THREE.MeshStandardMaterial({color:0xd8b477,metalness:.72,roughness:.28}),glassMat=new THREE.MeshStandardMaterial({color:0x65cbd7,metalness:.2,roughness:.2,transparent:true,opacity:.82});
+ const plinth=new THREE.Mesh(new THREE.CylinderGeometry(1.15,1.22,.10,32),new THREE.MeshStandardMaterial({color:0x263c50,metalness:.65,roughness:.35}));plinth.position.y=.04;site.add(plinth);
+ const core=new THREE.Mesh(new THREE.CylinderGeometry(.28,.34,.72,20),new THREE.MeshStandardMaterial({color:0xdce5e8,metalness:.35,roughness:.35}));core.position.y=.48;site.add(core);
+ const coreDome=new THREE.Mesh(new THREE.SphereGeometry(.42,20,14,0,Math.PI*2,0,Math.PI/2),glassMat);coreDome.position.y=.83;site.add(coreDome);
+ for(let i=0;i<6;i++){const a=i*Math.PI/3,x=Math.cos(a)*.78,z=Math.sin(a)*.78,pod=new THREE.Group();pod.position.set(x,.12,z);const foot=new THREE.Mesh(new THREE.CylinderGeometry(.20,.23,.12,14),goldMat);foot.position.y=.06;pod.add(foot);const dome=new THREE.Mesh(new THREE.SphereGeometry(.19,14,10,0,Math.PI*2,0,Math.PI/2),glassMat);dome.position.y=.12;pod.add(dome);site.add(pod);}
+ // One cloud-recorded M-001 Data Storage Center, Level 1.
+ const dataHall=new THREE.Mesh(new THREE.BoxGeometry(.48,.36,.38),new THREE.MeshStandardMaterial({color:0x263d56,metalness:.6,roughness:.32,emissive:0x12354a,emissiveIntensity:.45}));dataHall.position.set(-.45,.24,-.35);site.add(dataHall);
+ for(let i=0;i<3;i++){const rack=new THREE.Mesh(new THREE.BoxGeometry(.035,.22,.25),glassMat);rack.position.set(-.65+i*.16,.25,-.35);site.add(rack);}
+ const mast=new THREE.Mesh(new THREE.CylinderGeometry(.025,.04,.62,10),goldMat);mast.position.set(.15,.38,.05);site.add(mast);
+ const beacon=new THREE.Mesh(new THREE.SphereGeometry(.075,12,8),new THREE.MeshBasicMaterial({color:0x62e9f4}));beacon.position.set(.15,.72,.05);site.add(beacon);
+ const labelCanvas=document.createElement('canvas');labelCanvas.width=512;labelCanvas.height=112;const labelCtx=labelCanvas.getContext('2d');labelCtx.fillStyle='rgba(7,15,26,.9)';labelCtx.strokeStyle='#d8b477';labelCtx.lineWidth=5;labelCtx.beginPath();labelCtx.roundRect(5,5,502,102,18);labelCtx.fill();labelCtx.stroke();labelCtx.fillStyle='#f2d59c';labelCtx.font='bold 42px system-ui';labelCtx.textAlign='center';labelCtx.textBaseline='middle';labelCtx.fillText('A’ARU 1.0 · M-001',256,56);const labelTexture=new THREE.CanvasTexture(labelCanvas);labelTexture.colorSpace=THREE.SRGBColorSpace;const siteLabel=new THREE.Sprite(new THREE.SpriteMaterial({map:labelTexture,transparent:true,depthTest:false}));siteLabel.position.set(0,siteScale*2.1,0);siteLabel.scale.set(.19,.042,1);m001Site.add(siteLabel);
+
+ planetGroup.add(m001Site);
+
+ // Render every structure currently recorded in public.world_structures.
+ // Coordinates are parcel centers; small local offsets separate co-located records visually.
+ function makeStructureMarker(lat,lon,type,label,index){
+   const normal=new THREE.Vector3(Math.cos(THREE.MathUtils.degToRad(lat))*Math.cos(THREE.MathUtils.degToRad(lon)),Math.sin(THREE.MathUtils.degToRad(lat)),Math.cos(THREE.MathUtils.degToRad(lat))*Math.sin(THREE.MathUtils.degToRad(lon))).normalize();
+   const anchor=new THREE.Group();anchor.position.copy(normal.clone().multiplyScalar(1.014));anchor.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),normal);
+   const local=new THREE.Group();local.scale.setScalar(.009);anchor.add(local);
+   const base=new THREE.Mesh(new THREE.CylinderGeometry(.72,.8,.09,20),new THREE.MeshStandardMaterial({color:0x263c50,metalness:.55,roughness:.4}));base.position.y=.04;local.add(base);
+   const bodyMat=new THREE.MeshStandardMaterial({color:0x6d8295,metalness:.35,roughness:.42});
+   if(type==='ฐานที่อยู่อาศัย'){
+     const hub=new THREE.Mesh(new THREE.CylinderGeometry(.28,.34,.52,16),glassMat);hub.position.y=.34;local.add(hub);
+     for(let i=0;i<3;i++){const pod=new THREE.Mesh(new THREE.SphereGeometry(.2,12,8),bodyMat);pod.scale.set(1,.65,1);pod.position.set(Math.cos(i*2.094)*.55,.19,Math.sin(i*2.094)*.55);local.add(pod);}
+   }else if(type==='ห้องปฏิบัติการ'){
+     const lab=new THREE.Mesh(new THREE.BoxGeometry(.85,.42,.62),bodyMat);lab.position.y=.27;local.add(lab);
+     const roof=new THREE.Mesh(new THREE.BoxGeometry(.48,.12,.42),goldMat);roof.position.set(0,.54,0);local.add(roof);
+   }else if(type==='แผงพลังงานแสงอาทิตย์'){
+     for(let i=0;i<3;i++){const panel=new THREE.Mesh(new THREE.BoxGeometry(.42,.035,.24),new THREE.MeshStandardMaterial({color:0x246d91,metalness:.5,roughness:.25,emissive:0x12364d}));panel.position.set((i-1)*.48,.23,0);panel.rotation.z=-.18;local.add(panel);}
+   }else if(type==='โรงเรือนปลูกพืช'){
+     const greenhouse=new THREE.Mesh(new THREE.BoxGeometry(.9,.35,.7),new THREE.MeshStandardMaterial({color:0x65cbd7,transparent:true,opacity:.72,metalness:.1,roughness:.2}));greenhouse.position.y=.23;local.add(greenhouse);
+     const roof=new THREE.Mesh(new THREE.CylinderGeometry(.49,.49,.9,16,1,true,0,Math.PI),glassMat);roof.rotation.z=Math.PI/2;roof.scale.set(1,.45,1);roof.position.y=.43;local.add(roof);
+   }else{
+     const block=new THREE.Mesh(new THREE.BoxGeometry(.65,.45,.55),bodyMat);block.position.y=.27;local.add(block);
+   }
+   const cv=document.createElement('canvas');cv.width=512;cv.height=96;const cx=cv.getContext('2d');cx.fillStyle='rgba(7,15,26,.92)';cx.strokeStyle='#62d9e8';cx.lineWidth=4;cx.beginPath();cx.roundRect(4,4,504,88,14);cx.fill();cx.stroke();cx.fillStyle='#f2f6fb';cx.font='bold 32px system-ui';cx.textAlign='center';cx.textBaseline='middle';cx.fillText(label,256,48);const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;
+   const tag=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false}));tag.position.set(0,.94,0);tag.scale.set(.17,.032,1);anchor.add(tag);
+   // Keep structures on the same parcel visually distinct without changing stored coordinates.
+   const tangent=new THREE.Vector3().crossVectors(normal,new THREE.Vector3(0,1,0)).normalize();if(tangent.lengthSq()>.1)anchor.position.add(tangent.multiplyScalar((index-1)*.0008));
+   planetGroup.add(anchor);
+ }
+ makeStructureMarker(3,-26,'ห้องปฏิบัติการ','M-003 · LAB',0);
+ makeStructureMarker(3,-26,'ฐานที่อยู่อาศัย','M-003 · HABITAT',1);
+ makeStructureMarker(3,-26,'แผงพลังงานแสงอาทิตย์','M-003 · SOLAR',2);
+ makeStructureMarker(-49,108,'โรงเรือนปลูกพืช','M-005 · GREENHOUSE',0);
+
+
+const stars=new THREE.BufferGeometry(),starPos=[];for(let i=0;i<1300;i++){const r=12+Math.random()*28,a=Math.random()*Math.PI*2,b=Math.acos(2*Math.random()-1);starPos.push(r*Math.sin(b)*Math.cos(a),r*Math.cos(b),r*Math.sin(b)*Math.sin(a));}stars.setAttribute('position',new THREE.Float32BufferAttribute(starPos,3));scene.add(new THREE.Points(stars,new THREE.PointsMaterial({color:0xd8e4f4,size:.035,transparent:true,opacity:.8})));
+const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.06;controls.minDistance=1.35;controls.maxDistance=8;controls.enablePan=false;controls.autoRotate=true;controls.autoRotateSpeed=.32;
+const MARS_SOL_HOURS=24.6597;let hours=6,sol=1,playing=true,showPanels=true,last=performance.now();
+const timeRange=document.querySelector('#timeRange'),timeLabel=document.querySelector('#timeLabel'),clock=document.querySelector('#clock');
+function updateTime(){const dayMinutes=Math.floor((hours/MARS_SOL_HOURS)*1440);const h=Math.floor(dayMinutes/60)%24,m=dayMinutes%60;const label=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');timeLabel.textContent=label;clock.textContent='Sol '+String(sol).padStart(3,'0')+' · '+label;timeRange.value=String(hours);planetGroup.rotation.y=hours/MARS_SOL_HOURS*Math.PI*2;document.querySelector('#simState').textContent=playing?'Running':'Paused';}
+timeRange.max=String(MARS_SOL_HOURS);timeRange.step='0.01';timeRange.addEventListener('input',e=>{hours=Number(e.target.value);updateTime()});
+document.querySelector('#pauseTime').addEventListener('click',e=>{playing=!playing;e.currentTarget.textContent=playing?'Pause time':'Resume time';updateTime()});
+document.querySelector('#resetView').addEventListener('click',()=>{controls.reset();camera.position.set(0,0,3.5);updateTime()});
+document.querySelector('#atmosphereToggle').addEventListener('change',e=>atmosphere.visible=e.target.checked);
+document.querySelector('#gridToggle').addEventListener('change',e=>grid.visible=e.target.checked);
+document.querySelector('#markerToggle').addEventListener('change',e=>markers.visible=e.target.checked);
+document.querySelector('#toggleSpin').addEventListener('click',e=>{controls.autoRotate=!controls.autoRotate;e.currentTarget.classList.toggle('active',controls.autoRotate);e.currentTarget.textContent='Auto rotate: '+(controls.autoRotate?'ON':'OFF');document.querySelector('#rotationState').textContent=controls.autoRotate?'Auto + interactive':'Interactive'});
+const panelButton=document.querySelector('#togglePanel');const mobilePanels=matchMedia('(max-width:700px)').matches;if(!mobilePanels){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('mobile-hidden'));showPanels=true;panelButton.textContent='Hide panels';panelButton.setAttribute('aria-expanded','true');}panelButton.addEventListener('click',()=>{showPanels=!showPanels;document.querySelectorAll('.panel').forEach(p=>{if(mobilePanels){p.classList.toggle('mobile-hidden',!showPanels);}else{p.hidden=!showPanels;}});panelButton.textContent=showPanels?'Hide panels':'Show panels';panelButton.setAttribute('aria-expanded',String(showPanels));});
+document.querySelector('#home').addEventListener('click',()=>location.href='./index.html');
+document.querySelector('#openCity').addEventListener('click',()=>location.href='./city.html');document.querySelector('#openM001').addEventListener('click',()=>location.href='./city.html?parcel=M-001');document.querySelector('#focusM001').addEventListener('click',()=>{controls.autoRotate=false;document.querySelector('#toggleSpin').classList.remove('active');document.querySelector('#toggleSpin').textContent='Auto rotate: OFF';document.querySelector('#rotationState').textContent='Focused on M-001';controls.target.copy(m001Normal.clone().multiplyScalar(1.012));camera.position.copy(m001Normal.clone().multiplyScalar(3.55));controls.update();});
+function animate(now){requestAnimationFrame(animate);const dt=Math.min((now-last)/1000,.1);last=now;if(playing){hours+=dt*.08;if(hours>=MARS_SOL_HOURS){hours-=MARS_SOL_HOURS;sol++;}updateTime();}controls.update();renderer.render(scene,camera)}
+updateTime();renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();showEngineError("The graphics context was lost. Reload this page to restore the 3D world.");});const engineStatus=document.querySelector('#engineStatus');if(engineStatus)engineStatus.textContent="● PLANET ENGINE READY";requestAnimationFrame(animate);
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.6))});
+addEventListener('pagehide',()=>{renderer.dispose();mars.geometry.dispose();mars.material.dispose()},{once:true});
+</script>
+</body></html>
