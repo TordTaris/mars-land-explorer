@@ -163,4 +163,16 @@ updateTime();renderer.domElement.addEventListener('webglcontextlost',e=>{e.preve
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.6))});
 addEventListener('pagehide',()=>{renderer.dispose();mars.geometry.dispose();mars.material.dispose()},{once:true});
 </script>
+
+<style id="lm-5d-clean-interface">
+:root{--gold:#d9bb82;--line:rgba(217,187,130,.22);--panel:rgba(7,15,24,.88)}
+header{height:52px;padding:0 16px;background:linear-gradient(180deg,rgba(4,8,14,.86),transparent);border-bottom:1px solid rgba(217,187,130,.16)}
+.brand{font-size:16px;letter-spacing:1.7px}.status{border-radius:7px;background:rgba(14,35,29,.72);font-size:9px;padding:5px 8px}
+.panel{border:1px solid var(--line);border-radius:12px;background:rgba(7,15,24,.86);box-shadow:0 10px 28px rgba(0,0,0,.25);backdrop-filter:blur(12px)}
+.panel h2{color:#d9bb82;letter-spacing:1px}.metric{border-color:rgba(255,255,255,.08)}
+button{border:1px solid rgba(217,187,130,.25);border-radius:8px;background:#132131;box-shadow:none}button.active{background:rgba(195,155,93,.2);color:#f1d9ad;border-color:#d9bb82}
+.bottom{border:1px solid var(--line);border-radius:11px;background:rgba(5,12,21,.84);box-shadow:0 8px 24px rgba(0,0,0,.25);backdrop-filter:blur(14px)}
+.bottom button{background:transparent;border-color:transparent}.bottom button:focus-visible{outline:2px solid #d9bb82}
+@media(max-width:700px){header{height:46px;padding:0 10px}.panel{border-radius:10px}.bottom{border-radius:10px}}
+</style>
 </body></html>
