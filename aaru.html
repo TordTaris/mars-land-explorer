@@ -103,12 +103,13 @@ footer{padding:20px 0;color:#7e91a4;font-size:10px;text-align:center}
 @media(max-width:760px){.a13-layout{grid-template-columns:1fr}.a13{padding:12px}.a13-zone-list{grid-template-columns:1fr 1fr}}
 .a13-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}.a13-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:10px 14px;border:1px solid #d6b57888;border-radius:10px;background:linear-gradient(120deg,#203a50,#101e30);color:#f5dfb0;text-decoration:none;font-size:11px;font-weight:850;letter-spacing:.5px}.a13-actions a.primary{background:linear-gradient(120deg,#e9c77f,#9d713b);color:#15100a;border-color:#e9c77f}.a13-actions a:focus-visible{outline:2px solid #69d9ec;outline-offset:3px}
 @media(max-width:520px){.a13-actions{display:grid;grid-template-columns:1fr}.a13-actions a{width:100%}}
-</style>
+.a13-viewport{position:relative;overflow:hidden;min-height:560px;background:radial-gradient(ellipse at 50% 42%,#1c3547,#081321 74%)}#aaru3dCanvas{display:block;width:100%;height:560px;min-height:560px;touch-action:none;cursor:grab}#aaru3dCanvas:active{cursor:grabbing}.a13-viewport>svg{display:none}.a13-3d-hud{position:absolute;left:12px;top:12px;z-index:2;padding:7px 10px;border:1px solid #d6b57866;border-radius:8px;background:#071321d9;color:#f1d59d;font-size:10px;letter-spacing:.7px;pointer-events:none}.a13-3d-help{position:absolute;right:12px;bottom:12px;z-index:2;padding:7px 10px;border-radius:8px;background:#071321d9;color:#b7c9d7;font-size:10px;pointer-events:none}.a13-legend{position:relative;z-index:2}@media(max-width:760px){.a13-viewport{min-height:430px}#aaru3dCanvas{height:430px;min-height:430px}}</style>
 <section class="a13" id="aaru13">
  <div class="a13-head"><div><div class="eyebrow">A’ARU 1.3 · SPATIAL SYSTEMS DESIGN</div><h2>INTERNAL CITY · ISOMETRIC SITE MODEL</h2><p class="a13-sub">Interactive axonometric concept map of the A’ARU campus inside the M-001 boundary. Select a building zone and switch utility overlays to inspect the proposed connections.</p></div><span class="sim-badge">● CONCEPT MODEL</span></div>
  <div class="a13-actions" aria-label="A’ARU workspaces"><a class="primary" href="./world5d.html">✦ OPEN IMMERSIVE 5D WORLD</a><a href="./city.html?parcel=M-001">▦ OPEN M-001 3D CONSTRUCTION</a></div>
  <div class="a13-layout">
   <div class="a13-viewport">
+   <div class="a13-3d-hud" id="aaru3dStatus">● 3D CITY ENGINE · M-001</div><canvas id="aaru3dCanvas" aria-label="Interactive 3D isometric A’ARU city model. Drag to orbit and tap a building to inspect it."></canvas><div class="a13-3d-help">DRAG · ROTATE &nbsp; SCROLL / PINCH · ZOOM &nbsp; TAP · SELECT</div>
    <svg viewBox="0 0 820 590" role="img" aria-label="Isometric concept model of A’ARU city buildings and utility routes within the M-001 square parcel">
     <defs><linearGradient id="a13ground" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#28475a"/><stop offset="1" stop-color="#101e30"/></linearGradient><linearGradient id="a13roof" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#e1b979"/><stop offset="1" stop-color="#956344"/></linearGradient></defs>
     <path d="M410 34 735 205 410 382 85 205Z" fill="url(#a13ground)" stroke="#d6b578" stroke-width="3"/>
@@ -200,6 +201,92 @@ function choose(id){if(!info[id])return;root.querySelectorAll('[data-zone]').for
 root.querySelectorAll('[data-pick]').forEach(n=>n.addEventListener('click',()=>choose(n.dataset.pick)));
 root.querySelectorAll('[data-zone]').forEach(n=>{n.addEventListener('click',()=>choose(n.dataset.zone));n.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose(n.dataset.zone);}});});
 root.querySelectorAll('[data-toggle-net]').forEach(n=>n.addEventListener('click',()=>{const key=n.dataset.toggleNet,on=n.getAttribute('aria-pressed')!=='true';n.setAttribute('aria-pressed',String(on));root.querySelectorAll('[data-net="'+key+'"]').forEach(p=>p.classList.toggle('hidden',!on));}));
+})();
+</script>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+(()=>{
+ const canvas=document.getElementById('aaru3dCanvas'),status=document.getElementById('aaru3dStatus');
+ if(!canvas)return;
+ try{
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.7));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;
+  const scene=new THREE.Scene();scene.background=new THREE.Color(0x091523);scene.fog=new THREE.Fog(0x091523,24,48);
+  const camera=new THREE.OrthographicCamera(-12,12,12,-12,.1,100);camera.position.set(17,19,17);camera.lookAt(0,0,0);
+  const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.07;controls.minDistance=9;controls.maxDistance=34;controls.maxPolarAngle=Math.PI*.47;controls.target.set(0,.5,0);
+  scene.add(new THREE.HemisphereLight(0xb9dcff,0x1b2632,2.1));
+  const sun=new THREE.DirectionalLight(0xffe0b0,3.1);sun.position.set(-9,18,10);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);scene.add(sun);
+  const cyan=new THREE.MeshStandardMaterial({color:0x4ad8e8,emissive:0x087c9c,emissiveIntensity:.65,metalness:.25,roughness:.28});
+  const gold=new THREE.MeshStandardMaterial({color:0xd8b477,metalness:.72,roughness:.28});
+  const dark=new THREE.MeshStandardMaterial({color:0x1a2c3d,metalness:.48,roughness:.34});
+  const glass=new THREE.MeshPhysicalMaterial({color:0x62c8d7,metalness:.15,roughness:.16,transparent:true,opacity:.62,transmission:.12});
+  const warm=new THREE.MeshStandardMaterial({color:0x875d49,metalness:.28,roughness:.4});
+  const ground=new THREE.Mesh(new THREE.BoxGeometry(20,.42,20),new THREE.MeshStandardMaterial({color:0x263442,roughness:.92}));ground.position.y=-.22;ground.receiveShadow=true;scene.add(ground);
+  const grid=new THREE.GridHelper(20,20,0x59788b,0x344b5d);grid.position.y=.01;scene.add(grid);
+  const border=new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-10,.03,-10),new THREE.Vector3(10,.03,-10),new THREE.Vector3(10,.03,10),new THREE.Vector3(-10,.03,10)]),new THREE.LineBasicMaterial({color:0xd8b477}));scene.add(border);
+  const city=new THREE.Group();scene.add(city);const pickables=[];const utilityGroups={air:new THREE.Group(),water:new THREE.Group(),power:new THREE.Group(),data:new THREE.Group()};
+  Object.values(utilityGroups).forEach(g=>scene.add(g));
+  function box(parent,x,y,z,w,h,d,mat,shadow=true){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y+h/2,z);m.castShadow=shadow;m.receiveShadow=true;parent.add(m);return m;}
+  function cylinder(parent,x,y,z,r1,r2,h,mat){const m=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,20),mat);m.position.set(x,y+h/2,z);m.castShadow=true;parent.add(m);return m;}
+  function building(id,label,x,z,w,d,h,type='tower'){
+   const g=new THREE.Group();g.position.set(x,0,z);g.userData={id,label};city.add(g);pickables.push(g);
+   const base=box(g,0,.05,0,w+.3,.16,d+.3,dark);
+   if(type==='dome'){
+    const dome=new THREE.Mesh(new THREE.SphereGeometry(w*.52,24,16,0,Math.PI*2,0,Math.PI/2),glass);dome.position.y=.22;dome.scale.z=d/w;dome.castShadow=true;g.add(dome);cylinder(g,0,.18,0,w*.52,w*.52,.08,gold);
+   }else if(type==='greenhouse'){
+    box(g,0,.18,0,w,.12,d,dark);
+    for(let i=-1;i<=1;i++){const arch=new THREE.Mesh(new THREE.CapsuleGeometry(.045,h*.42,4,8),glass);arch.position.set(i*w*.27,.5,0);arch.scale.set(1,1,d*2.2);g.add(arch);}
+    box(g,0,.3,0,w*.88,.05,.045,cyan,false);
+   }else{
+    box(g,0,.18,0,w,h,d,warm);
+    box(g,0,h+.18,0,w*1.12,.13,d*1.12,gold);
+    for(let floor=0;floor<Math.max(2,Math.floor(h/.48));floor++){
+     const yy=.42+floor*(h/Math.max(2,Math.floor(h/.48)));
+     for(let side of [-1,1])box(g,0,yy,side*(d/2+.012),w*.7,.07,.025,cyan,false);
+    }
+    box(g,w*.34,.3,0,.06,h*.75,d*.035,cyan,false);
+   }
+   const beacon=new THREE.Mesh(new THREE.SphereGeometry(.09,12,8),cyan);beacon.position.set(0,h+.55,0);g.add(beacon);
+   const labelCanvas=document.createElement('canvas');labelCanvas.width=512;labelCanvas.height=96;const ctx=labelCanvas.getContext('2d');ctx.fillStyle='#081522';ctx.fillRect(0,0,512,96);ctx.strokeStyle='#d8b477';ctx.lineWidth=5;ctx.strokeRect(4,4,504,88);ctx.fillStyle='#f6e2b9';ctx.font='bold 38px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label.toUpperCase(),256,49);
+   const tex=new THREE.CanvasTexture(labelCanvas);tex.colorSpace=THREE.SRGBColorSpace;const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false}));sprite.position.set(0,h+1.05,0);sprite.scale.set(2.6,.5,1);g.add(sprite);
+   return g;
+  }
+  building('hub','Command Hub',0,0,2.25,1.8,1.65,'tower');
+  building('habitat','Habitat',-5,-3.2,2.1,1.8,1.25,'dome');
+  building('habitat','Habitat',-6,-1,1.6,1.5,1.05,'dome');
+  building('agri','Greenhouse',4.7,-3.2,2.8,1.8,.9,'greenhouse');
+  building('agri','Greenhouse',5.1,-.7,2.2,1.7,.8,'greenhouse');
+  building('medical','Medical',-1.4,-6,2.2,1.8,1.5,'tower');
+  building('energy','Energy',7,5.4,1.7,1.7,1.2,'tower');
+  building('water','Water Plant',-7,5,1.8,1.8,1.05,'tower');
+  building('logistics','Logistics',4.2,5.5,2.4,1.8,1.05,'tower');
+  building('shelter','Emergency',0,-5.2,2.2,1.7,.85,'dome');
+  // Streets and pedestrian links.
+  const roadMat=new THREE.MeshStandardMaterial({color:0x526171,roughness:.85});
+  function road(x1,z1,x2,z2,width=.42){const dx=x2-x1,dz=z2-z1,len=Math.hypot(dx,dz);const m=new THREE.Mesh(new THREE.BoxGeometry(width,.055,len),roadMat);m.position.set((x1+x2)/2,.06,(z1+z2)/2);m.rotation.y=Math.atan2(dx,dz);m.receiveShadow=true;city.add(m);const strip=new THREE.Mesh(new THREE.BoxGeometry(.035,.065,len*.9),gold);strip.position.set((x1+x2)/2,.095,(z1+z2)/2);strip.rotation.y=m.rotation.y;city.add(strip);}
+  road(0,0,-5,-3.2);road(0,0,4.7,-3.2);road(0,0,-1.4,-6);road(0,0,7,5.4);road(0,0,-7,5);road(0,0,4.2,5.5);road(0,0,0,-5.2);
+  // Solar arrays, water tanks, landing pad, planted bio-domes.
+  for(let i=0;i<4;i++){const p=box(city,5.7+i*.65,.08,7.6, .52,.08,1.1,new THREE.MeshStandardMaterial({color:0x244c70,metalness:.65,roughness:.25}));p.rotation.y=-.35;box(city,5.7+i*.65,.18,7.6,.035,.025,1.14,cyan,false);}
+  for(let i=0;i<3;i++){cylinder(city,-8+i*.75,.05,7.5,.38,.38,1.1,glass);cylinder(city,-8+i*.75,1.15,7.5,.4,.4,.1,gold);}
+  const pad=new THREE.Mesh(new THREE.CylinderGeometry(1.05,1.05,.12,48),dark);pad.position.set(7,.08,-7);pad.receiveShadow=true;city.add(pad);const padRing=new THREE.Mesh(new THREE.TorusGeometry(.78,.025,8,48),cyan);padRing.rotation.x=Math.PI/2;padRing.position.set(7,.16,-7);city.add(padRing);
+  // Animated conceptual utility routes; toggles control their visibility.
+  const route=(group,points,color)=>{const curve=new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(p[0],p[1],p[2])));const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,64,.035,7,false),new THREE.MeshBasicMaterial({color}));group.add(mesh);};
+  route(utilityGroups.air,[[0,1.1,0],[0,1.5,-3],[-3,1.3,-4],[-5,1,-3.2],[0,1.1,0]],0x67d8e9);
+  route(utilityGroups.water,[[0,.35,0],[-3,.35,3],[-7,.35,5],[0,.35,0],[4.7,.35,-3.2]],0x4b9bff);
+  route(utilityGroups.power,[[0,2,0],[3,1.8,2],[7,1.5,5],[4,1.5,5.5],[0,2,0]],0xe8bd62);
+  route(utilityGroups.data,[[0,2.3,0],[-2,2.2,-3],[-1,2.2,-6],[0,2.3,0],[4,2.2,5.5]],0xb28bfa);
+  // Lamps.
+  for(const [x,z] of [[-3,-2],[3,-2],[-3,3],[3,3],[0,-3],[0,4]]){cylinder(city,x,.08,z,.035,.055,.8,gold);const l=new THREE.PointLight(0x58dff0,.55,4);l.position.set(x,.9,z);city.add(l);}
+  const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();let selected='hub';
+  function choose(id){selected=id;document.querySelectorAll('[data-pick]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.pick===id)));const info=document.getElementById('a13Title'),desc=document.getElementById('a13Description'),state=document.getElementById('a13State');if(info&&desc&&state){const src=document.querySelector('[data-pick="'+id+'"]');info.textContent=({hub:'CENTRAL COMMAND HUB',habitat:'HABITAT DISTRICT',agri:'GREENHOUSE DISTRICT',medical:'MEDICAL / CIVIC DISTRICT',energy:'ENERGY GENERATION',water:'WATER / LIFE SUPPORT',logistics:'LOGISTICS & INDUSTRY',shelter:'EMERGENCY REFUGE'})[id]||id.toUpperCase();desc.textContent=({hub:'Command, communications, docking coordination and pedestrian transfer links.',habitat:'Pressurized residential domes and shared community facilities.',agri:'Controlled-environment greenhouses, hydroponics and food production.',medical:'Medical care, research laboratories and civic services.',energy:'Solar generation, energy storage and power distribution.',water:'Water recovery, storage, purification and life-support utilities.',logistics:'Cargo handling, maintenance, fabrication and waste sorting.',shelter:'Protected emergency refuge, supplies and independent communications.'})[id]||'';state.textContent='3D DISTRICT SELECTED · '+id.toUpperCase()+' · M-001';}}
+  document.querySelectorAll('[data-pick]').forEach(b=>b.addEventListener('click',()=>choose(b.dataset.pick)));
+  document.querySelectorAll('[data-toggle-net]').forEach(b=>b.addEventListener('click',()=>{const key=b.dataset.toggleNet,on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(on));utilityGroups[key].visible=on;}));
+  renderer.domElement.addEventListener('pointerup',e=>{const r=renderer.domElement.getBoundingClientRect();pointer.x=((e.clientX-r.left)/r.width)*2-1;pointer.y=-((e.clientY-r.top)/r.height)*2+1;raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(pickables,true);if(hits.length){let o=hits[0].object;while(o&&!o.userData.id)o=o.parent;if(o)choose(o.userData.id);}});
+  const resize=()=>{const w=canvas.clientWidth,h=canvas.clientHeight;if(!w||!h)return;camera.left=-12*h/w;camera.right=12*h/w;camera.top=12;camera.bottom=-12;camera.updateProjectionMatrix();renderer.setSize(w,h,false);};new ResizeObserver(resize).observe(canvas);resize();
+  status.textContent='● INTERACTIVE 3D CITY READY';status.style.color='#8ce5b7';
+  const clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera);}animate();
+ }catch(err){console.error('AARU 3D engine:',err);status.textContent='● 3D ENGINE ERROR · CHECK CONNECTION';status.style.color='#ff9b8e';}
 })();
 </script>
 
