@@ -2573,7 +2573,7 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
   underground:()=>document.getElementById('navUnderground')?.click(),
   satellite:()=>document.querySelector('.lm-command-dock [data-tab="satellite"]')?.click(),
   workspace:()=>{if(window.MarsWorldServer?.getState?.()?.user){document.getElementById('lmWorkspaceOpen')?.click();return;}document.getElementById('account')?.click();},
-  chat:()=>document.getElementById('lmChatOpen')?.click(),
+  chat:()=>document.dispatchEvent(new CustomEvent('local-mars-open-chat')),
   account:()=>{const signedIn=!!window.MarsWorldServer?.getState?.()?.user;if(signedIn){document.getElementById('lmWorkspaceOpen')?.click();return;}const signIn=document.getElementById('account');if(signIn){signIn.click();return;}const accountTab=document.querySelector('.lm-command-dock [data-tab="account"]');if(accountTab)accountTab.click();else window.dispatchEvent(new CustomEvent('local-mars-open-account'));},
   wallet:()=>document.querySelector('.lm-command-dock [data-tab="wallet"]')?.click(),
   install:()=>document.getElementById('lmInstallDialog')?.classList.add('open')
