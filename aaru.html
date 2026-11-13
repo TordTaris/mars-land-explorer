@@ -103,13 +103,13 @@ footer{padding:20px 0;color:#7e91a4;font-size:10px;text-align:center}
 @media(max-width:760px){.a13-layout{grid-template-columns:1fr}.a13{padding:12px}.a13-zone-list{grid-template-columns:1fr 1fr}}
 .a13-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}.a13-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:10px 14px;border:1px solid #d6b57888;border-radius:10px;background:linear-gradient(120deg,#203a50,#101e30);color:#f5dfb0;text-decoration:none;font-size:11px;font-weight:850;letter-spacing:.5px}.a13-actions a.primary{background:linear-gradient(120deg,#e9c77f,#9d713b);color:#15100a;border-color:#e9c77f}.a13-actions a:focus-visible{outline:2px solid #69d9ec;outline-offset:3px}
 @media(max-width:520px){.a13-actions{display:grid;grid-template-columns:1fr}.a13-actions a{width:100%}}
-.a13-viewport{position:relative;overflow:hidden;min-height:560px;background:radial-gradient(ellipse at 50% 42%,#1c3547,#081321 74%)}#aaru3dCanvas{display:block;width:100%;height:560px;min-height:560px;touch-action:none;cursor:grab}#aaru3dCanvas:active{cursor:grabbing}.a13-viewport>svg{display:none}.a13-3d-hud{position:absolute;left:12px;top:12px;z-index:2;padding:7px 10px;border:1px solid #d6b57866;border-radius:8px;background:#071321d9;color:#f1d59d;font-size:10px;letter-spacing:.7px;pointer-events:none}.a13-3d-help{position:absolute;right:12px;bottom:12px;z-index:2;padding:7px 10px;border-radius:8px;background:#071321d9;color:#b7c9d7;font-size:10px;pointer-events:none}.a13-legend{position:relative;z-index:2}@media(max-width:760px){.a13-viewport{min-height:430px}#aaru3dCanvas{height:430px;min-height:430px}}</style>
+.a13-viewport{position:relative;overflow:hidden;min-height:560px;background:radial-gradient(ellipse at 50% 42%,#1c3547,#081321 74%)}#aaru3dCanvas{display:block;width:100%;height:560px;min-height:560px;touch-action:none;cursor:grab}#aaru3dCanvas:active{cursor:grabbing}.a13-viewport>svg{display:none}.a13-3d-hud{position:absolute;left:12px;top:12px;z-index:2;padding:7px 10px;border:1px solid #d6b57866;border-radius:8px;background:#071321d9;color:#f1d59d;font-size:10px;letter-spacing:.7px;pointer-events:none}.a13-3d-help{position:absolute;right:12px;bottom:12px;z-index:2;padding:7px 10px;border-radius:8px;background:#071321d9;color:#b7c9d7;font-size:10px;pointer-events:none}.a13-minimap{position:absolute;right:12px;top:12px;width:112px;height:112px;z-index:3;border:1px solid #d6b57899;border-radius:10px;background:#071321eF;box-shadow:0 6px 18px #0008;pointer-events:none}@media(min-width:760px){.a13-minimap{width:148px;height:148px}}.a13-legend{position:relative;z-index:2}@media(max-width:760px){.a13-viewport{min-height:430px}#aaru3dCanvas{height:430px;min-height:430px}}</style>
 <section class="a13" id="aaru13">
  <div class="a13-head"><div><div class="eyebrow">A’ARU 1.3 · SPATIAL SYSTEMS DESIGN</div><h2>INTERNAL CITY · ISOMETRIC SITE MODEL</h2><p class="a13-sub">Interactive axonometric concept map of the A’ARU campus inside the M-001 boundary. Select a building zone and switch utility overlays to inspect the proposed connections.</p></div><span class="sim-badge">● CONCEPT MODEL</span></div>
  <div class="a13-actions" aria-label="A’ARU workspaces"><a class="primary" href="./world5d.html">✦ OPEN IMMERSIVE 5D WORLD</a><a href="./city.html?parcel=M-001">▦ OPEN M-001 3D CONSTRUCTION</a></div>
  <div class="a13-layout">
   <div class="a13-viewport">
-   <div class="a13-3d-hud" id="aaru3dStatus">● 3D CITY ENGINE · M-001</div><canvas id="aaru3dCanvas" aria-label="Interactive 3D isometric A’ARU city model. Drag to orbit and tap a building to inspect it."></canvas><div class="a13-3d-help">DRAG · ROTATE &nbsp; SCROLL / PINCH · ZOOM &nbsp; TAP · SELECT</div>
+   <div class="a13-3d-hud" id="aaru3dStatus">● 3D CITY ENGINE · M-001</div><canvas id="aaruMiniMap" class="a13-minimap" width="220" height="220" aria-label="A’ARU city mini map"></canvas><canvas id="aaru3dCanvas" aria-label="Interactive 3D isometric A’ARU city model. Drag to orbit and tap a building to inspect it."></canvas><div class="a13-3d-help">DRAG · ROTATE &nbsp; SCROLL / PINCH · ZOOM &nbsp; TAP · SELECT</div>
    <svg viewBox="0 0 820 590" role="img" aria-label="Isometric concept model of A’ARU city buildings and utility routes within the M-001 square parcel">
     <defs><linearGradient id="a13ground" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#28475a"/><stop offset="1" stop-color="#101e30"/></linearGradient><linearGradient id="a13roof" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#e1b979"/><stop offset="1" stop-color="#956344"/></linearGradient></defs>
     <path d="M410 34 735 205 410 382 85 205Z" fill="url(#a13ground)" stroke="#d6b578" stroke-width="3"/>
@@ -282,6 +282,33 @@ root.querySelectorAll('[data-toggle-net]').forEach(n=>n.addEventListener('click'
   route(utilityGroups.data,[[0,2.3,0],[-2,2.2,-3],[-1,2.2,-6],[0,2.3,0],[4,2.2,5.5]],0xb28bfa);
   // Lamps.
   for(const [x,z] of [[-3,-2],[3,-2],[-3,3],[3,3],[0,-3],[0,4]]){cylinder(city,x,.08,z,.035,.055,.8,gold);const l=new THREE.PointLight(0x58dff0,.55,4);l.position.set(x,.9,z);city.add(l);}
+  // Living colony: three astronaut residents walk between the central hub and habitat.
+  const residents=[];
+  const suit=new THREE.MeshStandardMaterial({color:0xe7e1d2,metalness:.18,roughness:.52});
+  const visor=new THREE.MeshStandardMaterial({color:0x163d55,metalness:.65,roughness:.16,emissive:0x087c9c,emissiveIntensity:.22});
+  const pack=new THREE.MeshStandardMaterial({color:0xd5b477,metalness:.45,roughness:.42});
+  function makeResident(index){
+   const g=new THREE.Group();
+   const body=new THREE.Mesh(new THREE.CapsuleGeometry(.16,.34,4,8),suit);body.position.y=.48;g.add(body);
+   const helmet=new THREE.Mesh(new THREE.SphereGeometry(.17,16,12),suit);helmet.position.y=.82;g.add(helmet);
+   const face=new THREE.Mesh(new THREE.SphereGeometry(.115,16,12),visor);face.position.set(0,.83,.105);g.add(face);
+   const bag=new THREE.Mesh(new THREE.BoxGeometry(.19,.27,.12),pack);bag.position.set(0,.48,-.2);g.add(bag);
+   for(const side of [-1,1]){
+    const arm=new THREE.Mesh(new THREE.CapsuleGeometry(.055,.22,3,6),suit);arm.position.set(side*.2,.49,0);arm.rotation.z=side*.18;g.add(arm);
+    const leg=new THREE.Mesh(new THREE.CapsuleGeometry(.065,.2,3,6),suit);leg.position.set(side*.085,.19,0);g.add(leg);
+   }
+   g.scale.setScalar(.72);city.add(g);residents.push({group:g,phase:index*2.1,radius:2.7+index*.7,speed:.16+index*.025});
+  }
+  for(let i=0;i<3;i++)makeResident(i);
+  // Compact top-down mini-map of the live scene.
+  const mini=document.getElementById('aaruMiniMap'),mx=mini?.getContext('2d');
+  if(mx){
+   mx.fillStyle='#081522';mx.fillRect(0,0,220,220);mx.strokeStyle='#d8b477';mx.lineWidth=2;mx.strokeRect(9,9,202,202);
+   mx.strokeStyle='#536b7b';mx.lineWidth=12;mx.beginPath();mx.moveTo(110,110);mx.lineTo(54,62);mx.moveTo(110,110);mx.lineTo(164,62);mx.moveTo(110,110);mx.lineTo(55,165);mx.moveTo(110,110);mx.lineTo(165,165);mx.stroke();
+   const dots=[[110,110,12],[54,62,10],[164,62,10],[56,165,9],[164,165,9],[110,175,8],[110,50,8],[175,110,8]];
+   dots.forEach(([x,y,r],i)=>{mx.fillStyle=i===0?'#e8c27c':i%2?'#5bd8e8':'#9dc7d5';mx.beginPath();mx.arc(x,y,r,0,Math.PI*2);mx.fill();});
+   mx.fillStyle='#e7dfcf';mx.font='bold 10px system-ui';mx.fillText('N',106,20);mx.fillText('M-001',88,205);
+  }
   const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();let selected='hub';
   function choose(id){selected=id;document.querySelectorAll('[data-pick]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.pick===id)));const info=document.getElementById('a13Title'),desc=document.getElementById('a13Description'),state=document.getElementById('a13State');if(info&&desc&&state){const src=document.querySelector('[data-pick="'+id+'"]');info.textContent=({hub:'CENTRAL COMMAND HUB',habitat:'HABITAT DISTRICT',agri:'GREENHOUSE DISTRICT',medical:'MEDICAL / CIVIC DISTRICT',energy:'ENERGY GENERATION',water:'WATER / LIFE SUPPORT',logistics:'LOGISTICS & INDUSTRY',shelter:'EMERGENCY REFUGE'})[id]||id.toUpperCase();desc.textContent=({hub:'Command, communications, docking coordination and pedestrian transfer links.',habitat:'Pressurized residential domes and shared community facilities.',agri:'Controlled-environment greenhouses, hydroponics and food production.',medical:'Medical care, research laboratories and civic services.',energy:'Solar generation, energy storage and power distribution.',water:'Water recovery, storage, purification and life-support utilities.',logistics:'Cargo handling, maintenance, fabrication and waste sorting.',shelter:'Protected emergency refuge, supplies and independent communications.'})[id]||'';state.textContent='3D DISTRICT SELECTED · '+id.toUpperCase()+' · M-001';}}
   document.querySelectorAll('[data-pick]').forEach(b=>b.addEventListener('click',()=>choose(b.dataset.pick)));
@@ -289,7 +316,7 @@ root.querySelectorAll('[data-toggle-net]').forEach(n=>n.addEventListener('click'
   renderer.domElement.addEventListener('pointerup',e=>{const r=renderer.domElement.getBoundingClientRect();pointer.x=((e.clientX-r.left)/r.width)*2-1;pointer.y=-((e.clientY-r.top)/r.height)*2+1;raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(pickables,true);if(hits.length){let o=hits[0].object;while(o&&!o.userData.id)o=o.parent;if(o)choose(o.userData.id);}});
   const resize=()=>{const w=canvas.clientWidth,h=canvas.clientHeight;if(!w||!h)return;camera.left=-12*h/w;camera.right=12*h/w;camera.top=12;camera.bottom=-12;camera.updateProjectionMatrix();renderer.setSize(w,h,false);};new ResizeObserver(resize).observe(canvas);resize();
   status.textContent='● INTERACTIVE 3D CITY READY';status.style.color='#8ce5b7';
-  const clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera);}animate();
+  const clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);const t=clock.getElapsedTime();residents.forEach((r,i)=>{const a=t*r.speed+r.phase;r.group.position.set(Math.cos(a)*r.radius,.04,Math.sin(a)*r.radius);r.group.rotation.y=-a;});controls.update();renderer.render(scene,camera);}animate();
  }catch(err){
   console.error('AARU 3D engine:',err);
   status.textContent='● 3D ENGINE UNAVAILABLE · SHOWING SITE PLAN';
