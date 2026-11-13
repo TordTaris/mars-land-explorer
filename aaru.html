@@ -203,8 +203,11 @@ root.querySelectorAll('[data-zone]').forEach(n=>{n.addEventListener('click',()=>
 root.querySelectorAll('[data-toggle-net]').forEach(n=>n.addEventListener('click',()=>{const key=n.dataset.toggleNet,on=n.getAttribute('aria-pressed')!=='true';n.setAttribute('aria-pressed',String(on));root.querySelectorAll('[data-net="'+key+'"]').forEach(p=>p.classList.toggle('hidden',!on));}));
 })();
 </script>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}
+</script>
 <script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+import * as THREE from 'three';
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
 (()=>{
  const canvas=document.getElementById('aaru3dCanvas'),status=document.getElementById('aaru3dStatus');
