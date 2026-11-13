@@ -3,7 +3,7 @@
 const $=id=>document.getElementById(id);
 const overlay=$('lmChatOverlay'),openButton=$('lmChatOpen'),closeButton=$('lmChatClose'),messages=$('lmChatMessages'),form=$('lmChatForm'),input=$('lmChatInput'),send=$('lmChatSend'),notice=$('lmChatNotice'),signIn=$('lmChatSignIn'),connection=$('lmChatConnection'),online=$('lmChatOnline'),bar=$('lmChatBar');
 if(!overlay||!messages||!form||!bar)return;
-let db=null,user=null,channel=null,connecting=false,sending=false,reconnectTimer=null,reconnectAttempt=0,seen=new Set(),onlineUsers=new Set(),activeRoom='global',lastSentAt=0;
+let db=null,user=null,channel=null,connecting=false,sending=false,reconnectTimer=null,reconnectAttempt=0,seen=new Set(),onlineUsers=new Set(),activeRoom='global',lastSentAt=0,connectToken=0;
 const rooms=[
  {id:'global',label:'GLOBAL COMMUNITY'},
  {id:'aaru',label:'A’ARU CITY · M-001'},
@@ -51,6 +51,7 @@ function countPresence(){
  onlineUsers=ids;updateOnline();
 }
 async function disconnect(){
+ connectToken++;connecting=false;
  if(reconnectTimer){clearTimeout(reconnectTimer);reconnectTimer=null;}
  if(channel&&db){const old=channel;channel=null;try{await db.removeChannel(old)}catch(_){}}
  onlineUsers.clear();updateOnline();
@@ -67,13 +68,14 @@ async function connect(){
  if(!db){status('Waiting for database connection');scheduleReconnect();return;}
  if(!user){await disconnect();status(lang()==='th'?'ต้องเข้าสู่ระบบสมาชิก':'Member sign-in required');empty(lang()==='th'?'เข้าสู่ระบบเพื่อดูและส่งข้อความ':'Sign in to view and send messages');controls();return;}
  if(channel||connecting)return;
- connecting=true;status('Connecting · '+rooms.find(r=>r.id===activeRoom).label);
+ connecting=true;const token=++connectToken;status('Connecting · '+rooms.find(r=>r.id===activeRoom).label);
  const ch=db.channel('localmars-chat-'+activeRoom,{config:{presence:{key:user.id}}});
  ch.on('postgres_changes',{event:'INSERT',schema:'public',table:'mars_chat_messages',filter:'room_key=eq.'+activeRoom},payload=>render(payload.new));
  ch.on('presence',{event:'sync'},countPresence);
  ch.on('presence',{event:'join'},countPresence);
  ch.on('presence',{event:'leave'},countPresence);
  ch.subscribe(async(st,err)=>{
+  if(token!==connectToken){try{await db.removeChannel(ch)}catch(_){}return;}
   connecting=false;
   if(st==='SUBSCRIBED'){
    channel=ch;reconnectAttempt=0;status(lang()==='th'?'เชื่อมต่อแล้ว · LIVE':'Connected · LIVE',true);
@@ -85,7 +87,6 @@ async function connect(){
    notice.textContent=err?.message||'Waiting for reconnection';controls();scheduleReconnect();
   }
  });
- connecting=false;
 }
 async function switchRoom(next){
  if(!rooms.some(r=>r.id===next)||next===activeRoom)return;
