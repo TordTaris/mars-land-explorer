@@ -115,6 +115,8 @@ const roomSelect=roomBar.querySelector('select');
 const style=document.createElement('style');style.textContent='#lmChatRoomBar{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid #7892a922;background:#0a1929}#lmChatRoomBar label{font-size:10px;letter-spacing:1px;color:#8da8bc;font-weight:800;white-space:nowrap}#lmChatRoomSelect{width:100%;min-width:0;border:1px solid #b58b4c88;border-radius:9px;background:#10253b;color:#f1dba9;padding:10px 12px;font:700 11px system-ui;outline-offset:2px}#lmChatRoomSelect:focus{outline:2px solid #69d9ec}';document.head.append(style);
 roomSelect.addEventListener('change',()=>switchRoom(roomSelect.value));
 openButton?.addEventListener('click',show);
+document.getElementById('lmChatLaunch')?.addEventListener('click',show);
+document.addEventListener('local-mars-open-chat',show);
 closeButton?.addEventListener('click',hide);
 overlay.addEventListener('click',e=>{if(e.target===overlay)hide();});
 signIn.addEventListener('click',()=>{hide();document.getElementById('account')?.click();});
