@@ -69,7 +69,7 @@ async function connect(){
  if(channel||connecting)return;
  connecting=true;status('Connecting · '+rooms.find(r=>r.id===activeRoom).label);
  const ch=db.channel('localmars-chat-'+activeRoom,{config:{presence:{key:user.id}}});
- ch.on('postgres_changes',{event:'INSERT',schema:'public',table:'mars_chat_messages,filter:'room_key=eq.'+activeRoom},payload=>render(payload.new));
+ ch.on('postgres_changes',{event:'INSERT',schema:'public',table:'mars_chat_messages',filter:'room_key=eq.'+activeRoom},payload=>render(payload.new));
  ch.on('presence',{event:'sync'},countPresence);
  ch.on('presence',{event:'join'},countPresence);
  ch.on('presence',{event:'leave'},countPresence);
