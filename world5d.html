@@ -76,7 +76,7 @@ const markers=new THREE.Group();const markerMat=new THREE.MeshBasicMaterial({col
  const M001_LAT=-55,M001_LON=-160;
  const m001Normal=new THREE.Vector3(Math.cos(THREE.MathUtils.degToRad(M001_LAT))*Math.cos(THREE.MathUtils.degToRad(M001_LON)),Math.sin(THREE.MathUtils.degToRad(M001_LAT)),Math.cos(THREE.MathUtils.degToRad(M001_LAT))*Math.sin(THREE.MathUtils.degToRad(M001_LON))).normalize();
  const m001Site=new THREE.Group();m001Site.position.copy(m001Normal.clone().multiplyScalar(1.012));m001Site.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),m001Normal);
- const siteScale=.018,site=new THREE.Group();site.scale.setScalar(siteScale);m001Site.add(site);
+ const siteScale=.03,site=new THREE.Group();site.scale.setScalar(siteScale);m001Site.add(site);
  const goldMat=new THREE.MeshStandardMaterial({color:0xd8b477,metalness:.72,roughness:.28}),glassMat=new THREE.MeshStandardMaterial({color:0x65cbd7,metalness:.2,roughness:.2,transparent:true,opacity:.82});
  const plinth=new THREE.Mesh(new THREE.CylinderGeometry(1.15,1.22,.10,32),new THREE.MeshStandardMaterial({color:0x263c50,metalness:.65,roughness:.35}));plinth.position.y=.04;site.add(plinth);
  const core=new THREE.Mesh(new THREE.CylinderGeometry(.28,.34,.72,20),new THREE.MeshStandardMaterial({color:0xdce5e8,metalness:.35,roughness:.35}));core.position.y=.48;site.add(core);
@@ -89,7 +89,59 @@ const markers=new THREE.Group();const markerMat=new THREE.MeshBasicMaterial({col
  const beacon=new THREE.Mesh(new THREE.SphereGeometry(.075,12,8),new THREE.MeshBasicMaterial({color:0x62e9f4}));beacon.position.set(.15,.72,.05);site.add(beacon);
  const labelCanvas=document.createElement('canvas');labelCanvas.width=512;labelCanvas.height=112;const labelCtx=labelCanvas.getContext('2d');labelCtx.fillStyle='rgba(7,15,26,.9)';labelCtx.strokeStyle='#d8b477';labelCtx.lineWidth=5;labelCtx.beginPath();labelCtx.roundRect(5,5,502,102,18);labelCtx.fill();labelCtx.stroke();labelCtx.fillStyle='#f2d59c';labelCtx.font='bold 42px system-ui';labelCtx.textAlign='center';labelCtx.textBaseline='middle';labelCtx.fillText('A’ARU 1.0 · M-001',256,56);const labelTexture=new THREE.CanvasTexture(labelCanvas);labelTexture.colorSpace=THREE.SRGBColorSpace;const siteLabel=new THREE.Sprite(new THREE.SpriteMaterial({map:labelTexture,transparent:true,depthTest:false}));siteLabel.position.set(0,siteScale*2.1,0);siteLabel.scale.set(.19,.042,1);m001Site.add(siteLabel);
 
- planetGroup.add(m001Site);
+ 
+// CYBER CITY layer: modular neon architecture, streets, windows and readable landmarks.
+// All geometry is anchored to the existing M-001 parcel schematic; no orbital rings are added.
+const cyberCity=new THREE.Group();site.add(cyberCity);
+const darkFacade=new THREE.MeshStandardMaterial({color:0x17283a,metalness:.62,roughness:.3});
+const warmFacade=new THREE.MeshStandardMaterial({color:0x3b3040,metalness:.42,roughness:.34});
+const neonCyan=new THREE.MeshStandardMaterial({color:0x38dff2,emissive:0x18b8d4,emissiveIntensity:2.1,metalness:.18,roughness:.22});
+const neonMagenta=new THREE.MeshStandardMaterial({color:0xff55d7,emissive:0xd51bb4,emissiveIntensity:1.8,metalness:.12,roughness:.24});
+const neonGold=new THREE.MeshStandardMaterial({color:0xffc76d,emissive:0xe58b27,emissiveIntensity:1.45,metalness:.35,roughness:.26});
+const windowMat=new THREE.MeshBasicMaterial({color:0xffd28a});
+function addCyberBuilding(x,z,w,d,h,kind,name){
+ const b=new THREE.Group();b.position.set(x,.1,z);cyberCity.add(b);
+ const shell=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),kind%2?darkFacade:warmFacade);shell.position.y=h/2;b.add(shell);
+ const roof=new THREE.Mesh(new THREE.BoxGeometry(w*1.08,.045,d*1.08),goldMat);roof.position.y=h+.02;b.add(roof);
+ const floors=Math.max(2,Math.floor(h/.16));
+ for(let floor=0;floor<floors;floor++){
+  const y=.12+floor*(h/floors);
+  for(let side=-1;side<=1;side+=2){
+   const strip=new THREE.Mesh(new THREE.BoxGeometry(w*.72,.035,.012),floor%2?neonCyan:windowMat);
+   strip.position.set(0,y,side*(d/2+.008));b.add(strip);
+  }
+ }
+ const vertical=new THREE.Mesh(new THREE.BoxGeometry(.025,h*.82,.018),kind%2?neonMagenta:neonCyan);vertical.position.set(w*.36,h*.52,d/2+.012);b.add(vertical);
+ const signCanvas=document.createElement('canvas');signCanvas.width=512;signCanvas.height=112;
+ const sx=signCanvas.getContext('2d');sx.fillStyle='rgba(5,12,22,.94)';sx.fillRect(0,0,512,112);
+ sx.strokeStyle=kind%2?'#ff55d7':'#43e4f5';sx.lineWidth=7;sx.strokeRect(5,5,502,102);
+ sx.shadowColor=sx.strokeStyle;sx.shadowBlur=16;sx.fillStyle='#fff2d5';sx.font='bold 48px system-ui';sx.textAlign='center';sx.textBaseline='middle';sx.fillText(name,256,58);
+ const signTex=new THREE.CanvasTexture(signCanvas);signTex.colorSpace=THREE.SRGBColorSpace;
+ const sign=new THREE.Mesh(new THREE.PlaneGeometry(w*.92,.2),new THREE.MeshBasicMaterial({map:signTex,transparent:true,side:THREE.DoubleSide}));
+ sign.position.set(0,h*.72,d/2+.022);b.add(sign);
+ const antenna=new THREE.Mesh(new THREE.CylinderGeometry(.012,.018,.22,8),goldMat);antenna.position.set(-w*.28,h+.14,0);b.add(antenna);
+ const beacon=new THREE.Mesh(new THREE.SphereGeometry(.027,8,8),kind%2?neonMagenta:neonCyan);beacon.position.set(-w*.28,h+.26,0);b.add(beacon);
+}
+addCyberBuilding(-.92,-.55,.42,.36,.78,0,'NEXUS');
+addCyberBuilding(.88,-.58,.38,.34,.62,1,'HABITAT');
+addCyberBuilding(-.92,.55,.36,.32,.52,1,'LAB');
+addCyberBuilding(.9,.55,.44,.36,.86,0,'ENERGY');
+addCyberBuilding(0,-1.02,.48,.34,.43,1,'MARKET');
+// Elevated walkways and luminous street guides (short segments, not orbital rings).
+const roadMat=new THREE.MeshStandardMaterial({color:0x24394b,metalness:.55,roughness:.4});
+function addRoad(ax,az,bx,bz){
+ const curve=new THREE.LineCurve3(new THREE.Vector3(ax,.13,az),new THREE.Vector3(bx,.13,bz));
+ const road=new THREE.Mesh(new THREE.TubeGeometry(curve,12,.055,6,false),roadMat);cyberCity.add(road);
+ const guide=new THREE.Mesh(new THREE.TubeGeometry(curve,12,.008,5,false),neonCyan);guide.position.y=.025;cyberCity.add(guide);
+}
+addRoad(-.48,-.55,.48,-.58);addRoad(-.5,.5,.48,.52);addRoad(-.92,-.28,-.92,.28);addRoad(.9,-.28,.9,.28);
+for(const [x,z] of [[-.55,-.18],[.55,-.18],[-.55,.2],[.55,.2],[0,-.78]]){
+ const pole=new THREE.Mesh(new THREE.CylinderGeometry(.012,.02,.3,8),goldMat);pole.position.set(x,.28,z);cyberCity.add(pole);
+ const lamp=new THREE.Mesh(new THREE.SphereGeometry(.045,8,8),neonGold);lamp.position.set(x,.45,z);cyberCity.add(lamp);
+ const glow=new THREE.PointLight(0x46dff4,.22,.42);glow.position.set(x,.47,z);cyberCity.add(glow);
+}
+
+planetGroup.add(m001Site);
 
  // Render structures from shared Supabase world state, not hard-coded sample markers.
  // Coordinates are parcel centers; small local offsets separate co-located records visually.
@@ -157,7 +209,7 @@ document.querySelector('#markerToggle').addEventListener('change',e=>markers.vis
 document.querySelector('#toggleSpin').addEventListener('click',e=>{controls.autoRotate=!controls.autoRotate;e.currentTarget.classList.toggle('active',controls.autoRotate);e.currentTarget.textContent='Auto rotate: '+(controls.autoRotate?'ON':'OFF');document.querySelector('#rotationState').textContent=controls.autoRotate?'Auto + interactive':'Interactive'});
 const panelButton=document.querySelector('#togglePanel');const mobilePanels=matchMedia('(max-width:700px)').matches;if(!mobilePanels){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('mobile-hidden'));showPanels=true;panelButton.textContent='Hide panels';panelButton.setAttribute('aria-expanded','true');}panelButton.addEventListener('click',()=>{showPanels=!showPanels;document.querySelectorAll('.panel').forEach(p=>{if(mobilePanels){p.classList.toggle('mobile-hidden',!showPanels);}else{p.hidden=!showPanels;}});panelButton.textContent=showPanels?'Hide panels':'Show panels';panelButton.setAttribute('aria-expanded',String(showPanels));});
 document.querySelector('#home').addEventListener('click',()=>location.href='./index.html');
-document.querySelector('#openCity').addEventListener('click',()=>location.href='./city.html');document.querySelector('#openM001').addEventListener('click',()=>location.href='./city.html?parcel=M-001');document.querySelector('#focusM001').addEventListener('click',()=>{controls.autoRotate=false;document.querySelector('#toggleSpin').classList.remove('active');document.querySelector('#toggleSpin').textContent='Auto rotate: OFF';document.querySelector('#rotationState').textContent='Focused on M-001';controls.target.copy(m001Normal.clone().multiplyScalar(1.012));camera.position.copy(m001Normal.clone().multiplyScalar(3.55));controls.update();});
+document.querySelector('#openCity').addEventListener('click',()=>location.href='./city.html');document.querySelector('#openM001').addEventListener('click',()=>location.href='./city.html?parcel=M-001');document.querySelector('#focusM001').addEventListener('click',()=>{controls.autoRotate=false;document.querySelector('#toggleSpin').classList.remove('active');document.querySelector('#toggleSpin').textContent='Auto rotate: OFF';document.querySelector('#rotationState').textContent='Focused on M-001';controls.target.copy(m001Normal.clone().multiplyScalar(1.012));camera.position.copy(m001Normal.clone().multiplyScalar(1.48));controls.update();});
 function animate(now){requestAnimationFrame(animate);const dt=Math.min((now-last)/1000,.1);last=now;if(playing){hours+=dt*.08;if(hours>=MARS_SOL_HOURS){hours-=MARS_SOL_HOURS;sol++;}updateTime();}controls.update();renderer.render(scene,camera)}
 updateTime();renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();showEngineError("The graphics context was lost. Reload this page to restore the 3D world.");});const engineStatus=document.querySelector('#engineStatus');if(engineStatus)engineStatus.textContent="● PLANET ENGINE READY";requestAnimationFrame(animate);
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.6))});
