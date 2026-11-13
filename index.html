@@ -2347,6 +2347,15 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
 <script src="./chat.js" defer></script>
 
 <button id="lmChatOpen" type="button" hidden aria-hidden="true">Open LOCAL MARS chat</button>
+<button id="lmChatLaunch" type="button" aria-label="Open global live chat"><span aria-hidden="true">💬</span><span>LIVE CHAT</span><i aria-hidden="true"></i></button>
+<style id="lm-chat-launch-style">
+#lmChatLaunch{position:fixed;right:16px;bottom:calc(82px + env(safe-area-inset-bottom));z-index:10040;display:flex;align-items:center;gap:9px;min-height:48px;padding:0 17px;border:1px solid #e5c27b;border-radius:999px;background:linear-gradient(135deg,#f1d18e,#a87535);color:#101722;box-shadow:0 8px 28px #0008;font:900 11px/1 system-ui;letter-spacing:1px;cursor:pointer}
+#lmChatLaunch span:first-child{font-size:18px}
+#lmChatLaunch i{width:8px;height:8px;border-radius:50%;background:#087e61;box-shadow:0 0 0 3px #087e6122}
+#lmChatLaunch:focus-visible{outline:3px solid #70ddeb;outline-offset:3px}
+#lmChatLaunch:active{transform:scale(.97)}
+@media(min-width:761px){#lmChatLaunch{right:24px;bottom:24px}}
+</style>
 <section id="lmChatOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="lmChatTitle">
  <div id="lmChatCard">
   <header id="lmChatHeader"><div><div class="lm-chat-eyebrow">LOCAL MARS · COMMUNITY</div><h2 id="lmChatTitle">LIVE CHAT</h2><p>Shared LOCAL MARS community chat room</p></div><button id="lmChatClose" type="button" aria-label="Close chat">✕</button></header>
