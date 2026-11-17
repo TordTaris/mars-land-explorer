@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#090f18"><title>LOCAL MARS | Avatar Studio</title>
+<style>
+:root{color-scheme:dark;--gold:#d9b477;--cyan:#70dce9;--panel:#0b1a2aee;--line:#b9955b66}*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#080d16;color:#f4ead8;font:14px system-ui,sans-serif}
+#world{position:fixed;inset:0}canvas{display:block;width:100%;height:100%;touch-action:none}
+header{position:fixed;z-index:5;top:10px;left:12px;right:12px;height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;border:1px solid var(--line);border-radius:13px;background:#081522d9;backdrop-filter:blur(14px)}
+.brand{font-weight:900;letter-spacing:1.7px}.brand span{color:var(--gold)}.status{font-size:10px;color:#9de9bd}
+.panel{position:fixed;z-index:4;top:72px;right:14px;bottom:90px;width:min(300px,42vw);overflow:auto;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--panel);backdrop-filter:blur(16px)}
+h2{font-size:13px;letter-spacing:1.3px;color:var(--gold);margin:0 0 12px}.group{padding:10px 0;border-top:1px solid #ffffff18}.group label{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:#c8d4e1;margin-bottom:7px}
+select,input[type=color]{width:100%;min-height:38px;border:1px solid #60768b;border-radius:9px;background:#12263a;color:#fff;padding:7px}
+input[type=range]{width:100%;accent-color:#d9b477}.choice{display:grid;grid-template-columns:1fr 1fr;gap:7px}.choice button,button{border:1px solid #8d754e88;border-radius:9px;background:#14283b;color:#f2e7d4;padding:9px;cursor:pointer}.choice button.active,.primary{background:linear-gradient(120deg,#dcb66c,#936a34);color:#16110a;font-weight:800}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}.actions button{font-size:11px}.full{width:100%;margin-top:8px}
+.note{font-size:10px;line-height:1.5;color:#9eb1c5;margin:8px 0}.bottom{position:fixed;z-index:5;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:7px;padding:7px;border:1px solid var(--line);border-radius:14px;background:#081522df}.bottom button{min-width:42px}.pad{position:fixed;z-index:5;bottom:76px;left:14px;display:grid;grid-template-columns:repeat(3,42px);grid-template-rows:repeat(2,42px);gap:4px}.pad button{padding:0;font-size:18px;background:#0c2034dd;touch-action:none}.pad [data-m=forward]{grid-column:2}.pad [data-m=left]{grid-column:1;grid-row:2}.pad [data-m=back]{grid-column:2;grid-row:2}.pad [data-m=right]{grid-column:3;grid-row:2}
+#toast{position:fixed;z-index:9;bottom:72px;left:50%;transform:translateX(-50%);display:none;padding:9px 13px;border:1px solid var(--gold);border-radius:10px;background:#10243a;color:#fff;font-size:11px}
+#auth{position:fixed;z-index:10;inset:0;display:none;place-items:center;padding:18px;background:#030811eF}.authbox{width:min(360px,100%);padding:20px;border:1px solid var(--line);border-radius:16px;background:#0d1d30}.authbox input{width:100%;padding:12px;margin:5px 0;border:1px solid #526b82;border-radius:8px;background:#071321;color:#fff}
+@media(max-width:680px){header{top:6px;left:6px;right:6px;height:42px;padding:0 10px}.brand{font-size:13px}.status{font-size:8px}.panel{top:58px;right:7px;bottom:142px;width:min(48vw,260px);padding:10px}.group{padding:7px 0}.group label{font-size:10px}.pad{left:7px;bottom:70px;grid-template-columns:repeat(3,36px);grid-template-rows:repeat(2,36px)}.bottom{bottom:6px;max-width:calc(100vw - 12px);gap:4px}.bottom button{font-size:9px;padding:8px 9px}.note{font-size:9px}}
+</style>
+</head>
+<body>
+<div id="world"></div>
+<header><div class="brand">LOCAL <span>MARS</span> <small style="font-size:9px;color:#9fb2c6">/ AVATAR STUDIO</small></div><div class="status" id="connection">CONNECTING</div></header>
+<aside class="panel">
+<h2>PERSONAL AVATAR</h2>
+<div class="group"><label>Character body</label><div class="choice"><button id="male" class="active">Male</button><button id="female">Female</button></div></div>
+<div class="group"><label>Suit color</label><input id="suit" type="color" value="#d8e0e5"></div>
+<div class="group"><label>Accent color</label><input id="accent" type="color" value="#d9a75e"></div>
+<div class="group"><label>Skin tone</label><input id="skin" type="color" value="#b98262"></div>
+<div class="group"><label>Helmet visor</label><select id="visor"><option value="gold">Gold reflective</option><option value="blue">Ice blue</option><option value="dark">Smoked black</option><option value="clear">Clear glass</option></select></div>
+<div class="group"><label>Helmet</label><select id="helmet"><option value="on">Wear helmet</option><option value="off">No helmet</option></select></div>
+<div class="group"><label>Height <b id="heightValue">100%</b></label><input id="height" type="range" min="85" max="115" value="100"></div>
+<div class="group"><label>Build <b id="buildValue">100%</b></label><input id="build" type="range" min="80" max="125" value="100"></div>
+<div class="actions"><button id="randomize">Randomize</button><button id="reset">Reset</button></div>
+<button class="primary full" id="save">Save Avatar</button>
+<p class="note">Your character is saved to your LOCAL MARS member profile. Other signed-in explorers in this area appear as live visitors when they open Avatar Studio.</p>
+</aside>
+<div class="pad" aria-label="Movement controls"><button data-m="forward">▲</button><button data-m="left">◀</button><button data-m="back">▼</button><button data-m="right">▶</button></div>
+<div class="bottom"><button id="back">← Mars</button><button id="follow">CAMERA: FOLLOW</button><button id="center">CENTER</button></div>
+<div id="toast" role="status"></div>
+<div id="auth"><div class="authbox"><h2>MEMBER SIGN IN</h2><p class="note">Sign in with your existing LOCAL MARS account to use your saved avatar.</p><input id="email" type="email" autocomplete="username" placeholder="Email"><input id="password" type="password" autocomplete="current-password" placeholder="Password"><button class="primary full" id="signIn">Sign in</button><button class="full" id="goHome">Back to LOCAL MARS</button><p class="note" id="authMessage"></p></div></div>
+<script type="module">
+import * as THREE from 'https://esm.sh/three@0.170.0';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+const SUPABASE_URL='https://tppgfxsdeuujidcjnfdl.supabase.co';
+const SUPABASE_KEY='sb_publishable_xQ0_NkSu2TMeIyJnAE94kw_WWQT2T3E';
+const db=createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const $=id=>document.getElementById(id);let user=null,channel=null,avatar=null,remote=new Map(),follow=true,elapsed=0,lastPresence=0;
+const defaults={body:'male',suit:'#d8e0e5',accent:'#d9a75e',skin:'#b98262',visor:'gold',helmet:'on',height:100,build:100};
+let config={...defaults};const keys={};let yaw=0;
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x8997a8);scene.fog=new THREE.Fog(0x8997a8,28,100);
+const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,180);camera.position.set(0,4,8);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;$('world').appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xc5d9ee,0x4a2b20,2.0));const sun=new THREE.DirectionalLight(0xffdfbd,3.2);sun.position.set(-12,20,10);sun.castShadow=true;scene.add(sun);
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(180,180),new THREE.MeshStandardMaterial({color:0x9c5940,roughness:1}));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
+const rand=(a,b)=>a+Math.random()*(b-a);
+for(let i=0;i<170;i++){const rock=new THREE.Mesh(new THREE.DodecahedronGeometry(rand(.12,.65),0),new THREE.MeshStandardMaterial({color:[0x704333,0x87503b,0xb16b4c][i%3],roughness:1}));rock.position.set(rand(-48,48),.08,rand(-48,48));rock.scale.y=rand(.3,.8);rock.castShadow=true;scene.add(rock)}
+for(let i=0;i<12;i++){const h=rand(3,11),m=new THREE.Mesh(new THREE.ConeGeometry(rand(2,6),h,5),new THREE.MeshStandardMaterial({color:0x734a3b,roughness:1}));m.position.set(rand(-70,70),h/2-1,rand(-70,70));scene.add(m)}
+function mat(color,metalness=0,roughness=.65){return new THREE.MeshStandardMaterial({color,metalness,roughness})}
+function capsule(group,r,len,material,x,y,z){const m=new THREE.Mesh(new THREE.CapsuleGeometry(r,len,5,10),material);m.position.set(x,y,z);m.castShadow=true;group.add(m);return m}
+function makePerson(cfg,remoteMode=false){
+ const root=new THREE.Group(),scale=cfg.height/100;root.scale.set(scale,scale,scale);
+ const suit=mat(cfg.suit,.32,.42),accent=mat(cfg.accent,.55,.32),skin=mat(cfg.skin,0,.72);
+ const visorColor=cfg.visor==='blue'?0x6ed9ed:cfg.visor==='dark'?0x101a29:cfg.visor==='clear'?0xc5e5ef:0xc69a50;
+ const glass=new THREE.MeshPhysicalMaterial({color:visorColor,metalness:.72,roughness:cfg.visor==='clear'?.08:.2,transparent:cfg.visor==='clear',opacity:cfg.visor==='clear'?.35:1});
+ const torso=capsule(root,.34*cfg.build/100,.62,suit,0,1.18,0);torso.scale.x=cfg.body==='female'?.9:1.05;
+ const chest=new THREE.Mesh(new THREE.BoxGeometry(.56,.18,.12),accent);chest.position.set(0,1.35,.29);root.add(chest);
+ capsule(root,.105,.48,suit,-.43,1.19,0).rotation.z=-.13;capsule(root,.105,.48,suit,.43,1.19,0).rotation.z=.13;
+ const legL=capsule(root,.13,.52,suit,-.18,.55,0),legR=capsule(root,.13,.52,suit,.18,.55,0);
+ for(const x of [-.18,.18]){const boot=new THREE.Mesh(new THREE.BoxGeometry(.27,.15,.38),accent);boot.position.set(x,.12,.07);boot.castShadow=true;root.add(boot)}
+ const pack=new THREE.Mesh(new THREE.BoxGeometry(.42,.58,.22),mat(0x53677a,.45,.55));pack.position.set(0,1.24,-.34);root.add(pack);
+ const head=new THREE.Mesh(new THREE.SphereGeometry(.235,20,16),skin);head.position.y=1.76;head.castShadow=true;root.add(head);
+ const helmet=new THREE.Group();helmet.position.y=1.78;
+ const shell=new THREE.Mesh(new THREE.SphereGeometry(.31,24,18),mat(0xc4d1d9,.62,.28));shell.scale.set(1,1.05,1.02);helmet.add(shell);
+ const windowMesh=new THREE.Mesh(new THREE.SphereGeometry(.265,24,16,0,Math.PI*2,.15,1.05),glass);windowMesh.scale.set(1,1.02,1.02);windowMesh.position.z=.07;helmet.add(windowMesh);
+ const rim=new THREE.Mesh(new THREE.TorusGeometry(.28,.025,8,28),accent);rim.position.y=-.02;rim.rotation.x=Math.PI/2;helmet.add(rim);
+ helmet.visible=cfg.helmet==='on';root.add(helmet);head.visible=cfg.helmet==='off';
+ const belt=new THREE.Mesh(new THREE.BoxGeometry(.72,.11,.18),accent);belt.position.y=.84;root.add(belt);
+ root.userData={legL,legR,torso};return root;
+}
+function createAvatar(){if(avatar)scene.remove(avatar);avatar=makePerson(config);avatar.position.set(0,0,0);scene.add(avatar)}
+function syncControls(){for(const k of ['body','suit','accent','skin','visor','helmet','height','build']){const el=$(k);if(el)el.value=config[k]}$('male').classList.toggle('active',config.body==='male');$('female').classList.toggle('active',config.body==='female');$('heightValue').textContent=config.height+'%';$('buildValue').textContent=config.build+'%';}
+function applyConfig(){syncControls();createAvatar()}
+function toast(msg){$('toast').textContent=msg;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',2600)}
+function getConfig(){return {...config}}
+function bindControls(){for(const k of ['suit','accent','skin','visor','helmet','height','build'])$(k).addEventListener('input',e=>{config[k]=['height','build'].includes(k)?Number(e.target.value):e.target.value;applyConfig()});$('male').onclick=()=>{config.body='male';applyConfig()};$('female').onclick=()=>{config.body='female';applyConfig()};$('randomize').onclick=()=>{const colors=['#d8e0e5','#b8c8d3','#c8b59a','#687d8f','#a9c0bd'];config.suit=colors[Math.floor(Math.random()*colors.length)];config.accent=['#d9a75e','#65c8d4','#c76f54','#9cc58c'][Math.floor(Math.random()*4)];config.height=Math.round(rand(90,111));config.build=Math.round(rand(88,116));applyConfig()};$('reset').onclick=()=>{config={...defaults};applyConfig()};}
+async function saveAvatar(){if(!user)return;const row={user_id:user.id,display_name:(user.user_metadata?.display_name||user.email?.split('@')[0]||'Explorer').slice(0,40),config:getConfig(),updated_at:new Date().toISOString()};const {error}=await db.from('mars_avatars').upsert(row,{onConflict:'user_id'});if(error){toast(error.message.includes('mars_avatars')?'Avatar storage is not installed yet. Apply the LOCAL MARS avatar migration.':error.message);return}toast('Avatar saved to your member profile.')}
+async function loadAvatar(){const {data,error}=await db.from('mars_avatars').select('config').eq('user_id',user.id).maybeSingle();if(error){toast('Avatar database migration is required before cloud saving.');return}if(data?.config&&typeof data.config==='object')config={...defaults,...data.config};applyConfig()}
+function makeRemote(id,state){const c={...defaults,...(state.config||{})};const p=makePerson(c,true);p.userData.remoteId=id;scene.add(p);remote.set(id,p);return p}
+function removeRemote(id){const p=remote.get(id);if(p){scene.remove(p);remote.delete(id)}}
+function updateRemote(){if(!channel)return;const states=channel.presenceState();for(const [id,list] of Object.entries(states)){if(id===user.id)continue;const s=list?.[0];if(!s)continue;let p=remote.get(id);if(!p)p=makeRemote(id,s);else if(p.userData.signature!==JSON.stringify(s.config)){scene.remove(p);remote.delete(id);p=makeRemote(id,s);p.userData.signature=JSON.stringify(s.config)}p.position.set(Number(s.x)||0,0,Number(s.z)||0);p.rotation.y=Number(s.yaw)||0;}for(const id of [...remote.keys()])if(!states[id])removeRemote(id);$('connection').textContent='ONLINE · '+(Object.keys(states).length)+' EXPLORER'+(Object.keys(states).length===1?'':'S');}
+async function connectPresence(){channel=db.channel('mars-avatar-world',{config:{presence:{key:user.id}}});channel.on('presence',{event:'sync'},updateRemote);channel.on('presence',{event:'join'},updateRemote);channel.on('presence',{event:'leave'},updateRemote);const status=await channel.subscribe(async s=>{if(s==='SUBSCRIBED'){await channel.track({user_id:user.id,config:getConfig(),x:avatar.position.x,z:avatar.position.z,yaw,online_at:new Date().toISOString()});$('connection').textContent='ONLINE';}});}
+async function authInit(){const {data:{session}}=await db.auth.getSession();if(!session){$('auth').style.display='grid';$('connection').textContent='SIGN IN REQUIRED';return}user=session.user;await loadAvatar();await connectPresence();$('auth').style.display='none'}
+$('signIn').onclick=async()=>{const {data,error}=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});$('authMessage').textContent=error?error.message:'Signed in.';if(!error){user=data.user;await loadAvatar();await connectPresence();$('auth').style.display='none'}};
+$('save').onclick=saveAvatar;$('goHome').onclick=()=>$('back').click();$('back').onclick=()=>location.href='./index.html';$('center').onclick=()=>{avatar.position.set(0,0,0);yaw=0};$('follow').onclick=()=>{follow=!follow;$('follow').textContent='CAMERA: '+(follow?'FOLLOW':'FREE')};
+bindControls();applyConfig();authInit().catch(e=>toast(e.message));
+document.querySelectorAll('[data-m]').forEach(b=>{const k=b.dataset.m;b.addEventListener('pointerdown',e=>{e.preventDefault();keys[k]=true});for(const ev of ['pointerup','pointerleave','pointercancel'])b.addEventListener(ev,()=>keys[k]=false)});
+addEventListener('keydown',e=>{const m={w:'forward',ArrowUp:'forward',s:'back',ArrowDown:'back',a:'left',ArrowLeft:'left',d:'right',ArrowRight:'right'};if(m[e.key])keys[m[e.key]]=true});addEventListener('keyup',e=>{const m={w:'forward',ArrowUp:'forward',s:'back',ArrowDown:'back',a:'left',ArrowLeft:'left',d:'right',ArrowRight:'right'};if(m[e.key])keys[m[e.key]]=false});
+const clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04);elapsed+=dt;const v=new THREE.Vector3();if(keys.forward)v.z-=1;if(keys.back)v.z+=1;if(keys.left)v.x-=1;if(keys.right)v.x+=1;if(v.lengthSq()){v.normalize().applyAxisAngle(new THREE.Vector3(0,1,0),yaw);avatar.position.addScaledVector(v,dt*3.1);yaw=Math.atan2(v.x,v.z);avatar.rotation.y=yaw;if(avatar.userData.legL){avatar.userData.legL.rotation.x=Math.sin(elapsed*9)*.5;avatar.userData.legR.rotation.x=-Math.sin(elapsed*9)*.5}}if(follow){const target=new THREE.Vector3(avatar.position.x,1.25,avatar.position.z);const desired=new THREE.Vector3(avatar.position.x+Math.sin(yaw)*5,3.2,avatar.position.z+Math.cos(yaw)*5);camera.position.lerp(desired,.08);camera.lookAt(target)}if(channel&&user&&elapsed-lastPresence>.18){lastPresence=elapsed;channel.track({user_id:user.id,config:getConfig(),x:avatar.position.x,z:avatar.position.z,yaw});}renderer.render(scene,camera)}
+animate();addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+</script>
+</body></html>
