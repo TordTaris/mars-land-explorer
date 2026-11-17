@@ -81,7 +81,7 @@ function makePerson(cfg,remoteMode=false){
  const belt=new THREE.Mesh(new THREE.BoxGeometry(.72,.11,.18),accent);belt.position.y=.84;root.add(belt);
  root.userData={legL,legR,torso};return root;
 }
-function createAvatar(){if(avatar)scene.remove(avatar);avatar=makePerson(config);avatar.position.set(0,0,0);scene.add(avatar)}
+function createAvatar(){if(avatar)scene.remove(avatar);avatar=makePerson(config);avatar.position.set(0,0,0);const badge=countryBadge(config.country_code||'TH');badge.userData.countryBadge=true;avatar.add(badge);scene.add(avatar)}
 function syncControls(){for(const k of ['body','country','suit','accent','skin','visor','helmet','height','build']){const el=$(k);if(el)el.value=config[k]}$('male').classList.toggle('active',config.body==='male');$('female').classList.toggle('active',config.body==='female');$('heightValue').textContent=config.height+'%';$('buildValue').textContent=config.build+'%';}
 function applyConfig(){syncControls();createAvatar()}
 function toast(msg){$('toast').textContent=msg;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',2600)}
