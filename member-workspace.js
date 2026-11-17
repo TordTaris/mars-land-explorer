@@ -28,3 +28,21 @@ window.addEventListener('local-mars-language-change',()=>{localize();if(overlay.
 document.addEventListener('DOMContentLoaded',()=>{syncState().then(()=>{if(db)subscribe();});});
 let attempts=0;const ready=setInterval(()=>{const s=state();if(s?.db){clearInterval(ready);db=s.db;user=s.user||null;subscribe();}else if(++attempts>=60){clearInterval(ready);if(overlay.classList.contains('open'))setStatus(lang()==='th'?'ยังเชื่อมต่อฐานข้อมูลไม่ได้':'Database connection is not ready.');}},300);
 })();
+
+// LOCAL MARS Avatar Studio launcher: add to More → Member Services without changing the main app layout.
+(()=> {
+  const addAvatarLink=()=>{
+    const grid=document.querySelector('.lm-system-group[data-system-group="member"] .lm-system-grid');
+    if(!grid||grid.querySelector('[data-lm-avatar-launcher]'))return;
+    const link=document.createElement('a');
+    link.className='lm-system-card';
+    link.href='./avatar.html';
+    link.dataset.lmAvatarLauncher='true';
+    link.dataset.searchTerms='avatar character customize player walk mars 3d';
+    link.innerHTML='<span class="lm-system-art">🧑‍🚀</span><b>Avatar Studio</b><small>Create your realistic explorer and walk on Mars</small><em class="lm-system-state">MEMBER ACCESS · LIVE WORLD</em>';
+    grid.prepend(link);
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',addAvatarLink,{once:true});
+  else addAvatarLink();
+  new MutationObserver(addAvatarLink).observe(document.documentElement,{childList:true,subtree:true});
+})();
