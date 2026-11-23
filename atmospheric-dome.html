@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#081321">
+<title>LOCAL MARS | Atmospheric Simulation Dome · M-003</title>
+<style>
+:root{color-scheme:dark;--bg:#07111e;--panel:#102238;--line:#42617e;--gold:#d8b477;--cyan:#69dbe8;--muted:#a8bdd0;--green:#83e4b1;--red:#ff9272}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 35%,#203a52 0,#0b1a2b 48%,#050b13 100%);color:#edf5ff;font:14px system-ui,sans-serif;min-height:100vh}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px clamp(14px,3vw,32px);border-bottom:1px solid #d8b47755;background:#081321d9;position:sticky;top:0;z-index:5;backdrop-filter:blur(14px)}
+.brand{font-weight:900;letter-spacing:1.7px}.brand span{color:var(--gold)}.status{font-size:10px;color:var(--green);border:1px solid #42785f;padding:6px 10px;border-radius:20px}
+a,button,input{font:inherit}a{color:var(--gold);text-decoration:none}.wrap{max-width:1180px;margin:auto;padding:22px 16px 42px}.eyebrow{color:var(--gold);font-size:10px;letter-spacing:2px;font-weight:800}
+h1{font-size:clamp(25px,4vw,40px);margin:7px 0 5px}p.sub{color:var(--muted);margin:0 0 20px;line-height:1.5}
+.grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(280px,.85fr);gap:16px}.panel{border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#122a40ed,#081727f2);box-shadow:0 18px 50px #0007;padding:16px}
+.scene{min-height:470px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 75%,#c66e4930,transparent 55%),linear-gradient(#0c2034,#071321 72%,#201b1c);border-radius:14px}
+.stars{position:absolute;inset:0;background-image:radial-gradient(#d7eaff 1px,transparent 1.5px),radial-gradient(#fff8 1px,transparent 1.5px);background-size:83px 71px,127px 109px;background-position:0 0,38px 21px;opacity:.45}
+.mars{position:absolute;bottom:-110px;width:min(80%,540px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 28%,#e99b70,#a84f37 42%,#642b2a 74%,#251d25);box-shadow:inset -35px -25px 70px #160f19,0 -15px 70px #d67d4b26}
+.horizon{position:absolute;bottom:20px;width:100%;height:120px;background:linear-gradient(transparent,#9b513522);clip-path:ellipse(70% 40% at 50% 100%)}
+.dome{position:absolute;bottom:83px;width:min(76%,480px);height:270px;border:3px solid #9deeffb8;border-bottom:0;border-radius:260px 260px 0 0;background:linear-gradient(115deg,#7bdff01b,#b7f6ff08 45%,#8bd7f022);box-shadow:0 0 28px #62ddec35,inset 0 0 28px #62ddec18}
+.dome:before{content:"";position:absolute;inset:12px 15px 0;border:1px solid #c7f8ff50;border-bottom:0;border-radius:240px 240px 0 0}
+.dome:after{content:"";position:absolute;bottom:0;left:-5%;width:110%;height:7px;border-radius:50%;background:#c7efff;box-shadow:0 0 18px #72e8ff}
+.ring{position:absolute;bottom:105px;width:min(70%,430px);height:65px;border:1px solid #e5c48b88;border-radius:50%;box-shadow:0 0 18px #d8b47733}
+.dome-label{position:absolute;top:20px;left:50%;transform:translateX(-50%);text-align:center;white-space:nowrap;color:#dffaff;text-shadow:0 2px 10px #000}
+.dome-label b{display:block;font-size:13px;letter-spacing:2px}.dome-label small{color:#a9dce5;font-size:10px}
+.layer{position:absolute;left:50%;transform:translateX(-50%);border-radius:50%;border:1px solid #b5eaff55;pointer-events:none}
+.layer.l1{bottom:125px;width:min(64%,390px);height:195px}.layer.l2{bottom:150px;width:min(53%,320px);height:150px;border-color:#f5c98b66}.layer.l3{bottom:175px;width:min(42%,250px);height:105px;border-color:#a4e8cb66}
+.module{position:absolute;bottom:88px;left:50%;transform:translateX(-50%);width:82px;height:38px;border:1px solid #e5c48b;background:#1c3446;border-radius:9px 9px 4px 4px;box-shadow:0 0 15px #e5c48b55}
+.module:before{content:"";position:absolute;left:31px;top:-20px;width:18px;height:20px;background:#38566b;border:1px solid #e5c48b}
+.module:after{content:"LIFE SUPPORT";position:absolute;left:50%;top:12px;transform:translateX(-50%);font-size:7px;white-space:nowrap;color:#f4d8a6}
+.scene-caption{position:absolute;bottom:12px;left:14px;right:14px;display:flex;justify-content:space-between;gap:8px;color:#c1d2e1;font-size:10px}
+h2{font-size:14px;letter-spacing:1px;color:var(--cyan);margin:0 0 13px}.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.metric{padding:12px;border:1px solid #3d5b76;border-radius:12px;background:#0a1a2a}.metric small{display:block;color:var(--muted);font-size:10px}.metric strong{font-size:21px;display:block;margin-top:4px}.metric em{font-size:10px;color:var(--green);font-style:normal}
+.controls{display:grid;gap:14px;margin-top:17px}.control label{display:flex;justify-content:space-between;gap:10px;color:#c7d7e6;font-size:12px;margin-bottom:7px}.control output{color:var(--gold);font-variant-numeric:tabular-nums}input[type=range]{width:100%;accent-color:#d8b477}
+.switches{display:grid;gap:8px;margin-top:15px}.switch{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 10px;border:1px solid #38536b;border-radius:10px;background:#0a1a2a;font-size:12px}.switch input{accent-color:#79ddb6;width:18px;height:18px}
+.note{margin-top:15px;padding:11px;border-left:3px solid var(--gold);background:#d8b47712;color:#c4d4e3;font-size:10px;line-height:1.55}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:15px}button{border:1px solid #6d8ba5;border-radius:10px;background:#1b354c;color:#f2f7fc;padding:9px 12px;cursor:pointer;font-weight:700;font-size:11px}button.primary{background:linear-gradient(120deg,#b9824d,#e7c18a);color:#1b160f;border:0}
+.layers{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:15px}.layer-card{padding:10px;border:1px solid #38536b;border-radius:10px;background:#0a1a2a}.layer-card b{display:block;font-size:11px}.layer-card small{color:var(--muted);font-size:9px;line-height:1.4}
+footer{color:#8298ad;font-size:10px;text-align:center;padding:18px}
+@media(max-width:780px){.grid{grid-template-columns:1fr}.scene{min-height:390px}.dome{height:230px;bottom:76px}.ring{bottom:96px}.module{bottom:81px}.layer.l1{bottom:113px;height:165px}.layer.l2{bottom:132px;height:128px}.layer.l3{bottom:151px;height:90px}.mars{bottom:-130px}.layers{grid-template-columns:1fr 1fr 1fr}}
+@media(max-width:420px){.scene{min-height:340px}.dome{height:190px}.metrics{gap:7px}.metric{padding:9px}.metric strong{font-size:18px}.layers{gap:5px}.layer-card{padding:7px}.layer-card b{font-size:10px}.layer-card small{font-size:8px}}
+</style>
+</head>
+<body>
+<header><div class="brand">LOCAL <span>MARS</span> <small style="font-size:9px;color:#9bb0c9"> / M-003</small></div><div class="status">● SIMULATION ONLINE</div></header>
+<main class="wrap">
+<div class="eyebrow">M-003 · CLIMATE RESEARCH ZONE</div>
+<h1>Atmospheric Simulation Dome</h1>
+<p class="sub">A controlled habitat envelope for testing Martian air processing, pressure balance, oxygen generation and thermal regulation.</p>
+<div class="grid">
+<section class="panel">
+<div class="scene" aria-label="Illustration of a transparent pressurized habitat dome on Mars">
+<div class="stars"></div><div class="mars"></div><div class="horizon"></div>
+<div class="layer l1"></div><div class="layer l2"></div><div class="layer l3"></div><div class="dome"></div><div class="ring"></div><div class="module"></div>
+<div class="dome-label"><b>ATMOSPHERIC TEST CHAMBER</b><small>M-003 · SEALED HABITAT ENVELOPE</small></div>
+<div class="scene-caption"><span>EXTERNAL: MARTIAN ENVIRONMENT</span><span id="domeState">DOME: PRESSURIZED</span></div>
+</div>
+<div class="layers">
+<div class="layer-card"><b>Outer zone</b><small>Thin CO₂-rich Mars atmosphere</small></div>
+<div class="layer-card"><b>Buffer zone</b><small>Pressure and thermal boundary</small></div>
+<div class="layer-card"><b>Habitat zone</b><small>Managed breathable air</small></div>
+</div>
+<div class="note">Concept visualization only. The dome is a closed-habitat simulation, not a claim that Mars has an Earth-like atmosphere. Values are illustrative controls and are not connected to physical sensors.</div>
+</section>
+<aside class="panel">
+<h2>LIVE ENVIRONMENT TELEMETRY</h2>
+<div class="metrics">
+<div class="metric"><small>Internal pressure</small><strong id="pressureValue">70.0 kPa</strong><em id="pressureState">Habitat target</em></div>
+<div class="metric"><small>Oxygen concentration</small><strong id="oxygenValue">21.0%</strong><em id="oxygenState">Breathable target</em></div>
+<div class="metric"><small>Temperature</small><strong id="tempValue">21.0 °C</strong><em id="tempState">Comfort range</em></div>
+<div class="metric"><small>Dust filtration</small><strong id="dustValue">92%</strong><em id="dustState">Filter efficiency</em></div>
+</div>
+<div class="controls">
+<div class="control"><label for="pressure">Pressure setpoint <output id="pressureOut">70.0 kPa</output></label><input id="pressure" type="range" min="20" max="100" step="0.5" value="70"></div>
+<div class="control"><label for="oxygen">Oxygen mix <output id="oxygenOut">21.0%</output></label><input id="oxygen" type="range" min="5" max="30" step="0.5" value="21"></div>
+<div class="control"><label for="temperature">Temperature <output id="temperatureOut">21.0 °C</output></label><input id="temperature" type="range" min="-20" max="35" step="0.5" value="21"></div>
+<div class="control"><label for="dust">Dust filter efficiency <output id="dustOut">92%</output></label><input id="dust" type="range" min="0" max="100" step="1" value="92"></div>
+</div>
+<div class="switches">
+<label class="switch">Atmosphere processing <input type="checkbox" id="atmosphere" checked></label>
+<label class="switch">Oxygen generation <input type="checkbox" id="oxygenGen" checked></label>
+<label class="switch">Thermal regulation <input type="checkbox" id="thermal" checked></label>
+<label class="switch">Pressure regulation <input type="checkbox" id="pressureReg" checked></label>
+<label class="switch">Dust filtration <input type="checkbox" id="dustFilter" checked></label>
+</div>
+<div class="actions"><button class="primary" id="stabilize">STABILIZE DOME</button><button id="reset">RESET TEST</button><a href="./city.html" style="display:inline-flex;align-items:center;padding:9px 4px;font-size:11px">← Return to City Builder</a></div>
+</aside>
+</div>
+</main>
+<footer>LOCAL MARS · M-003 ATMOSPHERIC RESEARCH · SIMULATED TELEMETRY</footer>
+<script>
+(()=>{
+ const ids=['pressure','oxygen','temperature','dust'];
+ const units={pressure:' kPa',oxygen:'%',temperature:' °C',dust:'%'};
+ const targets={pressure:70,oxygen:21,temperature:21,dust:92};
+ const $=id=>document.getElementById(id);
+ function render(){
+  const p=Number($('pressure').value),o=Number($('oxygen').value),t=Number($('temperature').value),d=Number($('dust').value);
+  ids.forEach(id=>{$(id+'Out').textContent=Number($(id).value).toFixed(id==='dust'?0:1)+units[id]});
+  $('pressureValue').textContent=p.toFixed(1)+' kPa';$('oxygenValue').textContent=o.toFixed(1)+'%';$('tempValue').textContent=t.toFixed(1)+' °C';$('dustValue').textContent=d.toFixed(0)+'%';
+  $('pressureState').textContent=p>=60&&p<=80?'Habitat pressure range':'Outside target range';
+  $('oxygenState').textContent=o>=19.5&&o<=23.5?'Breathable mix target':'Adjust oxygen mix';
+  $('tempState').textContent=t>=18&&t<=26?'Comfort range':'Thermal adjustment needed';
+  $('dustState').textContent=d>=90?'High filtration':'Filtration below target';
+  const active=['atmosphere','oxygenGen','thermal','pressureReg','dustFilter'].every(id=>$(id).checked);
+  $('domeState').textContent=active?'DOME: SYSTEMS ACTIVE':'DOME: DEGRADED MODE';
+ }
+ ids.forEach(id=>$(id).addEventListener('input',render));
+ ['atmosphere','oxygenGen','thermal','pressureReg','dustFilter'].forEach(id=>$(id).addEventListener('change',render));
+ $('stabilize').addEventListener('click',()=>{if(!$('pressureReg').checked||!$('oxygenGen').checked||!$('thermal').checked){$('domeState').textContent='DOME: STABILIZATION BLOCKED';return}ids.forEach(id=>$(id).value=targets[id]);render();$('domeState').textContent='DOME: STABILIZED'});
+ $('reset').addEventListener('click',()=>{ids.forEach(id=>$(id).value=targets[id]);['atmosphere','oxygenGen','thermal','pressureReg','dustFilter'].forEach(id=>$(id).checked=true);render()});
+ render();
+})();
+</script>
+</body></html>
