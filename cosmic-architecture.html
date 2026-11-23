@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080b14">
+<meta name="description" content="LOCAL MARS Cosmic Architecture 5D — an interactive educational visualization inspired by the Mashaya-Hana Host diagram.">
+<title>Cosmic Architecture 5D | LOCAL MARS</title>
+<style>
+:root{color-scheme:dark;--bg:#070a12;--panel:#101827;--line:#35445b;--gold:#dfbd7d;--cyan:#75ddeb;--muted:#9aa9bc;--white:#f4f0e7}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--white);font:14px system-ui,-apple-system,Segoe UI,sans-serif}
+#view{position:fixed;inset:0}canvas{display:block;width:100%;height:100%;touch-action:none}
+header{position:fixed;z-index:3;top:0;left:0;right:0;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(#050811ed,transparent)}
+.brand{font-size:17px;font-weight:850;letter-spacing:2px}.brand span{color:var(--gold)}.eyebrow{display:block;font-size:9px;letter-spacing:2.4px;color:var(--muted);margin-top:3px}
+.status{font-size:9px;letter-spacing:1.2px;color:#a9e5d2;border:1px solid #3e776b;border-radius:30px;padding:7px 10px;background:#0c211d}
+.panel{position:fixed;z-index:4;top:84px;left:16px;width:min(290px,calc(100vw - 32px));padding:15px;border:1px solid #b99a635e;border-radius:15px;background:#0b1423eF;box-shadow:0 15px 45px #0008;backdrop-filter:blur(16px)}
+.panel h2{font-size:11px;letter-spacing:1.8px;color:var(--gold);margin:0 0 12px}
+.statrow{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #ffffff12;color:var(--muted);font-size:11px}.statrow b{color:var(--white);font-variant-numeric:tabular-nums}
+.legend{display:grid;gap:8px;margin:12px 0}.legend div{display:flex;align-items:center;gap:9px;font-size:11px;color:#c6d0dc}.dot{width:9px;height:9px;border-radius:50%;display:inline-block;box-shadow:0 0 12px currentColor}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px}
+button,select{font:inherit;color:var(--white);background:#142238;border:1px solid #465a73;border-radius:9px;padding:9px 10px}button{cursor:pointer}button.active{border-color:var(--gold);color:var(--gold);background:#302719}button:focus-visible,select:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.full{width:100%;margin-top:8px}.note{font-size:10px;line-height:1.55;color:var(--muted);margin:12px 0 0}
+.bottom{position:fixed;z-index:4;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:7px;padding:8px;border:1px solid #b99a635e;border-radius:13px;background:#091321eF;backdrop-filter:blur(15px)}
+.bottom button{white-space:nowrap;font-size:10px}
+#hint{position:fixed;z-index:2;bottom:82px;left:50%;transform:translateX(-50%);font-size:10px;color:#b5c2d1;background:#07101dcc;border:1px solid #ffffff20;border-radius:20px;padding:7px 12px;white-space:nowrap}
+#detail{position:fixed;z-index:5;right:16px;top:84px;width:min(245px,calc(100vw - 32px));display:none;padding:14px;border:1px solid #b99a636e;border-radius:14px;background:#0b1423f2;backdrop-filter:blur(16px)}
+#detail h3{margin:0 0 8px;color:var(--gold);font-size:12px}#detail p{font-size:11px;color:var(--muted);line-height:1.5;margin:0}
+#back{position:fixed;z-index:6;top:75px;right:18px;text-decoration:none;color:#f0d7a3;font-size:11px;border:1px solid #b99a6370;border-radius:9px;padding:8px 11px;background:#101a29}
+@media(max-width:700px){header{padding:11px 13px}.brand{font-size:14px}.panel{top:auto;bottom:72px;left:8px;width:calc(100vw - 16px);padding:11px;max-height:37dvh;overflow:auto}.panel h2{margin-bottom:7px}.statrow{padding:4px 0;font-size:10px}.legend{display:flex;flex-wrap:wrap;gap:9px;margin:8px 0}.legend div{font-size:9px}.controls{margin-top:7px;gap:5px}.controls button,.controls select{padding:7px;font-size:10px}.note{font-size:9px;margin-top:7px}.bottom{left:8px;right:8px;bottom:7px;transform:none;justify-content:center}.bottom button{flex:1;padding:8px 4px;font-size:9px}#hint{bottom:calc(37dvh + 85px);font-size:9px}#detail{top:70px;right:8px;width:190px}#back{top:61px;right:10px}}
+</style>
+</head>
+<body>
+<div id="view" aria-label="Interactive three dimensional cosmic model"></div>
+<header><div class="brand">LOCAL <span>MARS</span><small class="eyebrow">COSMIC ARCHITECTURE · 5D LAB</small></div><div class="status">● CONCEPTUAL SIMULATION</div></header>
+<a id="back" href="./index.html">← MARS EXPLORER</a>
+<aside class="panel">
+<h2>MASHAYA-HANA HOST · MODEL MAP</h2>
+<div class="statrow"><span>Total nodes</span><b>72</b></div>
+<div class="statrow"><span>Outer probability dominions</span><b>48</b></div>
+<div class="statrow"><span>Central actuality dominions</span><b>24</b></div>
+<div class="statrow"><span>Selected node</span><b id="selected">None</b></div>
+<div class="legend"><div><i class="dot" style="background:#dfbd7d;color:#dfbd7d"></i> 48 Probability</div><div><i class="dot" style="background:#75ddeb;color:#75ddeb"></i> 24 Actuality</div><div><i class="dot" style="background:#d58bce;color:#d58bce"></i> Light-body axis</div></div>
+<div class="controls">
+<button id="prob" class="active" aria-pressed="true">48 Probability</button>
+<button id="actual" class="active" aria-pressed="true">24 Actuality</button>
+<button id="links" class="active" aria-pressed="true">Connections</button>
+<button id="body" aria-pressed="false">Light-body map</button>
+</div>
+<label class="statrow" for="layer"><span>Visualization scale</span><b id="layerValue">05 / 12</b></label>
+<input id="layer" type="range" min="1" max="12" value="5" style="width:100%;accent-color:#dfbd7d">
+<p id="layerDescription" class="note">Adjusts the visual scale of this symbolic model; it does not represent a measured physical dimension.</p>
+<p class="note">Inspired by the MCEO Freedom Teachings diagram. The 72 / 48 / 24 arrangement is reproduced as a symbolic visualization, not a verified physical model of the universe or a measurable human energy field.</p>
+</aside>
+<section id="detail" aria-live="polite"><button id="detailClose" type="button" aria-label="Close node details" style="float:right;padding:4px 8px">✕</button><h3 id="detailTitle">Node</h3><p id="detailText">Select a sphere to inspect its conceptual label.</p></section>
+<div id="hint">Drag to rotate · Pinch or scroll to zoom · Tap a node for details</div>
+<nav class="bottom"><button id="reset">Reset view</button><button id="spin" class="active">Auto rotate</button><button id="labels">Node labels</button></nav>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+const host=document.querySelector('#view');
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x070a12);scene.fog=new THREE.FogExp2(0x070a12,.018);
+const camera=new THREE.PerspectiveCamera(48,innerWidth/innerHeight,.1,100);camera.position.set(0,2.4,10.8);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.25;host.appendChild(renderer.domElement);
+const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.055;controls.minDistance=5;controls.maxDistance=19;controls.autoRotate=true;controls.autoRotateSpeed=.42;controls.target.set(0,0,0);
+scene.add(new THREE.AmbientLight(0x9eabc9,1.25));const key=new THREE.PointLight(0xffdba1,95,30);key.position.set(5,6,7);scene.add(key);const rim=new THREE.PointLight(0x4bbbd4,55,25);rim.position.set(-6,-2,-5);scene.add(rim);
+const root=new THREE.Group();scene.add(root);
+const starGeo=new THREE.BufferGeometry();const starPts=[];for(let i=0;i<1100;i++){starPts.push((Math.random()-.5)*65,(Math.random()-.5)*65,(Math.random()-.5)*65)}starGeo.setAttribute('position',new THREE.Float32BufferAttribute(starPts,3));scene.add(new THREE.Points(starGeo,new THREE.PointsMaterial({color:0x9ba9bf,size:.035,transparent:true,opacity:.68})));
+function spherePoints(count,radius,offset=0){const pts=[];const golden=Math.PI*(3-Math.sqrt(5));for(let i=0;i<count;i++){const y=1-(i/(count-1))*2;const rr=Math.sqrt(1-y*y);const theta=golden*i+offset;pts.push(new THREE.Vector3(Math.cos(theta)*rr*radius,y*radius,Math.sin(theta)*rr*radius))}return pts}
+const outerGroup=new THREE.Group(),innerGroup=new THREE.Group(),linkGroup=new THREE.Group(),bodyGroup=new THREE.Group();root.add(outerGroup,innerGroup,linkGroup,bodyGroup);
+const nodeMeshes=[];const outer=spherePoints(48,4.05,.3),inner=spherePoints(24,2.45,1.1);
+function makeNode(pos,index,type){const color=type==='probability'?0xdfbd7d:0x75ddeb;const mesh=new THREE.Mesh(new THREE.SphereGeometry(type==='probability'?.105:.13,18,14),new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:.42,metalness:.32,roughness:.28}));mesh.position.copy(pos);mesh.userData={index,type};(type==='probability'?outerGroup:innerGroup).add(mesh);nodeMeshes.push(mesh);const glow=new THREE.Sprite(new THREE.SpriteMaterial({color,transparent:true,opacity:.16,depthWrite:false}));glow.scale.set(.42,.42,1);glow.position.copy(pos);(type==='probability'?outerGroup:innerGroup).add(glow)}
+outer.forEach((p,i)=>makeNode(p,i+1,'probability'));inner.forEach((p,i)=>makeNode(p,i+49,'actuality'));
+function line(a,b,color,opacity=.22){const g=new THREE.BufferGeometry().setFromPoints([a,b]);const m=new THREE.Line(g,new THREE.LineBasicMaterial({color,transparent:true,opacity}));linkGroup.add(m)}
+// Stable radial links from each central node to its nearest two outer nodes.
+inner.forEach((p,i)=>{const a=outer[(i*2)%48],b=outer[(i*2+1)%48];line(p,a,0x75ddeb,.36);line(p,b,0xdfbd7d,.23)});
+for(let i=0;i<48;i++){line(outer[i],outer[(i+1)%48],0xdfbd7d,.11);if(i%4===0)line(outer[i],outer[(i+8)%48],0xdfbd7d,.09)}
+for(let i=0;i<24;i++)line(inner[i],inner[(i+1)%24],0x75ddeb,.2);
+function ring(radius,color,opacity){const mesh=new THREE.Mesh(new THREE.TorusGeometry(radius,.008,6,180),new THREE.MeshBasicMaterial({color,transparent:true,opacity}));mesh.rotation.x=Math.PI/2.7;root.add(mesh);return mesh}
+const rings=[ring(1.65,0x75ddeb,.23),ring(2.55,0xdfbd7d,.24),ring(4.12,0xdfbd7d,.18)];
+const core=new THREE.Mesh(new THREE.IcosahedronGeometry(.42,2),new THREE.MeshStandardMaterial({color:0xe9c98c,emissive:0x805b2a,emissiveIntensity:.65,metalness:.55,roughness:.25}));root.add(core);
+const selectionMarker=new THREE.Mesh(new THREE.TorusGeometry(.19,.018,8,48),new THREE.MeshBasicMaterial({color:0xffe0a3,transparent:true,opacity:.95}));selectionMarker.visible=false;root.add(selectionMarker);
+// Optional symbolic light-body silhouette, deliberately labelled conceptual.
+const bodyMat=new THREE.MeshBasicMaterial({color:0xd58bce,wireframe:true,transparent:true,opacity:.34});
+const torso=new THREE.Mesh(new THREE.SphereGeometry(.58,18,14),bodyMat);torso.scale.set(.72,1.8,.42);torso.position.y=.05;bodyGroup.add(torso);
+const head=new THREE.Mesh(new THREE.SphereGeometry(.28,16,12),bodyMat);head.position.y=1.45;bodyGroup.add(head);
+for(let i=0;i<7;i++){const y=-1.05+i*.35;const s=new THREE.Mesh(new THREE.TorusGeometry(.45+i*.045,.009,5,80),new THREE.MeshBasicMaterial({color:0xd58bce,transparent:true,opacity:.48}));s.position.y=y;bodyGroup.add(s)}
+bodyGroup.visible=false;
+const ray=new THREE.Raycaster(),pointer=new THREE.Vector2();let down=null;
+renderer.domElement.addEventListener('pointerdown',e=>{down={x:e.clientX,y:e.clientY}});
+renderer.domElement.addEventListener('pointerup',e=>{if(!down||Math.hypot(e.clientX-down.x,e.clientY-down.y)>7){down=null;return}down=null;pointer.x=e.clientX/innerWidth*2-1;pointer.y=-(e.clientY/innerHeight)*2+1;ray.setFromCamera(pointer,camera);const hit=ray.intersectObjects(nodeMeshes,false)[0];if(!hit){selectionMarker.visible=false;document.querySelector('#selected').textContent='None';document.querySelector('#detail').style.display='none';return}const d=hit.object.userData;selectionMarker.position.copy(hit.object.position);selectionMarker.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),hit.object.position.clone().normalize());selectionMarker.scale.setScalar(d.type==='probability'?.9:1.15);selectionMarker.visible=true;document.querySelector('#selected').textContent='#'+String(d.index).padStart(2,'0');document.querySelector('#detailTitle').textContent=(d.type==='probability'?'Probability Dominion ':'Actuality Dominion ')+'#'+String(d.index).padStart(2,'0');document.querySelector('#detailText').textContent=d.type==='probability'?'Outer field node in this educational 48-node symbolic probability layer.':'Central field node in this educational 24-node symbolic actuality layer.';document.querySelector('#detail').style.display='block'});
+document.querySelector('#detailClose').addEventListener('click',()=>{document.querySelector('#detail').style.display='none';selectionMarker.visible=false;document.querySelector('#selected').textContent='None'});
+function toggle(id,group){const el=document.querySelector('#'+id);const on=el.getAttribute('aria-pressed')!=='true';el.setAttribute('aria-pressed',String(on));el.classList.toggle('active',on);group.visible=on}
+document.querySelector('#prob').onclick=()=>toggle('prob',outerGroup);document.querySelector('#actual').onclick=()=>toggle('actual',innerGroup);document.querySelector('#links').onclick=()=>toggle('links',linkGroup);document.querySelector('#body').onclick=()=>toggle('body',bodyGroup);
+document.querySelector('#layer').oninput=e=>{const n=Number(e.target.value);document.querySelector('#layerValue').textContent=String(n).padStart(2,'0')+' / 12';root.scale.setScalar(.88+n*.024);rings.forEach((r,i)=>r.material.opacity=.12+n*.012+i*.025);document.querySelector('#layerDescription').textContent='Visualization scale '+n+' of 12 · adjusts model size and guide visibility only; no physical dimension is implied.'};
+document.querySelector('#reset').onclick=()=>{camera.position.set(0,2.4,10.8);controls.target.set(0,0,0);controls.update();root.rotation.set(0,0,0);selectionMarker.visible=false;document.querySelector('#selected').textContent='None';document.querySelector('#detail').style.display='none';document.querySelector('#layer').value='5';document.querySelector('#layer').dispatchEvent(new Event('input'))};
+document.querySelector('#spin').onclick=e=>{controls.autoRotate=!controls.autoRotate;e.currentTarget.classList.toggle('active',controls.autoRotate)};
+let showLabels=false;const labelSprites=[];function makeLabel(text,pos){const c=document.createElement('canvas');c.width=128;c.height=40;const ctx=c.getContext('2d');ctx.font='bold 22px system-ui';ctx.fillStyle='#f4e4c2';ctx.textAlign='center';ctx.fillText(text,64,27);const tex=new THREE.CanvasTexture(c);const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false}));sp.position.copy(pos);sp.scale.set(.58,.18,1);root.add(sp);labelSprites.push(sp)}
+outer.forEach((p,i)=>makeLabel('P'+String(i+1).padStart(2,'0'),p.clone().multiplyScalar(1.07)));inner.forEach((p,i)=>makeLabel('A'+String(i+1).padStart(2,'0'),p.clone().multiplyScalar(1.1)));labelSprites.forEach(s=>s.visible=false);
+document.querySelector('#labels').onclick=e=>{showLabels=!showLabels;labelSprites.forEach(s=>s.visible=showLabels);e.currentTarget.classList.toggle('active',showLabels)};
+function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}animate();
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2))});
+</script>
+</body>
+</html>
