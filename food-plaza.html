@@ -64,7 +64,7 @@ footer{text-align:center;color:#8190a0;font-size:10px;margin-top:28px;line-heigh
 <nav class="filters" aria-label="Food categories"><button class="active" data-cat="all">All stations</button><button data-cat="asian">Asian kitchen</button><button data-cat="western">Western grill</button><button data-cat="healthy">Healthy bar</button><button data-cat="drinks">Drinks & dessert</button></nav>
 <section class="grid" id="foods"></section>
 <section class="order"><h2>Your free meal tray</h2><div id="tray" class="empty">Choose any item above to add it to your tray.</div><div class="order-actions"><span id="total" style="font-weight:800;color:#9ce5b5">TOTAL: FREE</span><button class="primary" id="serve">Confirm free meal</button></div><div class="notice" id="notice" role="status" aria-live="polite"></div></section>
-<footer>LOCAL MARS COMMUNITY FOOD PLAZA · Virtual experience prototype<br>Menu selections are local to this browser session. Shared member accounts, live inventory and real-world food delivery are not connected.</footer>
+<footer>LOCAL MARS COMMUNITY FOOD PLAZA · Virtual experience prototype<br>Menu selections remain local to this browser session. Member sign-in, online presence and Food Plaza chat connect to the LOCAL MARS backend. Live food inventory and real-world food delivery are not connected.</footer>
 </main>
 <script>
 const menu=[
@@ -99,7 +99,7 @@ function render(){avatar.style.left=x+'%';avatar.style.top=y+'%';label.style.lef
 function move(dir){const step=4;if(dir==='up')y=Math.max(17,y-step);if(dir==='down')y=Math.min(83,y+step);if(dir==='left')x=Math.max(8,x-step);if(dir==='right')x=Math.min(92,x+step);render();status.textContent='Explorer position · '+Math.round(x)+' / '+Math.round(y)+' · Walk to a station and tap it.'}
 document.querySelectorAll('[data-move]').forEach(b=>b.addEventListener('click',()=>move(b.dataset.move)));
 document.addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;const k=e.key.toLowerCase(),d={arrowup:'up',w:'up',arrowdown:'down',s:'down',arrowleft:'left',a:'left',arrowright:'right',d:'right'}[k];if(d){e.preventDefault();move(d)}});
-world.querySelectorAll('[data-station]').forEach(b=>b.addEventListener('click',()=>{const s=b.dataset.station;if(s==='lounge'){status.textContent='Welcome to the Community Lounge. Social seating is shown in this prototype; live multiplayer presence and chat are not connected.';return}const filter=document.querySelector('[data-cat="'+s+'"]');if(filter){filter.click();document.getElementById('foods').scrollIntoView({behavior:'smooth',block:'start'});status.textContent='Station selected · '+b.childNodes[1].textContent+'. Browse the menu below and add a free meal.'}}));
+world.querySelectorAll('[data-station]').forEach(b=>b.addEventListener('click',()=>{const s=b.dataset.station;if(s==='lounge'){status.textContent='Welcome to the Community Lounge. Social seating is shown in this prototype. Members online are listed below and can chat in the live Food Plaza room.';return}const filter=document.querySelector('[data-cat="'+s+'"]');if(filter){filter.click();document.getElementById('foods').scrollIntoView({behavior:'smooth',block:'start'});status.textContent='Station selected · '+b.childNodes[1].textContent+'. Browse the menu below and add a free meal.'}}));
 render()})();
 </script>
 <script type="module" id="lm-food-plaza-realtime">
