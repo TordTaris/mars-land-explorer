@@ -20,11 +20,43 @@ footer{text-align:center;color:#8190a0;font-size:10px;margin-top:28px;line-heigh
 @media(max-width:720px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.food .pic{height:92px}.stats{gap:7px}.stat{padding:10px}.stat b{font-size:15px}}
 @media(max-width:390px){.grid{grid-template-columns:1fr}.food{display:grid;grid-template-columns:88px 1fr}.food .pic{height:100%;font-size:42px}.food .body{padding:10px}.food p{min-height:0}}
 </style>
+
+<style id="lm-food-plaza-3d-css">
+.world-wrap{margin:18px 0 24px;border:1px solid #d9b87855;border-radius:18px;overflow:hidden;background:linear-gradient(#111d2b,#090f18);box-shadow:0 16px 45px #0007}
+.world-top{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:13px 15px;border-bottom:1px solid #d9b87833}.world-top b{color:#f0d6a4;letter-spacing:1px}.world-top small{color:#a6b2c0}
+.world-stage{height:390px;position:relative;overflow:hidden;perspective:850px;background:radial-gradient(ellipse at 50% 40%,#374353 0,#172536 46%,#0a111b 100%)}
+.world-stage:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 49.7%,#ffffff08 50%,transparent 50.3%),linear-gradient(transparent 49.7%,#ffffff08 50%,transparent 50.3%);background-size:48px 48px;opacity:.5}
+.plaza-floor{position:absolute;width:125%;height:125%;left:-12%;top:13%;transform:rotateX(58deg) rotateZ(-3deg);transform-origin:center;background-color:#263746;background-image:linear-gradient(#ffffff13 1px,transparent 1px),linear-gradient(90deg,#ffffff13 1px,transparent 1px);background-size:48px 48px;border:2px solid #b99a6744;box-shadow:inset 0 0 80px #0009}
+.station{position:absolute;z-index:2;min-width:110px;padding:12px 9px;text-align:center;border:1px solid #d9b87888;border-radius:10px;background:linear-gradient(145deg,#26394a,#101b28);box-shadow:0 9px 0 #080d14,0 13px 24px #0008;color:#f5e5c7;cursor:pointer;transform:translate(-50%,-50%);font-size:12px}
+.station:after{content:"";position:absolute;left:12%;right:12%;bottom:-10px;height:10px;background:#080e17;filter:blur(4px);z-index:-1}.station span{display:block;font-size:25px;margin-bottom:4px}.station small{color:#b7c2cd;font-size:9px}
+.station.kitchen{left:23%;top:31%}.station.grill{left:77%;top:31%}.station.drinks{left:24%;top:68%}.station.lounge{left:76%;top:68%}
+.avatar{position:absolute;z-index:4;left:50%;top:53%;transform:translate(-50%,-50%);font-size:36px;filter:drop-shadow(0 8px 5px #0009);transition:left .16s linear,top .16s linear;pointer-events:none}
+.avatar-label{position:absolute;z-index:4;left:50%;top:calc(53% + 28px);transform:translateX(-50%);font-size:9px;color:#fff;background:#09111bd9;border:1px solid #d9b87855;padding:3px 7px;border-radius:20px;white-space:nowrap;pointer-events:none}
+.world-hint{position:absolute;left:10px;top:10px;z-index:3;padding:7px 9px;border-radius:8px;background:#08111bd9;color:#d7e0e8;font-size:10px;max-width:210px}
+.world-controls{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;background:#0b1420;border-top:1px solid #ffffff14}.pad{display:grid;grid-template-columns:repeat(3,34px);grid-template-rows:repeat(2,30px);gap:4px}.pad button{padding:0;border-radius:7px;font-size:14px}.pad button:nth-child(1){grid-column:2}.pad button:nth-child(2){grid-column:1;grid-row:2}.pad button:nth-child(3){grid-column:2;grid-row:2}.pad button:nth-child(4){grid-column:3;grid-row:2}.world-status{color:#aebbc8;font-size:10px;line-height:1.5;text-align:right;max-width:210px}
+@media(max-width:520px){.world-stage{height:350px}.station{min-width:88px;padding:9px 5px;font-size:10px}.station span{font-size:21px}.world-controls{align-items:center}.world-status{max-width:155px}}
+</style>
 </head>
 <body>
 <header><div class="brand">LOCAL <span>MARS</span> <small style="font-size:10px;color:#c8b48d">· FOOD PLAZA</small></div><button id="back">← Return to Mars</button></header>
 <main>
 <section class="hero"><div class="kicker">A SHARED PLACE FOR EVERY EXPLORER</div><h1>Welcome to Food Plaza</h1><p>A welcoming community dining hub for the LOCAL MARS world. Explore food stations, choose a meal and enjoy the plaza together.</p><div class="free">✦ 100% FREE · NO MLC · NO PAYMENT</div></section>
+
+<section class="world-wrap" aria-label="Walkable 3D food plaza">
+ <div class="world-top"><b>✦ PLAZA WALK MODE</b><small>LOCAL MARS · COMMUNITY HUB</small></div>
+ <div class="world-stage" id="plazaWorld">
+  <div class="plaza-floor"></div>
+  <div class="world-hint">Walk around the plaza. Tap a station to explore its menu or visit the lounge.</div>
+  <button class="station kitchen" data-station="asian"><span>🍜</span>ASIAN KITCHEN<small>Tap to browse meals</small></button>
+  <button class="station grill" data-station="western"><span>🍔</span>WESTERN GRILL<small>Tap to browse meals</small></button>
+  <button class="station drinks" data-station="drinks"><span>🧋</span>DRINKS BAR<small>Tap to browse drinks</small></button>
+  <button class="station lounge" data-station="lounge"><span>🛋️</span>COMMUNITY LOUNGE<small>Rest & meet explorers</small></button>
+  <div class="avatar" id="plazaAvatar">🧑‍🚀</div><div class="avatar-label" id="plazaAvatarLabel">YOU · EXPLORER</div>
+ </div>
+ <div class="world-controls"><div class="pad" aria-label="Movement controls">
+  <button data-move="up" aria-label="Move forward">▲</button><button data-move="left" aria-label="Move left">◀</button><button data-move="down" aria-label="Move backward">▼</button><button data-move="right" aria-label="Move right">▶</button>
+ </div><div class="world-status" id="plazaStatus" aria-live="polite">Use arrow keys, WASD or the pad to walk.<br>Tap a station to interact.</div></div>
+</section>
 <div class="stats"><div class="stat"><b>FREE</b><span>Every listed meal</span></div><div class="stat"><b>24 / 7</b><span>Virtual plaza access</span></div><div class="stat"><b>GLOBAL</b><span>All explorers welcome</span></div></div>
 <div class="section-head"><h2>Explore food stations</h2><small>Sample virtual menu</small></div>
 <nav class="filters" aria-label="Food categories"><button class="active" data-cat="all">All stations</button><button data-cat="asian">Asian kitchen</button><button data-cat="western">Western grill</button><button data-cat="healthy">Healthy bar</button><button data-cat="drinks">Drinks & dessert</button></nav>
@@ -57,5 +89,15 @@ document.querySelector('.filters').addEventListener('click',e=>{const b=e.target
 document.getElementById('serve').addEventListener('click',()=>{const n=[...tray.values()].reduce((a,b)=>a+b,0),notice=document.getElementById('notice');if(!n){notice.style.display='block';notice.textContent='Please choose a meal first.';return;}notice.style.display='block';notice.textContent='Your virtual free meal tray is confirmed ('+n+' item'+(n===1?'':'s')+'). No MLC or payment was charged. This is a local demo confirmation, not a kitchen order or physical food delivery.';tray.clear();renderTray();});
 document.getElementById('back').addEventListener('click',()=>{location.href='./index.html'});
 renderFoods();renderTray();
+</script>
+
+<script id="lm-food-plaza-walk-engine">
+(()=>{const world=document.getElementById('plazaWorld');if(!world)return;const avatar=document.getElementById('plazaAvatar'),label=document.getElementById('plazaAvatarLabel'),status=document.getElementById('plazaStatus');let x=50,y=53;
+function render(){avatar.style.left=x+'%';avatar.style.top=y+'%';label.style.left=x+'%';label.style.top='calc('+y+'% + 28px)'}
+function move(dir){const step=4;if(dir==='up')y=Math.max(17,y-step);if(dir==='down')y=Math.min(83,y+step);if(dir==='left')x=Math.max(8,x-step);if(dir==='right')x=Math.min(92,x+step);render();status.textContent='Explorer position · '+Math.round(x)+' / '+Math.round(y)+' · Walk to a station and tap it.'}
+document.querySelectorAll('[data-move]').forEach(b=>b.addEventListener('click',()=>move(b.dataset.move)));
+document.addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;const k=e.key.toLowerCase(),d={arrowup:'up',w:'up',arrowdown:'down',s:'down',arrowleft:'left',a:'left',arrowright:'right',d:'right'}[k];if(d){e.preventDefault();move(d)}});
+world.querySelectorAll('[data-station]').forEach(b=>b.addEventListener('click',()=>{const s=b.dataset.station;if(s==='lounge'){status.textContent='Welcome to the Community Lounge. Social seating is shown in this prototype; live multiplayer presence and chat are not connected.';return}const filter=document.querySelector('[data-cat="'+s+'"]');if(filter){filter.click();document.getElementById('foods').scrollIntoView({behavior:'smooth',block:'start'});status.textContent='Station selected · '+b.childNodes[1].textContent+'. Browse the menu below and add a free meal.'}}));
+render()})();
 </script>
 </body></html>
