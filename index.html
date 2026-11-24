@@ -2768,4 +2768,8 @@ button.primary{background:#c39b5d!important;border-color:#d9bb82!important;color
 #toast{box-shadow:none!important;border-color:rgba(217,187,130,.3)!important}
 @media(max-width:650px){header{height:46px!important;min-height:46px!important;padding:0 10px!important}.brand{font-size:14px!important;letter-spacing:1px!important}.status{font-size:8px!important}.bottom,.lm-command-dock{border-radius:10px!important}.resource-chip{padding:4px 2px!important}}
 </style>
+
+<script id="lm-food-plaza-launcher">
+(()=>{function add(){const dock=document.querySelector('.lm-command-dock')||document.querySelector('.bottom');if(!dock||document.getElementById('lmFoodPlazaLaunch'))return;const b=document.createElement('button');b.id='lmFoodPlazaLaunch';b.type='button';b.textContent='🍽 FOOD PLAZA';b.setAttribute('aria-label','Open free community Food Plaza');b.addEventListener('click',()=>{location.href='./food-plaza.html'});dock.appendChild(b)}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',add,{once:true});else add();const observer=new MutationObserver(add);observer.observe(document.documentElement,{childList:true,subtree:true});setTimeout(()=>observer.disconnect(),12000)})();
+</script>
 </body></html>
