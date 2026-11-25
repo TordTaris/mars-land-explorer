@@ -20,6 +20,7 @@ const ingredients=['Vegetables','Mushrooms','Tofu / plant protein','Chicken','Be
 const methods=['Chef’s choice','Grilled','Steamed','Stir-fried','Baked','Boiled / simmered','Fresh / no-cook'];
 const el=(tag,attrs={},txt)=>{const n=document.createElement(tag);Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,v));if(txt!==undefined)n.textContent=txt;return n};
 const style=el('style');style.textContent="#foodStudio{margin:26px 0;padding:18px;border:1px solid #d9b87866;border-radius:18px;background:linear-gradient(145deg,#142333,#09121d)}#foodStudio .fsgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}#foodStudio .fscard{padding:14px;border:1px solid #ffffff20;border-radius:12px;background:#0b1521;min-width:0}#foodStudio label{display:block;margin:10px 0 5px;color:#e8d4ad;font-size:11px}#foodStudio select{width:100%;padding:10px;border:1px solid #405064;border-radius:8px;background:#07101a;color:#fff}#foodStudio .checks{display:grid;grid-template-columns:1fr 1fr;gap:6px}#foodStudio .checks label{margin:0;padding:7px;background:#101d2b;border-radius:7px}#foodStudio .preview{display:grid;place-items:center;min-height:160px;border-radius:12px;background:radial-gradient(circle,#58402d,#182535);font-size:70px;animation:fsfloat 2.5s ease-in-out infinite}@keyframes fsfloat{50%{transform:translateY(-5px)}}#foodStudio .summary{padding:10px;margin-top:10px;background:#07101a;border-radius:9px;font-size:11px;line-height:1.6;min-height:65px}#foodStudio button{font-size:11px;margin:8px 5px 0 0}#foodStudio .basketrow{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #ffffff18;font-size:11px}@media(max-width:650px){#foodStudio .fsgrid{grid-template-columns:1fr}}";
+style.textContent += "\n#foodStudio{position:relative;isolation:isolate;overflow:hidden;border-color:#e6bd796e;background:radial-gradient(ellipse at 85% 0%,#60442b66,transparent 38%),linear-gradient(145deg,#1a2a39,#09121d 75%);box-shadow:0 20px 55px #0008}#foodStudio:before{content:'FOOD MODE ACTIVE';position:absolute;right:16px;top:15px;padding:7px 10px;border:1px solid #d9b87866;border-radius:30px;background:#2b2419;color:#f0d6a4;font-size:9px;font-weight:900;letter-spacing:1.4px}#foodStudio h2{font-size:clamp(24px,4vw,34px);margin:10px 0 6px;letter-spacing:-.6px}#foodStudio>p{max-width:680px;line-height:1.65}#foodStudio .fsgrid{grid-template-columns:minmax(0,1.08fr) minmax(260px,.92fr);gap:16px}#foodStudio .fscard{border-color:#d9b87835;background:linear-gradient(155deg,#142333,#09131e);box-shadow:inset 0 1px #ffffff08}#foodStudio .fscard:first-child{padding:17px}#foodStudio label{font-weight:700;letter-spacing:.2px}#foodStudio select{min-height:42px;border-color:#526071;background:linear-gradient(#101d2b,#07101a);font-size:13px}#foodStudio .checks label{display:flex;align-items:center;gap:7px;padding:9px;border:1px solid #ffffff12;background:#101d2b;color:#dbe4eb;font-weight:500}#foodStudio .checks input{accent-color:#d9b878;width:16px;height:16px}#foodStudio .preview{min-height:205px;border:1px solid #e2bd7b55;background:radial-gradient(circle at 50% 53%,#f0d7aa 0 25%,#b68c55 26% 29%,#273746 30% 52%,#101a25 75%);box-shadow:inset 0 0 45px #0008,0 12px 28px #0005;font-size:88px;text-shadow:0 7px 15px #0008}#foodStudio #fsName{display:block;margin-top:12px;font-size:19px;color:#f3d8a6}#foodStudio .summary{border:1px solid #d9b8782b;background:#08111b;color:#d7e0e8;min-height:75px}#foodStudio button{min-height:40px;border-color:#8b744d}#foodStudio button.primary{box-shadow:0 5px 18px #d9b87828}#foodStudio button:focus-visible,#foodStudio select:focus-visible,#foodStudio input:focus-visible{outline:2px solid #f0d6a4;outline-offset:2px}#foodStudio .basketrow{align-items:center;gap:8px;padding:10px 0}#foodStudio .traycard{display:grid;grid-template-columns:112px 1fr;gap:12px;padding:10px;margin:10px 0;border:1px solid #d9b87855;border-radius:12px;background:#07111c}#foodStudio .trayphoto{position:relative;min-height:104px;border-radius:9px;overflow:hidden;background:#182535}#foodStudio .trayphoto img{width:100%;height:100%;min-height:104px;object-fit:cover;display:block}#foodStudio .traybits{position:absolute;inset:5px;display:flex;flex-wrap:wrap;align-content:flex-start;gap:4px}#foodStudio .traybits span{font-size:17px;padding:3px 5px;border-radius:18px;background:#07111ddd;border:1px solid #f0d6a477}#foodStudio .traymeta{font-size:11px;line-height:1.6;color:#dbe4eb}#foodStudio .traymeta strong{display:block;color:#f3d8a6;font-size:14px;margin-bottom:3px}#foodStudio .traymeta button{margin-top:5px}@media(max-width:390px){#foodStudio .traycard{grid-template-columns:88px 1fr}}#foodStudio .basketrow button{min-height:32px;padding:6px 10px}#foodStudio .fscard>p{line-height:1.55}@media(max-width:650px){#foodStudio{padding:14px;margin:18px 0}#foodStudio:before{position:static;display:inline-flex;margin-bottom:5px}#foodStudio .fsgrid{grid-template-columns:1fr;gap:11px}#foodStudio .preview{min-height:175px;font-size:76px}#foodStudio .fscard:first-child{padding:13px}#foodStudio .checks{grid-template-columns:1fr 1fr}}";
 document.head.append(style);
 const root=el('section',{id:'foodStudio'});root.innerHTML=[
 '<div style="font-size:10px;letter-spacing:2px;color:#d9b878;font-weight:800">ALL CUISINES · INTERACTIVE FOOD EXPERIENCE</div>',
@@ -29,19 +30,80 @@ const root=el('section',{id:'foodStudio'});root.innerHTML=[
 '<label for="fsMethod">Cooking style</label><select id="fsMethod"></select><label for="fsSpice">Spice level</label><select id="fsSpice"><option>None</option><option>Mild</option><option selected>Medium</option><option>Hot</option><option>Extra hot</option></select>',
 '<label for="fsPortion">Portion</label><select id="fsPortion"><option>Regular</option><option>Small</option><option>Large</option><option>Sharing size</option></select>',
 '<button class="primary" id="fsAdd">＋ Add customized dish</button><button id="fsReset">Reset</button></div>',
-'<div class="fscard"><div style="font-size:10px;color:#d9b878;letter-spacing:2px">LIVE DISH PREVIEW</div><div class="preview" id="fsEmoji">🍛</div><b id="fsName">Thai basil rice</b><div class="summary" id="fsSummary" aria-live="polite"></div>',
+'<div class="fscard"><div style="font-size:10px;color:#d9b878;letter-spacing:2px">LIVE DISH PREVIEW</div><div class="preview" id="fsEmoji" style="overflow:hidden;padding:0;position:relative"><canvas id="fsDishCanvas" width="960" height="560" role="img" aria-label="Live food preview with selected ingredients" style="width:100%;height:100%;min-height:205px;max-height:300px;object-fit:cover;border-radius:12px;display:block"></canvas><span id="fsDishEmoji" aria-hidden="true" style="position:absolute;bottom:12px;right:14px;background:#08111dcc;border:1px solid #e2bd7b88;border-radius:30px;padding:7px 11px;font-size:24px">🍛</span><div id="fsLiveToppings" aria-live="polite" style="position:absolute;left:10px;right:10px;top:10px;display:flex;flex-wrap:wrap;gap:6px;pointer-events:none"></div></div><b id="fsName">Thai basil rice</b><div class="summary" id="fsSummary" aria-live="polite"></div>',
 '<div style="margin-top:14px"><b>My virtual food tray</b><div id="fsBasket" style="margin-top:8px;color:#aebbc8;font-size:11px">No customized dishes added yet.</div></div>',
 '<p style="color:#91a0af;font-size:10px">Free virtual experience. No MLC, payment, kitchen order or physical delivery.</p></div></div>'
 ].join('');
-const grid=document.getElementById('foods');if(grid)grid.insertAdjacentElement('afterend',root);
+const hero=document.querySelector('.hero');if(hero)hero.insertAdjacentElement('afterend',root);else{const grid=document.getElementById('foods');if(grid)grid.insertAdjacentElement('afterend',root);}
 const cuisine=document.getElementById('fsCuisine'),dish=document.getElementById('fsDish'),checks=document.getElementById('fsIngredients'),method=document.getElementById('fsMethod');
 groups.forEach((g,i)=>cuisine.add(new Option(g.name,String(i))));methods.forEach(x=>method.add(new Option(x,x)));
 ingredients.forEach((x,i)=>{const label=el('label'),input=el('input',{type:'checkbox',value:x});if([0,2,8].includes(i))input.checked=true;label.append(input,document.createTextNode(' '+x));checks.append(label)});
 let basket=[];
 function selected(){const g=groups[Number(cuisine.value)]||groups[0],d=g.items[Number(dish.value)]||g.items[0];return {group:g.name,emoji:d[0],name:d[1],ingredients:[...checks.querySelectorAll('input:checked')].map(x=>x.value),method:method.value,spice:document.getElementById('fsSpice').value,portion:document.getElementById('fsPortion').value}}
-function update(){const x=selected();document.getElementById('fsEmoji').textContent=x.emoji;document.getElementById('fsName').textContent=x.name;document.getElementById('fsSummary').textContent=x.group+' · '+x.ingredients.join(', ')+' · '+x.method+' · '+x.spice+' spice · '+x.portion+' · FREE'}
+const foodPhotos={
+'Thai basil rice':'photo-1512058564366-18510be2db19','Pad Thai':'photo-1559314809-0d155014e29e','Som tam':'photo-1512621776951-a57141f2eefd','Tom yum':'photo-1547592180-85f173990554','Green curry':'photo-1547592180-85f173990554',
+'Sushi':'photo-1579871494447-9811cf80d66c','Ramen':'photo-1569718212165-3a8278d5f624','Bento':'photo-1547592180-85f173990554','Tempura':'photo-1583623025817-d180a2221d0a',
+'Dim sum':'photo-1563245372-f21724e3856d','Chow mein':'photo-1585032226651-759b368d7246','Fried rice':'photo-1603133872878-684f208fb84b','Hot pot':'photo-1547592180-85f173990554',
+'Korean fried chicken':'photo-1626082927389-6cd097cdc6ec','Kimchi stew':'photo-1547592180-85f173990554','Bibimbap':'photo-1553163147-622ab57be1c7',
+'Butter chicken':'photo-1603894584373-5ac82b2ae398','Naan & curry':'photo-1565557623262-b51c2513a641','Biryani':'photo-1563379091339-03246963d96c',
+'Burger':'photo-1568901346375-23c9450c58cd','Pizza':'photo-1565299624946-b28f40a0ae38','Sandwich':'photo-1528735602780-2552fd46c7af','Steak':'photo-1546833999-b9f581a1996d',
+'Pasta':'photo-1473093295043-cdd812d0e601','Neapolitan pizza':'photo-1579751626657-72bc17010498','Risotto':'photo-1476124369491-e7a8e9b8b8b6',
+'Tacos':'photo-1551504734-5ee1c4a1479b','Burrito':'photo-1566740933430-b5e70b06d2d5','Quesadilla':'photo-1618040996337-56904b7850b9',
+'Shawarma':'photo-1529006557810-274b9b2fc783','Falafel':'photo-1593001874117-c99c800e3eb8','Kebab':'photo-1544025162-d76694265947',
+'Croissant':'photo-1555507036-ab1f4038808a','Paella':'photo-1534080564583-6be75777b70a','Jollof rice':'photo-1512058564366-18510be2db19',
+'Plant-based bowl':'photo-1512621776951-a57141f2eefd','Mushroom steak':'photo-150','Avocado toast':'photo-1525351484163-7529414344d8',
+'Grilled prawns':'photo-1565680018434-b513d5e5fd47','Fish and chips':'photo-1579208030886-b937da0925dc','Poke bowl':'photo-1546069901-ba9599a7e63c',
+'Cake':'photo-1578985545062-69928b1d9587','Doughnut':'photo-1551024506-0dabeaf0a5c7','Ice cream':'photo-1563805042-7684c019e1cb','Pancakes':'photo-1528207776546-365bb710ee93',
+'Bubble tea':'photo-1558857563-b371033873b8','Coffee':'photo-1509042239860-f550ce710b93','Smoothie':'photo-1505252585461-04db1eb84625','Matcha':'photo-1515823064-d6e0c04616a7',
+'Breakfast plate':'photo-1533089860892-a7c6f0a88666','Oatmeal':'photo-1517673132405-a56a62b18caf','Waffles':'photo-1562376552-0d160a2f238d'
+};
+let previewImage=null,previewState=null;
+function paintPreview(x){
+ const canvas=document.getElementById('fsDishCanvas'),ctx=canvas.getContext('2d');
+ const w=canvas.width,h=canvas.height;
+ ctx.clearRect(0,0,w,h);
+ if(previewImage&&previewImage.complete&&previewImage.naturalWidth){
+  const scale=Math.max(w/previewImage.naturalWidth,h/previewImage.naturalHeight),dw=previewImage.naturalWidth*scale,dh=previewImage.naturalHeight*scale;
+  ctx.save();
+  ctx.filter=x.method==='Grilled'?'saturate(1.35) contrast(1.12)':x.method==='Steamed'?'brightness(1.12) saturate(.92)':x.method==='Baked'?'sepia(.13) saturate(1.18)':x.method==='Stir-fried'?'saturate(1.25) contrast(1.08)':'none';
+  ctx.drawImage(previewImage,(w-dw)/2,(h-dh)/2,dw,dh);ctx.restore();
+ }else{
+  const g=ctx.createLinearGradient(0,0,w,h);g.addColorStop(0,'#755037');g.addColorStop(1,'#172b3b');ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+  ctx.font='120px system-ui';ctx.textAlign='center';ctx.fillText(x.emoji,w/2,h/2+40);
+ }
+ ctx.fillStyle='rgba(4,10,16,.24)';ctx.fillRect(0,0,w,h);
+ const icons={'Vegetables':'🥬','Mushrooms':'🍄','Tofu / plant protein':'🧈','Chicken':'🍗','Beef':'🥩','Seafood':'🦐','Egg':'🥚','Cheese':'🧀','Herbs':'🌿','Chili':'🌶️','Garlic':'🧄','Extra sauce':'🥣'};
+ const points=[[.31,.39],[.49,.31],[.68,.4],[.38,.62],[.59,.63],[.5,.49],[.75,.58],[.23,.55],[.68,.23],[.28,.25],[.53,.75],[.78,.38]];
+ x.ingredients.forEach((name,i)=>{
+  const [px,py]=points[i%points.length],xx=w*px,yy=h*py;
+  ctx.save();ctx.shadowColor='#000';ctx.shadowBlur=13;ctx.font='58px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(icons[name]||'✨',xx,yy);ctx.restore();
+ });
+ if(x.spice==='Hot'||x.spice==='Extra hot'){ctx.fillStyle=x.spice==='Hot'?'rgba(235,75,25,.12)':'rgba(235,45,15,.2)';ctx.fillRect(0,0,w,h)}
+ ctx.fillStyle='rgba(5,12,19,.82)';ctx.fillRect(18,h-54,Math.min(w-36,90+x.ingredients.length*45),36);
+ ctx.fillStyle='#f6dfb5';ctx.font='bold 18px system-ui';ctx.textAlign='left';ctx.textBaseline='middle';
+ ctx.fillText(x.ingredients.length+' ingredients · '+x.method,30,h-36);
+}
+function loadPreview(name){
+ const photo=foodPhotos[name]||'photo-1547592180-85f173990554';
+ const src='https://images.unsplash.com/'+photo+'?auto=format&fit=crop&w=1000&q=85';
+ if(document.getElementById('fsDishCanvas').dataset.photo===src)return;
+ const canvas=document.getElementById('fsDishCanvas');canvas.dataset.photo=src;
+ const image=new Image();image.crossOrigin='anonymous';image.onload=()=>{previewImage=image;if(previewState)paintPreview(previewState)};
+ image.onerror=()=>{previewImage=null;if(previewState)paintPreview(previewState)};
+ image.src=src;
+}
+function update(){
+ const x=selected();previewState=x;document.getElementById('fsDishEmoji').textContent=x.emoji;
+ loadPreview(x.name);paintPreview(x);
+ const icons={'Vegetables':'🥬','Mushrooms':'🍄','Tofu / plant protein':'🧈','Chicken':'🍗','Beef':'🥩','Seafood':'🦐','Egg':'🥚','Cheese':'🧀','Herbs':'🌿','Chili':'🌶️','Garlic':'🧄','Extra sauce':'🥣'};
+ const toppings=document.getElementById('fsLiveToppings');toppings.replaceChildren();
+ x.ingredients.forEach(name=>{const chip=el('span',{style:'padding:6px 8px;border-radius:20px;background:#07111ddd;border:1px solid #f0d6a477;color:#fff;font-size:11px;box-shadow:0 3px 12px #0008'},(icons[name]||'✨')+' '+name);toppings.append(chip)});
+ document.getElementById('fsName').textContent=x.name;
+ document.getElementById('fsSummary').textContent=x.group+' · '+(x.ingredients.join(', ')||'No added ingredients')+' · '+x.method+' · '+x.spice+' spice · '+x.portion+' · FREE';
+}
 function fill(){dish.replaceChildren();(groups[Number(cuisine.value)]||groups[0]).items.forEach((x,i)=>dish.add(new Option(x[1],String(i))));update()}
-function draw(){const b=document.getElementById('fsBasket');b.replaceChildren();if(!basket.length){b.textContent='No customized dishes added yet.';return}basket.forEach((x,i)=>{const row=el('div',{class:'basketrow'});row.append(el('span',{},x.emoji+' '+x.name+' · '+x.portion),el('button',{type:'button','data-remove':String(i)},'Remove'));b.append(row)});b.append(el('div',{},basket.length+' dish(es) · FREE'))}
+function draw(){const b=document.getElementById('fsBasket');b.replaceChildren();if(!basket.length){b.textContent='No customized dishes added yet.';return}const icons={'Vegetables':'🥬','Mushrooms':'🍄','Tofu / plant protein':'🧈','Chicken':'🍗','Beef':'🥩','Seafood':'🦐','Egg':'🥚','Cheese':'🧀','Herbs':'🌿','Chili':'🌶️','Garlic':'🧄','Extra sauce':'🥣'};basket.forEach((x,i)=>{const card=el('div',{class:'traycard'}),photo=el('div',{class:'trayphoto'}),img=el('img',{src:'https://images.unsplash.com/'+(foodPhotos[x.name]||'photo-1547592180-85f173990554')+'?auto=format&fit=crop&w=500&q=80',alt:x.name+' customized dish'}),bits=el('div',{class:'traybits'}),meta=el('div',{class:'traymeta'});x.ingredients.forEach(name=>bits.append(el('span',{},icons[name]||'✨')));photo.append(img,bits);meta.append(el('strong',{},x.emoji+' '+x.name),el('div',{},x.ingredients.length?'Ingredients: '+x.ingredients.join(', '):'No extra ingredients'),el('div',{},x.method+' · '+x.spice+' spice · '+x.portion+' · FREE'),el('button',{type:'button','data-remove':String(i)},'Remove'));card.append(photo,meta);b.append(card)});b.append(el('div',{},basket.length+' dish(es) · FREE'))}
 cuisine.addEventListener('change',fill);[dish,checks,method,document.getElementById('fsSpice'),document.getElementById('fsPortion')].forEach(x=>x.addEventListener('change',update));
 document.getElementById('fsAdd').addEventListener('click',()=>{basket.push(selected());draw()});
 document.getElementById('fsReset').addEventListener('click',()=>{checks.querySelectorAll('input').forEach((x,i)=>x.checked=[0,2,8].includes(i));method.selectedIndex=0;document.getElementById('fsSpice').value='Medium';document.getElementById('fsPortion').value='Regular';update()});
