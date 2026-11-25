@@ -51,7 +51,7 @@ const foodPhotos={
 'Tacos':'photo-1551504734-5ee1c4a1479b','Burrito':'photo-1566740933430-b5e70b06d2d5','Quesadilla':'photo-1618040996337-56904b7850b9',
 'Shawarma':'photo-1529006557810-274b9b2fc783','Falafel':'photo-1593001874117-c99c800e3eb8','Kebab':'photo-1544025162-d76694265947',
 'Croissant':'photo-1555507036-ab1f4038808a','Paella':'photo-1534080564583-6be75777b70a','Jollof rice':'photo-1512058564366-18510be2db19',
-'Plant-based bowl':'photo-1512621776951-a57141f2eefd','Mushroom steak':'photo-150 mushrooms','Avocado toast':'photo-1525351484163-7529414344d8',
+'Plant-based bowl':'photo-1512621776951-a57141f2eefd','Mushroom steak':'photo-150','Avocado toast':'photo-1525351484163-7529414344d8',
 'Grilled prawns':'photo-1565680018434-b513d5e5fd47','Fish and chips':'photo-1579208030886-b937da0925dc','Poke bowl':'photo-1546069901-ba9599a7e63c',
 'Cake':'photo-1578985545062-69928b1d9587','Doughnut':'photo-1551024506-0dabeaf0a5c7','Ice cream':'photo-1563805042-7684c019e1cb','Pancakes':'photo-1528207776546-365bb710ee93',
 'Bubble tea':'photo-1558857563-b371033873b8','Coffee':'photo-1509042239860-f550ce710b93','Smoothie':'photo-1505252585461-04db1eb84625','Matcha':'photo-1515823064-d6e0c04616a7',
