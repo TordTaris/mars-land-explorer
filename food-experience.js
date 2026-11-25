@@ -44,7 +44,7 @@ const foodPhotos={
 'Thai basil rice':'photo-1512058564366-18510be2db19','Pad Thai':'photo-1559314809-0d155014e29e','Som tam':'photo-1512621776951-a57141f2eefd','Tom yum':'photo-1547592180-85f173990554','Green curry':'photo-1547592180-85f173990554',
 'Sushi':'photo-1579871494447-9811cf80d66c','Ramen':'photo-1569718212165-3a8278d5f624','Bento':'photo-1547592180-85f173990554','Tempura':'photo-1583623025817-d180a2221d0a',
 'Dim sum':'photo-1563245372-f21724e3856d','Chow mein':'photo-1585032226651-759b368d7246','Fried rice':'photo-1603133872878-684f208fb84b','Hot pot':'photo-1547592180-85f173990554',
-'Korean fried chicken':'photo-1626082927389-6cd097cdc6ec','Kimchi stew':'photo-1498654896293-37a ebenfalls','Bibimbap':'photo-1553163147-622ab57be1c7',
+'Korean fried chicken':'photo-1626082927389-6cd097cdc6ec','Kimchi stew':'photo-1547592180-85f173990554','Bibimbap':'photo-1553163147-622ab57be1c7',
 'Butter chicken':'photo-1603894584373-5ac82b2ae398','Naan & curry':'photo-1565557623262-b51c2513a641','Biryani':'photo-1563379091339-03246963d96c',
 'Burger':'photo-1568901346375-23c9450c58cd','Pizza':'photo-1565299624946-b28f40a0ae38','Sandwich':'photo-1528735602780-2552fd46c7af','Steak':'photo-1546833999-b9f581a1996d',
 'Pasta':'photo-1473093295043-cdd812d0e601','Neapolitan pizza':'photo-1579751626657-72bc17010498','Risotto':'photo-1476124369491-e7a8e9b8b8b6',
@@ -53,8 +53,8 @@ const foodPhotos={
 'Croissant':'photo-1555507036-ab1f4038808a','Paella':'photo-1534080564583-6be75777b70a','Jollof rice':'photo-1512058564366-18510be2db19',
 'Plant-based bowl':'photo-1512621776951-a57141f2eefd','Mushroom steak':'photo-150 mushrooms','Avocado toast':'photo-1525351484163-7529414344d8',
 'Grilled prawns':'photo-1565680018434-b513d5e5fd47','Fish and chips':'photo-1579208030886-b937da0925dc','Poke bowl':'photo-1546069901-ba9599a7e63c',
-'Cake':'photo-1578985545062-69928b1d9587','Doughnut':'photo-1551024506-0解除','Ice cream':'photo-1563805042-7684c019e1cb','Pancakes':'photo-1528207776546-365bb710ee93',
-'Bubble tea':'photo-1558857563-b371033873b8','Coffee':'photo-150 этой','Smoothie':'photo-1505252585461-04db1eb84625','Matcha':'photo-1515823064-d6e0c04616a7',
+'Cake':'photo-1578985545062-69928b1d9587','Doughnut':'photo-1551024506-0dabeaf0a5c7','Ice cream':'photo-1563805042-7684c019e1cb','Pancakes':'photo-1528207776546-365bb710ee93',
+'Bubble tea':'photo-1558857563-b371033873b8','Coffee':'photo-1509042239860-f550ce710b93','Smoothie':'photo-1505252585461-04db1eb84625','Matcha':'photo-1515823064-d6e0c04616a7',
 'Breakfast plate':'photo-1533089860892-a7c6f0a88666','Oatmeal':'photo-1517673132405-a56a62b18caf','Waffles':'photo-1562376552-0d160a2f238d'
 };
 function update(){const x=selected(),img=document.getElementById('fsDishImage');document.getElementById('fsDishEmoji').textContent=x.emoji;const photo=foodPhotos[x.name]||'photo-1547592180-85f173990554';img.style.opacity='.25';img.src='https://images.unsplash.com/'+photo+'?auto=format&fit=crop&w=1000&q=85';img.alt=x.name+' food photograph';img.onload=()=>{img.style.opacity='1'};img.onerror=()=>{img.style.opacity='1';img.alt=x.name+' preview illustration';};document.getElementById('fsName').textContent=x.name;document.getElementById('fsSummary').textContent=x.group+' · '+x.ingredients.join(', ')+' · '+x.method+' · '+x.spice+' spice · '+x.portion+' · FREE'}
