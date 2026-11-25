@@ -30,7 +30,7 @@ const root=el('section',{id:'foodStudio'});root.innerHTML=[
 '<label for="fsMethod">Cooking style</label><select id="fsMethod"></select><label for="fsSpice">Spice level</label><select id="fsSpice"><option>None</option><option>Mild</option><option selected>Medium</option><option>Hot</option><option>Extra hot</option></select>',
 '<label for="fsPortion">Portion</label><select id="fsPortion"><option>Regular</option><option>Small</option><option>Large</option><option>Sharing size</option></select>',
 '<button class="primary" id="fsAdd">＋ Add customized dish</button><button id="fsReset">Reset</button></div>',
-'<div class="fscard"><div style="font-size:10px;color:#d9b878;letter-spacing:2px">LIVE DISH PREVIEW</div><div class="preview" id="fsEmoji">🍛</div><b id="fsName">Thai basil rice</b><div class="summary" id="fsSummary" aria-live="polite"></div>',
+'<div class="fscard"><div style="font-size:10px;color:#d9b878;letter-spacing:2px">LIVE DISH PREVIEW</div><div class="preview" id="fsEmoji" style="overflow:hidden;padding:0;position:relative"><img id="fsDishImage" alt="Selected dish photo" loading="eager" style="width:100%;height:100%;min-height:205px;max-height:300px;object-fit:cover;border-radius:12px;display:block;transition:opacity .2s ease"/><span id="fsDishEmoji" aria-hidden="true" style="position:absolute;bottom:12px;right:14px;background:#08111dcc;border:1px solid #e2bd7b88;border-radius:30px;padding:7px 11px;font-size:24px">🍛</span></div><b id="fsName">Thai basil rice</b><div class="summary" id="fsSummary" aria-live="polite"></div>',
 '<div style="margin-top:14px"><b>My virtual food tray</b><div id="fsBasket" style="margin-top:8px;color:#aebbc8;font-size:11px">No customized dishes added yet.</div></div>',
 '<p style="color:#91a0af;font-size:10px">Free virtual experience. No MLC, payment, kitchen order or physical delivery.</p></div></div>'
 ].join('');
@@ -40,7 +40,24 @@ groups.forEach((g,i)=>cuisine.add(new Option(g.name,String(i))));methods.forEach
 ingredients.forEach((x,i)=>{const label=el('label'),input=el('input',{type:'checkbox',value:x});if([0,2,8].includes(i))input.checked=true;label.append(input,document.createTextNode(' '+x));checks.append(label)});
 let basket=[];
 function selected(){const g=groups[Number(cuisine.value)]||groups[0],d=g.items[Number(dish.value)]||g.items[0];return {group:g.name,emoji:d[0],name:d[1],ingredients:[...checks.querySelectorAll('input:checked')].map(x=>x.value),method:method.value,spice:document.getElementById('fsSpice').value,portion:document.getElementById('fsPortion').value}}
-function update(){const x=selected();document.getElementById('fsEmoji').textContent=x.emoji;document.getElementById('fsName').textContent=x.name;document.getElementById('fsSummary').textContent=x.group+' · '+x.ingredients.join(', ')+' · '+x.method+' · '+x.spice+' spice · '+x.portion+' · FREE'}
+const foodPhotos={
+'Thai basil rice':'photo-1512058564366-18510be2db19','Pad Thai':'photo-1559314809-0d155014e29e','Som tam':'photo-1512621776951-a57141f2eefd','Tom yum':'photo-1547592180-85f173990554','Green curry':'photo-1547592180-85f173990554',
+'Sushi':'photo-1579871494447-9811cf80d66c','Ramen':'photo-1569718212165-3a8278d5f624','Bento':'photo-1547592180-85f173990554','Tempura':'photo-1583623025817-d180a2221d0a',
+'Dim sum':'photo-1563245372-f21724e3856d','Chow mein':'photo-1585032226651-759b368d7246','Fried rice':'photo-1603133872878-684f208fb84b','Hot pot':'photo-1547592180-85f173990554',
+'Korean fried chicken':'photo-1626082927389-6cd097cdc6ec','Kimchi stew':'photo-1498654896293-37a ebenfalls','Bibimbap':'photo-1553163147-622ab57be1c7',
+'Butter chicken':'photo-1603894584373-5ac82b2ae398','Naan & curry':'photo-1565557623262-b51c2513a641','Biryani':'photo-1563379091339-03246963d96c',
+'Burger':'photo-1568901346375-23c9450c58cd','Pizza':'photo-1565299624946-b28f40a0ae38','Sandwich':'photo-1528735602780-2552fd46c7af','Steak':'photo-1546833999-b9f581a1996d',
+'Pasta':'photo-1473093295043-cdd812d0e601','Neapolitan pizza':'photo-1579751626657-72bc17010498','Risotto':'photo-1476124369491-e7a8e9b8b8b6',
+'Tacos':'photo-1551504734-5ee1c4a1479b','Burrito':'photo-1566740933430-b5e70b06d2d5','Quesadilla':'photo-1618040996337-56904b7850b9',
+'Shawarma':'photo-1529006557810-274b9b2fc783','Falafel':'photo-1593001874117-c99c800e3eb8','Kebab':'photo-1544025162-d76694265947',
+'Croissant':'photo-1555507036-ab1f4038808a','Paella':'photo-1534080564583-6be75777b70a','Jollof rice':'photo-1512058564366-18510be2db19',
+'Plant-based bowl':'photo-1512621776951-a57141f2eefd','Mushroom steak':'photo-150 mushrooms','Avocado toast':'photo-1525351484163-7529414344d8',
+'Grilled prawns':'photo-1565680018434-b513d5e5fd47','Fish and chips':'photo-1579208030886-b937da0925dc','Poke bowl':'photo-1546069901-ba9599a7e63c',
+'Cake':'photo-1578985545062-69928b1d9587','Doughnut':'photo-1551024506-0解除','Ice cream':'photo-1563805042-7684c019e1cb','Pancakes':'photo-1528207776546-365bb710ee93',
+'Bubble tea':'photo-1558857563-b371033873b8','Coffee':'photo-150 этой','Smoothie':'photo-1505252585461-04db1eb84625','Matcha':'photo-1515823064-d6e0c04616a7',
+'Breakfast plate':'photo-1533089860892-a7c6f0a88666','Oatmeal':'photo-1517673132405-a56a62b18caf','Waffles':'photo-1562376552-0d160a2f238d'
+};
+function update(){const x=selected(),img=document.getElementById('fsDishImage');document.getElementById('fsDishEmoji').textContent=x.emoji;const photo=foodPhotos[x.name]||'photo-1547592180-85f173990554';img.style.opacity='.25';img.src='https://images.unsplash.com/'+photo+'?auto=format&fit=crop&w=1000&q=85';img.alt=x.name+' food photograph';img.onload=()=>{img.style.opacity='1'};img.onerror=()=>{img.style.opacity='1';img.alt=x.name+' preview illustration';};document.getElementById('fsName').textContent=x.name;document.getElementById('fsSummary').textContent=x.group+' · '+x.ingredients.join(', ')+' · '+x.method+' · '+x.spice+' spice · '+x.portion+' · FREE'}
 function fill(){dish.replaceChildren();(groups[Number(cuisine.value)]||groups[0]).items.forEach((x,i)=>dish.add(new Option(x[1],String(i))));update()}
 function draw(){const b=document.getElementById('fsBasket');b.replaceChildren();if(!basket.length){b.textContent='No customized dishes added yet.';return}basket.forEach((x,i)=>{const row=el('div',{class:'basketrow'});row.append(el('span',{},x.emoji+' '+x.name+' · '+x.portion),el('button',{type:'button','data-remove':String(i)},'Remove'));b.append(row)});b.append(el('div',{},basket.length+' dish(es) · FREE'))}
 cuisine.addEventListener('change',fill);[dish,checks,method,document.getElementById('fsSpice'),document.getElementById('fsPortion')].forEach(x=>x.addEventListener('change',update));
