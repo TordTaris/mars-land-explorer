@@ -31,7 +31,7 @@ create table if not exists public.world_data_records (
   latitude double precision check (latitude between -90 and 90),
   longitude double precision check (longitude between -180 and 180),
   altitude_m double precision,
-  coordinate_system text not null default 'WGS84' check (coordinate_system in ('WGS84','IAU_MARS_2000','LOCAL_SIMULATION','NONE')),
+  coordinate_system text not null default 'NONE' check (coordinate_system in ('WGS84','IAU_MARS_2000','LOCAL_SIMULATION','NONE')),
   observed_at timestamptz,
   source_updated_at timestamptz,
   fetched_at timestamptz,
@@ -46,6 +46,7 @@ create table if not exists public.world_data_records (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   check ((latitude is null) = (longitude is null)),
+  check (latitude is null or coordinate_system <> 'NONE'),
   check (
     (reality_scope = 'earth_real' and (coordinate_system in ('WGS84','NONE')))
     or (reality_scope = 'mars_observed' and (coordinate_system in ('IAU_MARS_2000','NONE')))
@@ -108,6 +109,10 @@ create policy world_data_records_submit_pending
     and is_public = false
     and verified_by is null
     and verified_at is null
+    and (source_id is null or exists (
+      select 1 from public.world_data_sources s
+      where s.id = world_data_records.source_id and s.is_active = true
+    ))
   );
 
 drop policy if exists world_data_records_delete_own_pending on public.world_data_records;
