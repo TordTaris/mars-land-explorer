@@ -122,4 +122,5 @@ window.addEventListener('lm-plaza-move',e=>{position=e.detail;if(channel&&user&&
 db.auth.onAuthStateChange((event)=>{if(event==='SIGNED_OUT')stop().catch(()=>{})});
 (async()=>{try{const {data:{session}}=await db.auth.getSession();if(session)await start(session.user);else stop()}catch(err){connection('OFFLINE');message('Member services unavailable: '+err.message)}})();
 </script>
+<script src="./food-experience.js"></script>
 </body></html>
