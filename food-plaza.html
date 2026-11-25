@@ -71,17 +71,56 @@ footer{text-align:center;color:#8190a0;font-size:10px;margin-top:28px;line-heigh
 }
 @media(prefers-reduced-motion:reduce){#foodChatDock.open{animation:none}}
 </style>
-</head>
+<style id="lm-food-metaverse-css">
+.world-wrap{position:relative;border-color:#d9b87899;background:linear-gradient(145deg,#111e2d,#080f19);box-shadow:0 24px 70px #0009}
+.world-top{background:linear-gradient(90deg,#1b2a3c,#111b29)}
+.world-top b{font-size:12px;letter-spacing:1.6px}
+.world-stage{height:510px;isolation:isolate;perspective:1100px;background:radial-gradient(ellipse at 50% 54%,#506075 0,#263b51 33%,#111e30 70%,#080f1a 100%)}
+.world-stage:before{z-index:-1;opacity:.26;background-image:radial-gradient(1px 1px at 12% 18%,#fff 98%,transparent),radial-gradient(2px 2px at 82% 27%,#f2d8a1 98%,transparent),radial-gradient(1px 1px at 61% 12%,#fff 98%,transparent),radial-gradient(1px 1px at 33% 41%,#fff 98%,transparent),radial-gradient(1px 1px at 91% 63%,#fff 98%,transparent);background-size:190px 150px,230px 180px,170px 140px,210px 170px,250px 190px}
+.plaza-floor{z-index:0;top:26%;height:112%;background-color:#31465a;background-image:linear-gradient(#e2c68b18 1px,transparent 1px),linear-gradient(90deg,#e2c68b18 1px,transparent 1px),radial-gradient(ellipse at 50% 42%,#a9a28a33,transparent 62%);background-size:58px 58px,58px 58px,100% 100%;transform:rotateX(61deg) rotateZ(-2deg);border:2px solid #d9b87855}
+.plaza-skyline{position:absolute;inset:0 0 43%;z-index:0;pointer-events:none;overflow:hidden;background:linear-gradient(180deg,#182c43aa,transparent)}
+.plaza-skyline:before,.plaza-skyline:after{content:"";position:absolute;bottom:0;width:100%;height:72%;background:linear-gradient(90deg,transparent 0 4%,#172a3d 4% 10%,transparent 10% 14%,#263d52 14% 21%,transparent 21% 25%,#1c3147 25% 34%,transparent 34% 39%,#2c4155 39% 48%,transparent 48% 53%,#1c3147 53% 62%,transparent 62% 67%,#263d52 67% 75%,transparent 75% 80%,#172a3d 80% 90%,transparent 90%);clip-path:polygon(0 40%,8% 40%,8% 15%,13% 15%,13% 48%,22% 48%,22% 4%,29% 4%,29% 35%,38% 35%,38% 20%,44% 20%,44% 0,51% 0,51% 40%,59% 40%,59% 14%,67% 14%,67% 48%,76% 48%,76% 18%,84% 18%,84% 40%,92% 40%,92% 7%,100% 7%,100% 100%,0 100%);opacity:.9}
+.plaza-skyline:after{height:36%;opacity:.6;filter:brightness(1.6);transform:scaleX(1.12);transform-origin:bottom}
+.plaza-sun{position:absolute;z-index:0;right:13%;top:10%;width:66px;height:66px;border-radius:50%;background:radial-gradient(circle at 38% 35%,#fff2c8,#e5ae68 55%,#bd754b 100%);box-shadow:0 0 35px #f0bd7a88,0 0 100px #e5a66b44;pointer-events:none}
+.plaza-path{position:absolute;z-index:1;left:50%;top:30%;width:22%;height:73%;transform:translateX(-50%) perspective(220px) rotateX(28deg);background:linear-gradient(90deg,#a98c6130,#d9c49a55 48%,#a98c6130);border-left:2px solid #ead3a266;border-right:2px solid #ead3a266;clip-path:polygon(43% 0,57% 0,100% 100%,0 100%);pointer-events:none}
+.plaza-fountain{position:absolute;z-index:2;left:50%;top:55%;transform:translate(-50%,-50%);width:95px;height:40px;border:5px solid #c7b28b;border-radius:50%;background:radial-gradient(ellipse,#71c5d8,#28617c 60%,#1c3546 65%);box-shadow:0 7px 0 #6d5c43,0 12px 20px #0008,0 0 25px #62b6d555;pointer-events:none}
+.plaza-fountain:before{content:"";position:absolute;left:50%;top:-25px;width:10px;height:30px;transform:translateX(-50%);background:linear-gradient(#a6e6f1aa,transparent);filter:blur(2px)}
+.plaza-bench{position:absolute;z-index:2;width:52px;height:13px;border-radius:4px;background:linear-gradient(#d9b878,#7e5c37);box-shadow:0 7px 0 #35291f;pointer-events:none}
+.plaza-bench:after{content:"";position:absolute;left:8px;right:8px;top:10px;height:10px;border-left:3px solid #8c704b;border-right:3px solid #8c704b}
+.plaza-bench.b1{left:35%;top:57%}.plaza-bench.b2{right:34%;top:57%}
+.plaza-tree{position:absolute;z-index:2;font-size:35px;filter:drop-shadow(0 7px 5px #0009);pointer-events:none}
+.plaza-tree.t1{left:11%;top:59%}.plaza-tree.t2{right:11%;top:59%}.plaza-tree.t3{left:48%;top:23%;font-size:28px}
+.station{z-index:5;min-width:132px;padding:13px 10px;border-radius:13px;background:linear-gradient(145deg,#344b61,#111e2d);box-shadow:0 10px 0 #070d15,0 16px 25px #0009,inset 0 1px #fff3;transition:transform .2s,border-color .2s,filter .2s}
+.station:hover,.station:focus-visible{transform:translate(-50%,-55%);border-color:#ffe1a5;filter:brightness(1.2)}
+.station:before{content:"";position:absolute;left:12%;right:12%;top:-7px;height:5px;border-radius:6px;background:#e8c98f;box-shadow:0 0 13px #e8c98f88}
+.station span{font-size:29px}
+.station.kitchen{left:22%;top:29%}.station.grill{left:78%;top:29%}.station.drinks{left:22%;top:73%}.station.lounge{left:78%;top:73%}
+.avatar{z-index:7;font-size:40px;filter:drop-shadow(0 8px 6px #000b);will-change:left,top}
+.avatar:after{content:"";position:absolute;z-index:-1;left:50%;bottom:-5px;width:27px;height:8px;transform:translateX(-50%);border-radius:50%;background:#0009;filter:blur(3px)}
+.avatar-label{z-index:7;border-color:#d9b87899;background:#101a27eF;color:#f6e5c4}
+.remote-player{z-index:6}
+.world-hint{z-index:8;max-width:260px;border:1px solid #d9b87855;background:#08111beF;color:#f1dfbd;line-height:1.5}
+.world-controls{background:linear-gradient(90deg,#0c1623,#152337);border-top-color:#d9b87844}
+.pad button{border-color:#d9b87877;background:#1b2d40;color:#f2d8a1}
+.world-status{font-size:11px}
+.metaverse-tag{position:absolute;z-index:8;right:12px;top:12px;padding:7px 10px;border:1px solid #d9b87866;border-radius:20px;background:#0a1422d9;color:#f0d6a4;font-size:9px;letter-spacing:1.4px;pointer-events:none}
+@media(max-width:520px){.world-stage{height:420px}.station{min-width:100px;padding:9px 6px}.station span{font-size:24px}.station.kitchen{left:22%}.station.grill{left:78%}.station.drinks{left:22%}.station.lounge{left:78%}.plaza-fountain{width:68px;height:31px}.plaza-bench{width:38px}.plaza-sun{width:48px;height:48px}}
+</style></head>
 <body>
 <header><div class="brand">LOCAL <span>MARS</span> <small style="font-size:10px;color:#c8b48d">· FOOD PLAZA</small></div><button id="back">← Return to Mars</button></header>
 <main>
 <section class="hero"><div class="kicker">A SHARED PLACE FOR EVERY EXPLORER</div><h1>Welcome to Food Plaza</h1><p>A welcoming community dining hub for the LOCAL MARS world. Explore food stations, choose a meal and enjoy the plaza together.</p><div class="free">✦ 100% FREE · NO MLC · NO PAYMENT</div></section>
 
 <section class="world-wrap" aria-label="Walkable 3D food plaza">
- <div class="world-top"><b>✦ PLAZA WALK MODE</b><small>LOCAL MARS · COMMUNITY HUB</small></div>
+ <div class="world-top"><b>✦ METAVERSE WORLD · PLAZA WALK MODE</b><small>LOCAL MARS · COMMUNITY HUB</small></div>
  <div class="world-stage" id="plazaWorld">
+  <div class="plaza-skyline" aria-hidden="true"></div><div class="plaza-sun" aria-hidden="true"></div>
+  <div class="plaza-path" aria-hidden="true"></div><div class="plaza-fountain" aria-hidden="true"></div>
+  <div class="plaza-bench b1" aria-hidden="true"></div><div class="plaza-bench b2" aria-hidden="true"></div>
+  <div class="plaza-tree t1" aria-hidden="true">🌳</div><div class="plaza-tree t2" aria-hidden="true">🌳</div><div class="plaza-tree t3" aria-hidden="true">🌴</div>
+  <div class="metaverse-tag">✦ METAVERSE DISTRICT · MARS</div>
   <div class="plaza-floor"></div>
-  <div class="world-hint">Walk around the plaza. Tap a station to explore its menu or visit the lounge.</div>
+  <div class="world-hint">Explore the Martian plaza. Walk between glowing food pavilions, meet other explorers and visit the central fountain.</div>
   <button class="station kitchen" data-station="asian"><span>🍜</span>ASIAN KITCHEN<small>Tap to browse meals</small></button>
   <button class="station grill" data-station="western"><span>🍔</span>WESTERN GRILL<small>Tap to browse meals</small></button>
   <button class="station drinks" data-station="drinks"><span>🧋</span>DRINKS BAR<small>Tap to browse drinks</small></button>
@@ -90,7 +129,7 @@ footer{text-align:center;color:#8190a0;font-size:10px;margin-top:28px;line-heigh
  </div>
  <div class="world-controls"><div class="pad" aria-label="Movement controls">
   <button data-move="up" aria-label="Move forward">▲</button><button data-move="left" aria-label="Move left">◀</button><button data-move="down" aria-label="Move backward">▼</button><button data-move="right" aria-label="Move right">▶</button>
- </div><div class="world-status" id="plazaStatus" aria-live="polite">Use arrow keys, WASD or the pad to walk.<br>Tap a station to interact.</div></div>
+ </div><div class="world-status" id="plazaStatus" aria-live="polite">Walk with WASD, arrow keys or the on-screen pad.<br>Tap a station to interact.</div></div>
 </section>
 <section class="community" id="plazaCommunity"><div class="community-head"><div><div class="kicker">LIVE COMMUNITY</div><h2>Meet explorers on Mars</h2></div><span id="plazaConnection" class="connection">CHECKING CONNECTION…</span></div><div class="community-grid"><div class="community-card"><h3>Member access</h3><p id="plazaAuthHint">Sign in with your LOCAL MARS member account to appear in the plaza and join live chat.</p><form id="plazaAuthForm" class="auth-form"><input id="plazaEmail" type="email" autocomplete="email" placeholder="Email address" required><input id="plazaPassword" type="password" autocomplete="current-password" minlength="8" placeholder="Password (8+ characters)" required><input id="plazaDisplayName" type="text" maxlength="40" placeholder="Explorer name (for new accounts)" autocomplete="nickname"><div class="auth-actions"><button class="primary" type="submit" id="plazaSignIn">Sign in</button><button type="button" id="plazaSignUp">Create account</button><button type="button" id="plazaSignOut" hidden>Sign out</button></div></form><div id="plazaAuthMessage" class="community-message" role="status" aria-live="polite"></div></div><div class="community-card"><div class="online-title"><h3>Explorers online</h3><strong id="plazaOnlineCount">0</strong></div><div id="plazaOnlineList" class="online-list"><span class="empty">Sign in to see live members.</span></div><small class="privacy-note">Only signed-in members appear here. Presence ends when they disconnect.</small></div><div class="community-card chat-card"><div class="online-title"><h3>Food Plaza live chat</h3><small>MEMBER ROOM</small></div><div id="plazaChatLog" class="chat-log" aria-live="polite"><span class="empty">Sign in to join the conversation.</span></div><form id="plazaChatForm" class="chat-form"><input id="plazaChatInput" maxlength="1000" placeholder="Say hello to the explorers…" autocomplete="off" disabled><button class="primary" type="submit" disabled id="plazaChatSend">Send</button></form><small class="privacy-note">Messages are stored in the Food Plaza room and visible to signed-in members.</small></div></div></section>
 <div class="stats"><div class="stat"><b>FREE</b><span>Every listed meal</span></div><div class="stat"><b>24 / 7</b><span>Virtual plaza access</span></div><div class="stat"><b>GLOBAL</b><span>All explorers welcome</span></div></div>
@@ -98,7 +137,7 @@ footer{text-align:center;color:#8190a0;font-size:10px;margin-top:28px;line-heigh
 <nav class="filters" aria-label="Food categories"><button class="active" data-cat="all">All stations</button><button data-cat="asian">Asian kitchen</button><button data-cat="western">Western grill</button><button data-cat="healthy">Healthy bar</button><button data-cat="drinks">Drinks & dessert</button></nav>
 <section class="grid" id="foods"></section>
 <section class="order"><h2>Your free meal tray</h2><div id="tray" class="empty">Choose any item above to add it to your tray.</div><div class="order-actions"><span id="total" style="font-weight:800;color:#9ce5b5">TOTAL: FREE</span><button class="primary" id="serve">Confirm free meal</button></div><div class="notice" id="notice" role="status" aria-live="polite"></div></section>
-<footer>LOCAL MARS COMMUNITY FOOD PLAZA · Virtual experience prototype<br>Menu selections remain local to this browser session. Member sign-in, online presence and Food Plaza chat connect to the LOCAL MARS backend. Live food inventory and real-world food delivery are not connected.</footer>
+<footer>LOCAL MARS METAVERSE · FOOD PLAZA · SHARED VIRTUAL WORLD<br>Menu selections remain local to this browser session. Member sign-in, online presence and Food Plaza chat connect to the LOCAL MARS backend. Live food inventory and real-world food delivery are not connected.</footer>
 </main>
 <script>
 const menu=[
