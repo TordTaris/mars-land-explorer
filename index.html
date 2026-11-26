@@ -1151,7 +1151,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 <button class="lm-dock-item" data-tab="market"><span class="lm-dock-icon">🪙</span><span class="lm-dock-label">Market</span></button>
 <button type="button" class="lm-dock-item" data-tab="wallet"><span class="lm-dock-icon">💠</span><span class="lm-dock-label">MLC Wallet</span></button>
 <button class="lm-dock-item" data-tab="colony"><span class="lm-dock-icon">🏙️</span><span class="lm-dock-label">Colony</span></button>
-<a href="./food-plaza.html" id="lmFoodPlazaLaunch" class="lm-dock-item" aria-label="Open free community Food Plaza"><span class="lm-dock-icon">🍽️</span><span class="lm-dock-label">Food Plaza</span></a>
+<button type="button" id="lmFoodPlazaLaunch" class="lm-dock-item" aria-label="Open free community Food Plaza"><span class="lm-dock-icon">🍽️</span><span class="lm-dock-label">Food Plaza</span></button>
 <button type="button" id="lmSystemsToggle" class="lm-dock-item lm-dock-systems" aria-expanded="false" aria-controls="lmSystemsOverlay"><span class="lm-dock-icon">☰</span><span class="lm-dock-label">More</span></button>
 </nav>
 <button type="button" id="lmWorkspaceOpen" hidden style="display:none!important" aria-hidden="true"></button>
@@ -2771,6 +2771,17 @@ button.primary{background:#c39b5d!important;border-color:#d9bb82!important;color
 </style>
 
 <script id="lm-food-plaza-launcher">
-(()=>{function add(){const dock=document.querySelector('.lm-command-dock')||document.querySelector('.bottom');if(!dock||document.getElementById('lmFoodPlazaLaunch'))return;const b=document.createElement('button');b.id='lmFoodPlazaLaunch';b.type='button';b.textContent='🍽 FOOD PLAZA';b.setAttribute('aria-label','Open free community Food Plaza');b.addEventListener('click',()=>{location.href='./food-plaza.html'});dock.appendChild(b)}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',add,{once:true});else add();const observer=new MutationObserver(add);observer.observe(document.documentElement,{childList:true,subtree:true});setTimeout(()=>observer.disconnect(),12000)})();
+(()=>{function add(){const b=document.getElementById('lmFoodPlazaLaunch');if(!b||b.dataset.bound)return;b.dataset.bound='1';b.addEventListener('click',()=>{location.href='./food-plaza.html'});}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',add,{once:true});else add();})();
 </script>
+<style id="lm-food-plaza-navigation-fix">
+/* Keep Food Plaza visible on signed-in mobile screens and allow the dock to scroll. */
+body.authenticated .lm-command-dock a#lmFoodPlazaLaunch{display:none!important}
+body .lm-command-dock{overflow-x:auto!important;overflow-y:hidden!important;flex-wrap:nowrap!important;justify-content:flex-start!important;scrollbar-width:none!important;-webkit-overflow-scrolling:touch}
+body .lm-command-dock::-webkit-scrollbar{display:none}
+body .lm-command-dock>.lm-dock-item{flex:0 0 68px!important;min-width:68px!important;max-width:68px!important}
+body .lm-command-dock>#lmFoodPlazaLaunch{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:4px!important;min-height:54px!important;padding:6px 3px!important;border:1px solid rgba(217,187,130,.25)!important;border-radius:10px!important;background:transparent!important;color:#eee9df!important;white-space:nowrap!important}
+body .lm-command-dock>#lmFoodPlazaLaunch .lm-dock-icon{font-size:18px!important;line-height:1!important}
+body .lm-command-dock>#lmFoodPlazaLaunch .lm-dock-label{display:block!important;font-size:8px!important;line-height:1.1!important}
+@media(min-width:761px){body .lm-command-dock>.lm-dock-item{flex:0 0 84px!important;min-width:84px!important;max-width:84px!important}}
+</style>
 </body></html>
